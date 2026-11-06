@@ -22,7 +22,7 @@ M = os.path.join(HERE, "models")
 ap = argparse.ArgumentParser()
 ap.add_argument("text", nargs="?")
 ap.add_argument("--file")
-ap.add_argument("--voice", default="am_michael")
+ap.add_argument("--voice", default="am_michael", help="a voice name, or a blend like am_michael:0.5,am_adam:0.5")
 ap.add_argument("--speed", type=float, default=1.0)
 ap.add_argument("--lang", default="en-us", help="en-us or en-gb (use en-gb for bm_* voices)")
 ap.add_argument("--pause", type=float, default=0.45, help="seconds of silence between lines")
@@ -34,11 +34,16 @@ k = Kokoro(os.path.join(M, "kokoro-v1.0.onnx"), os.path.join(M, "voices-v1.0.bin
 if a.list:
     print(" ".join(sorted(k.get_voices())))
     raise SystemExit
+voice = a.voice
+if ":" in a.voice:  # blend of voice styles, weights normalised
+    pairs = [(n, float(w)) for n, w in (x.split(":") for x in a.voice.split(","))]
+    tot = sum(w for _, w in pairs)
+    voice = sum(k.get_voice_style(n) * (w / tot) for n, w in pairs)
 text = open(a.file, encoding="utf-8").read() if a.file else a.text
 lines = [l.strip() for l in text.replace("…", "...").replace("’", "'").splitlines() if l.strip()]
 parts, sr = [], 24000
 for line in lines:
-    audio, sr = k.create(line, voice=a.voice, speed=a.speed, lang=a.lang)
+    audio, sr = k.create(line, voice=voice, speed=a.speed, lang=a.lang)
     parts += [audio, np.zeros(int(a.pause * sr), dtype=np.float32)]
 out = np.concatenate(parts) if parts else np.zeros(1, dtype=np.float32)
 out = out / max(1e-6, np.max(np.abs(out))) * 0.89
