@@ -15,5 +15,5 @@ for ((a=0; a<TOTAL; a+=CH)); do
   [[ -s "$f" ]] || { echo "chunk $a FAILED"; exit 1; }
   echo "chunk $a-$b done $(date +%T)"
 done
-ls "$OUT"/c_*.mp4 | sed "s#^#file '#; s#\$#'#" > "$OUT/list.txt"
+(cd "$OUT" && ls c_*.mp4 | sed "s#^#file '#; s#\$#'#" > list.txt)
 ffmpeg -v error -y -f concat -safe 0 -i "$OUT/list.txt" -c copy "$OUT/joined.mp4" && echo "joined $OUT/joined.mp4"
