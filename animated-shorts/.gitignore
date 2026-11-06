@@ -6,3 +6,8 @@ backup/
 # generated audio (rebuild with shorts/*/audio/sound.py)
 shorts/*/audio/*.wav
 shorts/*/audio/stems/
+
+# TTS model files (download, see tts/speak.py) and generated samples
+tts/models/
+tts/samples/
+tts/*.mp3
