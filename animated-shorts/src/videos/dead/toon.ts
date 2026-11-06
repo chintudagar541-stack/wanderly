@@ -628,7 +628,7 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
   if (back) {
     const hp = blobPts(300, hc, H), hair = o.hair ?? o.cap ?? "#3a2a22";
     p.shadedFill(hp, skin, mul(skin, SH_SKIN), light, H.a);
-    p.clip(hp, () => p.ell(300, hc - 0.32 * H.b, 1.2 * H.a, 1.05 * H.b, hair, 0));
+    p.clip(hp, () => p.ell(300, hc - 0.12 * H.b, 1.25 * H.a, 1.2 * H.b, hair, 0));
     p.inkRing(hp, ow, thick);
     p.stroke([[300 - 6 * u, crown + 0.3 * HH], [300 + 2 * u, crown + 0.42 * HH]], 1.4 * u);
     p.rot = null;

@@ -144,8 +144,8 @@ add({ a: 39.95, b: 41.45, kind: "3d", view: "cctv", grade: "hall",
   world: (t) => ({ light: "hall", tube: flicker(t, 1.4) }) });
 // 17 "Daniel dropped his phone." : the phone falls to the floor
 add({ a: 41.45, b: 43.35, kind: "3d",
-  cam: glide({ pos: [0.75, 0.32, -2.55], look: [1.35, 0.25, -3.4], fov: 46 }, { pos: [0.82, 0.3, -2.65], look: [1.35, 0.2, -3.4], fov: 44 }, 0.05),
-  actors: (t) => [{ who: "daniel", pos: [1.75, 0, -3.75], opts: { mode: "stand", expr: "terror", prop: t < 41.9 ? "phoneHold" : "phoneDrop", glow: 1 }, tint: NIGHT }],
+  cam: glide({ pos: [0.6, 0.75, -2.3], look: [1.4, 0.5, -3.5], fov: 50 }, { pos: [0.64, 0.72, -2.38], look: [1.4, 0.48, -3.5], fov: 48 }, 0.05),
+  actors: (t) => [{ who: "daniel", pos: [1.45, 0, -3.6], opts: { mode: "stand", expr: "terror", prop: t < 41.9 ? "phoneHold" : "phoneDrop", glow: 1 }, tint: NIGHT }],
   world: (t) => {
     const k = clamp01((t - 41.9) / 0.42), y = t < 41.9 ? 0.95 : t < 42.32 ? 0.95 * (1 - k * k) : Math.max(0, 0.08 * Math.sin(Math.min(1, (t - 42.32) / 0.25) * Math.PI));
     return { light: "night", lampOn: true, phoneOn: 1, phoneAt: "floor", phoneFloorY: y, phoneFloorRot: t < 42.32 ? 4 * k : 0, tube: flicker(t, 0.5) };
@@ -153,7 +153,7 @@ add({ a: 41.45, b: 43.35, kind: "3d",
 // 18 "Then came another knock." : behind him
 add({ a: 43.35, b: 45.05, kind: "3d",
   cam: glide({ pos: [0.9, 1.5, -1.6], look: [1.38, 1.3, -3.5], fov: 42 }, { pos: [0.95, 1.5, -1.85], look: [1.38, 1.32, -3.5], fov: 40 }, 0.06),
-  actors: (t) => [{ who: "daniel", pos: D_DOOR, opts: { mode: "stand", expr: t < 44.25 ? "worried" : "terror", look: -0.6, blink: t < 44.25 ? blinkAt(t, 4) : 0 }, tint: NIGHT }],
+  actors: (t) => [{ who: "daniel", pos: D_DOOR, opts: { mode: "stand", expr: "terror", back: true, tilt: t < 44.3 ? 0 : -3 }, tint: NIGHT }],
   world: () => ({ light: "night", lampOn: true, phoneOn: 1, phoneAt: "floor" }) });
 // 19 "This time from inside his bedroom." : the closed bedroom door
 add({ a: 45.05, b: 47.85, kind: "3d",
@@ -191,20 +191,20 @@ add({ a: 61.15, b: 64.3, kind: "3d", grade: "day",
   actors: (t) => {
     const w = ramp(t, 61.4, 63.6);
     return [
-      { who: "cop1", pos: [L(1.4, 1.1, w), 0, L(-4.4, -2.6, w)], opts: { mode: "stroll", phase: t * 1.6, expr: "stern", blink: blinkAt(t, 5) }, tint: DAY },
-      { who: "cop2", pos: [L(1.5, 1.9, w), 0, L(-5.2, -3.4, w)], opts: { mode: "stroll", phase: t * 1.6 + 0.3, expr: "neutral", blink: blinkAt(t, 6) }, tint: DAY },
+      { who: "cop1", pos: [L(1.15, 0.95, w), 0, L(-4.4, -2.6, w)], opts: { mode: "stroll", phase: t * 1.6, expr: "stern", blink: blinkAt(t, 5) }, tint: DAY },
+      { who: "cop2", pos: [L(1.85, 2.05, w), 0, L(-5.3, -3.5, w)], opts: { mode: "stroll", phase: t * 1.6 + 0.3, expr: "neutral", blink: blinkAt(t, 6) }, tint: DAY },
     ];
   },
-  world: () => ({ light: "day", phoneOn: 0, phoneAt: "floor", frontDoor: 1.4, bedDoor: 0 }) });
+  world: () => ({ light: "day", phoneOn: 0, phoneAt: "floor", frontDoor: 1.4, bedDoor: 1.35 }) });
 // 27 "There was no sign of a struggle. No broken doors. No missing belongings."
 add({ a: 64.3, b: 68.75, kind: "3d", grade: "day",
   cam: glide({ pos: [1.6, 1.6, -1.2], look: [-2.6, 0.8, -1.4], fov: 46 }, { pos: [1.6, 1.6, 1.8], look: [-2.6, 0.8, 1.2], fov: 46 }, 0),
   actors: (t) => [{ who: "cop2", pos: [-0.6, 0, 2.6], opts: { mode: "stand", expr: "stern", blink: blinkAt(t, 6) }, tint: DAY }],
-  world: () => ({ light: "day", phoneOn: 0, phoneAt: "floor", frontDoor: 1.4, bedDoor: 0 }) });
+  world: () => ({ light: "day", phoneOn: 0, phoneAt: "floor", frontDoor: 1.4, bedDoor: 1.35 }) });
 // 28 "Only a phone lying on the floor."
 add({ a: 68.75, b: 70.55, kind: "3d", grade: "day",
-  cam: glide({ pos: [2.0, 1.3, -2.4], look: [1.3, 0, -3.35], fov: 40 }, { pos: [1.85, 1.0, -2.65], look: [1.3, 0, -3.35], fov: 36 }, 0.05),
-  world: () => ({ light: "day", phoneOn: 0, phoneAt: "floor", frontDoor: 1.4, bedDoor: 0 }) });
+  cam: glide({ pos: [1.8, 1.05, -2.6], look: [1.3, 0, -3.35], fov: 34 }, { pos: [1.7, 0.85, -2.8], look: [1.3, 0, -3.35], fov: 30 }, 0.05),
+  world: () => ({ light: "day", phoneOn: 0, phoneAt: "floor", frontDoor: 1.4, bedDoor: 1.35 }) });
 // 29 "The last call in its history was made at 2:17 AM. The caller's name ... Daniel."
 add({ a: 70.55, b: 77.75, kind: "log" });
 // 30-31 "According to the police report, Daniel had died three days earlier."
