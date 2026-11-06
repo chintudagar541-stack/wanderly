@@ -19,7 +19,7 @@ export type Build = "adult" | "stout" | "kid";
 export type Outfit = {
   jacket: string; pants: string; boots: string; hat?: string | null; belt?: string | null; buttons?: string; rifle?: boolean;
   sash?: string; sword?: boolean; moustache?: string; skin?: string; head?: number; cap?: string; hair?: string; dress?: string;
-  build?: Build;
+  build?: Build; stars?: boolean;
 };
 type P2 = [number, number];
 
@@ -393,6 +393,42 @@ const hatOn = (p: Pen, o: Outfit, hp: P2[], H: Blob, cx: number, hc: number, lig
       const [tx, ty] = R([[cx, yb - ht - 6 * u]])[0];
       p.ell(tx, ty, 7 * u, 7 * u, "#2b7a4b", 2.5 * u); // green tuft
     }
+  } else if (o.hat === "helmetUS" || o.hat === "helmetDE") {
+    // WWII helmets: US = round dome with a thin rim and net dots; DE = taller dome with flared skirt over the ears
+    const de = o.hat === "helmetDE", col = o.cap ?? (de ? "#56605a" : "#5d6838"), rim = hc - 24 * u;
+    const rx = 1.18 * H.a, ry = rim - (crown - 0.06 * HH);
+    const dome: P2[] = [];
+    for (let i = 0; i <= 24; i++) { const t = Math.PI + (Math.PI * i) / 24; dome.push([cx + rx * Math.cos(t), rim + ry * Math.sin(t)]); }
+    const shape = de ? [[cx - rx - 4 * u, rim + 26 * u] as P2, ...dome, [cx + rx + 4 * u, rim + 26 * u] as P2, [cx + rx - 10 * u, rim + 6 * u] as P2, [cx - rx + 10 * u, rim + 6 * u] as P2]
+      : [...dome, [cx + rx + 8 * u, rim + 4 * u] as P2, [cx - rx - 8 * u, rim + 4 * u] as P2];
+    const body = R(shape);
+    p.shadedFill(body, col, mul(col, SH_FELT), light, rx, 0.4);
+    if (!de) p.clip(body, () => { for (let i = 0; i < 14; i++) p.dot(cx + (rnd(seed, 40 + i) - 0.5) * 1.8 * rx, rim - rnd(seed, 60 + i) * ry * 0.9, 1.6 * u, mul(col, [0.7, 0.7, 0.7])); });
+    p.poly(body, null, ow);
+    if (o.stars) for (const dx of [-14, 0, 14]) { // the fake general's stars
+      const [sx, sy] = R([[cx + dx * u, rim - 0.45 * ry]])[0], pts: P2[] = [];
+      for (let k = 0; k < 10; k++) { const r = k % 2 ? 3.2 * u : 8 * u, b = rad(k * 36 - 90); pts.push([sx + r * Math.cos(b), sy + r * Math.sin(b)]); }
+      p.poly(pts, "#f4f4f0", 1.6 * u);
+    }
+  } else if (o.hat === "peaked") {
+    // officer's peaked cap: wide flat crown, dark band, black visor, gold badge
+    const col = o.cap ?? "#5d6838", yb = hc - 26 * u, wt = 1.25 * H.a, ht = 0.34 * HH;
+    const top = R([[cx - 0.95 * H.a, yb], [cx - wt, yb - ht], [cx + wt, yb - ht], [cx + 0.95 * H.a, yb]]);
+    p.shadedFill(top, col, mul(col, SH_FELT), light, wt, 0.4);
+    p.poly(top, null, ow);
+    p.poly(R([[cx - 0.95 * H.a, yb - 0.1 * HH], [cx + 0.95 * H.a, yb - 0.1 * HH], [cx + 0.95 * H.a, yb], [cx - 0.95 * H.a, yb]]), "#3a2a1c", ow * 0.7);
+    const [px, py] = R([[cx + 3 * u * facing, yb + 2 * u]])[0];
+    p.ell(px, py, 38 * u, 0.05 * HH, "#16171b", 2.5 * u, 0, 180, (a * 180) / Math.PI);
+    const [bx, by] = R([[cx, yb - 0.55 * ht]])[0];
+    p.ell(bx, by, 9 * u, 7 * u, "#e8c45a", 2 * u, 0, 360, (a * 180) / Math.PI);
+  } else if (o.hat === "fedora") {
+    const col = o.cap ?? "#5a4a3a", yb = hc - 30 * u, ht = 0.32 * HH, wt = 0.95 * H.a;
+    const crownP = R([[cx - wt, yb], [cx - wt * 0.88, yb - ht], [cx, yb - ht + 8 * u], [cx + wt * 0.88, yb - ht], [cx + wt, yb]]);
+    p.shadedFill(crownP, col, mul(col, SH_FELT), light, wt, 0.4);
+    p.clip(crownP, () => p.band(R([[cx - wt - 4 * u, yb - 8 * u], [cx + wt + 4 * u, yb - 8 * u]]), "#2a211a", 12 * u, 0.8 * u));
+    p.poly(crownP, null, ow);
+    const [bx, by] = R([[cx, yb + 2 * u]])[0];
+    p.ell(bx, by, 1.6 * H.a, 0.06 * HH, col, ow, 0, 360, (a * 180) / Math.PI);
   } else if (o.hat === "cap" || o.hat === "hair") {
     const cut = crown + (o.hat === "cap" ? 0.3 : 0.42) * HH;
     const keep = (x: number, y: number) => y < cut || (side && o.hat === "hair" && x < cx - 6 * u && y < hc + 0.42 * H.b);
@@ -440,7 +476,7 @@ const hatOn = (p: Pen, o: Outfit, hp: P2[], H: Blob, cx: number, hc: number, lig
 // ---------------- bodies ----------------
 export type Arms = [P2[], P2[]];
 /** held prop; for the hammer the number is the strike 0 (raised) .. 1 (struck) */
-export type Prop = null | "icecream" | "shako" | ["hammer", number] | "phoneEar" | "phoneHold" | "phoneDrop";
+export type Prop = null | "icecream" | "shako" | ["hammer", number] | "phoneEar" | "phoneHold" | "phoneDrop" | "binoculars" | "earCup" | "point";
 
 const BUILD: Record<Build, { a: number; torso: number; legs: number; tw: number }> = {
   adult: { a: 118, torso: 1.1, legs: 1.4, tw: 0.8 },
@@ -541,6 +577,15 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
     } else if (prop === "phoneEar") {
       const S = sh(1), ear: P2 = [300 + 0.98 * H.a + 3 * u, chin - 0.95 * H.b];
       arms.push({ pts: [S, [tcx + 1.15 * T.a + 16 * u, S[1] + 0.18 * HH], ear], front: true });
+    } else if (prop === "binoculars") {
+      arms.length = 0;
+      for (const side of [-1, 1]) arms.push({ pts: [sh(side), [tcx + side * (1.1 * T.a + 8 * u), sh(side)[1] + 0.25 * HH], [300 + side * 24 * u, chin - 0.38 * HH]], front: true });
+    } else if (prop === "earCup") {
+      const S = sh(1);
+      arms.push({ pts: [S, [tcx + 1.2 * T.a + 18 * u, S[1] + 0.1 * HH], [300 + 1.05 * H.a + 6 * u, chin - 0.9 * H.b]], front: true });
+    } else if (prop === "point") {
+      const S = sh(1);
+      arms.push({ pts: [S, [tcx + 1.2 * T.a + 22 * u, S[1] - 0.05 * HH], [tcx + 1.3 * T.a + 60 * u, S[1] - 0.2 * HH]], front: true });
     } else if (prop === "phoneHold" || prop === "phoneDrop") {
       const S = sh(1);
       arms.push({ pts: [S, [tcx + 1.1 * T.a + 6 * u, S[1] + 0.42 * HH], [tcx + 0.25 * T.a, S[1] + 0.3 * HH]], front: true });
@@ -641,6 +686,12 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
   hatOn(p, o, hp, H, 300, hc, light, seed, facing, false);
   const brim = !!o.hat && o.hat !== "hair" && o.hat !== "bonnet" && o.hat !== "cap";
   faceFront(p, 300, hc, W, expr, facing, look, lid, brim, skin, o.moustache, o.build === "stout");
+  if (prop === "binoculars") { // binoculars over the eyes, hands on the barrels
+    for (const side of [-1, 1]) { p.ell(300 + side * 14 * u, hc - 2 * u, 12 * u, 13 * u, "#2b2e33", 2.6 * u); p.ell(300 + side * 14 * u, hc - 2 * u, 6 * u, 6.5 * u, "#5d7a9a", 1.6 * u); }
+    p.poly([[300 - 4 * u, hc - 8 * u], [300 + 4 * u, hc - 8 * u], [300 + 4 * u, hc + 2 * u], [300 - 4 * u, hc + 2 * u]], "#2b2e33", 1.6 * u);
+    for (const side of [-1, 1]) p.dot(300 + side * 24 * u, hc + 8 * u, 6 * u);
+  }
+  if (prop === "earCup") p.dot(300 + 1.05 * H.a + 6 * u, chin - 0.9 * H.b, 7 * u);
   if (prop === "phoneEar") { // phone pressed to the ear, over the head edge, hand on it
     const ex = 300 + 0.98 * H.a + 3 * u, ey = chin - 0.95 * H.b;
     p.poly([[ex - 6 * u, ey - 26 * u], [ex + 7 * u, ey - 24 * u], [ex + 8 * u, ey + 8 * u], [ex - 5 * u, ey + 6 * u]], "#22232b", 2.6 * u);
