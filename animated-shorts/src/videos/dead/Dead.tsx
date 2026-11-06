@@ -72,7 +72,7 @@ const Inner: React.FC<{ shot: Shot; t: number }> = ({ shot, t }) => {
     tone: new ToneMappingEffect({ mode: ToneMappingMode.NEUTRAL }),
     grade: new GradeEffect(GRADES.night, 1),
   }), [camera, scene]);
-  useEffect(() => () => fx.ink.dispose(), [fx]);
+  useEffect(() => () => { try { (fx.ink as unknown as { dispose?: () => void }).dispose?.(); } catch { /* already disposed by the composer */ } }, [fx]);
 
   // world state
   const ws = shot.world ? shot.world(t) : { light: "night" as const };
