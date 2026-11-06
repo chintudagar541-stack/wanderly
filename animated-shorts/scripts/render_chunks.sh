@@ -2,6 +2,7 @@
 # Render a composition in chunks (resumable: finished chunks are skipped), then join them losslessly.
 # usage: scripts/render_chunks.sh <CompId> <totalFrames> <outDir> [chunk=300]
 set -u
+cd "$(dirname "$0")/.." || exit 1   # run from the Remotion project, wherever we are called from
 COMP=$1; TOTAL=$2; OUT=$3; CH=${4:-300}
 mkdir -p "$OUT"
 for ((a=0; a<TOTAL; a+=CH)); do
