@@ -2,3 +2,7 @@ node_modules/
 out/
 backup/
 .remotion-tmp/
+
+# generated audio (rebuild with shorts/*/audio/sound.py)
+shorts/*/audio/*.wav
+shorts/*/audio/stems/
