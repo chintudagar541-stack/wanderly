@@ -6,6 +6,7 @@ import * as THREE from "three";
 import { NOINK } from "../bridge/ink";
 import { Pen, INK } from "../dead/toon";
 import { decorate, Decor } from "./decor";
+import { makeTank as makeTankDetailed } from "./tanks";
 
 export type LightName = "dawn" | "day" | "night" | "golden";
 
@@ -74,30 +75,8 @@ const B = (w: number, h: number, d: number, m: THREE.Material | THREE.Material[]
 const C = (rt: number, rb: number, h: number, m: THREE.Material, seg = 16) => new THREE.Mesh(new THREE.CylinderGeometry(rt, rb, h, seg), m);
 
 // ---------------- vehicles ----------------
-const STAR = starTex();
-/** Sherman-ish (us) or a grey panzer-ish (de) tank, nose toward +x, about 6 m long */
-export const makeTank = (kind: "us" | "de") => {
-  const g = new THREE.Group(), body = new THREE.Group();
-  g.add(body);
-  const col = kind === "us" ? 0x5f6b3a : 0x6b726b, dark = toon(0x2a2a26), m = toon(col);
-  B(5.8, 0.95, 2.0, m, 0, 1.0, 0, body);
-  for (const z of [-1.2, 1.2]) {
-    B(6.0, 1.0, 0.6, dark, 0, 0.55, z, body);
-    for (let i = 0; i < 6; i++) { const w = C(0.36, 0.36, 0.12, toon(0x3a3a34), 14); w.rotation.x = Math.PI / 2; w.position.set(-2.3 + i * 0.92, 0.45, z * 1.27); body.add(w); }
-  }
-  const up = B(kind === "us" ? 4.4 : 4.8, 0.7, 2.5, m, -0.2, 1.8, 0, body);
-  if (kind === "us") up.scale.set(1, 1, 1);
-  const tur = kind === "us" ? C(1.0, 1.15, 0.85, m, 20) : B(2.2, 0.75, 1.9, m);
-  tur.position.set(-0.3, 2.55, 0); body.add(tur);
-  const gun = C(0.09, 0.11, 2.8, m, 10); gun.rotation.z = Math.PI / 2; gun.position.set(1.9, 2.55, 0); body.add(gun);
-  B(0.4, 0.5, 0.7, m, 0.65, 2.55, 0, body);
-  if (kind === "us") for (const z of [-1.26, 1.26]) {
-    const st = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 0.9), new THREE.MeshBasicMaterial({ map: STAR, transparent: true, depthWrite: false }));
-    st.position.set(-0.2, 1.8, z); if (z < 0) st.rotation.y = Math.PI; st.layers.set(NOINK); body.add(st);
-  }
-  g.userData.body = body;
-  return g;
-};
+/** detailed Sherman-like (us) or Panzer IV-like (de) tank, nose toward +x (tanks.ts) */
+export const makeTank = (kind: "us" | "de") => makeTankDetailed(kind, toon);
 /** inflatable look: deflate 0 = full, 1 = flat rubber puddle; wob = jiggle */
 export const setInflate = (tank: THREE.Group, deflate: number, wob = 0) => {
   const b = tank.userData.body as THREE.Group, d = Math.max(0, Math.min(1, deflate));
