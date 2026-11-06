@@ -5,6 +5,7 @@
 import * as THREE from "three";
 import { NOINK } from "../bridge/ink";
 import { Pen, INK } from "../dead/toon";
+import { decorate, Decor } from "./decor";
 
 export type LightName = "dawn" | "day" | "night" | "golden";
 
@@ -170,6 +171,7 @@ export class World {
   moon: THREE.Mesh;
   fog = new THREE.Fog(0xb8d0ec, 60, 420);
   rings: THREE.Mesh[] = [];
+  decor: Decor;
 
   constructor() {
     const R = this.root;
@@ -182,6 +184,7 @@ export class World {
     this.moon.position.set(-90, 120, -420); this.moon.lookAt(0, 0, 0); this.moon.layers.set(NOINK); R.add(this.moon);
     const ground = new THREE.Mesh(new THREE.PlaneGeometry(1200, 1200), toon(0xffffff, grassTex()));
     ground.rotation.x = -Math.PI / 2; R.add(ground);
+    this.decor = decorate(R, toon);
     // distant hills
     for (let i = 0; i < 14; i++) {
       const a = (i / 14) * Math.PI * 2, r = 330 + rnd(i) * 80;

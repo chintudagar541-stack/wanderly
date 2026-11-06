@@ -13,6 +13,7 @@ import { InkPass } from "../bridge/ink";
 import { NOINK } from "../bridge/ink";
 import { GradeEffect, GradeParams } from "../bridge/grade";
 import { World, setWorldTime, LightName } from "./world";
+import { animateDecor } from "./decor";
 import { Pen, bodyFront } from "../dead/toon";
 import { SHOTS, TOTAL, FPS, Shot, ActorDef, shotAt, kickAt, outfitOf, DURATION as DURATION_S } from "./shots";
 import { Insert, BinocOverlay, Grain } from "./inserts";
@@ -82,6 +83,7 @@ const Inner: React.FC<{ shot: Shot; t: number }> = ({ shot, t }) => {
   const c = shot.cam!(t, (t - shot.a) / (shot.b - shot.a));
   cam.position.set(...c.pos); cam.fov = c.fov; cam.near = 0.1; cam.far = 1500; cam.updateProjectionMatrix();
   cam.lookAt(...c.look);
+  animateDecor(W.decor, t, ws.light, cam.position);
   const kick = kickAt(t);
   if (c.roll || kick) {
     right.set(1, 0, 0).applyQuaternion(cam.quaternion); up.set(0, 1, 0).applyQuaternion(cam.quaternion);
