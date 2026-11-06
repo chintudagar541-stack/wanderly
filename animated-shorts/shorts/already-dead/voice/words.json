@@ -1,0 +1,1022 @@
+[
+{
+"word": "a",
+"start": 0.06,
+"end": 0.11
+},
+{
+"word": "man",
+"start": 0.11,
+"end": 0.39
+},
+{
+"word": "named",
+"start": 0.39,
+"end": 0.69
+},
+{
+"word": "daniel",
+"start": 0.69,
+"end": 1.15
+},
+{
+"word": "received",
+"start": 1.15,
+"end": 1.54
+},
+{
+"word": "a",
+"start": 1.54,
+"end": 1.59
+},
+{
+"word": "phone",
+"start": 1.59,
+"end": 1.93
+},
+{
+"word": "call",
+"start": 1.93,
+"end": 2.25
+},
+{
+"word": "at",
+"start": 2.25,
+"end": 2.34
+},
+{
+"word": "exactly",
+"start": 2.34,
+"end": 2.93
+},
+{
+"word": "to",
+"start": 2.93,
+"end": 3.31
+},
+{
+"word": "seventeen",
+"start": 3.31,
+"end": 3.97
+},
+{
+"word": "am",
+"start": 3.97,
+"end": 4.49
+},
+{
+"word": "what",
+"start": 5.06,
+"end": 5.29
+},
+{
+"word": "he",
+"start": 5.29,
+"end": 5.41
+},
+{
+"word": "answered",
+"start": 5.41,
+"end": 5.89
+},
+{
+"word": "he",
+"start": 6.27,
+"end": 6.39
+},
+{
+"word": "hurt",
+"start": 6.39,
+"end": 6.59
+},
+{
+"word": "his",
+"start": 6.59,
+"end": 6.75
+},
+{
+"word": "own",
+"start": 6.84,
+"end": 7.11
+},
+{
+"word": "voice",
+"start": 7.11,
+"end": 7.47
+},
+{
+"word": "whispering",
+"start": 7.47,
+"end": 8.07
+},
+{
+"word": "don't",
+"start": 8.57,
+"end": 8.86
+},
+{
+"word": "open",
+"start": 8.86,
+"end": 9.15
+},
+{
+"word": "the",
+"start": 9.15,
+"end": 9.24
+},
+{
+"word": "front",
+"start": 9.24,
+"end": 9.56
+},
+{
+"word": "door",
+"start": 9.56,
+"end": 10.04
+},
+{
+"word": "daniel",
+"start": 10.73,
+"end": 11.09
+},
+{
+"word": "froze",
+"start": 11.09,
+"end": 11.73
+},
+{
+"word": "three",
+"start": 12.34,
+"end": 12.63
+},
+{
+"word": "seconds",
+"start": 12.63,
+"end": 12.98
+},
+{
+"word": "later",
+"start": 12.98,
+"end": 13.43
+},
+{
+"word": "someone",
+"start": 13.65,
+"end": 14.02
+},
+{
+"word": "knocked",
+"start": 14.02,
+"end": 14.47
+},
+{
+"word": "you",
+"start": 15.15,
+"end": 15.28
+},
+{
+"word": "look",
+"start": 15.28,
+"end": 15.46
+},
+{
+"word": "to",
+"start": 15.46,
+"end": 15.58
+},
+{
+"word": "the",
+"start": 15.58,
+"end": 15.67
+},
+{
+"word": "people",
+"start": 15.67,
+"end": 16.2
+},
+{
+"word": "nobody",
+"start": 16.77,
+"end": 17.09
+},
+{
+"word": "was",
+"start": 17.09,
+"end": 17.26
+},
+{
+"word": "there",
+"start": 17.26,
+"end": 17.6
+},
+{
+"word": "then",
+"start": 18.28,
+"end": 18.7
+},
+{
+"word": "his",
+"start": 18.75,
+"end": 19.0
+},
+{
+"word": "phone",
+"start": 19.0,
+"end": 19.31
+},
+{
+"word": "rang",
+"start": 19.31,
+"end": 19.5
+},
+{
+"word": "again",
+"start": 19.5,
+"end": 19.98
+},
+{
+"word": "this",
+"start": 20.53,
+"end": 20.8
+},
+{
+"word": "time",
+"start": 20.8,
+"end": 21.23
+},
+{
+"word": "the",
+"start": 21.23,
+"end": 21.31
+},
+{
+"word": "voice",
+"start": 21.31,
+"end": 21.62
+},
+{
+"word": "said",
+"start": 21.62,
+"end": 21.9
+},
+{
+"word": "check",
+"start": 22.31,
+"end": 22.57
+},
+{
+"word": "your",
+"start": 22.57,
+"end": 22.68
+},
+{
+"word": "security",
+"start": 22.68,
+"end": 23.19
+},
+{
+"word": "camera",
+"start": 23.19,
+"end": 23.67
+},
+{
+"word": "then",
+"start": 24.25,
+"end": 24.54
+},
+{
+"word": "you",
+"start": 24.54,
+"end": 24.66
+},
+{
+"word": "open",
+"start": 24.66,
+"end": 25.01
+},
+{
+"word": "the",
+"start": 25.01,
+"end": 25.08
+},
+{
+"word": "camera",
+"start": 25.08,
+"end": 25.47
+},
+{
+"word": "app",
+"start": 25.47,
+"end": 25.75
+},
+{
+"word": "and",
+"start": 26.25,
+"end": 26.47
+},
+{
+"word": "that's",
+"start": 26.47,
+"end": 26.87
+},
+{
+"word": "what",
+"start": 26.87,
+"end": 27.05
+},
+{
+"word": "his",
+"start": 27.05,
+"end": 27.2
+},
+{
+"word": "blood",
+"start": 27.2,
+"end": 27.59
+},
+{
+"word": "ran",
+"start": 27.59,
+"end": 27.88
+},
+{
+"word": "cold",
+"start": 27.88,
+"end": 28.4
+},
+{
+"word": "the",
+"start": 29.06,
+"end": 29.15
+},
+{
+"word": "footage",
+"start": 29.15,
+"end": 29.52
+},
+{
+"word": "showed",
+"start": 29.52,
+"end": 29.77
+},
+{
+"word": "himself",
+"start": 29.77,
+"end": 30.46
+},
+{
+"word": "standing",
+"start": 30.5,
+"end": 30.95
+},
+{
+"word": "outside",
+"start": 30.95,
+"end": 31.35
+},
+{
+"word": "his",
+"start": 31.35,
+"end": 31.52
+},
+{
+"word": "own",
+"start": 31.65,
+"end": 31.89
+},
+{
+"word": "apartment",
+"start": 31.89,
+"end": 32.4
+},
+{
+"word": "door",
+"start": 32.4,
+"end": 32.75
+},
+{
+"word": "but",
+"start": 33.26,
+"end": 33.38
+},
+{
+"word": "he",
+"start": 33.38,
+"end": 33.54
+},
+{
+"word": "was",
+"start": 33.54,
+"end": 33.68
+},
+{
+"word": "still",
+"start": 33.68,
+"end": 33.99
+},
+{
+"word": "inside",
+"start": 33.99,
+"end": 34.56
+},
+{
+"word": "suddenly",
+"start": 35.21,
+"end": 35.8
+},
+{
+"word": "the",
+"start": 36.05,
+"end": 36.15
+},
+{
+"word": "man",
+"start": 36.15,
+"end": 36.45
+},
+{
+"word": "on",
+"start": 36.45,
+"end": 36.52
+},
+{
+"word": "the",
+"start": 36.52,
+"end": 36.58
+},
+{
+"word": "security",
+"start": 36.58,
+"end": 37.06
+},
+{
+"word": "footage",
+"start": 37.06,
+"end": 37.42
+},
+{
+"word": "it",
+"start": 37.42,
+"end": 37.5
+},
+{
+"word": "slowly",
+"start": 37.5,
+"end": 38.18
+},
+{
+"word": "turned",
+"start": 38.18,
+"end": 38.53
+},
+{
+"word": "toward",
+"start": 38.53,
+"end": 38.84
+},
+{
+"word": "the",
+"start": 38.84,
+"end": 38.91
+},
+{
+"word": "camera",
+"start": 38.91,
+"end": 39.37
+},
+{
+"word": "and",
+"start": 40.02,
+"end": 40.18
+},
+{
+"word": "smiled",
+"start": 40.18,
+"end": 40.84
+},
+{
+"word": "daniel",
+"start": 41.49,
+"end": 41.87
+},
+{
+"word": "dropped",
+"start": 41.87,
+"end": 42.28
+},
+{
+"word": "his",
+"start": 42.28,
+"end": 42.44
+},
+{
+"word": "phone",
+"start": 42.44,
+"end": 42.81
+},
+{
+"word": "then",
+"start": 43.42,
+"end": 43.74
+},
+{
+"word": "came",
+"start": 43.74,
+"end": 43.94
+},
+{
+"word": "another",
+"start": 43.94,
+"end": 44.33
+},
+{
+"word": "knock",
+"start": 44.33,
+"end": 44.67
+},
+{
+"word": "this",
+"start": 45.08,
+"end": 45.32
+},
+{
+"word": "time",
+"start": 45.32,
+"end": 45.68
+},
+{
+"word": "from",
+"start": 45.81,
+"end": 45.98
+},
+{
+"word": "inside",
+"start": 46.08,
+"end": 46.56
+},
+{
+"word": "his",
+"start": 46.56,
+"end": 46.72
+},
+{
+"word": "bedroom",
+"start": 46.72,
+"end": 47.28
+},
+{
+"word": "he",
+"start": 47.89,
+"end": 48.02
+},
+{
+"word": "slowly",
+"start": 48.02,
+"end": 48.56
+},
+{
+"word": "turn",
+"start": 48.56,
+"end": 48.82
+},
+{
+"word": "around",
+"start": 48.82,
+"end": 49.28
+},
+{
+"word": "his",
+"start": 49.9,
+"end": 50.05
+},
+{
+"word": "bedroom",
+"start": 50.05,
+"end": 50.49
+},
+{
+"word": "door",
+"start": 50.49,
+"end": 50.77
+},
+{
+"word": "opened",
+"start": 50.86,
+"end": 51.22
+},
+{
+"word": "by",
+"start": 51.22,
+"end": 51.39
+},
+{
+"word": "itself",
+"start": 51.39,
+"end": 51.94
+},
+{
+"word": "and",
+"start": 52.38,
+"end": 52.52
+},
+{
+"word": "standing",
+"start": 52.52,
+"end": 53.0
+},
+{
+"word": "there",
+"start": 53.0,
+"end": 53.28
+},
+{
+"word": "was",
+"start": 53.55,
+"end": 53.72
+},
+{
+"word": "another",
+"start": 53.72,
+"end": 54.22
+},
+{
+"word": "daniel",
+"start": 54.22,
+"end": 54.72
+},
+{
+"word": "the",
+"start": 55.29,
+"end": 55.38
+},
+{
+"word": "stranger",
+"start": 55.38,
+"end": 55.8
+},
+{
+"word": "look",
+"start": 55.8,
+"end": 56.08
+},
+{
+"word": "at",
+"start": 56.08,
+"end": 56.14
+},
+{
+"word": "him",
+"start": 56.14,
+"end": 56.3
+},
+{
+"word": "and",
+"start": 56.3,
+"end": 56.4
+},
+{
+"word": "said",
+"start": 56.4,
+"end": 56.73
+},
+{
+"word": "you",
+"start": 57.17,
+"end": 57.34
+},
+{
+"word": "weren't",
+"start": 57.34,
+"end": 57.6
+},
+{
+"word": "supposed",
+"start": 57.6,
+"end": 58.03
+},
+{
+"word": "to",
+"start": 58.03,
+"end": 58.13
+},
+{
+"word": "answer",
+"start": 58.13,
+"end": 58.41
+},
+{
+"word": "the",
+"start": 58.41,
+"end": 58.5
+},
+{
+"word": "phone",
+"start": 58.5,
+"end": 59.0
+},
+{
+"word": "the",
+"start": 59.66,
+"end": 59.73
+},
+{
+"word": "lights",
+"start": 59.73,
+"end": 60.04
+},
+{
+"word": "went",
+"start": 60.04,
+"end": 60.24
+},
+{
+"word": "out",
+"start": 60.24,
+"end": 60.52
+},
+{
+"word": "the",
+"start": 61.17,
+"end": 61.27
+},
+{
+"word": "next",
+"start": 61.27,
+"end": 61.54
+},
+{
+"word": "morning",
+"start": 61.54,
+"end": 61.93
+},
+{
+"word": "police",
+"start": 62.16,
+"end": 62.59
+},
+{
+"word": "entered",
+"start": 62.59,
+"end": 62.95
+},
+{
+"word": "daniels",
+"start": 62.95,
+"end": 63.32
+},
+{
+"word": "apartment",
+"start": 63.32,
+"end": 63.85
+},
+{
+"word": "there",
+"start": 64.4,
+"end": 64.51
+},
+{
+"word": "was",
+"start": 64.51,
+"end": 64.64
+},
+{
+"word": "no",
+"start": 64.64,
+"end": 64.91
+},
+{
+"word": "sign",
+"start": 64.91,
+"end": 65.18
+},
+{
+"word": "of",
+"start": 65.18,
+"end": 65.24
+},
+{
+"word": "a",
+"start": 65.24,
+"end": 65.28
+},
+{
+"word": "struggle",
+"start": 65.28,
+"end": 65.87
+},
+{
+"word": "no",
+"start": 65.98,
+"end": 66.26
+},
+{
+"word": "broken",
+"start": 66.26,
+"end": 66.62
+},
+{
+"word": "door",
+"start": 66.62,
+"end": 66.93
+},
+{
+"word": "is",
+"start": 66.93,
+"end": 67.13
+},
+{
+"word": "no",
+"start": 67.18,
+"end": 67.45
+},
+{
+"word": "missing",
+"start": 67.45,
+"end": 67.76
+},
+{
+"word": "belongings",
+"start": 67.76,
+"end": 68.36
+},
+{
+"word": "only",
+"start": 68.86,
+"end": 69.15
+},
+{
+"word": "a",
+"start": 69.15,
+"end": 69.2
+},
+{
+"word": "phone",
+"start": 69.2,
+"end": 69.71
+},
+{
+"word": "line",
+"start": 69.71,
+"end": 70.05
+},
+{
+"word": "on",
+"start": 70.05,
+"end": 70.16
+},
+{
+"word": "the",
+"start": 70.16,
+"end": 70.22
+},
+{
+"word": "floor",
+"start": 70.22,
+"end": 70.57
+},
+{
+"word": "or",
+"start": 70.57,
+"end": 70.66
+},
+{
+"word": "the",
+"start": 71.25,
+"end": 71.34
+},
+{
+"word": "last",
+"start": 71.34,
+"end": 71.74
+},
+{
+"word": "call",
+"start": 71.74,
+"end": 72.07
+},
+{
+"word": "is",
+"start": 72.07,
+"end": 72.23
+},
+{
+"word": "history",
+"start": 72.23,
+"end": 72.72
+},
+{
+"word": "was",
+"start": 72.72,
+"end": 72.93
+},
+{
+"word": "made",
+"start": 72.93,
+"end": 73.15
+},
+{
+"word": "it",
+"start": 73.15,
+"end": 73.31
+},
+{
+"word": "to",
+"start": 73.31,
+"end": 73.57
+},
+{
+"word": "seventeen",
+"start": 73.57,
+"end": 74.21
+},
+{
+"word": "am",
+"start": 74.21,
+"end": 74.74
+},
+{
+"word": "the",
+"start": 75.35,
+"end": 75.43
+},
+{
+"word": "caller's",
+"start": 75.43,
+"end": 75.82
+},
+{
+"word": "name",
+"start": 75.82,
+"end": 76.17
+},
+{
+"word": "then",
+"start": 76.73,
+"end": 76.95
+},
+{
+"word": "you'll",
+"start": 76.95,
+"end": 77.16
+},
+{
+"word": "and",
+"start": 77.79,
+"end": 77.89
+},
+{
+"word": "according",
+"start": 77.89,
+"end": 78.24
+},
+{
+"word": "to",
+"start": 78.24,
+"end": 78.33
+},
+{
+"word": "the",
+"start": 78.33,
+"end": 78.42
+},
+{
+"word": "police",
+"start": 78.42,
+"end": 78.76
+},
+{
+"word": "report",
+"start": 78.76,
+"end": 79.16
+},
+{
+"word": "daniel",
+"start": 79.68,
+"end": 80.1
+},
+{
+"word": "had",
+"start": 80.1,
+"end": 80.33
+},
+{
+"word": "died",
+"start": 80.33,
+"end": 80.76
+},
+{
+"word": "three",
+"start": 80.76,
+"end": 81.13
+},
+{
+"word": "days",
+"start": 81.13,
+"end": 81.41
+},
+{
+"word": "earlier",
+"start": 81.41,
+"end": 81.91
+}
+]
