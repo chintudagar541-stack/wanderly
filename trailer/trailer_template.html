@@ -1,74 +1,94 @@
 <!doctype html>
 <html><head><meta charset="utf-8"><title>Warriors of the North Trailer</title>
 <style>
-:root{--ink:#fff}
+@font-face{font-family:Cinzel;font-weight:600;src:url(fonts/cinzel-latin-600-normal.woff2)}
+@font-face{font-family:Cinzel;font-weight:700;src:url(fonts/cinzel-latin-700-normal.woff2)}
+@font-face{font-family:Cinzel;font-weight:900;src:url(fonts/cinzel-latin-900-normal.woff2)}
+@font-face{font-family:Cormorant;font-style:italic;font-weight:500;src:url(fonts/cormorant-garamond-latin-500-italic.woff2)}
+@font-face{font-family:Cormorant;font-style:italic;font-weight:600;src:url(fonts/cormorant-garamond-latin-600-italic.woff2)}
+@font-face{font-family:Cormorant;font-style:normal;font-weight:600;src:url(fonts/cormorant-garamond-latin-600-normal.woff2)}
+@font-face{font-family:Manrope;font-weight:500;src:url(fonts/manrope-latin-500-normal.woff2)}
+@font-face{font-family:Manrope;font-weight:600;src:url(fonts/manrope-latin-600-normal.woff2)}
+@font-face{font-family:Manrope;font-weight:700;src:url(fonts/manrope-latin-700-normal.woff2)}
+@font-face{font-family:Manrope;font-weight:800;src:url(fonts/manrope-latin-800-normal.woff2)}
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{width:1920px;height:1080px;overflow:hidden;background:#000;font-family:"Inter","Inter Display",system-ui,sans-serif;color:#fff}
+html,body{width:1920px;height:1080px;overflow:hidden;background:#000;font-family:Manrope,sans-serif;color:#fff}
 #stage{position:absolute;inset:0;overflow:hidden}
 #world{position:absolute;inset:0;width:1920px;height:1080px}
-.glass{position:absolute;border-radius:40px;overflow:hidden;
-  background:linear-gradient(135deg,rgba(255,255,255,.26),rgba(255,255,255,.07) 48%,rgba(255,255,255,.13));
-  backdrop-filter:blur(26px) saturate(1.9) brightness(1.06);
-  border:1.5px solid rgba(255,255,255,.42);
-  box-shadow:inset 0 2px 1px rgba(255,255,255,.8),inset 0 -2px 8px rgba(255,255,255,.18),inset 0 0 50px rgba(255,255,255,.10),0 34px 90px rgba(0,0,0,.38)}
+.glass{position:absolute;border-radius:36px;overflow:hidden;
+  background:linear-gradient(135deg,rgba(255,255,255,.24),rgba(255,255,255,.06) 48%,rgba(255,255,255,.12));
+  backdrop-filter:blur(26px) saturate(1.9) brightness(1.04);
+  border:1.5px solid rgba(255,255,255,.40);
+  box-shadow:inset 0 2px 1px rgba(255,255,255,.75),inset 0 -2px 8px rgba(255,255,255,.16),inset 0 0 50px rgba(255,255,255,.08),0 34px 90px rgba(0,0,0,.42)}
 .glass::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
-  background:radial-gradient(120% 70% at 18% -10%,rgba(255,255,255,.55),rgba(255,255,255,0) 55%),radial-gradient(80% 60% at 100% 120%,rgba(255,255,255,.22),rgba(255,255,255,0) 60%);mix-blend-mode:screen}
+  background:radial-gradient(120% 70% at 18% -10%,rgba(255,255,255,.5),rgba(255,255,255,0) 55%),radial-gradient(80% 60% at 100% 120%,rgba(255,255,255,.2),rgba(255,255,255,0) 60%);mix-blend-mode:screen}
 .glass::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;padding:1.5px;
-  background:linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,255,255,.05) 35%,rgba(255,255,255,0) 60%,rgba(255,255,255,.6));
+  background:linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,255,255,.05) 35%,rgba(255,255,255,0) 60%,rgba(255,255,255,.55));
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
-.shine{position:absolute;top:-20%;height:140%;width:30%;left:-40%;transform:skewX(-20deg);
-  background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.38),rgba(255,255,255,0));pointer-events:none}
-.glass.tint{background:linear-gradient(135deg,rgba(30,26,40,.46),rgba(30,26,40,.26) 50%,rgba(30,26,40,.38))}
-.glass.dark{background:linear-gradient(135deg,rgba(20,16,24,.42),rgba(20,16,24,.22) 50%,rgba(20,16,24,.34))}
-.glass.red{background:linear-gradient(135deg,rgba(150,20,30,.38),rgba(60,8,12,.24) 50%,rgba(150,20,30,.30));border-color:rgba(255,160,160,.45)}
-.chip{display:inline-flex;align-items:center;gap:12px;padding:10px 22px;border-radius:999px;font-size:22px;font-weight:600;letter-spacing:3px;text-transform:uppercase}
-.kicker{font-weight:800 !important;text-shadow:0 1px 10px rgba(0,0,0,.55);font-size:22px;font-weight:600;letter-spacing:6px;text-transform:uppercase;opacity:.9}
-.name{font-size:84px;font-weight:800;letter-spacing:-1.5px;line-height:1.02;text-shadow:0 4px 30px rgba(0,0,0,.35)}
-.line{font-size:32px;font-weight:400;opacity:.95;margin-top:16px;text-shadow:0 2px 16px rgba(0,0,0,.4)}
-.tags{display:flex;gap:14px;margin-top:28px}
-.tag{position:relative;text-shadow:0 1px 6px rgba(0,0,0,.4);padding:12px 24px;border-radius:999px;font-size:22px;font-weight:600;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.4);box-shadow:inset 0 1px 0 rgba(255,255,255,.6)}
-#cap{left:50%;bottom:64px;transform:translateX(-50%);padding:18px 40px;border-radius:999px;font-size:34px;font-weight:500;white-space:nowrap;text-align:center}
-.bar{position:absolute;left:0;right:0;height:0;background:#000;z-index:5}
+.shine{position:absolute;top:-20%;height:140%;width:30%;left:-40%;transform:skewX(-20deg);background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.34),rgba(255,255,255,0));pointer-events:none}
+.glass.tint{background:linear-gradient(135deg,rgba(18,16,26,.50),rgba(18,16,26,.28) 50%,rgba(18,16,26,.40))}
+.glass.dark{background:linear-gradient(135deg,rgba(12,10,16,.55),rgba(12,10,16,.32) 50%,rgba(12,10,16,.45))}
+.glass.red{background:linear-gradient(135deg,rgba(140,18,28,.45),rgba(50,6,10,.30) 50%,rgba(140,18,28,.36));border-color:rgba(255,170,170,.45)}
+.chip{display:inline-flex;align-items:center;gap:12px;padding:10px 24px;border-radius:999px;font-size:20px;font-weight:700;letter-spacing:4px;text-transform:uppercase}
+.kicker{font-family:Manrope;font-size:20px;font-weight:800;letter-spacing:8px;text-transform:uppercase;text-shadow:0 1px 10px rgba(0,0,0,.6)}
+.name{font-family:Cinzel;font-weight:700;font-size:72px;letter-spacing:2px;line-height:1.05;text-shadow:0 4px 30px rgba(0,0,0,.45)}
+.line{font-family:Cormorant;font-style:italic;font-weight:600;font-size:40px;opacity:.96;margin-top:14px;text-shadow:0 2px 16px rgba(0,0,0,.5)}
+.tags{display:flex;gap:12px;margin-top:26px}
+.tag{position:relative;padding:10px 22px;border-radius:999px;font-size:18px;font-weight:700;letter-spacing:2px;text-transform:uppercase;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.38);box-shadow:inset 0 1px 0 rgba(255,255,255,.55);text-shadow:0 1px 6px rgba(0,0,0,.4)}
+#cap{left:50%;bottom:34px;transform:translateX(-50%);padding:12px 36px;border-radius:999px;font-family:Cormorant;font-style:italic;font-weight:600;font-size:36px;white-space:nowrap;text-align:center;z-index:7}
+.bar{position:absolute;left:0;right:0;height:138px;background:#000;z-index:5}
 #flash{position:absolute;inset:0;background:#000;opacity:0;z-index:6}
-#wflash{position:absolute;inset:0;background:#fff;opacity:0;z-index:6}
-#vig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,rgba(0,0,0,0) 55%,rgba(0,0,0,.45) 100%)}
-.row{display:flex;align-items:center;gap:22px;padding:22px 30px;border-radius:28px;margin-top:20px;font-size:34px;font-weight:600}
-.ico{width:58px;height:58px;flex:none}
-.serif{font-family:Georgia,"DejaVu Serif",serif}
+#wflash{position:absolute;inset:0;background:#fff;opacity:0;z-index:6;mix-blend-mode:screen}
+#vig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,rgba(0,0,0,0) 50%,rgba(0,0,0,.55) 100%)}
+#grain{position:absolute;inset:0;opacity:.07;mix-blend-mode:overlay;pointer-events:none;z-index:4}
+#leak{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;opacity:0}
+.row{display:flex;align-items:center;gap:22px;padding:20px 30px;border-radius:26px;margin-top:18px;font-size:30px;font-weight:600}
+.ico{width:50px;height:50px;flex:none}
 </style></head>
 <body><div id="stage">
 <svg id="world" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
 <defs>
   %%CHARS%%
   <linearGradient id="skyG" x1="0" y1="0" x2="0" y2="1"><stop id="skyT" offset="0"/><stop id="skyB" offset="1"/></linearGradient>
-  <radialGradient id="sunG"><stop offset="0" id="sunC" stop-opacity="1"/><stop offset=".35" id="sunC2" stop-opacity=".55"/><stop offset="1" id="sunC3" stop-opacity="0"/></radialGradient>
+  <radialGradient id="sunG"><stop offset="0" id="sunC" stop-opacity="1"/><stop offset=".3" id="sunC2" stop-opacity=".5"/><stop offset="1" id="sunC3" stop-opacity="0"/></radialGradient>
   <radialGradient id="glowG" cx=".5" cy="1" r=".7"><stop offset="0" id="glowC" stop-opacity=".75"/><stop offset="1" id="glowC2" stop-opacity="0"/></radialGradient>
+  <linearGradient id="rayG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".5"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+  <filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="14"/></filter>
+  <filter id="fgblur" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="9"/></filter>
+  <filter id="fFar" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur id="bFar" stdDeviation="0"/></filter>
+  <filter id="fNear" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur id="bNear" stdDeviation="0"/></filter>
+  <filter id="fGround" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur id="bGround" stdDeviation="0"/></filter>
+  <filter id="fMB" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur id="bMB" stdDeviation="0 0"/></filter>
   <g id="pine"><path d="M0,0 L-26,0 L-8,-30 L-20,-30 L-4,-62 L-14,-62 L0,-96 L14,-62 L4,-62 L20,-30 L8,-30 L26,0Z"/><rect x="-4" y="0" width="8" height="10"/></g>
   <g id="ship"><path d="M-90,0 C-60,18 60,18 90,0 L100,-30 C104,-40 96,-46 92,-36 L84,-8 L-84,-8 L-94,-34 C-98,-44 -106,-38 -102,-28Z"/><rect x="-3" y="-120" width="6" height="112"/><path d="M-50,-112 L50,-112 L46,-30 L-46,-30Z" opacity=".85"/></g>
+  <g id="tuft"><path d="M0,0 C-10,-60 -30,-120 -60,-170 C-20,-130 -6,-80 4,-30 C8,-100 20,-160 40,-200 C30,-140 24,-80 18,-10 C30,-60 60,-110 90,-140 C64,-90 44,-50 34,0Z"/></g>
 </defs>
-<g id="cam">
-  <rect x="-200" y="-200" width="2320" height="1480" fill="url(#skyG)"/>
-  <circle id="sun" cx="1550" cy="180" r="260" fill="url(#sunG)"/>
-  <g id="clouds"></g>
-  <g id="farL">
-    <path id="far" d="M-300,640 L-120,500 L0,600 L160,470 L300,560 L470,400 L640,540 L800,430 L980,560 L1150,380 L1330,520 L1500,420 L1700,560 L1920,450 L2200,560 L2200,1200 L-300,1200Z"/>
-    <path id="snow" d="M470,400 L430,436 L452,432 L470,448 L488,432 L512,438Z M800,430 L768,458 L786,456 L800,468 L816,455 L834,460Z M1150,380 L1100,424 L1128,418 L1150,438 L1170,420 L1200,426Z M1500,420 L1466,450 L1486,446 L1500,460 L1516,446 L1536,452Z M160,470 L130,494 L148,492 L160,502 L174,490 L190,496Z"/>
+<g id="all" filter="url(#fMB)">
+  <g id="skyL">
+    <rect x="-1200" y="-1200" width="4320" height="3480" fill="url(#skyG)"/>
+    <g id="rays" opacity="0"></g>
+    <circle id="sun" cx="1550" cy="180" r="260" fill="url(#sunG)"/>
+    <ellipse id="streak" cx="1550" cy="180" rx="700" ry="5" filter="url(#soft)" opacity=".0"/>
+    <g id="clouds"></g>
+  </g>
+  <g id="farL" filter="url(#fFar)">
+    <path id="far" d="M-900,640 L-500,520 L-300,600 L-120,500 L0,600 L160,470 L300,560 L470,400 L640,540 L800,430 L980,560 L1150,380 L1330,520 L1500,420 L1700,560 L1920,450 L2200,560 L2500,470 L2900,590 L2900,1800 L-900,1800Z"/>
+    <path id="snow" d="M470,400 L430,436 L452,432 L470,448 L488,432 L512,438Z M800,430 L768,458 L786,456 L800,468 L816,455 L834,460Z M1150,380 L1100,424 L1128,418 L1150,438 L1170,420 L1200,426Z M1500,420 L1466,450 L1486,446 L1500,460 L1516,446 L1536,452Z M160,470 L130,494 L148,492 L160,502 L174,490 L190,496Z M2500,470 L2470,494 L2488,492 L2500,502 L2514,490 L2530,496Z"/>
     <g id="ships"></g>
   </g>
-  <g id="nearL">
-    <path id="near" d="M-300,720 C200,640 400,700 600,660 C800,620 1000,700 1200,650 C1400,610 1650,690 1920,640 L2200,660 L2200,1200 L-300,1200Z"/>
-    <path id="water" d="M-300,735 C400,718 800,742 2200,722 L2200,762 C1200,772 600,766 -300,772Z"/>
+  <g id="nearL" filter="url(#fNear)">
+    <path id="near" d="M-900,700 C-400,660 -200,700 0,680 C200,640 400,700 600,660 C800,620 1000,700 1200,650 C1400,610 1650,690 1920,640 C2300,600 2600,680 2900,650 L2900,1800 L-900,1800Z"/>
+    <path id="water" d="M-900,735 C400,718 800,742 2900,722 L2900,762 C1200,772 600,766 -900,772Z"/>
     <g id="trees"></g>
   </g>
-  <g id="groundL">
-    <path id="ground" d="M-300,770 C500,750 1200,782 2200,758 L2200,1300 L-300,1300Z"/>
-    <path id="ground2" d="M-300,880 C400,860 900,900 1500,870 C1800,858 2000,880 2200,875 L2200,1300 L-300,1300Z"/>
+  <g id="groundL" filter="url(#fGround)">
+    <path id="ground" d="M-900,770 C500,750 1200,782 2900,758 L2900,1900 L-900,1900Z"/>
+    <path id="ground2" d="M-900,880 C400,860 900,900 1500,870 C1800,858 2000,880 2900,875 L2900,1900 L-900,1900Z"/>
     <g id="house1" transform="translate(1460,772)">
       <path class="hw" d="M-150,0 L-150,-80 L150,-80 L150,0Z"/>
       <path class="hr" d="M-185,-70 L-110,-170 L110,-170 L185,-70 L150,-80 L-150,-80Z" stroke="#2a1c16" stroke-width="3"/>
       <path d="M-120,-150 L120,-150 M-150,-115 L150,-115" stroke="rgba(0,0,0,.18)" stroke-width="4"/>
-      <rect class="win" x="-24" y="-62" width="48" height="62"/>
-      <rect class="win" x="70" y="-60" width="34" height="28"/><rect class="win" x="-104" y="-60" width="34" height="28"/>
+      <rect class="win" x="-24" y="-62" width="48" height="62"/><rect class="win" x="70" y="-60" width="34" height="28"/><rect class="win" x="-104" y="-60" width="34" height="28"/>
     </g>
     <g id="house2" transform="translate(330,790) scale(.7)">
       <path class="hw" d="M-150,0 L-150,-80 L150,-80 L150,0Z"/>
@@ -77,70 +97,66 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:#000;font-family
     </g>
     <path id="fence" d="M560,800 L1240,790 M560,780 L1240,770" stroke-width="6" fill="none"/>
     <g id="posts"></g>
+    <rect id="glow" x="-900" y="500" width="3800" height="900" fill="url(#glowG)" opacity="0"/>
   </g>
-  <rect id="glow" x="-200" y="500" width="2320" height="700" fill="url(#glowG)" opacity="0"/>
-  <g id="actors"></g>
-  <g id="fx"></g>
+  <g id="actorsL"><g id="actors"></g></g>
+  <g id="fxL"><g id="fx"></g></g>
+  <g id="fgL" filter="url(#fgblur)"><g id="fg"></g></g>
 </g>
 <rect id="lightning" x="0" y="0" width="1920" height="1080" fill="#e8ecff" opacity="0"/>
 </svg>
+<div id="leak"></div>
 <div id="vig"></div>
+<canvas id="grain" width="960" height="540" style="width:1920px;height:1080px"></canvas>
 
-<!-- intro card -->
-<div id="intro" class="glass" style="left:310px;top:190px;width:1300px;height:640px;padding:64px 80px">
+<div id="intro" class="glass" style="left:330px;top:250px;width:1260px;height:580px;padding:56px 76px">
   <div class="shine"></div>
-  <div class="chip glass" style="position:relative;border-radius:999px">
-    <svg width="26" height="26" viewBox="0 0 24 24"><path fill="#fff" d="M4 4h16v12H5.2L4 17.2z" opacity=".9"/></svg> New series idea</div>
-  <div class="name" style="font-size:76px;margin-top:34px">I'm planning a new<br>animated series</div>
-  <div id="introRows" style="margin-top:14px">
-    <div class="row glass" id="r1" style="position:relative;width:1000px">
-      <svg class="ico" viewBox="0 0 24 24"><path fill="#ffd36e" d="M12 21s-7.5-4.6-9.6-9.1C.9 8.6 3 5 6.6 5c2 0 3.6 1.1 4.4 2.7.2.4.8.4 1 0C12.8 6.1 14.4 5 16.4 5 20 5 22.1 8.6 21.6 11.9 19.5 16.4 12 21 12 21z"/></svg>
-      Like it? Tell me in the comments</div>
-    <div class="row glass" id="r2" style="position:relative;width:1000px">
-      <svg class="ico" viewBox="0 0 24 24"><path fill="#8fd3ff" d="M3 17.2V21h3.8L17.9 9.9l-3.8-3.8zM20.7 7c.4-.4.4-1 0-1.4l-2.3-2.3c-.4-.4-1-.4-1.4 0l-1.8 1.8 3.8 3.8z"/></svg>
-      Want any changes? Tell me that too</div>
-  </div>
+  <div class="chip glass" style="position:relative">New series idea</div>
+  <div class="name" style="font-size:64px;margin-top:30px">I'm planning a new<br>animated series</div>
+  <div class="row glass" id="r1" style="position:relative;width:960px">
+    <svg class="ico" viewBox="0 0 24 24"><path fill="#ffd36e" d="M12 21s-7.5-4.6-9.6-9.1C.9 8.6 3 5 6.6 5c2 0 3.6 1.1 4.4 2.7.2.4.8.4 1 0C12.8 6.1 14.4 5 16.4 5 20 5 22.1 8.6 21.6 11.9 19.5 16.4 12 21 12 21z"/></svg>
+    Like it? Tell me in the comments</div>
+  <div class="row glass" id="r2" style="position:relative;width:960px">
+    <svg class="ico" viewBox="0 0 24 24"><path fill="#8fd3ff" d="M3 17.2V21h3.8L17.9 9.9l-3.8-3.8zM20.7 7c.4-.4.4-1 0-1.4l-2.3-2.3c-.4-.4-1-.4-1.4 0l-1.8 1.8 3.8 3.8z"/></svg>
+    Want any changes? Tell me that too</div>
 </div>
 
-<!-- name card -->
-<div id="card" class="glass" style="width:760px;height:400px;padding:52px 60px;top:250px">
+<div id="card" class="glass tint" style="width:740px;padding:46px 56px;top:300px">
   <div class="shine"></div>
   <div class="kicker" id="cK"></div>
-  <div class="name" id="cN" style="margin-top:10px"></div>
+  <div class="name" id="cN" style="margin-top:12px"></div>
   <div class="line" id="cL"></div>
   <div class="tags" id="cT"></div>
 </div>
 
-<!-- est chip -->
-<div id="est" class="glass chip" style="left:80px;top:100px;padding:16px 30px">
-  <div class="shine"></div>
-  <svg width="26" height="26" viewBox="0 0 24 24"><path fill="#fff" d="M12 2 4 20h16z" opacity=".9"/></svg> The North · Year 1007</div>
-
-<!-- title -->
-<div id="title" data-d="flex" class="glass dark" style="left:210px;top:300px;width:1500px;height:420px;display:flex;flex-direction:column;align-items:center;justify-content:center">
-  <div class="shine"></div>
-  <div class="kicker" style="color:#e9c46a">An original animated series</div>
-  <div class="name serif" id="tName" style="white-space:nowrap;font-size:80px;font-weight:700;margin-top:18px;letter-spacing:6px">WARRIORS OF THE NORTH</div>
-  <div class="chip glass" id="soon" style="position:relative;margin-top:34px;font-size:26px;padding:14px 34px">Coming soon</div>
+<div id="est" style="position:absolute;left:0;right:0;top:330px;text-align:center">
+  <div class="kicker" id="estK" style="font-size:22px;color:#f3e3b8">The North &nbsp;·&nbsp; Year 1007</div>
+  <div class="name" id="estN" style="font-size:54px;margin-top:16px;font-weight:600;letter-spacing:14px">Where the world ends</div>
 </div>
 
-<!-- outro -->
-<div id="outro" class="glass" style="left:330px;top:120px;width:1260px;height:520px;padding:56px 70px;text-align:center">
+<div id="title" data-d="flex" class="glass dark" style="left:190px;top:330px;width:1540px;height:420px;display:flex;flex-direction:column;align-items:center;justify-content:center">
+  <div class="shine"></div>
+  <div class="kicker" style="color:#e9c46a">An original animated series</div>
+  <div class="name" id="tName" style="white-space:nowrap;font-size:92px;font-weight:900;margin-top:20px">WARRIORS OF THE NORTH</div>
+  <div class="chip glass" id="soon" style="position:relative;margin-top:30px;font-size:22px;padding:12px 34px">Coming soon</div>
+</div>
+
+<div id="outro" class="glass" style="left:330px;top:170px;width:1260px;height:500px;padding:50px 70px;text-align:center">
   <div class="shine"></div>
   <div class="kicker" style="color:#ffe7a6">Your turn</div>
-  <div class="name" style="font-size:96px;margin-top:10px">Did you like it?</div>
-  <div class="row glass" id="o1" style="position:relative;justify-content:center;margin:34px auto 0;width:980px;font-size:40px">
+  <div class="name" style="font-size:84px;margin-top:12px">Did you like it?</div>
+  <div class="row glass" id="o1" style="position:relative;justify-content:center;margin:30px auto 0;width:980px;font-size:34px">
     <svg class="ico" id="bub" viewBox="0 0 24 24"><path fill="#fff" d="M4 3h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-5 4v-4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm3 6.5a1.5 1.5 0 1 0 0 .01zm5 0a1.5 1.5 0 1 0 0 .01zm5 0a1.5 1.5 0 1 0 0 .01z"/></svg>
     Comment below &amp; I'll start this series!</div>
-  <div style="display:flex;gap:20px;justify-content:center;margin-top:26px">
+  <div style="display:flex;gap:18px;justify-content:center;margin-top:24px">
     <div class="chip glass" id="o2" style="position:relative">Like</div>
     <div class="chip glass" id="o3" style="position:relative">Subscribe</div>
     <div class="chip glass" id="o4" style="position:relative">Suggest changes</div>
   </div>
 </div>
 
-<div id="cap" class="glass dark"><div class="shine"></div><span id="capT"></span></div>
 <div class="bar" id="barT" style="top:0"></div><div class="bar" id="barB" style="bottom:0"></div>
+<div id="cap" class="glass dark"><div class="shine"></div><span id="capT"></span></div>
 <div id="flash"></div><div id="wflash"></div>
 </div>
 <script>

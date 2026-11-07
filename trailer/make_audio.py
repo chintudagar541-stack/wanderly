@@ -48,6 +48,9 @@ def whoosh(L=0.7,g=0.25):
     n=int(L*SR); tt=np.arange(n)/SR; x=rng.standard_normal(n)
     e=np.sin(np.pi*tt/L)**2; return lp(x,0.05+0.25*tt/L)*e*g*3
 for a in (12.25,18.05,23.55,29.55,35.25,41.25,54.1): place(sfx,whoosh(),a-0.35)
+for a in (20.53,26.25,32.12,37.95,43.55): place(sfx,whoosh(0.45,0.18),a-0.22)
+place(sfx,whoosh(0.5,0.4),47.35)
+place(sfx,whoosh(2.6,0.12),54.1)
 # --- thunder
 def thunder(g=0.9):
     n=int(2.5*SR); tt=np.arange(n)/SR; x=rng.standard_normal(n)
