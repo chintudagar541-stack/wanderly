@@ -12,3 +12,4 @@ tts/models/
 tts/samples/
 tts/*.mp3
 shorts/*/voice/*_preview.mp3
+shorts/*/voice/*_v1_*.wav
