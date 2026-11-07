@@ -553,7 +553,7 @@ const hatOn = (p: Pen, o: Outfit, hp: P2[], H: Blob, cx: number, hc: number, lig
 // ---------------- bodies ----------------
 export type Arms = [P2[], P2[]];
 /** held prop; for the hammer the number is the strike 0 (raised) .. 1 (struck) */
-export type Prop = null | "icecream" | "shako" | ["hammer", number] | "phoneEar" | "phoneHold" | "phoneDrop" | "binoculars" | "earCup" | "point" | "bow" | "bowAim" | "diya" | "sparkler" | "spear" | "spearAim" | "spearUp" | "newspaper" | "suitcase" | "cash" | "letter" | "twoFingers" | "moneyCase";
+export type Prop = null | "icecream" | "shako" | ["hammer", number] | "phoneEar" | "phoneHold" | "phoneDrop" | "binoculars" | "earCup" | "point" | "bow" | "bowAim" | "diya" | "sparkler" | "spear" | "spearAim" | "spearUp" | "newspaper" | "suitcase" | "cash" | "letter" | "twoFingers" | "moneyCase" | "axe";
 
 const BUILD: Record<Build, { a: number; torso: number; legs: number; tw: number }> = {
   adult: { a: 118, torso: 1.1, legs: 1.4, tw: 0.8 },
@@ -669,9 +669,9 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
     } else if (prop === "sparkler") {
       const S = sh(1);
       arms.push({ pts: [S, [tcx + 1.15 * T.a + 14 * u, S[1] - 0.2 * HH], [tcx + 1.25 * T.a + 22 * u, S[1] - 0.68 * HH]], front: true });
-    } else if (prop === "spearAim" || prop === "spearUp") {
+    } else if (prop === "spearAim" || prop === "spearUp" || prop === "axe") {
       arms.length = 0;
-      const up = prop === "spearUp" ? 1 : 0;
+      const up = prop === "spearAim" ? 0 : 1;
       for (const side of [-1, 1]) arms.push({ pts: [sh(side), [tcx + side * (1.0 * T.a + 8 * u), sh(side)[1] + (0.25 - 0.2 * up) * HH], [tcx + side * 10 * u - 8 * u, sh(side)[1] + (0.32 - 0.38 * up) * HH + side * 6 * u]], front: true });
     } else if (prop === "newspaper" || prop === "moneyCase") {
       arms.length = 0;
@@ -766,6 +766,14 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
     const L = up ? 1.9 * HH : 2.0 * HH, tip: P2 = [base[0] + dir[0] * L, base[1] + dir[1] * L], n = Math.hypot(dir[0], dir[1]), dx = dir[0] / n, dy = dir[1] / n;
     p.band([base, tip], "#7a4b2a", 4.5 * u, 1.5 * u, "round");
     p.poly([[tip[0] - dy * 7 * u, tip[1] + dx * 7 * u], [tip[0] + dy * 7 * u, tip[1] - dx * 7 * u], [tip[0] + dx * 30 * u, tip[1] + dy * 30 * u]], "#c9ccd2", 2 * u);
+  }
+  if (prop === "axe") { // axe raised over the shoulder with both hands, about to swing
+    const base: P2 = [300 + 46 * u, chin + 0.95 * HH], tip: P2 = [base[0] - 0.3 * HH, base[1] - 1.25 * HH];
+    p.band([base, tip], "#9a6a3a", 5.5 * u, 1.5 * u, "round");
+    const dx = tip[0] - base[0], dy = tip[1] - base[1], n = Math.hypot(dx, dy), ux = dx / n, uy = dy / n;
+    const a: P2 = [tip[0] - ux * 4 * u, tip[1] - uy * 4 * u], b: P2 = [tip[0] - ux * 34 * u, tip[1] - uy * 34 * u];
+    p.poly([a, b, [b[0] - uy * 44 * u - ux * 6 * u, b[1] + ux * 44 * u - uy * 6 * u], [a[0] - uy * 50 * u + ux * 6 * u, a[1] + ux * 50 * u + uy * 6 * u]], "#c9ccd2", 2.2 * u);
+    p.poly([a, b, [b[0] + uy * 14 * u, b[1] - ux * 14 * u], [a[0] + uy * 14 * u, a[1] - ux * 14 * u]], "#5a5a62", 2 * u);
   }
   if (prop === "bow") { // bow held upright in the hanging right hand
     const [hx, hy] = arms[arms.length - 1].pts[2], top: P2 = [hx + 4 * u, hy - 0.95 * HH], bot: P2 = [hx + 4 * u, hy + 0.75 * HH];

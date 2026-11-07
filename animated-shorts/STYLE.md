@@ -27,14 +27,26 @@ These come straight from the channel owner. Apply all of them to every new video
 - Get the facts right. Hedge folklore with "one story says".
 
 ## Voice
-- Kokoro TTS, **am_michael** (default). The owner is comparing free look-alike voices of the reference narrator in
-  `tts/voice_match_demo.mp3` (Eric, Piper Ryan, Eric+Fenrir, Eric pitched up). If the owner picks one, write it here.
-- **Fast, energetic pace**, like the reference shorts: `python3 tts/lines.py script.txt outdir --speed 1.12 --pause 0.14 --lead 0.3`
-  (about 2.9 words/s, tiny gaps between lines).
-- Indian names get Indian pronunciation via `--fix word=phonemes` (Raam, Raavan, Lakshman, Ayodhyaa,
-  Tughlak, Daulatabad, ...).
+- Kokoro TTS, **am_michael only** (the owner confirmed this on 2026-11-07). Use no other voice.
+- **Fast pace like the reference shorts (about 3.8 words/s):**
+  `python3 tts/lines.py script.txt outdir --speed 1.35 --pause 0.08 --lead 0.25`
+- Indian names get Indian pronunciation via `--fix word=phonemes`. Keep a `make.sh` in each `shorts/<name>/voice/`.
+  Examples: `shorts/diwali2/voice/make.sh` (Ayodhya, Ramayana, Hargobind, Kolkata, Narakasura, Varanasi...).
+- If the owner gives their own script, use it word for word. Only write numbers out as words for TTS
+  ("2,500" becomes "twenty five hundred").
 
 ## Picture
+- **"Like the reference" means the reference videos the owner sent (Tughlaq coin, Diwali, and others), NOT our own
+  older videos.** Match their look: big close-ups of characters, rich colourful sets, and fast moving cameras.
+- **ALWAYS, in every video: a moving camera, a full ("bhara hua") environment, and close-ups.** The owner repeats this
+  a lot, so treat it as the top rule.
+- Reference Diwali look:
+  - A violet/purple night grade with warm diya glow and fireworks.
+  - It opens and closes on a family in front of a glowing doorway, with rangoli and a big diya in the foreground.
+  - Gods and kings are richly dressed cartoon characters (crowns, jewels, blue-skinned Ram and Krishna).
+  - Each city is a dense set: Ayodhya palace on the river with a swan boat and diyas on the ghats; Golden Temple
+    with fireworks; Gwalior fort gate; a line of 52 turbaned kings; Goa palms with a giant green Narakasura
+    effigy on scaffolding.
 - **No title cards and no captions.** Start straight on a scene.
 - **Backgrounds are always full.** Nothing may look empty ("khali khali"): props everywhere (pots, carts, stalls,
   lamps, trees, banners, carpets, books, crates), crowds of background characters, patterned surfaces
