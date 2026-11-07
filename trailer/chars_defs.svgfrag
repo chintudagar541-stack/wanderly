@@ -1,0 +1,250 @@
+
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40,0 L0,0 0,40" fill="none" stroke="#e4dccb" stroke-width="1"/></pattern>
+  <linearGradient id="sky1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5d8fd6"/><stop offset="1" stop-color="#cfe2f5"/></linearGradient>
+  <linearGradient id="sky2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b3f6b"/><stop offset="1" stop-color="#e9a77c"/></linearGradient>
+  
+  
+
+  <!-- ============ EIRIK ============ -->
+  <g id="eHalf">
+    <path d="M0,-345 L58,-345 C60,-280 58,-220 54,-170 L44,-40 L12,-40 L14,-170 C10,-230 6,-280 2,-300 L0,-300Z" fill="#8a7a62"/>
+    <path d="M14,-165 L53,-170 L46,-45 L12,-45Z" fill="#d8cdb4"/>
+    <path d="M14,-140 L52,-152 M13,-115 L50,-127 M13,-90 L48,-102 M12,-65 L47,-77" stroke="#a89c84" stroke-width="2.5" fill="none"/>
+    <path d="M8,-48 L50,-48 C54,-30 56,-12 68,-6 L68,0 L6,0Z" fill="#4a3324"/>
+    <path d="M0,-545 L18,-545 C40,-532 60,-530 70,-522 C70,-490 68,-470 64,-460 C60,-430 56,-400 56,-385 C62,-340 70,-310 74,-288 C50,-282 25,-280 0,-282Z" fill="#4d6b3a"/>
+    <path d="M40,-380 C52,-340 60,-310 64,-290 L74,-288 C70,-310 62,-340 56,-385Z" fill="#36502a" stroke="none"/>
+    <path d="M64,-528 C88,-522 98,-505 100,-470 L104,-400 L100,-345 L74,-345 L76,-400 C74,-430 70,-450 66,-462Z" fill="#4d6b3a"/>
+    <path d="M86,-500 C96,-480 100,-440 102,-400 L100,-345 L92,-345 C94,-400 92,-450 86,-500Z" fill="#36502a" stroke="none"/>
+    <path d="M74,-350 L101,-350 L102,-322 L73,-322Z" fill="#e8dcc4"/>
+    <circle cx="88" cy="-306" r="19" fill="#e8dcc4"/>
+    <path d="M74,-312 L102,-312 M76,-300 L100,-298" stroke="#b9ab8e" stroke-width="2" fill="none"/>
+    <path d="M14,-540 C40,-528 60,-526 68,-520 C68,-480 62,-450 58,-420 L56,-392 L22,-392 C18,-450 14,-500 10,-530Z" fill="#6b4a2e"/>
+    <path d="M28,-470 C30,-440 32,-420 34,-395" stroke="#4e341f" stroke-width="2" fill="none"/>
+    <path d="M10,-548 L20,-538 L28,-546 L36,-534 L46,-542 L52,-530 L62,-536 L66,-524 L76,-526 C66,-512 46,-512 30,-520 C20,-526 12,-534 10,-548Z" fill="#cfc2a8"/>
+    <rect x="0" y="-396" width="60" height="20" fill="#3a2a1e"/>
+  </g>
+  <g id="eFace">
+    <path d="M14,-600 Q24,-611 37,-605 Q27,-595 14,-598Z" fill="#fff"/>
+    <ellipse cx="25" cy="-601" rx="6" ry="7.5" fill="#b8862e" stroke="none"/>
+    <circle cx="25" cy="-601" r="3" fill="#2a1c16" stroke="none"/>
+    <circle cx="23" cy="-604" r="1.8" fill="#fff" stroke="none"/>
+    <path d="M11,-599 Q24,-614 39,-605" fill="none" stroke-width="4.5"/>
+    <path d="M10,-614 L42,-626 L40,-620 L12,-610Z" fill="#5e2412"/>
+    <path d="M44,-610 C50,-612 52,-596 46,-588" fill="#f2c9a5"/>
+  </g>
+  <g id="eBraid">
+    <ellipse cx="-50" cy="-590" rx="9" ry="10" fill="#8a3b1e"/>
+    <ellipse cx="-51" cy="-573" rx="9" ry="10" fill="#8a3b1e"/>
+    <ellipse cx="-52" cy="-556" rx="8.5" ry="10" fill="#8a3b1e"/>
+    <ellipse cx="-53" cy="-539" rx="8" ry="10" fill="#8a3b1e"/>
+    <ellipse cx="-54" cy="-522" rx="7.5" ry="10" fill="#8a3b1e"/>
+    <rect x="-61" y="-512" width="14" height="7" fill="#c9a24a"/>
+    <path d="M-58,-505 L-60,-488 L-54,-494 L-50,-486 L-50,-505Z" fill="#8a3b1e"/>
+  </g>
+  <g id="eirik" stroke="#2a1c16" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+    <ellipse cx="0" cy="-618" rx="52" ry="50" fill="#5e2412"/>
+    <use href="#eHalf"/><use href="#eHalf" transform="scale(-1,1)"/>
+    <!-- hand axe on hip -->
+    <path d="M48,-392 L74,-300" stroke-width="7" stroke="#5a3d22"/>
+    <path d="M62,-345 C80,-360 96,-352 98,-336 C90,-330 80,-328 70,-318Z" fill="#9aa3ab"/>
+    <rect x="-12" y="-398" width="24" height="24" rx="3" fill="#c9a24a"/>
+    <rect x="-15" y="-566" width="30" height="30" fill="#f2c9a5"/>
+    <path d="M-15,-552 Q0,-540 15,-552 L15,-540 Q0,-532 -15,-540Z" fill="#d9a27e" stroke="none"/>
+    <use href="#eBraid"/><use href="#eBraid" transform="scale(-1,1)"/>
+    <path d="M-44,-610 C-44,-575 -25,-552 0,-548 C25,-552 44,-575 44,-610 C44,-650 -44,-650 -44,-610Z" fill="#f2c9a5"/>
+    <path d="M44,-610 C44,-585 34,-565 18,-554 C30,-570 36,-590 36,-612Z" fill="#d9a27e" stroke="none"/>
+    <use href="#eFace"/><use href="#eFace" transform="scale(-1,1)"/>
+    <path d="M-3,-588 L3,-576 L-1,-574" fill="none" stroke-width="2.5"/>
+    <path d="M-42,-592 C-40,-560 -20,-536 0,-532 C20,-536 40,-560 42,-592 C36,-578 30,-568 22,-566 C12,-570 -12,-570 -22,-566 C-30,-568 -36,-578 -42,-592Z" fill="#8a3b1e"/>
+    <path d="M-17,-569 C-8,-577 8,-577 17,-569 C8,-566 -8,-566 -17,-569Z" fill="#8a3b1e"/>
+    <path d="M-8,-561 L8,-561" stroke-width="3"/>
+    <path d="M-48,-612 C-52,-660 -20,-682 0,-680 C28,-682 54,-660 48,-612 C44,-630 36,-638 26,-640 L20,-624 L12,-642 C0,-646 -12,-644 -22,-640 L-26,-622 L-32,-638 C-40,-634 -46,-626 -48,-612Z" fill="#8a3b1e"/>
+    <path d="M-20,-668 C-6,-674 10,-674 24,-666" fill="none" stroke="#c46a3f" stroke-width="4"/>
+    <path d="M-31,-630 L-22,-590" stroke="#b5574a" stroke-width="2.5"/>
+  </g>
+
+  <!-- ============ SIGRUN ============ -->
+  <g id="sHalf">
+    <path d="M14,-548 C50,-540 80,-530 86,-515 C96,-450 100,-360 106,-262 C90,-250 70,-246 50,-252 L40,-300 L0,-300Z" fill="#3e5e5c"/>
+    <path d="M0,-330 L50,-330 C52,-270 50,-220 46,-170 L40,-40 L12,-40 L12,-170 C8,-230 4,-280 2,-300 L0,-300Z" fill="#3b3b44"/>
+    <path d="M10,-150 L46,-156 L44,-30 C48,-15 54,-8 62,-4 L62,0 L8,0Z" fill="#2a2522"/>
+    <path d="M9,-160 L48,-166 L47,-148 L10,-142Z" fill="#4a4038"/>
+    <path d="M0,-545 L16,-545 C34,-534 54,-530 62,-522 C62,-490 58,-470 54,-455 C48,-430 44,-405 44,-385 C52,-330 60,-280 66,-232 C44,-226 22,-226 0,-228Z" fill="#2f3a5c"/>
+    <path d="M32,-380 C44,-330 52,-280 56,-232 L66,-232 C60,-280 52,-330 44,-385Z" fill="#232c47" stroke="none"/>
+    <path d="M0,-242 C22,-240 44,-240 64,-246 L66,-232 C44,-226 22,-226 0,-228Z" fill="#b89a5a"/>
+    <path d="M56,-526 C76,-520 84,-505 86,-475 L90,-400 L88,-340 L66,-340 L66,-400 C64,-430 60,-450 56,-460Z" fill="#2f3a5c"/>
+    <path d="M65,-392 L90,-395 L89,-340 L66,-340Z" fill="#5a3d2a"/>
+    <path d="M10,-548 C40,-545 70,-532 84,-515 C88,-500 86,-490 80,-480 C60,-500 40,-510 20,-520Z" fill="#4e7471"/>
+    <path d="M0,-404 L48,-406 L46,-386 L0,-384Z" fill="#7a3b2a"/>
+  </g>
+  <g id="sHand"><circle cx="77" cy="-326" r="13" fill="#f4d3b6"/></g>
+  <g id="sFace">
+    <path d="M13,-600 Q24,-613 38,-606 Q27,-593 13,-597Z" fill="#fff"/>
+    <ellipse cx="25" cy="-601" rx="6.5" ry="9" fill="#5f9fc4" stroke="none"/>
+    <ellipse cx="25" cy="-602" rx="3" ry="4" fill="#1d2a3a" stroke="none"/>
+    <circle cx="23" cy="-605" r="2" fill="#fff" stroke="none"/>
+    <path d="M10,-599 Q24,-616 40,-606 L44,-610" fill="none" stroke-width="4"/>
+    <path d="M13,-618 Q27,-626 40,-619" fill="none" stroke="#8d95a3" stroke-width="3"/>
+  </g>
+  <g id="sigrun" stroke="#22181a" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M-54,-615 C-58,-560 -52,-540 -40,-540 L40,-540 C52,-540 58,-560 54,-615 C54,-670 -54,-670 -54,-615Z" fill="#a7afbb"/>
+    <use href="#sHalf"/><use href="#sHalf" transform="scale(-1,1)"/>
+    <!-- spear -->
+    <path d="M-77,-760 L-77,0" stroke="#6b4a2e" stroke-width="8"/>
+    <path d="M-77,-830 C-66,-800 -66,-780 -71,-760 L-83,-760 C-88,-780 -88,-800 -77,-830Z" fill="#c3cad1"/>
+    <path d="M-77,-826 L-77,-764" stroke="#8e98a3" stroke-width="1.5"/>
+    <path d="M-85,-762 L-69,-762 L-71,-748 L-83,-748Z" fill="#b89a5a"/>
+    <use href="#sHand"/><use href="#sHand" transform="scale(-1,1)"/>
+    <circle cx="-24" cy="-528" r="8" fill="#c9a24a"/>
+    <rect x="-13" y="-566" width="26" height="30" fill="#f4d3b6"/>
+    <path d="M-13,-552 Q0,-542 13,-552 L13,-541 Q0,-534 -13,-541Z" fill="#dcae8c" stroke="none"/>
+    <path d="M-42,-610 C-42,-578 -24,-555 0,-551 C24,-555 42,-578 42,-610 C42,-648 -42,-648 -42,-610Z" fill="#f4d3b6"/>
+    <path d="M42,-610 C42,-586 32,-566 16,-556 C28,-572 34,-592 34,-612Z" fill="#dcae8c" stroke="none"/>
+    <use href="#sFace"/><use href="#sFace" transform="scale(-1,1)"/>
+    <path d="M-2,-586 L2,-577 L-1,-575" fill="none" stroke-width="2.5"/>
+    <path d="M-7,-565 Q0,-563 7,-566" fill="none" stroke-width="2.5"/>
+    <path d="M-50,-605 C-56,-668 56,-668 50,-605 L44,-594 L38,-622 L30,-604 L22,-630 L10,-610 L0,-634 L-8,-610 L-20,-630 L-28,-604 L-38,-622 L-44,-594Z" fill="#d9dde3"/>
+    <path d="M-50,-608 C-54,-585 -52,-560 -46,-546 L-40,-560 C-44,-575 -44,-592 -42,-604Z" fill="#d9dde3"/>
+    <path d="M50,-608 C54,-585 52,-560 46,-546 L40,-560 C44,-575 44,-592 42,-604Z" fill="#d9dde3"/>
+    <circle cx="-46" cy="-543" r="4.5" fill="#5f9fc4"/>
+    <path d="M-24,-654 C-8,-662 10,-662 26,-654" fill="none" stroke="#ffffff" stroke-width="4"/>
+  </g>
+  <pattern id="mail" width="8" height="6" patternUnits="userSpaceOnUse"><rect width="8" height="6" fill="#6d7480"/><path d="M0,3 A4,3 0 0 0 8,3" stroke="#4d5360" fill="none" stroke-width="1.2"/></pattern>
+
+  <!-- ============ HALVARD (old smith) ============ -->
+  <g id="hHalf">
+    <path d="M0,-330 L60,-330 C62,-270 60,-220 56,-170 L48,-40 L14,-40 L14,-170 C10,-230 6,-280 2,-300 L0,-300Z" fill="#3d3530"/>
+    <path d="M10,-48 L52,-48 C56,-30 58,-12 70,-6 L70,0 L8,0Z" fill="#3a2618"/>
+    <path d="M0,-545 L20,-545 C45,-534 70,-532 82,-522 C82,-490 80,-470 76,-455 C72,-420 66,-395 64,-380 C68,-350 70,-320 72,-296 C50,-292 25,-291 0,-292Z" fill="#8c4a2f"/>
+    <path d="M74,-528 C98,-522 108,-505 110,-470 L112,-440 L86,-440 C84,-450 80,-458 76,-462Z" fill="#8c4a2f"/>
+    <path d="M84,-448 L115,-448 L115,-432 L84,-432Z" fill="#6e3622"/>
+    <path d="M86,-432 L113,-432 L110,-342 L84,-342Z" fill="#e0b48f"/>
+    <path d="M104,-432 L113,-432 L110,-342 L102,-342Z" fill="#c4906c" stroke="none"/>
+    <path d="M0,-500 L22,-500 C32,-470 48,-462 52,-440 L54,-250 L0,-250Z" fill="#6b4a2e"/>
+    <path d="M40,-440 L44,-250 L54,-250 L52,-440Z" fill="#4e341f" stroke="none"/>
+    <path d="M20,-500 L32,-548 L42,-546 L28,-500Z" fill="#6b4a2e"/>
+    <circle cx="30" cy="-330" r="4" fill="#3a2618" stroke="none"/><circle cx="20" cy="-300" r="3" fill="#3a2618" stroke="none"/>
+    <path d="M0,-404 L54,-406 L54,-392 L0,-390Z" fill="#4a3020"/>
+  </g>
+  <g id="hHand"><circle cx="98" cy="-328" r="18" fill="#e0b48f"/></g>
+  <g id="hFace">
+    <path d="M14,-600 Q24,-607 36,-603 Q26,-597 14,-598Z" fill="#fff"/>
+    <ellipse cx="25" cy="-600.5" rx="5" ry="4.5" fill="#6b8a9e" stroke="none"/>
+    <circle cx="25" cy="-600.5" r="2.2" fill="#2a1c16" stroke="none"/>
+    <path d="M11,-598 Q24,-610 39,-603" fill="none" stroke-width="4"/>
+    <path d="M14,-594 Q26,-590 36,-596" fill="none" stroke-width="1.5"/>
+    <path d="M8,-612 C18,-626 34,-628 48,-618 C40,-614 30,-612 22,-614 C16,-610 12,-608 8,-612Z" fill="#eeeeee"/>
+    <path d="M44,-612 C52,-614 54,-596 48,-586" fill="#e0b48f"/>
+    <path d="M44,-596 C52,-610 54,-630 46,-640 C40,-630 40,-612 44,-596Z" fill="#dcdcdc"/>
+  </g>
+  <g id="halvard" stroke="#2a1c16" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+    <use href="#hHalf"/><use href="#hHalf" transform="scale(-1,1)"/>
+    <path d="M-98,-330 L-94,-236" stroke="#5a3d22" stroke-width="8"/>
+    <path d="M-118,-250 L-72,-250 L-72,-212 L-118,-212Z" fill="#5c6168"/>
+    <path d="M-118,-250 L-72,-250 L-72,-240 L-118,-240Z" fill="#8a9098" stroke="none"/>
+    <use href="#hHand"/><use href="#hHand" transform="scale(-1,1)"/>
+    <rect x="-16" y="-566" width="32" height="30" fill="#e0b48f"/>
+    <path d="M-46,-612 C-46,-578 -26,-552 0,-548 C26,-552 46,-578 46,-612 C46,-660 -46,-660 -46,-612Z" fill="#e0b48f"/>
+    <path d="M46,-612 C46,-586 36,-566 18,-554 C30,-570 38,-592 38,-614Z" fill="#c4906c" stroke="none"/>
+    <path d="M-20,-648 C-6,-656 14,-656 26,-648" fill="none" stroke="#f3d2b3" stroke-width="5"/>
+    <path d="M-14,-630 L14,-630 M-10,-622 L10,-622" fill="none" stroke="#b07c5a" stroke-width="2"/>
+    <use href="#hFace"/><use href="#hFace" transform="scale(-1,1)"/>
+    <path d="M-3,-592 C-6,-582 -6,-576 0,-574 C6,-576 6,-582 3,-592" fill="none" stroke-width="2.5"/>
+    <path d="M-44,-598 C-48,-556 -40,-500 -20,-466 L0,-446 L20,-466 C40,-500 48,-556 44,-598 C38,-575 28,-566 18,-566 C8,-570 -8,-570 -18,-566 C-28,-566 -38,-575 -44,-598Z" fill="#e6e6e6"/>
+    <path d="M10,-540 C14,-520 12,-490 4,-470 M-12,-530 C-14,-510 -10,-490 -4,-476 M26,-560 C30,-540 26,-510 18,-490" fill="none" stroke="#b9bcc2" stroke-width="2"/>
+    <path d="M-24,-566 C-12,-578 12,-578 24,-566 C18,-560 10,-562 0,-566 C-10,-562 -18,-560 -24,-566Z" fill="#f4f4f4"/>
+    <path d="M-7,-558 Q0,-556 7,-558" fill="none" stroke-width="2.5"/>
+  </g>
+
+  <!-- ============ TOVE (young scout) ============ -->
+  <g id="tHalf">
+    <path d="M12,-560 C50,-550 76,-530 82,-500 C86,-450 84,-400 80,-360 C60,-350 40,-352 20,-360Z" fill="#a8521b"/>
+    <path d="M0,-330 L46,-330 C48,-270 46,-220 42,-170 L38,-40 L12,-40 L12,-170 C8,-230 4,-280 2,-300 L0,-300Z" fill="#6b4a2e"/>
+    <path d="M10,-92 L42,-94 L40,-30 C44,-15 50,-8 58,-4 L58,0 L8,0Z" fill="#4a3324"/>
+    <path d="M9,-100 L44,-102 L43,-88 L10,-86Z" fill="#c9a77a"/>
+    <path d="M0,-545 L16,-545 C32,-534 50,-530 58,-522 C58,-490 54,-470 50,-455 C46,-430 42,-405 42,-385 C48,-340 54,-300 58,-268 C40,-264 20,-264 0,-266Z" fill="#e3c58a"/>
+    <path d="M32,-380 C42,-340 48,-300 50,-268 L58,-268 C54,-300 48,-340 42,-385Z" fill="#c9a86c" stroke="none"/>
+    <path d="M52,-526 C70,-520 78,-505 80,-475 L84,-400 L82,-345 L62,-345 L62,-400 C60,-430 56,-450 52,-460Z" fill="#e3c58a"/>
+    <path d="M61,-388 L84,-390 L83,-345 L62,-345Z" fill="#6b4a2e"/>
+    <path d="M8,-552 C40,-550 66,-536 78,-515 C80,-500 76,-490 70,-482 C55,-498 35,-508 14,-516Z" fill="#d9772b"/>
+    <path d="M0,-402 L44,-404 L44,-388 L0,-386Z" fill="#6b4a2e"/>
+  </g>
+  <g id="tHand"><circle cx="72" cy="-332" r="12" fill="#f6d5b8"/></g>
+  <g id="tFace">
+    <path d="M12,-600 Q24,-614 38,-606 Q27,-592 12,-596Z" fill="#fff"/>
+    <ellipse cx="25" cy="-601" rx="7" ry="10" fill="#4f9a5a" stroke="none"/>
+    <ellipse cx="25" cy="-602" rx="3.2" ry="4.5" fill="#1b2a1d" stroke="none"/>
+    <circle cx="22.5" cy="-606" r="2.4" fill="#fff" stroke="none"/>
+    <path d="M9,-599 Q24,-618 41,-607" fill="none" stroke-width="4"/>
+    <path d="M14,-622 Q26,-628 38,-623" fill="none" stroke="#6b3f22" stroke-width="3"/>
+    <circle cx="22" cy="-584" r="1.3" fill="#c98a62" stroke="none"/><circle cx="28" cy="-582" r="1.3" fill="#c98a62" stroke="none"/><circle cx="25" cy="-578" r="1.3" fill="#c98a62" stroke="none"/>
+  </g>
+  <g id="tove" stroke="#22181a" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M30,-610 L66,-620 L74,-590 L40,-580Z" fill="#a8521b" stroke="none"/>
+    <path d="M44,-640 L48,-600 M54,-644 L56,-602 M62,-638 L62,-600" stroke="#6b4a2e" stroke-width="3"/>
+    <path d="M40,-650 L48,-636 L44,-632Z M50,-654 L58,-640 L54,-636Z M58,-648 L66,-634 L62,-630Z" fill="#f3efe6"/>
+    <path d="M36,-610 L70,-618 L60,-470 L32,-468Z" fill="#7a4a26"/>
+    <path d="M-70,-600 Q10,-470 74,-290" fill="none" stroke="#7a4a26" stroke-width="7"/>
+    <path d="M-70,-600 L74,-290" fill="none" stroke="#e8e0cc" stroke-width="1.5"/>
+    <ellipse cx="0" cy="-612" rx="60" ry="60" fill="#a8521b"/>
+    <use href="#tHalf"/><use href="#tHalf" transform="scale(-1,1)"/>
+    <use href="#tHand"/><use href="#tHand" transform="scale(-1,1)"/>
+    <rect x="-12" y="-566" width="24" height="28" fill="#f6d5b8"/>
+    <path d="M-42,-608 C-42,-576 -24,-556 0,-552 C24,-556 42,-576 42,-608 C42,-648 -42,-648 -42,-608Z" fill="#f6d5b8"/>
+    <path d="M42,-608 C42,-586 32,-566 16,-556 C28,-572 34,-592 34,-610Z" fill="#e2b896" stroke="none"/>
+    <use href="#tFace"/><use href="#tFace" transform="scale(-1,1)"/>
+    <path d="M-2,-586 L2,-578 L-1,-576" fill="none" stroke-width="2.5"/>
+    <path d="M-8,-566 Q0,-560 8,-566" fill="none" stroke-width="2.5"/>
+    <path d="M-44,-610 C-46,-650 46,-650 44,-610 L38,-618 L32,-630 L22,-616 L14,-634 L4,-618 L-6,-636 L-16,-618 L-26,-632 L-34,-614 L-40,-622Z" fill="#6b3f22"/>
+    <path d="M-58,-600 C-62,-676 62,-676 58,-600 L58,-556 C52,-546 46,-548 44,-560 C48,-648 -48,-648 -44,-560 C-46,-548 -52,-546 -58,-556Z" fill="#d9772b"/>
+    <path d="M-30,-664 C-10,-672 14,-672 34,-662" fill="none" stroke="#f0a35e" stroke-width="5"/>
+  </g>
+
+  <!-- ============ ULFRIK (villain) ============ -->
+  <g id="uHalf">
+    <path d="M14,-548 C60,-540 96,-530 104,-510 C114,-420 120,-200 126,-12 C90,-2 50,-4 30,-10 L0,-10 L0,-300Z" fill="#7d1d24"/>
+    <path d="M96,-480 C104,-380 110,-200 114,-14 L126,-12 C120,-200 114,-420 104,-510Z" fill="#5a1218" stroke="none"/>
+    <path d="M0,-345 L60,-345 C62,-280 60,-220 56,-170 L46,-40 L14,-40 L14,-170 C10,-230 6,-280 2,-300 L0,-300Z" fill="#2a2a30"/>
+    <path d="M8,-120 L52,-124 L50,-30 C54,-15 58,-8 72,-5 L72,0 L6,0Z" fill="#1f1b1b"/>
+    <path d="M0,-545 L20,-545 C45,-534 72,-532 84,-522 C84,-490 80,-470 76,-455 C70,-420 64,-395 62,-380 C70,-340 76,-300 80,-262 C55,-256 25,-254 0,-256Z" fill="url(#mail)"/>
+    <path d="M0,-500 L18,-500 L22,-262 L0,-260Z" fill="#2a2228"/>
+    <path d="M18,-500 L22,-262" stroke="#c9a24a" stroke-width="3"/>
+    <path d="M74,-528 C98,-522 108,-505 110,-470 L114,-400 L110,-342 L84,-342 L86,-400 C84,-430 80,-450 76,-462Z" fill="url(#mail)"/>
+    <path d="M85,-386 L113,-386 L111,-342 L84,-342Z" fill="#2a2228"/>
+    <path d="M84,-412 L114,-412 L114,-400 L84,-400Z" fill="#c9a24a"/>
+    <path d="M6,-556 L18,-546 L26,-560 L36,-544 L48,-558 L56,-540 L70,-552 L76,-532 L92,-540 L94,-520 L110,-520 C102,-500 92,-494 82,-488 L74,-500 L64,-490 L54,-504 L42,-496 L34,-510 L20,-506 L10,-520Z" fill="#2b2b2b"/>
+    <path d="M30,-530 L40,-520 M58,-526 L66,-512 M80,-520 L86,-506" stroke="#555" stroke-width="2"/>
+    <path d="M0,-402 L62,-404 L62,-382 L0,-380Z" fill="#1f1b1b"/>
+  </g>
+  <g id="uHand"><circle cx="97" cy="-326" r="18" fill="#ecc29d"/></g>
+  <g id="uFace">
+    <path d="M13,-601 Q25,-609 38,-605 Q28,-596 13,-598Z" fill="#fff"/>
+    <ellipse cx="25" cy="-601.5" rx="5.5" ry="5.5" fill="#c0392b" stroke="none"/>
+    <circle cx="25" cy="-601.5" r="2.4" fill="#1a0e0e" stroke="none"/>
+    <path d="M10,-597 Q24,-614 41,-606" fill="none" stroke-width="5"/>
+    <path d="M6,-608 L44,-630 L46,-622 L10,-604Z" fill="#151318"/>
+    <path d="M22,-592 L20,-578 M30,-592 L29,-580" stroke="#9e2a2a" stroke-width="3"/>
+    <path d="M44,-612 C50,-614 52,-598 46,-590" fill="#ecc29d"/>
+  </g>
+  <g id="ulfrik" stroke="#120d0f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M0,-692 C40,-692 66,-662 64,-622 L82,-580 L64,-584 L78,-528 L58,-546 L64,-496 L44,-530 L40,-560 L-40,-560 L-44,-530 L-64,-496 L-58,-546 L-78,-528 L-64,-584 L-82,-580 L-64,-622 C-66,-662 -40,-692 0,-692Z" fill="#151318"/>
+    <use href="#uHalf"/><use href="#uHalf" transform="scale(-1,1)"/>
+    <rect x="-14" y="-398" width="28" height="28" rx="14" fill="#c9a24a"/>
+    <path d="M-103,-312 L-91,-312 L-91,-60 L-97,-40 L-103,-60Z" fill="#c3cad1"/>
+    <path d="M-97,-312 L-97,-60" stroke="#8e98a3" stroke-width="1.5"/>
+    <path d="M-126,-318 L-68,-318 L-68,-306 L-126,-306Z" fill="#c9a24a"/>
+    <path d="M-102,-360 L-92,-360 L-92,-318 L-102,-318Z" fill="#3a2a1e"/>
+    <circle cx="-97" cy="-366" r="8" fill="#c9a24a"/>
+    <use href="#uHand"/><use href="#uHand" transform="scale(-1,1)"/>
+    <rect x="-16" y="-566" width="32" height="30" fill="#ecc29d"/>
+    <path d="M-44,-612 C-44,-580 -30,-556 0,-548 C30,-556 44,-580 44,-612 C44,-652 -44,-652 -44,-612Z" fill="#ecc29d"/>
+    <path d="M44,-612 C44,-586 34,-566 18,-554 C30,-570 36,-592 36,-614Z" fill="#cf9f7b" stroke="none"/>
+    <use href="#uFace"/><use href="#uFace" transform="scale(-1,1)"/>
+    <path d="M-3,-590 L3,-577 L-1,-575" fill="none" stroke-width="2.5"/>
+    <path d="M-40,-590 C-36,-562 -16,-544 0,-526 C16,-544 36,-562 40,-590 C34,-576 26,-568 18,-566 C8,-570 -8,-570 -18,-566 C-26,-568 -34,-576 -40,-590Z" fill="#151318"/>
+    <circle cx="0" cy="-524" r="5" fill="#c9a24a"/>
+    <path d="M-10,-562 L10,-562" stroke="#5a1a1a" stroke-width="3"/>
+    <path d="M-46,-616 C-50,-664 -18,-684 0,-682 C18,-684 50,-664 46,-616 C42,-636 30,-646 16,-648 L6,-632 L4,-650 C-10,-650 -26,-646 -34,-638 L-40,-618Z" fill="#151318"/>
+    <path d="M-12,-648 C-20,-630 -22,-610 -18,-594 L-14,-612 C-12,-626 -8,-640 -4,-648Z" fill="#151318"/>
+    <path d="M-20,-670 C-4,-676 14,-676 28,-668" fill="none" stroke="#3d3a48" stroke-width="4"/>
+  </g>
