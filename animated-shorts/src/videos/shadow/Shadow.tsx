@@ -55,11 +55,11 @@ const cardTex = (who: string, a: ActorDef, back: boolean, k: number) => {
 class Card {
   mat = new THREE.MeshBasicMaterial({ alphaTest: 0.5, side: THREE.DoubleSide });
   mesh = new THREE.Mesh(CARD_GEO, this.mat);
-  smat = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.62, depthWrite: false, side: THREE.DoubleSide, alphaTest: 0.5, fog: false });
+  smat = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.78, depthWrite: false, side: THREE.DoubleSide, alphaTest: 0.5, fog: false });
   shadow = new THREE.Mesh(CARD_GEO, this.smat);
   constructor(parent: THREE.Object3D) {
     this.mesh.layers.set(NOINK); this.mesh.renderOrder = 1; this.mesh.visible = false; parent.add(this.mesh);
-    this.shadow.layers.set(NOINK); this.shadow.renderOrder = 0; this.shadow.visible = false; this.shadow.matrixAutoUpdate = false; parent.add(this.shadow);
+    this.shadow.layers.set(NOINK); this.shadow.renderOrder = 5; this.shadow.visible = false; this.shadow.matrixAutoUpdate = false; parent.add(this.shadow);
   }
 }
 const bx = new THREE.Vector3(), by = new THREE.Vector3(), bz = new THREE.Vector3(0, 1, 0);
@@ -165,7 +165,7 @@ const Screen: React.FC<{ k: number; t: number }> = ({ k, t }) => {
           {[380, 600, 820].map((y) => <line key={y} x1={232} y1={y} x2={668} y2={y} stroke="#c0703a" strokeWidth={14} />)}
           <rect x={210} y={200} width={480} height={70} rx={20} fill="#3a3e46" stroke="#07080c" strokeWidth={8} />
           <line x1={450} y1={200} x2={450} y2={90} stroke="#7a8088" strokeWidth={8} /><circle cx={450} cy={84} r={18} fill="#bff" />
-          <g transform={`translate(${sx - 90} 0) rotate(${lean} 450 860)`}>
+          <g transform={`translate(${sx - 450} 0) rotate(${lean} 450 860)`}>
             <ellipse cx={450} cy={430} rx={82} ry={92} fill="#050507" />
             <path d="M 380 520 Q 450 500 520 520 L 540 760 Q 450 790 360 760 Z" fill="#050507" />
             <rect x={385} y={740} width={30} height={130} rx={12} fill="#050507" /><rect x={485} y={740} width={30} height={130} rx={12} fill="#050507" />

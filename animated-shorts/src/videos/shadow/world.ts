@@ -240,7 +240,7 @@ export class World {
       // bed (headboard at z = +4.8, foot toward the window)
       B.add(BOX, woodD, [X, 0.3, 2.6], [0, 0, 0], [2.6, 0.6, 4.4]); B.add(BOX, toon(0xe8e2d4), [X, 0.7, 2.6], [0, 0, 0], [2.4, 0.25, 4.2]); B.add(BOX, toon(0x3a4a7a), [X, 0.86, 2.2], [0, 0, 0], [2.6, 0.12, 3.4]);
       for (const s of [-0.6, 0.6]) B.add(BOX, toon(0xf4f1ea), [X + s, 0.95, 4.3], [0, 0, 0], [1.0, 0.25, 0.6]);
-      B.add(BOX, woodD, [X, 1.5, 4.85], [0, 0, 0], [2.8, 3.0, 0.2]); B.add(BOX, woodD, [X, 0.75, 0.35], [0, 0, 0], [2.8, 1.5, 0.15]);
+      B.add(BOX, woodD, [X, 1.5, 4.85], [0, 0, 0], [2.8, 3.0, 0.2]); B.add(BOX, woodD, [X, 0.5, 0.35], [0, 0, 0], [2.8, 1.0, 0.15]);
       for (const s of [-1, 1]) { B.add(BOX, wood, [X + s * 1.9, 0.35, 4.4], [0, 0, 0], [0.7, 0.7, 0.6]); B.add(CYL8, brass, [X + s * 1.9, 0.95, 4.4], [0, 0, 0], [0.05, 0.5, 0.05]); B.add(CONE, toon(0xe8d4a0), [X + s * 1.9, 1.32, 4.4], [0, 0, 0], [0.3, 0.32, 0.3]); room.push({ p: [X + s * 1.9, 1.2, 4.4], order: 0, tint: [1, 0.8, 0.5] }); }
       B.add(BOX, wood, [X - 5.6, 1.3, 0], [0, 0, 0], [0.8, 2.6, 2.4]); B.add(BOX, brass, [X - 5.18, 1.3, 0], [0, 0, 0], [0.04, 0.3, 0.06]);
       B.add(BOX, wood, [X + 5.6, 0.5, -1.5], [0, 0, 0], [0.8, 1.0, 2.0]); B.add(BOX, toon(0x9ab0c8), [X + 5.9, 1.9, -1.5], [0, 0, 0], [0.05, 1.4, 1.2]);
@@ -332,7 +332,7 @@ export class World {
     this.pt[2].position.set(MX + 2.6, 2.5, 8); this.pt[3].position.set(MX - 3.6, 2.5, 14);
     this.pt[2].intensity = o.police ? (ph ? 14 : 2) : 0; this.pt[3].intensity = o.police ? (ph ? 2 : 14) : 0;
     this.mansionMat.map = L === "day" ? this.mDay : this.mNight; this.mansionMat.needsUpdate = true;
-    this.lid.rotation.x = -(o.lid ?? 0) * 1.75 + 0.0;
+    const lv = o.lid ?? 0; this.lid.rotation.x = (1 - lv) * (Math.PI / 2) - 0.22 * lv;
     this.screen.color.setHex((o.screen ?? 0) > 0 ? 0x6ab8c8 : 0x0a1418);
     // manhole steam on the street
     this.puffs.forEach((p, i) => {

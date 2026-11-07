@@ -63,8 +63,8 @@ add({ a: 3.85, b: 5.65, cam: glide({ pos: [-3.0, 1.75, -18.6], look: [-3.2, 1.7,
   actors: (t) => [{ who: "hero", pos: [-3.2, 0, -20.6], opts: { mode: "stand", expr: "worried", headTilt: 6, blink: blinkAt(t, 1) }, tint: LAMP }],
   world: () => ({ light: "night", steam: true }) });
 // 3 "The shadow actually belonged to him." : looking down at his long shadow on the pavement
-add({ a: 5.65, b: 8.1, cam: glide({ pos: [-1.2, 4.4, -12.4], look: [-3.3, 0.3, -17.6], fov: 50 }, { pos: [-1.4, 4.0, -12.9], look: [-3.3, 0.3, -17.6], fov: 48 }, 0),
-  actors: () => { const p: V3 = [-3.4, 0, -16.4]; return [{ who: "hero", pos: p, opts: { mode: "stand", expr: "neutral", look: -0.4 }, tint: LAMP, shadow: shadowFrom(LAMP1, p, 1.3) }]; },
+add({ a: 5.65, b: 8.1, cam: glide({ pos: [-2.4, 4.6, -7.0], look: [-3.0, 0.2, -12.0], fov: 48 }, { pos: [-2.5, 4.2, -7.4], look: [-3.0, 0.2, -12.0], fov: 46 }, 0),
+  actors: () => { const p: V3 = [-3.3, 0, -12.6]; return [{ who: "hero", pos: p, opts: { mode: "stand", expr: "neutral", look: -0.4 }, tint: LAMP, shadow: shadowFrom(LAMP1, p, 1.3) }]; },
   world: () => ({ light: "night", steam: true }) });
 // 4 "It started when a mysterious businessman approached him in an empty street, ..." : out of the fog
 add({ a: 8.1, b: 11.3, cam: glide({ pos: [-1.6, 1.7, -9.5], look: [-2.6, 1.6, -40], fov: 40 }, { pos: [-1.7, 1.7, -10.5], look: [-2.8, 1.6, -40], fov: 38 }, 0),
@@ -97,10 +97,10 @@ add({ a: 23.65, b: 25.4, cam: glide({ pos: [MXX, 1.9, MZ + 5.0], look: [MXX, 1.8
   actors: (t) => [{ who: "hero", pos: [MXX, 0.6, MZ], opts: { mode: "stand", expr: t < 24.3 ? "nervous" : "shock" }, tint: CYAN }],
   world: (t) => ({ light: "night", machine: ramp(t, 24.0, 24.5) * (1 - ramp(t, 24.9, 25.4)) }), overlay: (t) => ({ flash: Math.max(0, 1 - Math.abs(t - 24.55) * 3.2) }) });
 // 10 "... his shadow was gone." : he stands in the light with no shadow; the businessman still has his
-add({ a: 25.4, b: 27.5, cam: glide({ pos: [14.0, 2.7, -27.8], look: [14.0, 0.7, -34.2], fov: 46 }, { pos: [14.0, 2.8, -28.1], look: [14.0, 0.6, -34.2], fov: 44 }, 0),
-  actors: (t) => { const b: V3 = [12.9, 0, -34.6]; return [
-    { who: "hero", pos: [15.0, 0, -33.4], opts: { mode: "stand", expr: "shock", look: -0.3, blink: blinkAt(t, 1) }, tint: CYAN },
-    { who: "biz", pos: b, opts: { mode: "stand", expr: "smile_closed" }, tint: CYAN, shadow: [-0.79, 0.61, 2.8] }]; },
+add({ a: 25.4, b: 27.5, cam: glide({ pos: [13.4, 3.0, -27.4], look: [13.4, 0.5, -33.6], fov: 48 }, { pos: [13.4, 3.1, -27.7], look: [13.4, 0.4, -33.6], fov: 46 }, 0),
+  actors: (t) => { const b: V3 = [12.4, 0, -34.8]; return [
+    { who: "hero", pos: [14.4, 0, -33.6], opts: { mode: "stand", expr: "shock", look: -0.3, blink: blinkAt(t, 1) }, tint: CYAN },
+    { who: "biz", pos: b, opts: { mode: "stand", expr: "smile_closed" }, tint: CYAN, shadow: [-0.35, 0.94, 2.4] }]; },
   world: () => ({ light: "night" }) });
 // 11 "And the money was real."
 add({ a: 27.5, b: 29.15, cam: glide({ pos: [14.6, 1.6, -31.0], look: [15.0, 1.45, -33.4], fov: 38 }, { pos: [14.65, 1.58, -31.3], look: [15.0, 1.45, -33.4], fov: 35 }, 0.04),
@@ -124,21 +124,21 @@ add({ a: 36.0, b: 39.7, cam: glide({ pos: [MX + 18, 3.5, 26], look: [MX, 8, -40]
 // 16 "Every night, he noticed a dark figure standing outside his bedroom window." : from the bed toward the window
 add({ a: 39.7, b: 42.7, cam: glide({ pos: [BX + 0.9, 2.1, 4.5], look: [BX, 1.8, -5], fov: 46 }, { pos: [BX + 0.8, 2.05, 4.0], look: [BX, 1.85, -5], fov: 44 }, 0.03),
   actors: (t) => [{ who: "pj", pos: [BX, BED, 3.1], opts: { mode: "sit", back: true }, tint: MOON },
-    { who: "shade", pos: [BX, 0.45, -4.97], opts: { mode: "stand", expr: "neutral" }, tint: BLACK, scale: 1.0 + 0 * t }],
+    { who: "shade", pos: [BX + 0.55, 0.45, -4.97], opts: { mode: "stand", expr: "neutral" }, tint: BLACK, scale: 1.0 + 0 * t }],
   world: () => ({ light: "bedroom" }) });
 // 16b closer on the window
-add({ a: 42.7, b: 45.3, cam: glide({ pos: [BX + 0.4, 1.9, -0.8], look: [BX, 1.95, -5], fov: 40 }, { pos: [BX + 0.3, 1.92, -1.6], look: [BX, 1.98, -5], fov: 38 }, 0.03),
-  actors: () => [{ who: "shade", pos: [BX, 0.45, -4.97], opts: { mode: "stand", expr: "neutral" }, tint: BLACK }], world: () => ({ light: "bedroom" }) });
+add({ a: 42.7, b: 45.3, cam: glide({ pos: [BX + 0.9, 1.9, -0.8], look: [BX + 0.6, 1.9, -5], fov: 40 }, { pos: [BX + 0.85, 1.9, -1.6], look: [BX + 0.6, 1.9, -5], fov: 38 }, 0.03),
+  actors: () => [{ who: "shade", pos: [BX + 0.55, 0.45, -4.97], opts: { mode: "stand", expr: "neutral" }, tint: BLACK }], world: () => ({ light: "bedroom" }) });
 // 17 "It looked exactly like him." : his face, then the figure
 add({ a: 45.3, b: 46.4, cam: glide({ pos: [BX, 1.62, 1.3], look: [BX, 1.62, 3.1], fov: 36 }, { pos: [BX, 1.62, 1.45], look: [BX, 1.62, 3.1], fov: 34 }, 0.04),
   actors: (t) => [{ who: "pj", pos: [BX, BED, 3.1], opts: { mode: "sit", expr: "terror", blink: blinkAt(t, 1) }, tint: MOON }], world: () => ({ light: "bedroom" }) });
-add({ a: 46.4, b: 47.3, cam: glide({ pos: [BX, 2.2, -3.0], look: [BX, 2.1, -5], fov: 40 }, { pos: [BX, 2.2, -3.2], look: [BX, 2.1, -5], fov: 38 }, 0.04),
-  actors: () => [{ who: "shade", pos: [BX, 0.45, -4.97], opts: { mode: "stand", expr: "neutral" }, tint: BLACK }], world: () => ({ light: "bedroom" }) });
+add({ a: 46.4, b: 47.3, cam: glide({ pos: [BX + 0.5, 2.0, -2.6], look: [BX + 0.6, 1.9, -5], fov: 42 }, { pos: [BX + 0.5, 2.0, -2.8], look: [BX + 0.6, 1.9, -5], fov: 40 }, 0.04),
+  actors: () => [{ who: "shade", pos: [BX + 0.55, 0.45, -4.97], opts: { mode: "stand", expr: "neutral" }, tint: BLACK }], world: () => ({ light: "bedroom" }) });
 // 18 "Except it had no face."
-add({ a: 47.3, b: 49.15, cam: glide({ pos: [BX, 2.42, -4.0], look: [BX, 2.42, -5], fov: 40 }, { pos: [BX, 2.42, -4.15], look: [BX, 2.42, -5], fov: 36 }, 0.03),
-  actors: () => [{ who: "shade", pos: [BX, 0.45, -4.97], opts: { mode: "stand", expr: "neutral" }, tint: BLACK }], world: () => ({ light: "bedroom" }) });
+add({ a: 47.3, b: 49.15, cam: glide({ pos: [BX + 0.62, 1.98, -3.6], look: [BX + 0.62, 1.96, -5], fov: 40 }, { pos: [BX + 0.62, 1.98, -3.8], look: [BX + 0.62, 1.96, -5], fov: 36 }, 0.03),
+  actors: () => [{ who: "shade", pos: [BX + 0.55, 0.45, -4.97], opts: { mode: "stand", expr: "neutral" }, tint: BLACK }], world: () => ({ light: "bedroom" }) });
 // 19 "He called the police, but whenever they arrived, the figure disappeared." : flashing lights on the lawn
-add({ a: 49.15, b: 53.75, cam: glide({ pos: [MX + 4.6, 1.75, 13.6], look: [MX + 0.6, 1.5, 6.4], fov: 46 }, { pos: [MX + 4.2, 1.72, 12.8], look: [MX + 0.6, 1.5, 6.4], fov: 44 }, 0),
+add({ a: 49.15, b: 53.75, cam: glide({ pos: [MX + 1.0, 1.7, -2.2], look: [MX + 0.6, 1.5, 9.0], fov: 50 }, { pos: [MX + 1.0, 1.68, -1.4], look: [MX + 0.6, 1.5, 9.0], fov: 48 }, 0),
   actors: (t) => [
     { who: "cop0", pos: [MX + 0.8, 0, 6.0], opts: { mode: "stand", expr: "neutral", look: t < 51 ? -0.7 : 0.7, blink: blinkAt(t, 3) }, tint: NIGHT },
     { who: "cop1", pos: [MX - 1.8, 0, 7.4], opts: { mode: "stand", expr: "dazed", look: 0.5, blink: blinkAt(t, 4) }, tint: NIGHT },
@@ -148,19 +148,19 @@ add({ a: 49.15, b: 53.75, cam: glide({ pos: [MX + 4.6, 1.75, 13.6], look: [MX + 
 add({ a: 53.75, b: 56.2, cam: glide({ pos: [BX, 1.62, 1.6], look: [BX, 1.6, 3.1], fov: 40 }, { pos: [BX, 1.62, 1.8], look: [BX, 1.6, 3.1], fov: 36 }, 0.03),
   actors: (t) => [{ who: "pj", pos: [BX, BED, 3.1], opts: { mode: "sit", expr: t < 54.9 ? "asleep" : "shock" }, tint: MOON }], world: () => ({ light: "bedroom" }) });
 // 21 "His shadow was standing inside his bedroom." : at the foot of the bed
-add({ a: 56.2, b: 59.3, cam: glide({ pos: [BX + 0.7, 2.0, 4.4], look: [BX - 0.3, 1.3, -0.6], fov: 46 }, { pos: [BX + 0.6, 1.95, 4.0], look: [BX - 0.3, 1.35, -0.6], fov: 42 }, 0.03),
-  actors: () => [{ who: "pj", pos: [BX + 0.1, BED, 3.1], opts: { mode: "sit", back: true }, tint: MOON }, { who: "shade", pos: [BX - 0.3, 0, -0.6], opts: { mode: "stand", expr: "neutral" }, tint: BLACK }],
+add({ a: 56.2, b: 59.3, cam: glide({ pos: [BX + 0.3, 2.0, 3.0], look: [BX - 0.05, 1.25, -2.4], fov: 46 }, { pos: [BX + 0.25, 1.95, 2.4], look: [BX - 0.05, 1.3, -2.4], fov: 42 }, 0.03),
+  actors: () => [{ who: "shade", pos: [BX - 0.05, 0, -2.4], opts: { mode: "stand", expr: "neutral" }, tint: BLACK }],
   world: () => ({ light: "bedroom" }) });
 // 22 "And it was smiling."
-add({ a: 59.3, b: 60.75, cam: glide({ pos: [BX - 0.3, 1.78, 1.1], look: [BX - 0.3, 1.72, -0.6], fov: 36 }, { pos: [BX - 0.3, 1.78, 0.95], look: [BX - 0.3, 1.72, -0.6], fov: 32 }, 0.04),
-  actors: () => [{ who: "smile", pos: [BX - 0.3, 0, -0.6], opts: { mode: "stand", expr: "creepy" }, tint: [0.7, 0.72, 0.85] }], world: () => ({ light: "bedroom" }) });
+add({ a: 59.3, b: 60.75, cam: glide({ pos: [BX - 0.05, 1.78, -0.7], look: [BX - 0.05, 1.72, -2.4], fov: 36 }, { pos: [BX - 0.05, 1.78, -0.85], look: [BX - 0.05, 1.72, -2.4], fov: 32 }, 0.04),
+  actors: () => [{ who: "smile", pos: [BX - 0.05, 0, -2.4], opts: { mode: "stand", expr: "creepy" }, tint: [0.75, 0.78, 0.92] }], world: () => ({ light: "bedroom" }) });
 // 23 "The next morning, he tracked down the businessman, and demanded his shadow back."
 add({ a: 60.75, b: 65.95, cam: glide({ pos: [OX + 3.4, 1.8, 3.6], look: [OX - 0.2, 1.2, -2.6], fov: 46 }, { pos: [OX + 3.0, 1.75, 3.0], look: [OX - 0.2, 1.2, -2.6], fov: 44 }, 0.03),
   actors: (t) => [{ who: "rich", pos: [OX + 0.5, 0, Math.max(-0.6, 3.4 - 2.4 * (t - 60.75))], opts: t < 62.4 ? { mode: "march", phase: t * 1.8, expr: "stern" } : { mode: "stand", expr: "stern", prop: t > 63.2 ? "point" : null, blink: blinkAt(t, 1) }, tint: OFFICE },
     { who: "biz", pos: [OX, SIT, -4.3], opts: { mode: "sit", expr: "smile_closed", blink: blinkAt(t, 5) }, tint: OFFICE }],
   world: () => ({ light: "office" }) });
 // 24 "But the businessman simply opened a laptop."
-add({ a: 65.95, b: 69.3, cam: glide({ pos: [OX + 0.25, 1.3, -1.6], look: [OX, 1.0, -3.1], fov: 42 }, { pos: [OX + 0.2, 1.25, -1.9], look: [OX, 1.0, -3.1], fov: 40 }, 0.03),
+add({ a: 65.95, b: 69.3, cam: glide({ pos: [OX + 0.7, 1.6, -1.5], look: [OX, 0.95, -3.0], fov: 44 }, { pos: [OX + 0.65, 1.55, -1.7], look: [OX, 0.95, -3.0], fov: 42 }, 0.03),
   actors: (t) => [{ who: "biz", pos: [OX, SIT, -4.3], opts: { mode: "sit", expr: "smile_closed", blink: blinkAt(t, 5) }, tint: OFFICE }],
   world: (t) => ({ light: "office", lid: ramp(t, 66.4, 67.6), screen: t > 67.7 ? 1 : 0 }) });
 // 25 "On the screen was a video of the machine. And inside it, the man's shadow was moving, on its own." : the screen
@@ -184,12 +184,12 @@ add({ a: 85.2, b: 88.25, cam: glide({ pos: [OX + 4.6, 2.6, 4.6], look: [OX, 1.2,
   world: (t) => ({ light: t > 86.6 ? "dark" : "office", lid: 1, screen: 1, out: flick(t) }) });
 // 29 "And from behind him, a familiar voice whispered..." : his face in the dark; behind him, it rises
 add({ a: 88.25, b: 91.85, cam: glide({ pos: [OX + 0.42, 1.8, -2.3], look: [OX + 0.6, 1.8, -0.6], fov: 44 }, { pos: [OX + 0.42, 1.8, -2.0], look: [OX + 0.6, 1.8, -0.6], fov: 40 }, 0.03),
-  actors: (t) => [{ who: "rich", pos: [OX + 0.45, 0, -0.6], opts: { mode: "stand", expr: "terror", blink: blinkAt(t, 1) }, tint: [0.42, 0.55, 0.7] },
-    { who: "smile", pos: [OX + 1.1, -0.6 + 0.6 * ramp(t, 88.6, 90.6), 0.5], opts: { mode: "stand", expr: "creepy" }, tint: [0.32, 0.34, 0.42].map((v) => v * ramp(t, 88.6, 90.6)) as V3 }],
+  actors: (t) => [{ who: "rich", pos: [OX + 0.45, 0, -0.6], opts: { mode: "stand", expr: "terror", blink: blinkAt(t, 1) }, tint: [0.55, 0.68, 0.85] },
+    { who: "smile", pos: [OX + 1.1, -0.6 + 0.6 * ramp(t, 88.6, 90.6), 0.5], opts: { mode: "stand", expr: "creepy" }, tint: [0.75, 0.78, 0.92].map((v) => v * ramp(t, 88.6, 90.6)) as V3 }],
   world: () => ({ light: "dark", lid: 1, screen: 1, out: 1 }) });
 // 30 "Finally. My turn."
-add({ a: 91.85, b: DURATION, cam: glide({ pos: [OX + 0.85, 1.85, -1.3], look: [OX + 1.05, 1.82, 0.5], fov: 36 }, { pos: [OX + 0.85, 1.85, -1.05], look: [OX + 1.05, 1.82, 0.5], fov: 32 }, 0.05),
-  actors: () => [{ who: "rich", pos: [OX + 0.45, 0, -0.6], opts: { mode: "stand", expr: "terror" }, tint: [0.38, 0.5, 0.65] }, { who: "smile", pos: [OX + 1.1, 0, 0.5], opts: { mode: "stand", expr: "creepy" }, tint: [0.36, 0.38, 0.48] }],
+add({ a: 91.85, b: DURATION, cam: glide({ pos: [OX + 0.75, 1.82, -2.4], look: [OX + 0.8, 1.8, 0.0], fov: 44 }, { pos: [OX + 0.75, 1.82, -2.0], look: [OX + 0.8, 1.8, 0.0], fov: 42 }, 0.05),
+  actors: () => [{ who: "rich", pos: [OX + 0.45, 0, -0.6], opts: { mode: "stand", expr: "terror" }, tint: [0.55, 0.68, 0.85] }, { who: "smile", pos: [OX + 1.1, 0, 0.5], opts: { mode: "stand", expr: "creepy" }, tint: [0.75, 0.78, 0.92] }],
   world: () => ({ light: "dark", lid: 1, screen: 1, out: 1 }), overlay: (t) => ({ black: t > 93.25 ? 1 : 0 }) });
 
 export const SHOTS = S;
