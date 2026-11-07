@@ -61,16 +61,60 @@ def whoosh(d=0.35):
     tt = t_(d); return bp(rng.standard_normal(len(tt)), 400, 2600) * np.sin(np.pi * tt / d) ** 2
 
 
+def creak(d=1.1):
+    tt = t_(d); f = 140 + 60 * np.sin(2 * np.pi * 1.3 * tt); x = np.sign(np.sin(2 * np.pi * np.cumsum(f) / SR)) * 0.4
+    return bp(x + 0.2 * rng.standard_normal(len(tt)), 200, 1800) * env(len(tt), 0.1, 0.3)
+def step(k=1.0):
+    tt = t_(0.12); return (lp(rng.standard_normal(len(tt)), 900) * np.exp(-tt * 45) + np.sin(2 * np.pi * 90 * tt) * np.exp(-tt * 40) * 0.5) * k
+def steps(d, rate=3.2):
+    out = np.zeros(int(d * SR))
+    for x in np.arange(0, d, 1 / rate): place(out, step(rng.uniform(0.6, 1.0)), float(x + rng.uniform(0, 0.05)))
+    return out
+def bell(f=880, d=2.2):
+    tt = t_(d); return sum(a * np.sin(2 * np.pi * f * m * tt) * np.exp(-tt * (2 + m)) for a, m in ((1, 1), (0.5, 2.76), (0.3, 5.4))) * env(len(tt), 0.002, 0.3)
+def dhak():
+    tt = t_(0.35); return (np.sin(2 * np.pi * (95 - 30 * tt) * tt) * np.exp(-tt * 10) + bp(rng.standard_normal(len(tt)), 600, 2500) * np.exp(-tt * 30) * 0.3)
+def fire(d):
+    tt = t_(d); roar = lp(rng.standard_normal(len(tt)), 400) * 1.2; cr = np.zeros(len(tt))
+    for _ in range(int(d * 30)):
+        i = int(rng.uniform(0, d) * SR); n = int(0.004 * SR)
+        if i + n < len(cr): cr[i:i + n] += bp(rng.standard_normal(n), 1500, 7000) * rng.uniform(0.3, 1)
+    return (roar + cr) * env(len(tt), 0.4, 0.5)
+def cheer(d):
+    tt = t_(d); return bp(rng.standard_normal(len(tt)), 400, 2600) * (0.7 + 0.3 * np.sin(2 * np.pi * 2.2 * tt) * np.sin(2 * np.pi * 0.7 * tt)) * env(len(tt), 0.2, 0.6)
+def shimmer(d=1.8):
+    tt = t_(d); return sum(np.sin(2 * np.pi * f * tt) * np.exp(-tt * 2.5) for f in (1760, 2217, 2637, 3520)) * env(len(tt), 0.01, 0.4) * 0.3
+
+
 sfx = np.zeros(N)
-# opening lane (0 - 6.95): murmur, sparkler fizz, fireworks at the burst times in shots.ts
+# crowd and water beds per place
 place(sfx, murmur(7.0), 0.0, 0.25)
+place(sfx, water(12.7), 6.9, 0.22); place(sfx, murmur(12.7), 6.9, 0.16)
+place(sfx, murmur(3.4), 19.6, 0.16); place(sfx, water(3.4), 19.6, 0.1); place(sfx, murmur(3.8), 28.5, 0.16)
+place(sfx, murmur(13.3), 32.2, 0.18)
+place(sfx, murmur(12.6), 45.4, 0.14)
+place(sfx, water(14.3), 58.0, 0.22); place(sfx, murmur(14.3), 58.0, 0.14)
+place(sfx, murmur(4.4), 72.2, 0.18); place(sfx, murmur(4.0), 79.1, 0.16); place(sfx, murmur(5.7), 80.8, 0.2)
 place(sfx, fizz(2.2), 1.2, 0.08); place(sfx, fizz(1.8), 5.2, 0.1)
-for at in (3.8, 4.25, 4.7, 5.15, 5.6, 6.05, 6.5): place(sfx, pop(), at - 0.05, 0.5)
-# Ayodhya (6.95 - ): river water, a murmur from the ghats, two fireworks
-place(sfx, water(DUR - 6.9), 6.9, 0.22); place(sfx, murmur(DUR - 6.9), 6.9, 0.14)
-for at in (7.2, 7.8): place(sfx, pop(), at - 0.05, 0.4)
+# fireworks (times of the visible bursts in shots.ts)
+for at in (3.8, 4.25, 4.7, 5.15, 5.6, 6.05, 6.5, 7.2, 7.8, 17.7, 18.0, 18.35, 18.7, 19.0, 19.3, 28.6, 29.0, 29.4, 29.8, 30.2, 30.6, 31.0, 31.4,
+           57.2, 57.5, 72.4, 72.9, 73.4, 80.1, 80.5, 82.6, 83.0, 84.2, 84.6, 85.0, 85.4, 85.8):
+    place(sfx, pop(), at - 0.05, 0.5)
+for at in (69.9, 70.4, 70.9, 71.4, 71.8): place(sfx, shimmer(), at, 0.35)
+# Gwalior: gate creak, kings' footsteps
+place(sfx, creak(1.2), 24.5, 0.35); place(sfx, whoosh(0.8), 24.9, 0.15); place(sfx, steps(2.8), 25.7, 0.3); place(sfx, steps(1.0), 76.4, 0.25)
+# Kolkata: dhak drums and puja bells
+for k, at in enumerate(np.arange(35.2, 45.4, 0.42)): place(sfx, dhak(), float(at), 0.35 if k % 4 in (0, 2) else 0.2)
+for at in (37.6, 38.5, 39.4, 40.3, 41.2): place(sfx, bell(1320, 1.6), at, 0.18)
+# Goa: fire and cheering
+place(sfx, fire(6.8), 51.3, 0.4); place(sfx, cheer(2.0), 51.4, 0.25); place(sfx, cheer(1.6), 56.6, 0.25); place(sfx, fire(1.0), 77.4, 0.3)
+# Varanasi: aarti bells
+for at in np.arange(64.6, 66.4, 0.45): place(sfx, bell(990, 1.4), float(at), 0.14)
+place(sfx, cheer(2.2), 84.0, 0.2)
 # whips
-for at in (2.35, 2.98, 3.75, 6.95): place(sfx, whoosh(), at - 0.17, 0.12)
+for at in (2.35, 2.98, 3.75, 6.95, 10.5, 13.4, 14.6, 17.6, 19.6, 22.9, 25.7, 28.5, 32.2, 33.4, 35.2, 39.0, 42.4, 45.4, 48.3, 51.4, 53.3, 55.4,
+           58.0, 62.4, 63.3, 72.2, 75.4, 76.4, 77.4, 78.3, 79.1, 80.0, 80.8, 82.5, 83.35, 84.0):
+    place(sfx, whoosh(), at - 0.17, 0.12)
 sfx = reverb(sfx, 1.4, 0.25)
 
 # ---------------- music: drone + plucked melody (raag-like scale in C) + soft pulse ----------------

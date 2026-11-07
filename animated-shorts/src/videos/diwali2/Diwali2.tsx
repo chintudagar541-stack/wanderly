@@ -26,6 +26,12 @@ const GRADES: Record<LightName, GradeParams> = {
   home: BASE,
   ayodhya: { ...BASE, tintS: [0.05, 0.035], sat: [1.12, 1.24, 1.14] },
   close: { ...BASE, vig: [0.34, 0.32] },
+  amritsar: { ...BASE, tintS: [0.05, 0.02], tintH: [-0.04, 0.02] },
+  gwalior: { ...BASE, tintS: [0.06, 0.0], sat: [1.05, 1.15, 1.1] },
+  kolkata: { ...BASE, tintS: [0.03, 0.05], sat: [1.12, 1.24, 1.14] },
+  goa: { ...BASE, tintS: [0.03, 0.03], tintH: [-0.04, 0.03], vig: [0.28, 0.34] },
+  varanasi: { ...BASE, tintS: [0.05, 0.035] },
+  divine: { ...BASE, tintS: [0.02, 0.02], tintH: [-0.04, 0.02], sat: [1.08, 1.18, 1.12] },
 };
 const makeBloom = () => {
   const b = new BloomEffect({ blendFunction: BlendFunction.ADD, intensity: 0.85, luminanceThreshold: 0.86, luminanceSmoothing: 0.25, mipmapBlur: true, levels: 6, radius: 0.6 });

@@ -10,8 +10,10 @@ import { NOINK } from "../bridge/ink";
 import { Flames } from "../diwali/world";
 import { Batch, V3, rnd, toon, canvasTex, BOX, CYL, CONE, SPH, CYL8, DOME, PRISM } from "../eiffel/lib";
 
-export type LightName = "home" | "ayodhya" | "close";
-export const HX = 0, AX = 400;
+export type LightName = "home" | "ayodhya" | "close" | "amritsar" | "gwalior" | "kolkata" | "goa" | "varanasi" | "divine";
+export const HX = 0, AX = 400, MX = 800, GWX = 1000, KX = 1200, GX = 1600, VX = 2000;
+/** Golden Temple centre, Gwalior gate, Kolkata pandal facade and the idol's pedestal, Goa effigy base */
+export const TEMPLE: V3 = [MX, 0, -30], GATE: V3 = [GWX, 0, -20], PANDAL: V3 = [KX, 0, -16], IDOL: V3 = [KX, 1.4, -21.5], EFFIGY: V3 = [GX, 1.0, -8];
 /** the family doorway (centre of the threshold) and the hero diya on the rangoli */
 export const DOOR: V3 = [HX, 0, -6];
 export const DIYA: V3 = [HX, 0, -0.9];
@@ -86,10 +88,11 @@ export class World {
   boat = new THREE.Group();
   fw: THREE.Points; fwPos: Float32Array; fwCol: Float32Array; fwMat: THREE.PointsMaterial;
   heroFlame: THREE.Sprite;
+  doors: THREE.Group[] = []; gateRays: THREE.Mesh[] = []; fire!: Flames;
 
   constructor() {
     const R = this.root;
-    this.skies = { home: skyTex("#1a1048", "#4a2a8a", "#9a5ab0"), ayodhya: skyTex("#1a1450", "#5a3a9a", "#d07ab0"), close: skyTex("#1a1048", "#4a2a8a", "#9a5ab0") };
+    this.skies = { home: skyTex("#1a1048", "#4a2a8a", "#9a5ab0"), ayodhya: skyTex("#1a1450", "#5a3a9a", "#d07ab0"), close: skyTex("#1a1048", "#4a2a8a", "#9a5ab0"), amritsar: skyTex("#100c40", "#3a2a8a", "#8a5ab0"), gwalior: skyTex("#0c1040", "#2a3a8a", "#6a6ab0"), kolkata: skyTex("#1a0830", "#4a1a5a", "#9a3a7a"), goa: skyTex("#1a2a6a", "#7a5aa0", "#ff9a5a"), varanasi: skyTex("#120c48", "#4a2a8a", "#c06aa0"), divine: skyTex("#2a1a6a", "#8a5ab0", "#ffc890") };
     this.sky = new THREE.Mesh(new THREE.SphereGeometry(1400, 24, 16), this.skyMat); this.sky.layers.set(NOINK); R.add(this.sky);
     { const st = new THREE.Mesh(new THREE.SphereGeometry(1300, 24, 16, 0, Math.PI * 2, 0, Math.PI / 2), new THREE.MeshBasicMaterial({ map: starsTex(), transparent: true, side: THREE.BackSide, fog: false, depthWrite: false, toneMapped: false })); st.layers.set(NOINK); this.sky.add(st);
       const mo = new THREE.Mesh(new THREE.CircleGeometry(28, 32), new THREE.MeshBasicMaterial({ color: 0xfff4d8, fog: false, toneMapped: false })); mo.position.set(-420, 520, -1000); mo.lookAt(0, 0, 0); mo.layers.set(NOINK); this.sky.add(mo); }
@@ -99,7 +102,7 @@ export class World {
     const plane = (w: number, d: number, m: THREE.Material, p: V3, rz = 0) => { const q = new THREE.Mesh(new THREE.PlaneGeometry(w, d), m); q.rotation.set(-Math.PI / 2, 0, rz); q.position.set(...p); q.receiveShadow = true; R.add(q); return q; };
     const vplane = (w: number, h: number, m: THREE.Material, p: V3, ry = 0) => { const q = new THREE.Mesh(new THREE.PlaneGeometry(w, h), m); q.position.set(...p); q.rotation.y = ry; R.add(q); return q; };
     const glow = (m: THREE.Texture) => new THREE.MeshBasicMaterial({ map: m, toneMapped: false, fog: false });
-    const clay = toon(0xb5532c), clayD = toon(0x8a3a1e), gold = toon(0xe8b84a), marigold = [toon(0xf2a020), toon(0xe8701a), toon(0xf2c14e)], leafM = toon(0x3f7a34), wood = toon(0x7a3a1a), white = toon(0xf4ead6);
+    const red = toon(0xd1202f), clay = toon(0xb5532c), clayD = toon(0x8a3a1e), gold = toon(0xe8b84a), marigold = [toon(0xf2a020), toon(0xe8701a), toon(0xf2c14e)], leafM = toon(0x3f7a34), wood = toon(0x7a3a1a), white = toon(0xf4ead6);
     const STR: V3[] = [[1, 0.3, 0.3], [0.3, 1, 0.4], [0.4, 0.6, 1], [1, 0.85, 0.3], [1, 0.4, 0.9]];
     /** a clay diya with its flame; big = hero diya */
     const diya = (B: Batch, x: number, y: number, z: number, s = 1, order = 0) => { B.add(SPH, clay, [x, y + 0.05 * s, z], [0, 0, 0], [0.12 * s, 0.06 * s, 0.09 * s]); B.add(CYL8, clayD, [x, y + 0.09 * s, z], [0, 0, 0], [0.1 * s, 0.015 * s, 0.075 * s]); diyas.push({ p: [x, y + 0.16 * s, z], order }); };
@@ -220,6 +223,135 @@ export class World {
         for (let k = 0; k < 14; k++) { const t = k / 13; m(SPH, marigold[k % 3], [-1.4 + 2.8 * t, 3.25 - Math.sin(Math.PI * t) * 0.35, 1.0], [0.08, 0.08, 0.08]); m(SPH, marigold[(k + 1) % 3], [-1.4 + 2.8 * t, 3.25 - Math.sin(Math.PI * t) * 0.35, -1.0], [0.08, 0.08, 0.08]); }
         P.position.set(X, WATER_Y + 0.2, BOAT_Z); R.add(P); }
     }
+    // ================= AMRITSAR (Golden Temple in its pool) =================
+    { const B = set(), X = MX, cz = TEMPLE[2];
+      const pool = new THREE.Mesh(new THREE.PlaneGeometry(70, 70), new THREE.MeshBasicMaterial({ map: waterTex(), transparent: true, opacity: 0.94, depthWrite: false }));
+      pool.rotation.x = -Math.PI / 2; pool.position.set(X, -0.3, cz); pool.renderOrder = 1; pool.layers.set(NOINK); R.add(pool);
+      plane(70, 70, toon(0x1a1440), [X, -1.2, cz]);
+      const marbleM = toon(0xf4f1ea), marbleT = toon(0xffffff, tex(128, 64, (g) => { g.fillStyle = "#f4f1ea"; g.fillRect(0, 0, 128, 64); g.strokeStyle = "#c9b8a0"; g.lineWidth = 2; for (let x = 0; x < 128; x += 16) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x + 8, 32); g.lineTo(x, 64); g.stroke(); } }, [30, 2]));
+      // the parikrama (marble walkway) around the pool and the arcaded buildings behind it
+      for (const [px, pz, w, d, ry] of [[X, cz + 38, 86, 6, 0], [X, cz - 38, 86, 6, 0], [X - 38, cz, 6, 70, 0], [X + 38, cz, 6, 70, 0]] as const) { B.add(BOX, marbleT, [px, -0.1, pz], [0, ry, 0], [w, 0.4, d]); }
+      for (let k = 0; k < 4; k++) { const ry = (k * Math.PI) / 2, dir: V3 = [Math.sin(ry), 0, Math.cos(ry)];
+        for (let q = -40; q <= 40; q += 5) { const x = X + dir[0] * 44 + Math.cos(ry) * q, z = cz + dir[2] * 44 - Math.sin(ry) * q;
+          B.add(BOX, marbleM, [x, 4, z], [0, ry, 0], [5, 8, 4]); vplane(3.2, 3.6, glow(litWindow("#f4f1ea", true)), [x - dir[0] * 2.02, 2.2, z - dir[2] * 2.02], ry + Math.PI); vplane(2.4, 2.4, glow(litWindow("#f4f1ea", true)), [x - dir[0] * 2.02, 6.0, z - dir[2] * 2.02], ry + Math.PI);
+          B.add(BOX, toon(0xe8dcc8), [x, 8.2, z], [0, ry, 0], [5.2, 0.4, 4.2]); if (q % 10 === 0) { B.add(DOME, gold, [x, 8.4, z], [0, 0, 0], [0.9, 1.2, 0.9]); }
+          lightString(B, [x - Math.cos(ry) * 2.5 - dir[0] * 2.1, 8.0, z + Math.sin(ry) * 2.5 - dir[2] * 2.1], [x + Math.cos(ry) * 2.5 - dir[0] * 2.1, 8.0, z - Math.sin(ry) * 2.5 - dir[2] * 2.1], 10, 0.15);
+          for (let r = 0; r < 4; r++) { const dx = x - dir[0] * 3.6 + Math.cos(ry) * (r - 1.5) * 1.1, dz = z - dir[2] * 3.6 - Math.sin(ry) * (r - 1.5) * 1.1; diya(B, dx, 0.1, dz, 1.2); refl.push({ p: [dx - dir[0] * 1.2, -0.75, dz - dir[2] * 1.2], order: 0, tint: [1, 0.6, 0.2] }); } } }
+      // causeway to the temple with lamp posts
+      B.add(BOX, marbleT, [X, -0.05, cz + 21], [0, 0, 0], [4, 0.5, 30]);
+      for (let z = cz + 8; z < cz + 36; z += 3) for (const s of [-1, 1]) { B.add(CYL8, gold, [X + s * 2.1, 1.0, z], [0, 0, 0], [0.07, 2.0, 0.07]); B.add(SPH, toon(0xfff0c0), [X + s * 2.1, 2.1, z], [0, 0, 0], [0.18, 0.22, 0.18]); strings.push({ p: [X + s * 2.1, 2.15, z], order: 0, tint: [1, 0.85, 0.5] }); refl.push({ p: [X + s * 2.6, -2.6, z], order: 0, tint: [1, 0.75, 0.3] }); }
+      // the temple: marble base, two gold storeys, corner chhatris, the gold lotus dome
+      B.add(BOX, marbleM, [X, 0.6, cz], [0, 0, 0], [13, 1.6, 13]);
+      const goldT = toon(0xffffff, tex(128, 128, (g) => { g.fillStyle = "#e8b84a"; g.fillRect(0, 0, 128, 128); g.strokeStyle = "#a8742a"; g.lineWidth = 3; for (let x = 8; x < 128; x += 40) { g.beginPath(); g.moveTo(x, 120); g.lineTo(x, 50); g.quadraticCurveTo(x + 14, 20, x + 28, 50); g.lineTo(x + 28, 120); g.stroke(); } g.fillStyle = "#fff0b0"; for (let i = 0; i < 40; i++) g.fillRect(rnd(i) * 128, rnd(i + 1) * 128, 3, 3); }, [2, 1]));
+      B.add(BOX, goldT, [X, 4.4, cz], [0, 0, 0], [10, 6, 10]); B.add(BOX, gold, [X, 7.6, cz], [0, 0, 0], [10.6, 0.4, 10.6]); B.add(BOX, goldT, [X, 9.4, cz], [0, 0, 0], [7, 3.2, 7]);
+      for (const sx of [-1, 1]) for (const sz of [-1, 1]) { B.add(CYL8, gold, [X + sx * 4.6, 9.0, cz + sz * 4.6], [0, 0, 0], [0.5, 2.4, 0.5]); B.add(DOME, gold, [X + sx * 4.6, 10.2, cz + sz * 4.6], [0, 0, 0], [0.7, 1.0, 0.7]); }
+      B.add(SPH, gold, [X, 13.0, cz], [0, 0, 0], [3.6, 3.0, 3.6]); B.add(CONE, gold, [X, 16.4, cz], [0, 0, 0], [0.7, 2.2, 0.7]); B.add(SPH, gold, [X, 17.6, cz], [0, 0, 0], [0.25, 0.3, 0.25]);
+      for (let k = 0; k < 40; k++) { const a = (k / 40) * Math.PI * 2; strings.push({ p: [X + Math.cos(a) * 5.4, 7.9, cz + Math.sin(a) * 5.4], order: 0, tint: [1, 0.9, 0.55] }); strings.push({ p: [X + Math.cos(a) * 7, 1.5, cz + Math.sin(a) * 7], order: 0, tint: [1, 0.85, 0.45] }); }
+      // golden reflection of the temple in the pool (a soft gold slab under the water)
+      const gref = new THREE.Mesh(new THREE.PlaneGeometry(10, 18), new THREE.MeshBasicMaterial({ map: tex(64, 128, (g) => { const gr = g.createLinearGradient(0, 0, 0, 128); gr.addColorStop(0, "rgba(255,200,80,0.9)"); gr.addColorStop(1, "rgba(255,160,40,0)"); g.fillStyle = gr; for (let y = 0; y < 128; y += 4) g.fillRect(4 + rnd(y) * 8, y, 52 - rnd(y + 1) * 10, 3); }), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }));
+      gref.rotation.x = -Math.PI / 2; gref.position.set(X, -0.28, cz + 14); gref.renderOrder = 2; gref.layers.set(NOINK); R.add(gref);
+      // Akal Takht behind (gold domes) and the clock tower gate in front
+      B.add(BOX, marbleM, [X, 6, cz - 52], [0, 0, 0], [16, 12, 8]); B.add(DOME, gold, [X, 12, cz - 52], [0, 0, 0], [3.4, 4.0, 3.4]); for (const s of [-1, 1]) B.add(DOME, gold, [X + s * 6, 12, cz - 52], [0, 0, 0], [1.4, 1.8, 1.4]);
+    }
+    // ================= GWALIOR FORT (the gate the 52 kings walk out of) =================
+    { const B = set(), X = GWX, gz = GATE[2];
+      plane(120, 120, toon(0xffffff, tex(128, 128, (g) => { g.fillStyle = "#8a6a8a"; g.fillRect(0, 0, 128, 128); for (let y = 0; y < 128; y += 16) for (let x = (y / 16) % 2 ? 8 : 0; x < 128; x += 16) { g.strokeStyle = "rgba(40,20,40,0.35)"; g.strokeRect(x, y, 16, 16); } }, [30, 30])), [X, 0, gz + 40]);
+      const tile = toon(0xffffff, tex(128, 128, (g) => { g.fillStyle = "#c9a07a"; g.fillRect(0, 0, 128, 128); for (const y of [20, 70]) { g.fillStyle = "#2a8ac0"; g.fillRect(0, y, 128, 16); g.fillStyle = "#f2c14e"; for (let x = 4; x < 128; x += 16) { g.beginPath(); g.moveTo(x, y + 8); g.lineTo(x + 6, y + 2); g.lineTo(x + 12, y + 8); g.lineTo(x + 6, y + 14); g.fill(); } g.fillStyle = "#3a9a4a"; g.fillRect(0, y + 16, 128, 4); } g.strokeStyle = "rgba(60,40,30,0.3)"; for (let y = 0; y < 128; y += 10) { g.beginPath(); g.moveTo(0, y); g.lineTo(128, y); g.stroke(); } }, [8, 2]));
+      for (const s of [-1, 1]) { B.add(BOX, tile, [X + s * 21, 9, gz], [0, 0, 0], [34, 18, 6]);
+        for (const tx of [6, 16, 28]) { B.add(CYL, tile, [X + s * tx, 10.5, gz + 3], [0, 0, 0], [3.2, 21, 3.2]); B.add(CYL8, toon(0xc9a07a), [X + s * tx, 22, gz + 3], [0, 0, 0], [2.6, 2, 2.6]); B.add(DOME, toon(0xf4ead6), [X + s * tx, 23, gz + 3], [0, 0, 0], [2.6, 2.2, 2.6]); for (let k = 0; k < 8; k++) { const a = (k / 8) * Math.PI * 2; B.add(CYL8, toon(0xf4ead6), [X + s * tx + Math.cos(a) * 2.4, 21.6, gz + 3 + Math.sin(a) * 2.4], [0, 0, 0], [0.12, 1.4, 0.12]); } }
+        for (let k = 0; k < 6; k++) { B.add(BOX, toon(0xc9a07a), [X + s * (6 + k * 5), 18.6, gz + 2.6], [0, 0, 0], [2.2, 1.2, 1]); diyas.push({ p: [X + s * (6 + k * 5) + 1.6, 18.4, gz + 3.4], order: 0 }); } }
+      // the arch over the gate, with the glowing opening and light rays
+      B.add(BOX, tile, [X, 15.5, gz], [0, 0, 0], [8, 5, 6]);
+      const arch = new THREE.Mesh(new THREE.CylinderGeometry(4, 4, 6, 20, 1, false, 0, Math.PI), tile); arch.rotation.set(Math.PI / 2, 0, Math.PI / 2); arch.position.set(X, 12.2, gz); R.add(arch);
+      const gl = vplane(7.6, 13, new THREE.MeshBasicMaterial({ map: tex(64, 128, (g) => { const gr = g.createRadialGradient(32, 90, 4, 32, 80, 90); gr.addColorStop(0, "#ffffff"); gr.addColorStop(0.4, "#fff0b0"); gr.addColorStop(1, "#ffa040"); g.fillStyle = gr; g.fillRect(0, 0, 64, 128); }), toneMapped: false }), [X, 6.5, gz - 2.5]); void gl;
+      for (const s of [-1, 1]) { const d = new THREE.Group(), door = new THREE.Mesh(BOX, toon(0x5a3a22)); door.scale.set(3.8, 12, 0.4); door.position.set(-s * 1.9, 6, 0); door.castShadow = true; d.add(door);
+        for (let k = 0; k < 5; k++) for (let q = 0; q < 3; q++) { const sp = new THREE.Mesh(CONE, toon(0x3a3a3a)); sp.scale.set(0.15, 0.4, 0.15); sp.rotation.x = Math.PI / 2; sp.position.set(-s * (0.8 + q * 1.1), 2 + k * 2.2, 0.35); d.add(sp); }
+        d.position.set(X + s * 3.8, 0, gz + 1.2); R.add(d); this.doors.push(d); }
+      const rm = new THREE.MeshBasicMaterial({ map: tex(64, 256, (g) => { const gr = g.createLinearGradient(0, 0, 0, 256); gr.addColorStop(0, "rgba(255,240,190,0.7)"); gr.addColorStop(1, "rgba(255,240,190,0)"); g.fillStyle = gr; g.fillRect(0, 0, 64, 256); }), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, toneMapped: false, fog: false });
+      for (let k = 0; k < 7; k++) { const r = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 30), rm); r.position.set(X + (k - 3) * 1.1, 1, gz + 15); r.rotation.set(-Math.PI / 2 + 0.06, 0, (k - 3) * 0.08); r.layers.set(NOINK); R.add(r); this.gateRays.push(r); }
+      // the path, torches, and a line of soldiers/attendants with torches along it
+      for (let z = gz + 4; z < gz + 60; z += 5) for (const s of [-1, 1]) { B.add(CYL8, toon(0x5a3a22), [X + s * 5, 1.2, z], [0, 0, 0], [0.08, 2.4, 0.08]); diyas.push({ p: [X + s * 5, 2.55, z], order: 0, tint: [1, 0.5, 0.1] }); }
+    }
+    // ================= KOLKATA (Kali Puja pandal and its light gates) =================
+    { const B = set(), X = KX, pz = PANDAL[2];
+      plane(60, 120, toon(0xffffff, tex(128, 128, (g) => { g.fillStyle = "#4a3a5a"; g.fillRect(0, 0, 128, 128); for (let i = 0; i < 100; i++) { g.fillStyle = "rgba(0,0,0,0.12)"; g.fillRect(rnd(i) * 128, rnd(i + 1) * 128, 6, 3); } }, [10, 20])), [X, 0, pz + 40]);
+      // the pandal: a tall tiered facade of red/gold fabric, an arched entrance, bulb patterns, a shrine inside
+      const fab = toon(0xffffff, tex(256, 256, (g) => { g.fillStyle = "#a8202a"; g.fillRect(0, 0, 256, 256); for (let y = 0; y < 256; y += 32) { g.fillStyle = "#e8b84a"; g.fillRect(0, y, 256, 4); for (let x = 0; x < 256; x += 32) { g.beginPath(); g.arc(x + 16, y + 18, 9, 0, Math.PI * 2); g.fill(); g.fillStyle = "#2e7a4a"; g.beginPath(); g.arc(x + 16, y + 18, 4, 0, Math.PI * 2); g.fill(); g.fillStyle = "#e8b84a"; } } }, [3, 2]));
+      for (const s of [-1, 1]) { B.add(BOX, fab, [X + s * 8, 9, pz], [0, 0, 0], [10, 18, 3]); B.add(CONE, gold, [X + s * 8, 19.5, pz], [0, Math.PI / 4, 0], [4, 3, 2]); }
+      B.add(BOX, fab, [X, 17, pz], [0, 0, 0], [8, 8, 3]); B.add(CONE, gold, [X, 24, pz], [0, Math.PI / 4, 0], [5, 6, 3]); B.add(SPH, gold, [X, 27.3, pz], [0, 0, 0], [0.5, 0.6, 0.5]);
+      const archM = new THREE.Mesh(new THREE.CylinderGeometry(4, 4, 3, 20, 1, false, 0, Math.PI), fab); archM.rotation.set(Math.PI / 2, 0, Math.PI / 2); archM.position.set(X, 9, pz); R.add(archM);
+      for (let k = 0; k < 7; k++) { const r = 3.5 + k * 0.7; for (let q = 0; q <= 30; q++) { const a = (q / 30) * Math.PI; strings.push({ p: [X + Math.cos(a) * r, 9 + Math.sin(a) * r, pz + 1.6], order: 0, tint: STR[(k + q) % 5] }); } }
+      for (let y = 1; y < 18; y += 0.9) for (const s of [-1, 1]) for (let x = 3.5; x < 13; x += 0.9) if ((Math.floor(x + y) % 3) === 0) strings.push({ p: [X + s * x, y, pz + 1.6], order: 0, tint: STR[Math.floor(x * 3 + y) % 5] });
+      // inside: dark red backdrop, gold halo, pedestal (the idol is a card), hibiscus garlands, lamps
+      B.add(BOX, toon(0x3a0a1a), [X, 8, pz - 8], [0, 0, 0], [16, 16, 0.5]); B.add(BOX, toon(0x5a1a2a), [X, 0.2, pz - 4], [0, 0, 0], [16, 0.4, 8]);
+      for (const s of [-1, 1]) B.add(BOX, fab, [X + s * 7.5, 8, pz - 4], [0, 0, 0], [1, 16, 8]);
+      const halo = new THREE.Mesh(new THREE.RingGeometry(2.4, 3.4, 48), new THREE.MeshBasicMaterial({ color: 0xffc040, toneMapped: false, side: THREE.DoubleSide })); halo.position.set(X, IDOL[1] + 3.7, pz - 7.6); R.add(halo);
+      for (let k = 0; k < 24; k++) { const a = (k / 24) * Math.PI * 2; B.add(CONE, gold, [X + Math.cos(a) * 3.8, IDOL[1] + 3.7 + Math.sin(a) * 3.8, pz - 7.62], [0, 0, a - Math.PI / 2], [0.25, 0.7, 0.05]); }
+      B.add(BOX, gold, [X, IDOL[1] / 2, IDOL[2]], [0, 0, 0], [4, IDOL[1], 2.4]); B.add(BOX, red, [X, IDOL[1] + 0.05, IDOL[2]], [0, 0, 0], [4.2, 0.1, 2.6]);
+      for (let k = 0; k < 3; k++) garland(B, [X - 6, 15 - k * 0.8, pz - 6], [X + 6, 15 - k * 0.8, pz - 6], 1.6, 30);
+      for (let k = 0; k < 10; k++) { diya(B, X - 2.2 + k * 0.5, IDOL[1] + 0.1, IDOL[2] + 1.0, 1.4); }
+      for (const s of [-1, 1]) for (let k = 0; k < 3; k++) { B.add(CYL8, gold, [X + s * (3.2 + k * 1.2), 1.2, pz - 3 + k], [0, 0, 0], [0.1, 2.4, 0.1]); diyas.push({ p: [X + s * (3.2 + k * 1.2), 2.5, pz - 3 + k], order: 0 }); }
+      // the street: light tunnel gates of rings, stalls, more buildings with balconies
+      for (let z = pz + 6; z < pz + 70; z += 6) { for (let q = 0; q <= 40; q++) { const a = (q / 40) * Math.PI; strings.push({ p: [X + Math.cos(a) * 7, Math.sin(a) * 9, z], order: 0, tint: STR[(q + z) % 5] }); }
+        for (let q = 0; q < 12; q++) { const a = (q / 12) * Math.PI * 2; strings.push({ p: [X + Math.cos(a) * 1.4, 7.3 + Math.sin(a) * 1.4, z], order: 0, tint: [1, 0.3, 0.6] }); } }
+      for (const s of [-1, 1]) for (let z = pz + 6, i = 0; z < pz + 80; z += 7, i++) { const H = 9 + (i % 3) * 3, x = X + s * 13;
+        B.add(BOX, toon(0xffffff, wallTex(["#e8d0b0", "#c9a8a0", "#d9c9a8", "#b8a0c0"][i % 4], "#f4f1ea", i)), [x, H / 2, z], [0, 0, 0], [8, H, 7]);
+        for (let f = 0; f < 2; f++) { vplane(1.3, 1.9, glow(litWindow("#3a6a4a", true)), [x - s * 4.01, 2 + f * 4, z - 1.5], -s * Math.PI / 2); vplane(1.3, 1.9, glow(litWindow("#3a6a4a", false)), [x - s * 4.01, 2 + f * 4, z + 1.5], -s * Math.PI / 2); }
+        B.add(BOX, toon(0x3a6a4a), [x - s * 4.6, 5.6, z], [0, 0, 0], [1.2, 0.15, 5]); lightString(B, [x - s * 5.1, 6.6, z - 2.5], [x - s * 5.1, 6.6, z + 2.5], 12, 0.2);
+        if (i % 2 === 0) { B.add(BOX, toon(0x7a3a1a), [x - s * 6.5, 0.5, z], [0, 0, 0], [1.0, 1.0, 2.6]); for (let q = 0; q < 5; q++) B.add(SPH, [toon(0xf4ead6), toon(0xf2c14e), toon(0xd1202f)][q % 3], [x - s * 6.5, 1.1, z - 1 + q * 0.5], [0, 0, 0], [0.14, 0.14, 0.14]); } }
+    }
+    // ================= GOA (palms, village, the Narakasura effigy on its scaffold) =================
+    { const B = set(), X = GX, [ex, , ez] = EFFIGY;
+      plane(200, 200, toon(0xffffff, tex(128, 128, (g) => { g.fillStyle = "#6a5a4a"; g.fillRect(0, 0, 128, 128); for (let i = 0; i < 200; i++) { g.fillStyle = rnd(i) < 0.5 ? "rgba(255,220,180,0.1)" : "rgba(0,0,0,0.12)"; g.fillRect(rnd(i + 1) * 128, rnd(i + 2) * 128, 4, 3); } }, [40, 40])), [X, 0, 0]);
+      // scaffold: bamboo poles and platforms around the effigy (which is a big card)
+      const bam = toon(0xc9a86a);
+      for (const sx of [-2.4, 2.4]) for (const sz of [-1.4, 1.4]) B.add(CYL8, bam, [ex + sx, 6, ez + sz], [0, 0, 0], [0.12, 12, 0.12]);
+      for (let y = 1; y < 12; y += 2.2) { for (const sz of [-1.4, 1.4]) B.add(CYL8, bam, [ex, y, ez + sz], [0, 0, Math.PI / 2], [0.08, 5, 0.08]); for (const sx of [-2.4, 2.4]) B.add(CYL8, bam, [ex + sx, y, ez], [Math.PI / 2, 0, 0], [0.08, 2.8, 0.08]); }
+      for (let y = 1; y < 11; y += 4.4) for (const s of [-1, 1]) B.beam(bam, [ex - 2.4, y, ez + s * 1.4], [ex + 2.4, y + 4.4, ez + s * 1.4], 0.07);
+      B.add(BOX, toon(0x8a6a4a), [ex, 0.5, ez], [0, 0, 0], [5.4, 1.0, 3.4]);
+      for (let k = 0; k < 6; k++) { const ladder = k; B.add(CYL8, bam, [ex + 3.4, 2.5, ez + 2 - ladder * 0.05], [0, 0, 0.25], [0.05, 5, 0.05]); }
+      // fire: points over the effigy volume that ignite bottom-up with o.burn
+      const fire: Pt[] = [];
+      for (let k = 0; k < 520; k++) { const y = 0.8 + rnd(k + 3000) * 11.5, w = 2.2 * (1 - Math.abs(y - 6) / 9); fire.push({ p: [ex + (rnd(k + 3001) - 0.5) * 2 * w, y, ez + (rnd(k + 3002) - 0.5) * 1.8], order: y / 13 + rnd(k + 3003) * 0.08, tint: rnd(k) < 0.5 ? [1, 0.45, 0.08] : [1, 0.75, 0.2] }); }
+      this.fire = new Flames(R, fire, 1.6);
+      // Goan houses: colourful walls, red tile roofs, balcões (porches), palms everywhere, lanterns
+      const roof = toon(0xb8402a), wcol = ["#f2c14e", "#2a8ac0", "#e8538a", "#3aa86a", "#f2f0ea", "#e86a2a"];
+      for (let i = 0; i < 16; i++) { const a = (i / 16) * Math.PI * 1.4 + Math.PI * 0.8, r = 22 + rnd(i) * 10, x = ex + Math.cos(a) * r, z = ez + Math.sin(a) * r * 0.8 - 6, ry = -a + Math.PI / 2;
+        B.add(BOX, toon(parseInt(wcol[i % 6].slice(1), 16)), [x, 2.5, z], [0, ry, 0], [8, 5, 6]); B.add(PRISM, roof, [x, 6.2, z], [Math.PI / 2, ry, 0], [4.8, 9, 2.4].map((v, k) => k === 1 ? 9 : v) as V3);
+        B.add(BOX, white, [x, 2.5, z], [0, ry, 0], [8.2, 0.3, 6.2]); kandil(B, x + Math.cos(a) * -3.4, 4.2, z + Math.sin(a) * -3.4, [0xff5a3a, 0xffc040, 0x5ae0ff, 0xff60c0][i % 4], 1.0); diyas.push({ p: [x + Math.cos(a) * -3.3, 0.4, z + Math.sin(a) * -3.3], order: 0 }); }
+      for (let k = 0; k < 40; k++) { const a = rnd(k + 400) * Math.PI * 2, r = 12 + rnd(k + 401) * 40, x = ex + Math.cos(a) * r, z = ez + Math.sin(a) * r - 4; if (z > ez + 6 && Math.abs(x - ex) < 10) continue; const h = 6 + rnd(k) * 5;
+        for (let q = 0; q < 7; q++) B.add(CYL8, toon(0x8a6a3a), [x + Math.sin(q * 0.4 + k) * 0.12 * q, 0.5 + q * h / 7, z], [0, 0, 0.04], [0.22, h / 7 + 0.05, 0.22]);
+        for (let q = 0; q < 8; q++) { const b = q * 0.785 + k; B.add(CONE, leafM, [x + Math.cos(b) * 1.6, h + 0.7, z + Math.sin(b) * 1.6], [Math.sin(b) * 1.25, 0, -Math.cos(b) * 1.25], [0.5, 3.4, 0.12]); } }
+      for (let x = -14; x <= 14; x += 3) lightString(B, [ex + x, 8, ez + 10], [ex + x + 3, 8, ez + 10], 10, 0.4);
+      for (let x = -16; x < 16; x += 2) B.add(PRISM, [toon(0xe86a2a), toon(0xf2c14e), toon(0xd1202f), toon(0x2a8ac0)][Math.abs(x) % 4], [ex + x, 7.5, ez + 10], [Math.PI / 2, 0, Math.PI], [0.4, 0.03, 0.6]);
+    }
+    // ================= VARANASI (ghats, temples, boats, countless diyas) =================
+    { const B = set(), X = VX;
+      const water = new THREE.Mesh(new THREE.PlaneGeometry(600, 140), new THREE.MeshBasicMaterial({ map: waterTex(), transparent: true, opacity: 0.94, depthWrite: false }));
+      water.rotation.x = -Math.PI / 2; water.position.set(X, WATER_Y, 52); water.renderOrder = 1; water.layers.set(NOINK); R.add(water);
+      plane(600, 40, toon(0x2a1f4a), [X, WATER_Y - 2, 52]);
+      const gm = toon(0xffffff, tex(128, 64, (g) => { g.fillStyle = "#c9a888"; g.fillRect(0, 0, 128, 64); g.fillStyle = "rgba(80,50,30,0.25)"; for (let x = 0; x < 128; x += 24) g.fillRect(x, 0, 2, 64); g.fillRect(0, 0, 128, 3); }, [20, 1]));
+      for (let k = 0; k < 16; k++) { const y = WATER_Y + k * 0.32, z = -k * 0.75; B.add(BOX, gm, [X, y - 0.5, z - 0.4], [0, 0, 0], [140, 1.32, 0.8]);
+        for (let q = 0; q < 230; q++) { const x = X - 70 + q * (140 / 230) + (k % 2) * 0.3; if (k % 3 === 2 && q % 3) continue; diya(B, x, y + 0.16, z - 0.1, 1, 0); if (k < 6) refl.push({ p: [x, 2 * WATER_Y - (y + 0.16) - 0.1, z + 0.7 + k * 0.4], order: 0, tint: [1, 0.55, 0.2] }); } }
+      // tall old buildings and temple shikharas crowding the ghats
+      const cols = ["#e8b88a", "#f2d0a0", "#d9a8a0", "#f4ead6", "#e8c0d0", "#c9b090"];
+      for (let i = 0; i < 26; i++) { const x = X - 66 + i * 5.2 + rnd(i) * 1.5, w = 4.6, h = 8 + rnd(i + 1) * 12, z = -15 - rnd(i + 2) * 6, c = cols[i % 6];
+        B.add(BOX, toon(0xffffff, palaceTex(c, "#f4f1ea")), [x, WATER_Y + 5 + h / 2, z], [0, 0, 0], [w, h, 6]);
+        if (i % 4 === 1) { B.add(CONE, toon(parseInt(c.slice(1), 16)), [x, WATER_Y + 5 + h + 4, z], [0, Math.PI / 4, 0], [2.4, 8, 2.4]); for (let q = 0; q < 4; q++) B.add(CYL8, toon(0xf4f1ea), [x, WATER_Y + 5 + h + 0.8 + q * 1.6, z], [0, 0, 0], [2.0 - q * 0.4, 0.3, 2.0 - q * 0.4]); B.add(PRISM, toon(0xe86a2a), [x + 0.5, WATER_Y + 5 + h + 9.4, z], [Math.PI / 2, 0, Math.PI / 2], [0.4, 0.04, 1.0]); }
+        else if (i % 4 === 3) B.add(DOME, toon(0xf4f1ea), [x, WATER_Y + 5 + h, z], [0, 0, 0], [1.6, 1.6, 1.6]);
+        lightString(B, [x - w / 2, WATER_Y + 5 + h - 0.2, z + 3.05], [x + w / 2, WATER_Y + 5 + h - 0.2, z + 3.05], 12, 0.08);
+        for (let q = 0; q < 6; q++) diyas.push({ p: [x - w / 2 + 0.4 + q * (w - 0.8) / 5, WATER_Y + 5.2, z + 3.2], order: 0 }); }
+      B.add(BOX, gm, [X, WATER_Y + 4.6, -14], [0, 0, 0], [160, 1.2, 4]);
+      // aarti platforms with umbrellas and big lamps
+      for (let k = 0; k < 7; k++) { const x = X - 24 + k * 8; B.add(BOX, toon(0x7a3a1a), [x, WATER_Y + 1.6, -2.5], [0, 0, 0], [2.2, 0.3, 2.2]);
+        const um = new THREE.Mesh(new THREE.ConeGeometry(1.8, 0.8, 12, 1, true), toon([0xe86a2a, 0xd1202f, 0xf2c14e][k % 3], undefined, THREE.DoubleSide)); um.position.set(x, WATER_Y + 5.4, -2.5); R.add(um); B.add(CYL8, toon(0x5a3a22), [x, WATER_Y + 3.4, -2.5], [0, 0, 0], [0.06, 3.8, 0.06]);
+        for (let q = 0; q < 5; q++) diyas.push({ p: [x - 0.6 + q * 0.3, WATER_Y + 3.3 + (q % 2) * 0.25, -1.6], order: 0, tint: [1, 0.5, 0.1] }); }
+      // boats on the river with people and lamps
+      for (let k = 0; k < 9; k++) { const x = X - 30 + k * 7.5 + rnd(k) * 3, z = 8 + rnd(k + 1) * 18, ry = (rnd(k + 2) - 0.5) * 0.6;
+        B.add(SPH, toon(0x6a3a1a), [x, WATER_Y + 0.1, z], [0, ry, 0], [2.6, 0.45, 0.9]); B.add(BOX, toon(0x8a5a2a), [x, WATER_Y + 0.42, z], [0, ry, 0], [4.6, 0.08, 1.4]);
+        for (let q = 0; q < 4; q++) { const dx = (q - 1.5) * 1.0; diyas.push({ p: [x + Math.cos(ry) * dx, WATER_Y + 0.6, z - Math.sin(ry) * dx], order: 0 }); refl.push({ p: [x + Math.cos(ry) * dx, WATER_Y - 0.9, z - Math.sin(ry) * dx + 0.6], order: 0, tint: [1, 0.55, 0.2] }); } }
+      for (let q = 0; q < 140; q++) { const x = X - 50 + rnd(q + 700) * 100, z = 2 + rnd(q + 701) * 40; diya(B, x, WATER_Y, z, 1.4); refl.push({ p: [x, WATER_Y - 0.25, z + 0.3], order: 0, tint: [1, 0.55, 0.2] }); }
+    }
     for (const B of sets) { const g = new THREE.Group(); B.build(g); g.traverse((o) => { if ((o as THREE.Mesh).isMesh) { o.castShadow = true; o.receiveShadow = true; } }); R.add(g); }
     this.diyas = new Flames(R, diyas, 0.3);
     this.strings = new Flames(R, strings, 0.2);
@@ -238,7 +370,7 @@ export class World {
   }
 
   /** boatX: the swan boat's x; bursts: fireworks */
-  set(o: { light: LightName; t: number; px: number; cam: V3; look: V3; warm?: V3[]; shadowR?: number; boatX?: number; bursts?: Burst[] }) {
+  set(o: { light: LightName; t: number; px: number; cam: V3; look: V3; warm?: V3[]; shadowR?: number; boatX?: number; bursts?: Burst[]; gate?: number; burn?: number }) {
     const L = o.light;
     this.sky.position.set(...o.cam);
     this.skyMat.map = this.skies[L]; this.skyMat.needsUpdate = true;
@@ -246,6 +378,12 @@ export class World {
       home: { hs: 0x9a80e0, hg: 0x4a2a5a, hi: 1.25, sc: 0xb8b0ff, si: 0.9, sd: [-0.4, 0.8, 0.5], fog: 0x4a2a7a, fn: 30, ff: 160 },
       ayodhya: { hs: 0xb090e8, hg: 0x4a2a5a, hi: 1.3, sc: 0xc0b0ff, si: 1.0, sd: [-0.5, 0.7, 0.6], fog: 0x7a4a9a, fn: 50, ff: 260 },
       close: { hs: 0xa088e8, hg: 0x5a3a5a, hi: 1.35, sc: 0xc8b8ff, si: 0.9, sd: [-0.4, 0.8, 0.5], fog: 0x4a2a7a, fn: 30, ff: 160 },
+      amritsar: { hs: 0xa898f0, hg: 0x4a3a5a, hi: 1.3, sc: 0xffe0b0, si: 1.0, sd: [-0.4, 0.7, 0.6], fog: 0x3a2a7a, fn: 50, ff: 260 },
+      gwalior: { hs: 0x8898e0, hg: 0x3a3a5a, hi: 1.2, sc: 0xfff0c0, si: 1.4, sd: [0, 0.35, -1], fog: 0x2a2a6a, fn: 40, ff: 220 },
+      kolkata: { hs: 0xc080d0, hg: 0x5a2a4a, hi: 1.3, sc: 0xffc0a0, si: 0.8, sd: [-0.3, 0.8, 0.5], fog: 0x4a1a5a, fn: 30, ff: 180 },
+      goa: { hs: 0xa0a0e0, hg: 0x6a4a4a, hi: 1.35, sc: 0xffb080, si: 1.6, sd: [0.6, 0.25, -0.7], fog: 0xc08a9a, fn: 50, ff: 260 },
+      varanasi: { hs: 0xb090e8, hg: 0x4a2a5a, hi: 1.3, sc: 0xc0b0ff, si: 1.0, sd: [-0.5, 0.7, 0.6], fog: 0x6a3a8a, fn: 50, ff: 260 },
+      divine: { hs: 0xd0b0ff, hg: 0x6a4a6a, hi: 1.5, sc: 0xffe0a0, si: 1.6, sd: [0.2, 0.9, 0.3], fog: 0x9a6aa0, fn: 50, ff: 260 },
     }[L];
     this.hemi.color.set(P.hs); this.hemi.groundColor.set(P.hg); this.hemi.intensity = P.hi;
     this.moon.color.set(P.sc); this.moon.intensity = P.si;
@@ -257,7 +395,10 @@ export class World {
     this.strings.mat.uniforms.uTime.value = o.t * 0.3;
     const fl = 0.92 + 0.08 * Math.sin(o.t * 11) * Math.sin(o.t * 7.3);
     this.heroFlame.scale.set(0.24 * fl, 0.46 * (0.95 + 0.07 * Math.sin(o.t * 9)), 1);
-    this.doorLight.intensity = L === "ayodhya" ? 0 : 9 * fl;
+    this.doorLight.intensity = L === "home" || L === "close" ? 9 * fl : 0;
+    this.doors.forEach((d, i) => { d.rotation.y = (i === 0 ? 1 : -1) * 1.35 * (o.gate ?? 0); });
+    this.gateRays.forEach((r) => { r.visible = (o.gate ?? 0) > 0.05; (r.material as THREE.MeshBasicMaterial).opacity = o.gate ?? 0; });
+    this.fire.mat.uniforms.uTime.value = o.t * 1.6; this.fire.mat.uniforms.uPx.value = o.px; this.fire.mat.uniforms.uLit.value = o.burn ?? -1;
     this.warm.forEach((l, i) => { const w = o.warm?.[i]; l.intensity = w ? 6 * fl : 0; if (w) l.position.set(...w); });
     this.boat.position.x = o.boatX ?? AX; this.boat.position.y = WATER_Y + 0.2 + 0.06 * Math.sin(o.t * 1.6); this.boat.rotation.z = 0.015 * Math.sin(o.t * 1.3);
     // fireworks: each burst expands, falls and fades over 2.2 s
