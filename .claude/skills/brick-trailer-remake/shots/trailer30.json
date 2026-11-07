@@ -1,0 +1,1404 @@
+{
+ "fps": 23.976023976023978,
+ "duration": 30.03,
+ "width": 1280,
+ "height": 536,
+ "frameHeight": 720,
+ "logo": {
+  "title": "BRICK LEGION",
+  "subtitle": "THE LAST STAND"
+ },
+ "cast": {
+  "ember": {
+   "skin": "#f0c49a",
+   "hairStyle": "short",
+   "hair": "#b5541f",
+   "beard": "#9a4a1c",
+   "expr": "grim",
+   "torso": "#3a3d44",
+   "print": "armor",
+   "accent": "#a01f24",
+   "emblem": "#7af0ff",
+   "arms": "#3a3d44",
+   "legs": "#2a2c31",
+   "boots": "#1b1c20",
+   "pads": "#9aa3ad",
+   "cape": "#8e1b22",
+   "prop": {
+    "tip": "#6ff2ff",
+    "color": "#9aa3ad",
+    "len": 3.6
+   }
+  },
+  "rook": {
+   "skin": "#eac09a",
+   "hairStyle": "long",
+   "hair": "#5a3a22",
+   "beard": "#4a3020",
+   "expr": "grim",
+   "torso": "#1f2a3d",
+   "print": "jacket",
+   "accent": "#141c2a",
+   "arms": "#1f2a3d",
+   "legs": "#2e3238"
+  },
+  "pip": {
+   "skin": "#f2c8a0",
+   "hairStyle": "short",
+   "hair": "#4a2c1a",
+   "expr": "smile",
+   "goggles": true,
+   "torso": "#d9732b",
+   "print": "jumpsuit",
+   "accent": "#1f6f78",
+   "emblem": "#ffffff",
+   "arms": "#1f6f78",
+   "legs": "#1f6f78"
+  },
+  "vex": {
+   "skin": "#5a3a6a",
+   "hairStyle": "hood",
+   "hair": "#3a1f4d",
+   "mask": "#c9a43a",
+   "expr": "grim",
+   "torso": "#2a1838",
+   "print": "robe",
+   "accent": "#c9a43a",
+   "arms": "#2a1838",
+   "hands": "#1a1020",
+   "robe": "#2a1838",
+   "cape": "#3a1f4d",
+   "glow": "#d04dff"
+  },
+  "kade": {
+   "skin": "#d9a882",
+   "hairStyle": "helmet",
+   "hair": "#2b2b30",
+   "visor": "#ff6a2a",
+   "accent": "#55575e",
+   "torso": "#1e1e22",
+   "print": "armor",
+   "emblem": "#ff6a2a",
+   "legs": "#1e1e22"
+  },
+  "ivy": {
+   "skin": "#c99272",
+   "paint": "#3f6fd8",
+   "hairStyle": "long",
+   "hair": "#7a3a1a",
+   "expr": "grim",
+   "torso": "#4a3b5c",
+   "print": "armor",
+   "accent": "#b8b8c8",
+   "emblem": "#3f6fd8",
+   "legs": "#2c2436",
+   "prop": {
+    "color": "#2a2a2a",
+    "len": 4.6,
+    "offset": 0,
+    "always": true
+   }
+  },
+  "tor": {
+   "skin": "#8a5a3a",
+   "hairStyle": "short",
+   "hair": "#1a1a1a",
+   "expr": "grim",
+   "torso": "#6a1f2a",
+   "print": "armor",
+   "accent": "#d0a040",
+   "emblem": "#d0a040",
+   "legs": "#3a1418",
+   "prop": {
+    "blade": true,
+    "color": "#6b4a2b",
+    "len": 4.4,
+    "always": true
+   }
+  },
+  "nova": {
+   "skin": "#f0c8a0",
+   "hairStyle": "short",
+   "hair": "#e0c070",
+   "expr": "smile",
+   "torso": "#e8ecf0",
+   "print": "jumpsuit",
+   "accent": "#2f6fd0",
+   "emblem": "#2f6fd0",
+   "arms": "#2f6fd0",
+   "legs": "#e8ecf0"
+  },
+  "brute": {
+   "scale": 1.12,
+   "skin": "#b07a52",
+   "hairStyle": "short",
+   "hair": "#222222",
+   "beard": "#222222",
+   "expr": "smile",
+   "torso": "#5a6b3a",
+   "print": "jacket",
+   "accent": "#3a4628",
+   "legs": "#3a3a30"
+  },
+  "sela": {
+   "skin": "#e8b890",
+   "hairStyle": "long",
+   "hair": "#111111",
+   "expr": "grim",
+   "torso": "#2f5a3a",
+   "print": "jacket",
+   "accent": "#1e3a26",
+   "legs": "#2a2a2a"
+  },
+  "axl": {
+   "skin": "#7a4a30",
+   "hairStyle": "short",
+   "hair": "#111111",
+   "goggles": true,
+   "expr": "grim",
+   "torso": "#2e7d5b",
+   "print": "armor",
+   "accent": "#e8c23a",
+   "emblem": "#ffffff",
+   "arms": "#2e7d5b",
+   "legs": "#23262b"
+  }
+ },
+ "shots": [
+  {
+   "n": 1,
+   "start": 0,
+   "end": 1.251,
+   "set": "shipRound",
+   "actors": [
+    {
+     "id": "ember",
+     "p": [
+      1.5,
+      0
+     ],
+     "ry": -30,
+     "pose": {
+      "aR": 150,
+      "look": 10
+     },
+     "charge": 0.3
+    }
+   ],
+   "cam": {
+    "p": [
+     -2.4,
+     2.2,
+     8.5
+    ],
+    "p2": [
+     -2.1,
+     2.4,
+     7.8
+    ],
+    "t": [
+     0.8,
+     4.8,
+     0
+    ],
+    "fov": 42
+   }
+  },
+  {
+   "n": 2,
+   "start": 1.251,
+   "end": 1.919,
+   "set": "shipRound",
+   "fadeOut": 0.15,
+   "actors": [
+    {
+     "id": "rook",
+     "p": [
+      -4.5,
+      -3.5
+     ],
+     "ry": 40
+    },
+    {
+     "id": "ember",
+     "p": [
+      4,
+      0.5
+     ],
+     "ry": -50,
+     "pose": {
+      "aR": 150
+     },
+     "charge": 0.6
+    }
+   ],
+   "cam": {
+    "p": [
+     0,
+     5,
+     11.8
+    ],
+    "p2": [
+     0,
+     4.9,
+     11.2
+    ],
+    "t": [
+     0,
+     3.6,
+     -1
+    ],
+    "fov": 46
+   }
+  },
+  {
+   "n": 3,
+   "start": 1.919,
+   "end": 2.169,
+   "type": "black"
+  },
+  {
+   "n": 4,
+   "start": 2.169,
+   "end": 4.713,
+   "type": "title",
+   "text": "THIS WINTER",
+   "fadeIn": 0.5,
+   "fadeOut": 0.35
+  },
+  {
+   "n": 5,
+   "start": 4.713,
+   "end": 5.005,
+   "set": "villainSky",
+   "actors": [
+    {
+     "id": "vex",
+     "p": [
+      0,
+      0
+     ],
+     "ry": 0,
+     "glow": true,
+     "pose": {
+      "sR": 70,
+      "sL": 70,
+      "aR": 20,
+      "aL": 20
+     },
+     "wind": 1
+    }
+   ],
+   "cam": {
+    "p": [
+     0,
+     2.2,
+     10.5
+    ],
+    "p2": [
+     0,
+     2.3,
+     9.8
+    ],
+    "t": [
+     0,
+     4.3,
+     0
+    ],
+    "fov": 42
+   }
+  },
+  {
+   "n": 6,
+   "start": 5.005,
+   "end": 5.589,
+   "set": "villainSky",
+   "actors": [
+    {
+     "id": "vex",
+     "p": [
+      0,
+      0
+     ],
+     "ry": 0,
+     "pose": {
+      "sR": 85,
+      "aR": 8,
+      "sL": 20
+     },
+     "fx": "disintegrate",
+     "wind": 1
+    }
+   ],
+   "cam": {
+    "p": [
+     -1.7,
+     3.7,
+     5.2
+    ],
+    "p2": [
+     -1.9,
+     3.7,
+     5.0
+    ],
+    "t": [
+     -1.3,
+     3.5,
+     0
+    ],
+    "fov": 40
+   }
+  },
+  {
+   "n": 7,
+   "start": 5.589,
+   "end": 6.924,
+   "set": "cathedral",
+   "actors": [
+    {
+     "id": "kade",
+     "p": [
+      -2.5,
+      -1
+     ],
+     "ry": 165
+    }
+   ],
+   "cam": {
+    "p": [
+     -4.8,
+     4.6,
+     4.5
+    ],
+    "p2": [
+     -4.4,
+     4.6,
+     3.8
+    ],
+    "t": [
+     0.5,
+     5.5,
+     -8
+    ],
+    "fov": 46
+   }
+  },
+  {
+   "n": 8,
+   "start": 6.924,
+   "end": 7.883,
+   "type": "title",
+   "text": "THREE CREWS",
+   "fadeIn": 0.2,
+   "fadeOut": 0.2
+  },
+  {
+   "n": 9,
+   "start": 7.883,
+   "end": 8.383,
+   "set": "shipInterior",
+   "actors": [
+    {
+     "id": "ember",
+     "p": [
+      0,
+      0
+     ],
+     "ry": 55,
+     "pose": {
+      "look": 8
+     }
+    }
+   ],
+   "cam": {
+    "p": [
+     -0.6,
+     4.3,
+     3.1
+    ],
+    "p2": [
+     -0.5,
+     4.3,
+     2.9
+    ],
+    "t": [
+     0.3,
+     4.3,
+     0
+    ],
+    "fov": 36
+   }
+  },
+  {
+   "n": 10,
+   "start": 8.383,
+   "end": 10.302,
+   "set": "hall",
+   "light": {
+    "ki": 0.6
+   },
+   "actors": [
+    {
+     "id": "ivy",
+     "p": [
+      0,
+      0
+     ],
+     "ry": 0,
+     "pose": {
+      "aR": 70,
+      "aL": 70
+     },
+     "hold": {
+      "rx": 0,
+      "rz": 90
+     }
+    }
+   ],
+   "cam": {
+    "p": [
+     0,
+     4.0,
+     4.6
+    ],
+    "p2": [
+     0,
+     4.0,
+     3.7
+    ],
+    "t": [
+     0,
+     3.8,
+     0
+    ],
+    "fov": 40
+   }
+  },
+  {
+   "n": 11,
+   "start": 10.302,
+   "end": 10.803,
+   "set": "desert",
+   "actors": [
+    {
+     "id": "tor",
+     "p": [
+      -5,
+      0
+     ],
+     "ry": 70,
+     "pose": {
+      "aR": 60
+     },
+     "hold": {
+      "rx": 0
+     }
+    },
+    {
+     "id": "ivy",
+     "p": [
+      -7.5,
+      -1.5
+     ],
+     "ry": 60
+    },
+    {
+     "id": "sela",
+     "p": [
+      -9.5,
+      0.5
+     ],
+     "ry": 70
+    },
+    {
+     "id": "kade",
+     "p": [
+      -11.5,
+      -1
+     ],
+     "ry": 60
+    },
+    {
+     "id": "brute",
+     "p": [
+      -2.4,
+      0
+     ],
+     "ry": -70,
+     "pose": {
+      "aR": 60
+     }
+    },
+    {
+     "id": "nova",
+     "p": [
+      0,
+      -1
+     ],
+     "ry": -60
+    },
+    {
+     "id": "pip",
+     "p": [
+      2,
+      0.5
+     ],
+     "ry": -70
+    },
+    {
+     "id": "rook",
+     "p": [
+      4,
+      -1
+     ],
+     "ry": -60
+    },
+    {
+     "id": "axl",
+     "p": [
+      6,
+      0.5
+     ],
+     "ry": -70
+    }
+   ],
+   "cam": {
+    "p": [
+     -2.5,
+     4.5,
+     21
+    ],
+    "p2": [
+     -2.5,
+     4.5,
+     20.4
+    ],
+    "t": [
+     -2.5,
+     3,
+     0
+    ],
+    "fov": 38
+   }
+  },
+  {
+   "n": 12,
+   "start": 10.803,
+   "end": 11.8,
+   "type": "title",
+   "text": "ONE MISSION",
+   "fadeIn": 0.2,
+   "fadeOut": 0.15
+  },
+  {
+   "n": 13,
+   "start": 11.8,
+   "end": 12.76,
+   "set": "hall",
+   "actors": [
+    {
+     "id": "tor",
+     "p": [
+      0,
+      -8
+     ],
+     "p2": [
+      0,
+      -6.6
+     ],
+     "walk": true
+    },
+    {
+     "id": "ivy",
+     "p": [
+      -2.5,
+      -9
+     ],
+     "p2": [
+      -2.5,
+      -7.6
+     ],
+     "walk": true,
+     "phase": 0.2
+    },
+    {
+     "id": "kade",
+     "p": [
+      2.5,
+      -9
+     ],
+     "p2": [
+      2.5,
+      -7.6
+     ],
+     "walk": true,
+     "phase": 0.4
+    },
+    {
+     "id": "axl",
+     "p": [
+      -5,
+      -10.5
+     ],
+     "p2": [
+      -5,
+      -9.1
+     ],
+     "walk": true,
+     "phase": 0.1
+    },
+    {
+     "id": "sela",
+     "p": [
+      5,
+      -10.5
+     ],
+     "p2": [
+      5,
+      -9.1
+     ],
+     "walk": true,
+     "phase": 0.3
+    }
+   ],
+   "cam": {
+    "p": [
+     0,
+     4.2,
+     6
+    ],
+    "p2": [
+     0,
+     4.2,
+     5.4
+    ],
+    "t": [
+     0,
+     3.6,
+     -8
+    ],
+    "fov": 42
+   }
+  },
+  {
+   "n": 14,
+   "start": 12.76,
+   "end": 13.555,
+   "set": "shipRound",
+   "actors": [
+    {
+     "id": "ember",
+     "p": [
+      0,
+      0
+     ],
+     "ry": 10,
+     "pose": {
+      "look": 18,
+      "head": -10
+     }
+    }
+   ],
+   "cam": {
+    "p": [
+     0.4,
+     3.7,
+     4.8
+    ],
+    "p2": [
+     0.4,
+     3.75,
+     4.5
+    ],
+    "t": [
+     0,
+     4.5,
+     0
+    ],
+    "fov": 38
+   }
+  },
+  {
+   "n": 15,
+   "start": 13.555,
+   "end": 14.014,
+   "set": "storm",
+   "bolts": 4,
+   "boltArea": [
+    -25,
+    50,
+    -30,
+    12
+   ],
+   "bloom": 0.6,
+   "actors": [
+    {
+     "id": "ember",
+     "p": [
+      0,
+      -10
+     ],
+     "ry": 0,
+     "pose": {
+      "aR": 160
+     },
+     "charge": 1,
+     "wind": 1
+    }
+   ],
+   "cam": {
+    "p": [
+     0,
+     4,
+     16
+    ],
+    "t": [
+     0,
+     6,
+     -10
+    ],
+    "fov": 45,
+    "shake": 0.03
+   }
+  },
+  {
+   "n": 16,
+   "start": 14.014,
+   "end": 14.348,
+   "set": "storm",
+   "bolts": 3,
+   "boltArea": [
+    -8,
+    16,
+    -14,
+    6
+   ],
+   "boltSeed": 5,
+   "bloom": 0.6,
+   "flashAt": [
+    2,
+    10,
+    -6
+   ],
+   "actors": [
+    {
+     "id": "ember",
+     "p": [
+      0,
+      -10
+     ],
+     "ry": 20,
+     "pose": {
+      "aR": 160,
+      "look": 10
+     },
+     "charge": 1,
+     "wind": 1
+    }
+   ],
+   "cam": {
+    "p": [
+     4,
+     3.4,
+     -2.5
+    ],
+    "t": [
+     0,
+     5,
+     -10
+    ],
+    "fov": 40,
+    "shake": 0.05
+   }
+  },
+  {
+   "n": 17,
+   "start": 14.348,
+   "end": 14.765,
+   "set": "storm",
+   "bolts": 3,
+   "boltArea": [
+    -6,
+    12,
+    -13,
+    5
+   ],
+   "boltSeed": 9,
+   "bloom": 0.6,
+   "flashAt": [
+    -2,
+    9,
+    -7
+   ],
+   "fadeOut": 0.12,
+   "actors": [
+    {
+     "id": "ember",
+     "p": [
+      0,
+      -10
+     ],
+     "ry": 20,
+     "pose": {
+      "aR": 160,
+      "look": 10
+     },
+     "charge": 1,
+     "wind": 1
+    }
+   ],
+   "cam": {
+    "p": [
+     2.2,
+     4.5,
+     -5.6
+    ],
+    "p2": [
+     2.0,
+     4.5,
+     -6.0
+    ],
+    "t": [
+     0,
+     5.2,
+     -10
+    ],
+    "fov": 38,
+    "shake": 0.06
+   }
+  },
+  {
+   "n": 18,
+   "start": 14.765,
+   "end": 15.39,
+   "type": "black"
+  },
+  {
+   "n": 19,
+   "start": 15.39,
+   "end": 16.391,
+   "set": "shipInterior",
+   "actors": [
+    {
+     "id": "pip",
+     "p": [
+      1,
+      0
+     ],
+     "ry": -15,
+     "talk": true
+    },
+    {
+     "id": "nova",
+     "p": [
+      -1.8,
+      2.6
+     ],
+     "ry": 160
+    }
+   ],
+   "cam": {
+    "p": [
+     -0.6,
+     4.3,
+     6.2
+    ],
+    "p2": [
+     -0.5,
+     4.3,
+     5.8
+    ],
+    "t": [
+     0.9,
+     4.1,
+     0
+    ],
+    "fov": 34
+   }
+  },
+  {
+   "n": 20,
+   "start": 16.391,
+   "end": 16.934,
+   "set": "shipInterior",
+   "actors": [
+    {
+     "id": "rook",
+     "p": [
+      0,
+      0
+     ],
+     "ry": 25,
+     "talk": true
+    }
+   ],
+   "cam": {
+    "p": [
+     -0.8,
+     4.3,
+     4.4
+    ],
+    "t": [
+     0,
+     4.1,
+     0
+    ],
+    "fov": 34
+   }
+  },
+  {
+   "n": 21,
+   "start": 16.934,
+   "end": 18.769,
+   "set": "shipInterior",
+   "actors": [
+    {
+     "id": "axl",
+     "p": [
+      -4.5,
+      0
+     ],
+     "ry": 10
+    },
+    {
+     "id": "nova",
+     "p": [
+      -2,
+      0.4
+     ],
+     "ry": 5
+    },
+    {
+     "id": "kade",
+     "p": [
+      0.5,
+      0
+     ],
+     "ry": -5
+    },
+    {
+     "id": "pip",
+     "p": [
+      3,
+      0.2
+     ],
+     "ry": -15
+    },
+    {
+     "id": "sela",
+     "p": [
+      5,
+      6
+     ],
+     "ry": -150
+    }
+   ],
+   "cam": {
+    "p": [
+     0,
+     4.2,
+     12.5
+    ],
+    "p2": [
+     0.6,
+     4.2,
+     11.6
+    ],
+    "t": [
+     0,
+     3.4,
+     0
+    ],
+    "fov": 36
+   }
+  },
+  {
+   "n": 22,
+   "start": 18.769,
+   "end": 20.02,
+   "set": "shipInterior",
+   "actors": [
+    {
+     "id": "rook",
+     "p": [
+      0,
+      -1
+     ],
+     "ry": 0
+    },
+    {
+     "id": "ivy",
+     "p": [
+      -2.6,
+      0.6
+     ],
+     "ry": 20
+    },
+    {
+     "id": "brute",
+     "p": [
+      2.6,
+      0.3
+     ],
+     "ry": -20,
+     "pose": {
+      "aR": 75
+     },
+     "talk": true
+    },
+    {
+     "id": "tor",
+     "p": [
+      4.8,
+      -0.4
+     ],
+     "ry": -25
+    }
+   ],
+   "cam": {
+    "p": [
+     0,
+     4.4,
+     10.5
+    ],
+    "p2": [
+     0.3,
+     4.4,
+     9.8
+    ],
+    "t": [
+     0.6,
+     3.8,
+     0
+    ],
+    "fov": 38
+   }
+  },
+  {
+   "n": 23,
+   "start": 20.02,
+   "end": 21.23,
+   "set": "shipInterior",
+   "actors": [
+    {
+     "id": "axl",
+     "p": [
+      0.5,
+      0
+     ],
+     "ry": -10
+    },
+    {
+     "id": "pip",
+     "p": [
+      2.5,
+      0.3
+     ],
+     "ry": -20,
+     "talk": true
+    },
+    {
+     "id": "nova",
+     "p": [
+      -2.2,
+      4
+     ],
+     "ry": 150
+    }
+   ],
+   "cam": {
+    "p": [
+     -1,
+     4.2,
+     8.2
+    ],
+    "p2": [
+     -0.8,
+     4.2,
+     7.8
+    ],
+    "t": [
+     1.4,
+     3.9,
+     0
+    ],
+    "fov": 36
+   }
+  },
+  {
+   "n": 24,
+   "start": 21.23,
+   "end": 22.648,
+   "set": "shipInterior",
+   "actors": [
+    {
+     "id": "pip",
+     "p": [
+      0,
+      0
+     ],
+     "ry": -12,
+     "talk": true
+    }
+   ],
+   "cam": {
+    "p": [
+     -0.2,
+     4.3,
+     3.8
+    ],
+    "p2": [
+     -0.2,
+     4.3,
+     3.3
+    ],
+    "t": [
+     0,
+     4.15,
+     0
+    ],
+    "fov": 34
+   }
+  },
+  {
+   "n": 25,
+   "start": 22.648,
+   "end": 23.44,
+   "set": "shipInterior",
+   "actors": [
+    {
+     "id": "pip",
+     "p": [
+      -1.4,
+      3
+     ],
+     "ry": 160
+    },
+    {
+     "id": "ember",
+     "p": [
+      1.4,
+      -2
+     ],
+     "ry": -15,
+     "talk": true
+    }
+   ],
+   "cam": {
+    "p": [
+     -2.2,
+     4.4,
+     6.8
+    ],
+    "t": [
+     1.3,
+     4.0,
+     -2
+    ],
+    "fov": 34
+   }
+  },
+  {
+   "n": 26,
+   "start": 23.44,
+   "end": 24.858,
+   "set": "logo",
+   "bloom": 0.35,
+   "flashIn": 0.12,
+   "cam": {
+    "p": [
+     0,
+     0.2,
+     14
+    ],
+    "p2": [
+     0,
+     0.2,
+     12.2
+    ],
+    "t": [
+     0,
+     0,
+     0
+    ],
+    "fov": 40
+   }
+  },
+  {
+   "n": 27,
+   "start": 24.858,
+   "end": 25.817,
+   "set": "city",
+   "actors": [
+    {
+     "id": "rook",
+     "p": [
+      -2.5,
+      -1
+     ],
+     "ry": 25,
+     "talk": true
+    },
+    {
+     "id": "ember",
+     "p": [
+      2.5,
+      3
+     ],
+     "ry": 200
+    }
+   ],
+   "cam": {
+    "p": [
+     0,
+     4.3,
+     9.5
+    ],
+    "p2": [
+     -0.3,
+     4.3,
+     9.0
+    ],
+    "t": [
+     -1,
+     3.9,
+     0
+    ],
+    "fov": 36
+   },
+   "bloom": 0.4
+  },
+  {
+   "n": 28,
+   "start": 25.817,
+   "end": 26.61,
+   "set": "city",
+   "actors": [
+    {
+     "id": "ember",
+     "p": [
+      0,
+      0
+     ],
+     "ry": -50,
+     "talk": true
+    }
+   ],
+   "cam": {
+    "p": [
+     1.7,
+     4.3,
+     3.4
+    ],
+    "t": [
+     0,
+     4.2,
+     0
+    ],
+    "fov": 34
+   },
+   "bloom": 0.4
+  },
+  {
+   "n": 29,
+   "start": 26.61,
+   "end": 27.235,
+   "set": "city",
+   "actors": [
+    {
+     "id": "rook",
+     "p": [
+      0,
+      0
+     ],
+     "ry": 30,
+     "talk": true
+    }
+   ],
+   "cam": {
+    "p": [
+     -0.8,
+     4.3,
+     3.6
+    ],
+    "t": [
+     0,
+     4.15,
+     0
+    ],
+    "fov": 34
+   },
+   "bloom": 0.4
+  },
+  {
+   "n": 30,
+   "start": 27.235,
+   "end": 27.653,
+   "set": "city",
+   "actors": [
+    {
+     "id": "ember",
+     "p": [
+      0,
+      0
+     ],
+     "ry": -50
+    }
+   ],
+   "cam": {
+    "p": [
+     1.5,
+     4.3,
+     3.0
+    ],
+    "t": [
+     0,
+     4.2,
+     0
+    ],
+    "fov": 34
+   },
+   "bloom": 0.4
+  },
+  {
+   "n": 31,
+   "start": 27.653,
+   "end": 28.612,
+   "set": "city",
+   "beam": true,
+   "bloom": 0.6,
+   "flashOut": 0.2,
+   "cam": {
+    "p": [
+     0,
+     5,
+     5
+    ],
+    "p2": [
+     0,
+     5.4,
+     4
+    ],
+    "t": [
+     3,
+     16,
+     -110
+    ],
+    "fov": 50
+   }
+  },
+  {
+   "n": 32,
+   "start": 28.612,
+   "end": 30.03,
+   "type": "title",
+   "lines": [
+    "COMING THIS WINTER",
+    "BUILD YOUR TEAM"
+   ],
+   "size": 40,
+   "fadeIn": 0.25,
+   "fadeOut": 0.5
+  }
+ ]
+}
