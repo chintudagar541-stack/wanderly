@@ -532,7 +532,7 @@ const hatOn = (p: Pen, o: Outfit, hp: P2[], H: Blob, cx: number, hc: number, lig
 // ---------------- bodies ----------------
 export type Arms = [P2[], P2[]];
 /** held prop; for the hammer the number is the strike 0 (raised) .. 1 (struck) */
-export type Prop = null | "icecream" | "shako" | ["hammer", number] | "phoneEar" | "phoneHold" | "phoneDrop" | "binoculars" | "earCup" | "point" | "bow" | "bowAim" | "diya" | "sparkler" | "spear" | "spearAim" | "spearUp" | "newspaper" | "suitcase" | "cash" | "letter" | "twoFingers";
+export type Prop = null | "icecream" | "shako" | ["hammer", number] | "phoneEar" | "phoneHold" | "phoneDrop" | "binoculars" | "earCup" | "point" | "bow" | "bowAim" | "diya" | "sparkler" | "spear" | "spearAim" | "spearUp" | "newspaper" | "suitcase" | "cash" | "letter" | "twoFingers" | "moneyCase";
 
 const BUILD: Record<Build, { a: number; torso: number; legs: number; tw: number }> = {
   adult: { a: 118, torso: 1.1, legs: 1.4, tw: 0.8 },
@@ -651,7 +651,7 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
       arms.length = 0;
       const up = prop === "spearUp" ? 1 : 0;
       for (const side of [-1, 1]) arms.push({ pts: [sh(side), [tcx + side * (1.0 * T.a + 8 * u), sh(side)[1] + (0.25 - 0.2 * up) * HH], [tcx + side * 10 * u - 8 * u, sh(side)[1] + (0.32 - 0.38 * up) * HH + side * 6 * u]], front: true });
-    } else if (prop === "newspaper") {
+    } else if (prop === "newspaper" || prop === "moneyCase") {
       arms.length = 0;
       for (const side of [-1, 1]) arms.push({ pts: [sh(side), [tcx + side * (1.15 * T.a + 8 * u), sh(side)[1] + 0.4 * HH], [300 + side * 52 * u, chin + 0.42 * HH]], front: true });
     } else if (prop === "suitcase") {
@@ -807,6 +807,15 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
       p.poly(Rh([[hx - 12 * u, hy - 58 * u], [hx + 20 * u, hy - 58 * u], [hx + 20 * u, hy - 42 * u], [hx - 12 * u, hy - 42 * u]]), "#7d848c", 2.2 * u);
       p.dot(hx, hy, 5.5 * u);
     }
+  }
+  if (prop === "moneyCase") { // an open briefcase full of banknotes, held at the chest
+    const x0 = 300 - 64 * u, x1 = 300 + 64 * u, y0 = chin + 0.3 * HH, y1 = chin + 0.92 * HH;
+    p.poly([[x0 + 4 * u, y0 - 0.34 * HH], [x1 - 4 * u, y0 - 0.34 * HH], [x1, y0], [x0, y0]], "#3a2416", 2.6 * u);
+    p.poly([[x0, y0], [x1, y0], [x1, y1], [x0, y1]], "#4a2e1a", 2.6 * u);
+    for (let r = 0; r < 3; r++) for (let c = 0; c < 4; c++) { const bx = x0 + 8 * u + c * 29 * u, by = y0 + 6 * u + r * 15 * u;
+      p.poly([[bx, by], [bx + 26 * u, by], [bx + 26 * u, by + 13 * u], [bx, by + 13 * u]], "#7fb36a", 1.4 * u); p.poly([[bx + 10 * u, by], [bx + 16 * u, by], [bx + 16 * u, by + 13 * u], [bx + 10 * u, by + 13 * u]], "#f1ead6", 0); }
+    p.poly([[300 - 8 * u, y1 - 4 * u], [300 + 8 * u, y1 - 4 * u], [300 + 8 * u, y1 + 3 * u], [300 - 8 * u, y1 + 3 * u]], "#c9a040", 1.2 * u);
+    for (const side of [-1, 1]) p.dot(300 + side * 60 * u, chin + 0.45 * HH, 5.5 * u);
   }
   if (prop === "newspaper") { // an open broadsheet held at the chest, face left visible
     const x0 = 300 - 66 * u, x1 = 300 + 66 * u, y0 = chin + 0.2 * HH, y1 = chin + 0.95 * HH;

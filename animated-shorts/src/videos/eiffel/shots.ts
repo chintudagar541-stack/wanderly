@@ -81,7 +81,7 @@ const stationFolk = (t: number, tint: V3): ActorDef[] => Array.from({ length: 9 
 // ================= SHOTS =================
 // 1 "In nineteen twenty-five, a man arrived in Paris ..." : Paris from above, the tower over the Seine
 add({ a: 0, b: 3.6, cam: glide({ pos: [330, 150, 640], look: [0, 120, 0], fov: 50 }, { pos: [250, 110, 500], look: [0, 118, 0], fov: 48 }, 0),
-  world: () => ({ light: "morning" }), overlay: (t) => ({ text: "PARIS, 1925", textOp: ramp(t, 0.5, 1.1) * (1 - ramp(t, 3.0, 3.5)) }) });
+  world: () => ({ light: "morning" }) });
 // 1b "... with a fake name, and a very big idea." : Lustig strolls down the cafe street, the tower at its end
 add({ a: 3.6, b: 7.0, cam: glide({ pos: [4.6, 1.6, -703.5], look: [1.6, 9, -560], fov: 46 }, { pos: [4.55, 1.6, -704.6], look: [1.6, 9.5, -560], fov: 44 }, 0),
   actors: (t) => [{ who: "lustig", pos: [4.4, 0, -689 - 1.5 * (t - 3.6)], opts: { mode: "stroll", phase: t * 1.4, expr: t < 5.4 ? "neutral" : "smile_closed", prop: "suitcase", blink: blinkAt(t, 1) }, tint: MORN },
