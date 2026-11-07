@@ -129,8 +129,33 @@ place(sfx, beep(1.1), 0.0, 0.16); place(sfx, rustle(0.7), 1.55, 0.25)
 place(sfx, traffic(1.0), 2.5, 0.22)
 # night (6.6 - 10.9 s): traffic far below, keyboard, trackpad scroll, a click
 place(sfx, traffic(4.5), 6.5, 0.18); place(sfx, clicks(1.8), 7.4, 0.3); place(sfx, clicks(0.9, 14), 8.6, 0.2); place(sfx, tick(), 9.55, 0.6)
+# auction screen + email (10.9 - 16.1 s): keyboard, a bid click, a soft mail chime
+place(sfx, traffic(5.2), 10.9, 0.12); place(sfx, clicks(1.2), 11.9, 0.25); place(sfx, tick(), 13.2, 0.6)
+place(sfx, birds(4.5), 16.1, 0.15); place(sfx, hum(4.5), 16.1, 0.2); place(sfx, bell(1320, 1.2), 16.4, 0.2)
+# lawyer at the door (18.15 - 26.6 s): knock-steps, paper rustles
+place(sfx, steps(1.2), 18.2, 0.35); place(sfx, rustle(0.8), 19.6, 0.35); place(sfx, rustle(0.6), 20.9, 0.3)
+place(sfx, hum(4.6), 22.0, 0.18); place(sfx, rustle(0.7), 23.3, 0.25)
+# casino (26.6 - 30.2 s): murmur, chips, a distant cheer
+place(sfx, murmur(3.6), 26.6, 0.35); place(sfx, clicks(3.4, 6), 26.8, 0.2); place(sfx, cheer(1.4), 28.3, 0.12)
+# city + space (30.2 - 35.7 s): traffic wash, then quiet space shimmer
+place(sfx, traffic(2.4), 30.2, 0.25); place(sfx, shimmer(2.0), 32.6, 0.25)
+# NASA (35.7 - 46.65 s): control-room hum, beeps, keyboards
+place(sfx, hum(10.9), 35.7, 0.25); place(sfx, clicks(10.5, 7), 35.9, 0.12)
+for at in (36.2, 38.3, 41.0, 43.6): place(sfx, tick(), at, 0.5)
+# night window, lunar sales (46.65 - 50.3 s)
+place(sfx, traffic(1.3), 46.65, 0.15); place(sfx, shimmer(2.2), 47.9, 0.22)
+# street booth (50.3 - 57.4 s): crowd, footsteps, traffic
+place(sfx, murmur(7.1), 50.3, 0.45); place(sfx, steps(7.0, 4.0), 50.3, 0.2); place(sfx, traffic(7.1), 50.3, 0.18); place(sfx, cheer(1.2), 52.7, 0.12)
+# press conference (57.4 - 61.9 s): room murmur and camera shutters
+place(sfx, murmur(4.5), 57.4, 0.25)
+for at in (57.6, 57.9, 58.8, 59.1, 60.0, 60.9, 61.2): place(sfx, tick(), at, 0.8)
+# space hotel, refund (62.95 - 68.6 s)
+place(sfx, shimmer(3.6), 62.95, 0.2); place(sfx, hum(2.0), 66.6, 0.18)
+# office (68.6 - 70.4 s), night ending (70.4 - end): keyboards, then crickets-quiet city
+place(sfx, hum(1.8), 68.6, 0.3); place(sfx, clicks(1.8), 68.6, 0.3)
+place(sfx, traffic(DUR - 70.4), 70.4, 0.12)
 # whips
-for at in (1.0, 2.55, 3.35, 4.35, 6.6, 8.6):
+for at in (1.0, 2.55, 3.35, 4.35, 6.6, 8.6, 11.9, 14.95, 24.35, 25.4, 30.2, 32.6, 34.6, 39.0, 42.45, 45.25, 47.9, 50.3, 52.6, 53.9, 55.2, 57.4, 59.9, 60.8, 61.9, 62.95, 66.6, 68.0, 68.6, 72.6):
     place(sfx, whoosh(), at - 0.17, 0.12)
 sfx = reverb(sfx, 1.0, 0.2)
 
