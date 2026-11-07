@@ -131,31 +131,31 @@ sfx = np.zeros(N)
 place(sfx, traffic(7.0), 0.0, 0.35)
 for k in (0.6, 1.4, 1.9, 2.8): place(sfx, chirp(), k, 0.25)
 place(sfx, bell(392, 3.5, 0.5), 0.8, 0.35); place(sfx, bell(330, 3.5, 0.5), 2.2, 0.3)
-place(sfx, steps(3.3, 1.9), 3.7, 0.45); place(sfx, aooga(), 5.4, 0.18)
+place(sfx, steps(3.3, 1.9), 3.7, 0.45); 
 place(sfx, murmur(6.4), 7.0, 0.4); place(sfx, traffic(6.4), 7.0, 0.2)
 place(sfx, rustle(0.5), 7.05, 0.6); place(sfx, clink(), 8.6, 0.25); place(sfx, clink(4100), 9.4, 0.18)
-place(sfx, whoosh(0.4, 800, 6000), 9.85, 0.5); place(sfx, rustle(0.6), 10.0, 0.7); place(sfx, rustle(0.5), 13.5, 0.6)
+place(sfx, rustle(0.6), 10.0, 0.7); place(sfx, rustle(0.5), 13.5, 0.6)
 place(sfx, tick(4.2, 2.0), 15.4, 0.25); place(sfx, scratch(2.2), 15.7, 0.45); place(sfx, thump(), 18.2, 0.8); place(sfx, thump(), 18.9, 0.6)
 place(sfx, water(4.4), 19.6, 0.25); place(sfx, traffic(4.4), 19.6, 0.25); place(sfx, steps(4.0, 2.2, 0.8), 19.8, 0.35)
-place(sfx, murmur(6.6), 24.0, 0.2); place(sfx, whoosh(0.5, 200, 1500), 28.3, 0.35)
-place(sfx, clang(), 30.62, 1.0)
-place(sfx, shh(1.4), 33.4, 0.3); place(sfx, shh(1.0), 35.0, 0.25)
-place(sfx, engine(3.3), 36.6, 0.6); place(sfx, aooga(), 38.3, 0.55)
+place(sfx, murmur(6.6), 24.0, 0.2); 
+place(sfx, clang(), 30.62, 0.5)
+
+place(sfx, engine(3.3), 36.6, 0.6); 
 place(sfx, traffic(5.6), 39.8, 0.25); for_ = [place(sfx, chirp(), k, 0.2) for k in (40.3, 41.7, 43.9)]
-place(sfx, bell(1047, 1.2, 0.4), 40.65, 0.4)
+
 place(sfx, tick(2.3, 2.0), 45.4, 0.25); place(sfx, tick(6.0, 1.6), 47.7, 0.15)
-place(sfx, bell(1319, 1.4, 0.4), 52.2, 0.35)
+
 place(sfx, tick(4.5, 2.0), 53.7, 0.2)
-place(sfx, rustle(0.5), 59.4, 0.5); place(sfx, kaching(), 59.6, 0.9)
+place(sfx, rustle(0.5), 59.4, 0.5); 
 place(sfx, murmur(4.8), 61.3, 0.35); place(sfx, hiss(2.0), 61.5, 0.25); place(sfx, steps(2.5, 1.9), 61.4, 0.4)
 place(sfx, whistle(1.5), 63.5, 0.6); place(sfx, chuffs(2.4, 1.2, 4.5), 63.9, 0.7); place(sfx, hiss(1.6), 64.0, 0.3)
-place(sfx, wahwah(), 66.35, 0.9)
-place(sfx, whoosh(0.7, 300, 4000), 69.15, 0.5); place(sfx, water(2.4), 69.4, 0.2); place(sfx, steps(2.4, 2.2, 0.8), 69.5, 0.35)
+
+place(sfx, water(2.4), 69.4, 0.2); place(sfx, steps(2.4, 2.2, 0.8), 69.5, 0.35)
 place(sfx, murmur(2.6), 71.9, 0.2)
-place(sfx, police(1.4), 74.6, 0.5); place(sfx, police(1.2), 75.9, 0.4); place(sfx, steps(2.5, 5.0, 1.0), 74.5, 0.6)
-place(sfx, tick(2.3, 2.0), 77.0, 0.3); place(sfx, gliss(False), 77.1, 0.5)
+place(sfx, police(1.0), 74.6, 0.25); place(sfx, steps(2.5, 5.0, 1.0), 74.5, 0.6)
+place(sfx, tick(2.3, 2.0), 77.0, 0.3); 
 place(sfx, water(2.1), 79.3, 0.3); place(sfx, bell(294, 3.0, 0.5), 79.5, 0.3)
-place(sfx, traffic(4.6), 81.35, 0.15); place(sfx, gliss(True), 83.05, 0.5); place(sfx, bell(1568, 1.6, 0.5), 83.18, 0.6)
+place(sfx, traffic(4.6), 81.35, 0.15); 
 
 # ---------------- score: a sneaky Parisian waltz (D minor), 150 bpm in 3/4 ----------------
 BEAT = 60 / 150
@@ -193,24 +193,24 @@ def sneak(a, b):  # pizzicato tiptoe: staccato bass walk + glockenspiel ticks
 waltz(0.3, 15.3)
 sneak(15.4, 30.4)
 for k, f in enumerate([587, 698, 880, 1175]): place(glk, glock(f), 24.1 + k * 0.2, 0.4)
-place(mel, brass([73.4, 110.0, 146.8], 2.4), 30.62, 1.4)
+
 sneak(33.1, 36.5)
 waltz(36.6, 45.3, True, 1.05)
-place(mel, brass([69.3, 103.8], 1.6), 45.45, 0.6)               # the wife's suspicion: a low, sour chord
+
 sneak(47.7, 58.1)
 waltz(58.2, 66.0, True, 1.0)
 waltz(69.4, 74.4, True, 1.1)
 sneak(74.5, 79.2)
 for k, f in enumerate([293.7, 349.2, 440.0, 587.3]): place(mel, accordion(f, 2.0 - k * 0.3), 79.4 + k * 0.45, 0.45)
 place(mel, accordion(587.3, 0.7) + accordion(440.0, 0.7), 81.4, 0.5); place(mel, accordion(698.5, 0.9), 82.2, 0.5)
-place(mel, brass([146.8, 220.0, 293.7], 2.2) * 0.9, 83.18, 1.2)
+
 for k, (n, d) in enumerate([("D5", 0.2), ("F5", 0.2), ("A5", 0.2), ("D5", 1.6)]): place(mel, accordion(NOTE[n] * (2 if k == 3 else 1), d), 83.2 + 0.22 * k, 0.7)
 place(bass, pluck(73.4, 1.6, 0.9), 83.18, 1.2)
 
 
 def curve(points):
     xs, ys = zip(*points); return np.interp(t, xs, ys)
-score = 0.9 * bass + 0.55 * chords + 0.6 * mel + 0.6 * glk
+score = 0.9 * bass + 0.5 * chords + 0.55 * mel
 score *= curve([(0, 0.8), (15.3, 0.8), (15.4, 1.0), (30.4, 1.0), (45.4, 1.0), (66.0, 1.0), (66.2, 0.0), (69.2, 0.0), (69.4, 1.0), (83.0, 1.0), (85.2, 1.0), (86, 0)])
 for a, b in ((30.3, 30.6), (45.2, 45.45), (83.0, 83.17)):
     score[int(a * SR):int(b * SR)] *= 0.12
@@ -221,8 +221,8 @@ voice = np.zeros(N); v = np.frombuffer(raw, dtype=np.float32).astype(np.float64)
 venv = lp(np.abs(voice), 8)
 duck = 1 - 0.55 * np.clip(venv / (np.percentile(venv, 90) + 1e-9), 0, 1)
 vr = np.sqrt(np.mean(voice[voice != 0] ** 2))
-score *= (vr * db(-14)) / (np.sqrt(np.mean(score ** 2)) + 1e-9) * db(3)
-sfx *= (vr * db(-2)) / (np.percentile(np.abs(sfx[sfx != 0]), 99) + 1e-9) * db(-6) * 3
+score *= (vr * db(-14)) / (np.sqrt(np.mean(score ** 2)) + 1e-9) * db(-4)   # kept low: the voice leads
+sfx *= (vr * db(-2)) / (np.percentile(np.abs(sfx[sfx != 0]), 99) + 1e-9) * db(-10) * 3
 mus = score * duck
 mix = voice + mus + sfx
 peak = np.max(np.abs(mix)); mix *= db(-1) / peak
