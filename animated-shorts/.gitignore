@@ -11,3 +11,4 @@ shorts/*/audio/stems/
 tts/models/
 tts/samples/
 tts/*.mp3
+shorts/*/voice/*_preview.mp3
