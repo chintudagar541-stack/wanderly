@@ -29,7 +29,11 @@ pip install -q kokoro-onnx soundfile scipy
 - To check a pronunciation: `python3 tts/lines.py script.txt out --show`.
 - The output is `voice.wav`, `lines.json` and `words.json`. Use the word times to cut on words.
 
-## 3. World (`src/videos/<name>/world.ts`)
+## 3. World (`src/videos/<name>/world.ts`): REALISTIC, read `animated-shorts/REALISM.md` first
+- Build from the shared realism library `src/lib/realism/` (photo PBR materials, `M.*`, `std()` in place of `toon()`,
+  `rbox` bevels, world-scaled UVs, `building()` / `street()` and the city kit, `LOOKS` + `makeEnvs` + `aoPass`).
+  Load it with `loadRealism()` in a `delayRender` (see `src/videos/moon/Moon.tsx`). The Moon short is the reference
+  implementation of the realism library.
 - Copy diwali2/world.ts. Each place is its own block (its own `Batch`, about 400 units apart on x).
 - Available pieces:
   - Points lights: `diya()`, `lightString()`, `Flames`.
@@ -64,7 +68,7 @@ pip install -q kokoro-onnx soundfile scipy
 - Use DOF on close shots (`dof` 10–26, plus `focus`) and `warm` point lights on faces at night.
 - The opening and closing shots use the same "home" scene, so the video ends where it started.
 
-## 6. Check with stills (always, before rendering)
+## 6. Check with stills (always, before rendering): run the 9-point check in REALISM.md on every still
 ```
 cd animated-shorts && REMOTION_TMP=$PWD/.remotion-tmp REMOTION_GL=swangle COMP=<Comp> node scripts/bridge-stills.mjs out/<name>/st/a_ f1,f2,... 0.5
 ```

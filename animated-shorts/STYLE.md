@@ -36,6 +36,10 @@ These come straight from the channel owner. Apply all of them to every new video
   ("2,500" becomes "twenty five hundred").
 
 ## Picture
+- **REALISTIC WORLDS (owner directive 2026-11-07, top rule with the one below): follow `REALISM.md` for every set.**
+  The owner said the old backgrounds were "bilkul cartoony" and showed the reference videos: their worlds have real
+  textures, real light and real skies. Build every set from `src/lib/realism/`: photo PBR materials, bevelled models,
+  `building()` / `street()` kits, HDRI lighting, AO, a photo sky, a real Moon. Characters stay 2D cards.
 - **"Like the reference" means the reference videos the owner sent (Tughlaq coin, Diwali, and others), NOT our own
   older videos.** Match their look: big close-ups of characters, rich colourful sets, and fast moving cameras.
 - **ALWAYS, in every video: a moving camera, a full ("bhara hua") environment, and close-ups.** The owner repeats this
@@ -48,7 +52,7 @@ These come straight from the channel owner. Apply all of them to every new video
     with fireworks; Gwalior fort gate; a line of 52 turbaned kings; Goa palms with a giant green Narakasura
     effigy on scaffolding.
 - **No title cards and no captions.** Start straight on a scene.
-- **Backgrounds are always full.** Nothing may look empty ("khali khali"): props everywhere (pots, carts, stalls,
+- **Backgrounds are always full** (and realistic, see `REALISM.md`). Nothing may look empty ("khali khali"): props everywhere (pots, carts, stalls,
   lamps, trees, banners, carpets, books, crates), crowds of background characters, patterned surfaces
   (carpets, tiles, fabrics, wallpapers), foreground objects to frame shots. Check every still for empty areas
   before rendering.
