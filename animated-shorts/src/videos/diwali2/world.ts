@@ -353,7 +353,7 @@ export class World {
       for (let q = 0; q < 140; q++) { const x = X - 50 + rnd(q + 700) * 100, z = 2 + rnd(q + 701) * 40; diya(B, x, WATER_Y, z, 1.4); refl.push({ p: [x, WATER_Y - 0.25, z + 0.3], order: 0, tint: [1, 0.55, 0.2] }); }
     }
     for (const B of sets) { const g = new THREE.Group(); B.build(g); g.traverse((o) => { if ((o as THREE.Mesh).isMesh) { o.castShadow = true; o.receiveShadow = true; } }); R.add(g); }
-    this.diyas = new Flames(R, diyas, 0.3);
+    this.diyas = new Flames(R, diyas, 0.42);
     this.strings = new Flames(R, strings, 0.2);
     this.reflect = new Flames(R, refl, 0.5); this.reflect.pts.renderOrder = 2;
     // hero diya flame (a big sprite)
