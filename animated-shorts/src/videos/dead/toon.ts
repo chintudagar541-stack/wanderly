@@ -20,6 +20,8 @@ export type Outfit = {
   jacket: string; pants: string; boots: string; hat?: string | null; belt?: string | null; buttons?: string; rifle?: boolean;
   sash?: string; sword?: boolean; moustache?: string; skin?: string; head?: number; cap?: string; hair?: string; dress?: string;
   build?: Build; stars?: boolean; heads?: number; bindi?: boolean; beard?: string;
+  /** with hat "longHair": the hairstyle (default long); jewel = jhumkas, necklace, maang tikka; dupatta = its colour */
+  hairStyle?: "long" | "bob" | "ponytail" | "bun"; jewel?: boolean; dupatta?: string;
 };
 type P2 = [number, number];
 
@@ -358,17 +360,36 @@ const faceSide = (p: Pen, hx: number, hy: number, W: number, expr: Expr, lid: nu
 const BONNET = "#e9cf8f", BONNET_BRIM = "#d6b46a";
 /** parts of a hat that sit behind the head (bonnet) */
 const hatBehind = (p: Pen, o: Outfit, H: Blob, cx: number, hc: number, light: number, thick: number, ow: number, side: boolean) => {
-  if (o.hat === "longHair") { // long hair falling behind to the shoulders, with a bun
-    const hair = o.hair ?? "#1f1612";
-    const lh = blobPts(cx, hc + 0.32 * 2 * H.b, { ...H, a: H.a * 1.12, b: H.b * 1.45, asym: 0, egg: -0.1, seed: H.seed + 5 });
-    p.shadedFill(lh, hair, mul(hair, SH_FELT), light, H.a * 1.12);
-    p.inkRing(lh, ow * 0.85, thick);
-    return;
-  }
+  if (o.hat === "longHair") return; // drawn behind the body by hairBack
   if (o.hat !== "bonnet") return;
   const bb = blobPts(cx - (side ? 12 : 0) * (H.a / 50), hc - 0.07 * 2 * H.b, { ...H, a: H.a * 1.17, b: H.b * 1.13, asym: 0, egg: 0.04, seed: H.seed + 3 });
   p.shadedFill(bb, BONNET, mul(BONNET, SH_CLOTH), light, H.a * 1.17);
   p.inkRing(bb, ow * 0.85, thick);
+};
+
+/** the back part of a woman's hair, drawn BEHIND the body: long / bob / ponytail / bun */
+const hairBack = (p: Pen, o: Outfit, H: Blob, cx: number, hc: number, light: number, thick: number, ow: number) => {
+  const hair = o.hair ?? "#1f1612", a = H.a, b = H.b, u = (2 * a) / 100, st = o.hairStyle ?? "long", hi = mul(hair, [1.8, 1.8, 1.8]);
+  const cap: P2[] = [];
+  for (let i = 0; i <= 18; i++) { const t = Math.PI + (Math.PI * i) / 18; cap.push([cx + Math.cos(t) * a * 1.1, hc - 0.05 * b + Math.sin(t) * b * 1.08]); }
+  if (st === "long" || st === "bob") {
+    const len = st === "long" ? 2.25 : 0.95, wide = st === "long" ? 1.24 : 1.2, pts = [...cap];
+    pts.push([cx + a * 1.14, hc + 0.4 * b], [cx + a * wide, hc + (len - 0.4) * b]);
+    for (let i = 0; i <= 8; i++) pts.push([cx + a * wide - (2 * wide * a * i) / 8, hc + len * b + (i % 2 ? 5 * u : 0)]);
+    pts.push([cx - a * 1.14, hc + 0.4 * b]);
+    p.shadedFill(pts, hair, mul(hair, SH_FELT), light, a * 1.2);
+    for (const s of [-1, 1]) for (let k = 0; k < 2; k++) p.stroke([[cx + s * a * (1.02 + k * 0.08), hc + 0.3 * b], [cx + s * a * (1.1 + k * 0.06), hc + (len - 0.15) * b]], 1.3 * u, hi);
+    p.poly(pts, null, ow * 0.85);
+  } else if (st === "ponytail") {
+    const tail: P2[] = [[cx + a * 0.55, hc - 0.7 * b], [cx + a * 1.35, hc - 0.4 * b], [cx + a * 1.55, hc + 0.5 * b], [cx + a * 1.35, hc + 1.5 * b], [cx + a * 1.12, hc + 0.6 * b], [cx + a * 0.9, hc - 0.2 * b]];
+    p.shadedFill(tail, hair, mul(hair, SH_FELT), light, a); p.poly(tail, null, ow * 0.85);
+    p.stroke([[cx + a * 1.3, hc - 0.2 * b], [cx + a * 1.38, hc + 1.1 * b]], 1.3 * u, hi);
+  } else {
+    p.ell(cx, hc - 1.05 * b, a * 0.55, b * 0.42, hair, ow * 0.85);
+    p.stroke([[cx - a * 0.3, hc - 1.1 * b], [cx + a * 0.25, hc - 1.25 * b]], 1.3 * u, hi);
+  }
+  if (o.jewel) for (let k = 0; k < 7; k++) { const t = rad(200 + k * 14); p.ell(cx + Math.cos(t) * a * 1.08, hc + 0.35 * b + Math.sin(t) * b * 0.95, 4 * u, 4 * u, "#fbf8ee", 1.2 * u); }
+  void thick;
 };
 
 const hatOn = (p: Pen, o: Outfit, hp: P2[], H: Blob, cx: number, hc: number, light: number, seed: number, facing: number, side: boolean) => {
@@ -604,7 +625,8 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
   const sway = mode === "march" ? 1.6 * Math.sin(two * phase) : mode === "stroll" ? 1.0 * Math.sin(two * phase) : 0;
   const A = tilt + sway;
   p.rot = A ? [rad(A), 300, hipY] : null;
-  const dress = !!o.dress && mode !== "sit" && mode !== "fall";
+  if (o.hat === "longHair" && !back) hairBack(p, o, H, 300, hc, light, thick, ow);
+  const dress = !!o.dress && mode !== "fall";
   const T: Blob = { a: ((Bd.tw / 2) * W) / 1.06, b: 0.5 * (torsoBot - (chin - 0.25 * HH)), nTop: 2.2, nBot: 2.6, egg: o.build === "stout" ? 0.17 : 0.12,
     asym: 0.04 * facing, rot: 0, noise: 0.006, seed: seed + 7 };
   const tcx = 300 + 3 * u * facing, tcy = torsoBot - T.b, tp = blobPts(tcx, tcy, T);
@@ -694,14 +716,27 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
   for (const a of arms) if (!a.front) drawArm(a);
   // torso / dress: shaded fill -> clothing clipped to it -> thick-thin ink ring
   if (dress) {
-    const D: Blob = { a: 0.5 * W * 0.98, b: 0.5 * ((sole - 0.35 * HH) - (chin - 0.2 * HH)), nTop: 2.0, nBot: 3.0, egg: 0.35, asym: 0.03 * facing, rot: 0, noise: 0.006, seed: seed + 9 };
-    const dp = blobPts(300, sole - 0.35 * HH - D.b, D);
-    p.gradFill(dp, o.dress!, mul(o.dress!, SH_CLOTH), light);
-    p.inkRing(dp, ow, thick);
-    const Sw: Blob = { a: 0.37 * W, b: 0.3 * HH, nTop: 2.2, nBot: 2.4, egg: 0.1, asym: 0, rot: 0, noise: 0.006, seed: seed + 8 };
-    const sp = blobPts(300, chin + 0.12 * HH, Sw);
-    p.gradFill(sp, o.jacket, mul(o.jacket, SH_CLOTH), light);
-    p.inkRing(sp, ow * 0.9, thick);
+    // lehenga / saree: a flared pleated skirt from the waist with a gold border, a fitted blouse, a dupatta, jewellery
+    const sk = o.dress!, bord = o.sash ?? mul(o.dress!, [0.7, 0.7, 0.7]), yw = torsoBot - 0.2 * HH, yh = mode === "sit" ? sole + 0.06 * HH : sole - 0.08 * HH, tw = 0.82 * T.a, hw = (mode === "sit" ? 1.75 : 1.42) * T.a;
+    const skirt: P2[] = [[tcx - tw, yw], [tcx + tw, yw]];
+    for (let i = 0; i <= 10; i++) { const x = tcx + hw - (2 * hw * i) / 10; skirt.push([x, yh + (i % 2 ? 3 * u : 0) - Math.abs(i - 5) * 0.6 * u]); }
+    p.gradFill(skirt, sk, mul(sk, SH_CLOTH), light);
+    p.clip(skirt, () => {
+      for (let i = -3; i <= 3; i++) p.stroke([[tcx + i * 0.2 * tw, yw + 4 * u], [tcx + i * 0.3 * hw, yh]], 1.6 * u, mul(sk, [0.72, 0.72, 0.72]));
+      p.band([[tcx - hw - 4 * u, yh - 0.1 * HH], [tcx + hw + 4 * u, yh - 0.1 * HH]], bord, 0.09 * HH, 0);
+      for (let x = tcx - hw; x < tcx + hw; x += 11 * u) p.dot(x, yh - 0.1 * HH, 2.4 * u, sk);
+    });
+    p.poly(skirt, null, ow);
+    const bl: Blob = { ...T, a: T.a * 0.86, b: T.b * 0.78, nBot: 2.2, seed: seed + 8 };
+    const bp = blobPts(tcx, chin + 0.55 * HH - 0.1 * HH, bl);
+    p.gradFill(bp, o.jacket, mul(o.jacket, SH_CLOTH), light);
+    p.inkRing(bp, ow * 0.9, thick);
+    // dupatta over the left shoulder, across to the right hip, its end falling down the side
+    if (o.dupatta) { const dup = o.dupatta;
+    p.band([[tcx - 0.78 * T.a, chin + 0.04 * HH], [tcx + 0.95 * T.a, yw + 0.06 * HH]], dup, 0.2 * HH, ow * 0.6, "round");
+    p.band([[tcx - 0.92 * T.a, chin + 0.02 * HH], [tcx - 1.12 * T.a, yw + 0.3 * HH]], dup, 0.11 * HH, ow * 0.5, "round");
+    for (let k = 0; k < 6; k++) p.dot(tcx - 1.12 * T.a + (k - 2.5) * 2.4 * u, yw + 0.36 * HH + (k % 2) * 2 * u, 2.2 * u, bord); }
+    if (o.jewel) { for (let k = -4; k <= 4; k++) p.dot(tcx + k * 4.2 * u, chin + 0.06 * HH + (16 - k * k) * 0.25 * u, 2.6 * u, "#f2c14e"); p.dot(tcx, chin + 0.06 * HH + 6 * u, 3.6 * u, "#d1202f"); }
   } else {
     p.gradFill(tp, o.jacket, mul(o.jacket, SH_CLOTH), light);
     p.clip(tp, () => {
@@ -864,7 +899,22 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
   const hp = blobPts(300, hc, H);
   p.shadedFill(hp, skin, mul(skin, SH_SKIN), light, H.a);
   p.inkRing(hp, ow, thick);
-  hatOn(p, o.hat === "longHair" || o.hat === "jata" ? { ...o, hat: "hair" } : o, hp, H, 300, hc, light, seed, facing, false);
+  if (o.hat === "longHair") {
+    const hair = o.hair ?? "#1f1612", a = H.a, b = H.b, cx = 300;
+    const fr: P2[] = [[cx - a * 1.06, hc + 0.62 * b]];
+    for (let i = 0; i <= 18; i++) { const t = Math.PI + (Math.PI * i) / 18; fr.push([cx + Math.cos(t) * a * 1.07, hc - 0.02 * b + Math.sin(t) * b * 1.06]); }
+    const st = o.hairStyle ?? "long", lk = st === "long" ? 0.62 : st === "bob" ? 0.5 : 0.0, side = o.hairStyle === "ponytail" || o.hairStyle === "bun";
+    if (side) fr[0] = [cx - a * 1.06, hc + 0.05 * b];
+    fr.push([cx + a * 1.06, hc + (side ? 0.05 : lk) * b]);
+    if (!side) fr.push([cx + a * 0.82, hc + (lk - 0.04) * b], [cx + a * 0.8, hc + 0.05 * b]);
+    fr.push([cx + a * 0.55, hc - 0.38 * b], [cx + a * 0.18, hc - 0.6 * b], [cx, hc - 0.5 * b], [cx - a * 0.18, hc - 0.6 * b], [cx - a * 0.55, hc - 0.38 * b]);
+    if (!side) fr.push([cx - a * 0.8, hc + 0.05 * b], [cx - a * 0.82, hc + (lk - 0.04) * b]);
+    p.shadedFill(fr, hair, mul(hair, SH_FELT), light, a, 0.35);
+    p.stroke([[cx, hc - 0.5 * b], [cx, hc - 0.98 * b]], 1.6 * u, mul(hair, [2.2, 2.2, 2.2]));
+    for (const s of [-1, 1]) { p.stroke([[cx + s * a * 0.2, hc - 0.8 * b], [cx + s * a * 0.7, hc - 0.45 * b]], 1.3 * u, mul(hair, [1.9, 1.9, 1.9])); if (!side) p.stroke([[cx + s * a * 0.95, hc - 0.2 * b], [cx + s * a * 0.94, hc + (lk - 0.12) * b]], 1.3 * u, mul(hair, [1.9, 1.9, 1.9])); }
+    p.poly(fr, null, ow * 0.9);
+    if (o.jewel) { p.stroke([[cx, hc - 0.98 * b], [cx, hc - 0.62 * b]], 1.4 * u, "#e8b84a"); p.ell(cx, hc - 0.58 * b, 4.5 * u, 5 * u, "#e8b84a", 1.4 * u); p.ell(cx, hc - 0.58 * b, 2 * u, 2.2 * u, "#d1202f", 0); }
+  } else hatOn(p, o.hat === "jata" ? { ...o, hat: "hair" } : o, hp, H, 300, hc, light, seed, facing, false);
   if (o.hat === "jata") { // matted hair tied in a bun on top
     p.ell(300, crown - 0.02 * HH, 0.38 * H.a, 0.2 * HH, o.hair ?? "#2a1d18", ow * 0.8);
     p.stroke([[300 - 0.3 * H.a, crown + 0.06 * HH], [300 + 0.3 * H.a, crown + 0.06 * HH]], 3 * u, "#e8b84a");
@@ -872,6 +922,11 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
   const brim = !!o.hat && o.hat !== "hair" && o.hat !== "bonnet" && o.hat !== "cap" && o.hat !== "longHair" && o.hat !== "jata";
   faceFront(p, 300, hc, W, expr, facing, look, lid, brim, skin, o.moustache, o.build === "stout");
   if (o.bindi) p.ell(300 + 7 * u * facing, hc - 15 * u, 3.2 * u, 3.6 * u, "#d1202f", 0);
+  if (o.hat === "longHair" && o.jewel) for (const s of [-1, 1]) { // jhumka earrings
+    const ex = 300 + s * H.a * 0.98, ey = hc + 0.3 * H.b;
+    p.stroke([[ex, ey], [ex, ey + 7 * u]], 1.2 * u, "#c9962e"); p.poly([[ex - 5 * u, ey + 13 * u], [ex, ey + 6 * u], [ex + 5 * u, ey + 13 * u]], "#f2c14e", 1.2 * u);
+    for (const dx of [-4, 0, 4]) p.dot(ex + dx * u, ey + 15 * u, 1.6 * u, "#f2c14e");
+  }
   if (o.beard) { // full beard framing the chin, mouth left visible
     const bd: P2[] = [];
     for (let i = 0; i <= 16; i++) { const a = rad(-10 + (200 * i) / 16); bd.push([300 + Math.cos(a) * 0.86 * H.a, hc + 6 * u + Math.sin(a) * 0.95 * H.b]); }
