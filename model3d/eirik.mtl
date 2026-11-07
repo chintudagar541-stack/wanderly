@@ -1,0 +1,128 @@
+newmtl skin
+Ka 0 0 0
+Kd 0.950 0.790 0.650
+Ks 0.05 0.05 0.05
+Ns 10
+d 1
+illum 2
+
+newmtl hair
+Ka 0 0 0
+Kd 0.540 0.230 0.120
+Ks 0.05 0.05 0.05
+Ns 10
+d 1
+illum 2
+
+newmtl tunic
+Ka 0 0 0
+Kd 0.300 0.420 0.230
+Ks 0.05 0.05 0.05
+Ns 10
+d 1
+illum 2
+
+newmtl vest
+Ka 0 0 0
+Kd 0.420 0.290 0.180
+Ks 0.05 0.05 0.05
+Ns 10
+d 1
+illum 2
+
+newmtl pants
+Ka 0 0 0
+Kd 0.540 0.480 0.380
+Ks 0.05 0.05 0.05
+Ns 10
+d 1
+illum 2
+
+newmtl wrap
+Ka 0 0 0
+Kd 0.850 0.800 0.710
+Ks 0.05 0.05 0.05
+Ns 10
+d 1
+illum 2
+
+newmtl boot
+Ka 0 0 0
+Kd 0.290 0.200 0.140
+Ks 0.05 0.05 0.05
+Ns 10
+d 1
+illum 2
+
+newmtl belt
+Ka 0 0 0
+Kd 0.230 0.160 0.120
+Ks 0.05 0.05 0.05
+Ns 10
+d 1
+illum 2
+
+newmtl gold
+Ka 0 0 0
+Kd 0.790 0.640 0.290
+Ks 0.05 0.05 0.05
+Ns 10
+d 1
+illum 2
+
+newmtl fur
+Ka 0 0 0
+Kd 0.810 0.760 0.660
+Ks 0.05 0.05 0.05
+Ns 10
+d 1
+illum 2
+
+newmtl eye
+Ka 0 0 0
+Kd 0.970 0.970 0.970
+Ks 0.05 0.05 0.05
+Ns 10
+d 1
+illum 2
+
+newmtl iris
+Ka 0 0 0
+Kd 0.720 0.530 0.180
+Ks 0.05 0.05 0.05
+Ns 10
+d 1
+illum 2
+
+newmtl mouth
+Ka 0 0 0
+Kd 0.450 0.200 0.150
+Ks 0.05 0.05 0.05
+Ns 10
+d 1
+illum 2
+
+newmtl scar
+Ka 0 0 0
+Kd 0.710 0.340 0.290
+Ks 0.05 0.05 0.05
+Ns 10
+d 1
+illum 2
+
+newmtl wood
+Ka 0 0 0
+Kd 0.350 0.240 0.130
+Ks 0.05 0.05 0.05
+Ns 10
+d 1
+illum 2
+
+newmtl steel
+Ka 0 0 0
+Kd 0.620 0.650 0.680
+Ks 0.05 0.05 0.05
+Ns 10
+d 1
+illum 2
+
