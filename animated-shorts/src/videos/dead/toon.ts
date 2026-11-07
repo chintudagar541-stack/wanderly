@@ -532,7 +532,7 @@ const hatOn = (p: Pen, o: Outfit, hp: P2[], H: Blob, cx: number, hc: number, lig
 // ---------------- bodies ----------------
 export type Arms = [P2[], P2[]];
 /** held prop; for the hammer the number is the strike 0 (raised) .. 1 (struck) */
-export type Prop = null | "icecream" | "shako" | ["hammer", number] | "phoneEar" | "phoneHold" | "phoneDrop" | "binoculars" | "earCup" | "point" | "bow" | "bowAim" | "diya" | "sparkler" | "spear" | "spearAim" | "spearUp";
+export type Prop = null | "icecream" | "shako" | ["hammer", number] | "phoneEar" | "phoneHold" | "phoneDrop" | "binoculars" | "earCup" | "point" | "bow" | "bowAim" | "diya" | "sparkler" | "spear" | "spearAim" | "spearUp" | "newspaper" | "suitcase" | "cash" | "letter" | "twoFingers";
 
 const BUILD: Record<Build, { a: number; torso: number; legs: number; tw: number }> = {
   adult: { a: 118, torso: 1.1, legs: 1.4, tw: 0.8 },
@@ -620,7 +620,7 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
   const rifle = !!o.rifle && (mode === "march" || mode === "stand" || mode === "stroll");
   type Arm = { pts: [P2, P2, P2]; front: boolean };
   const arms: Arm[] = [];
-  if (mode === "sit") for (const side of [-1, 1]) arms.push({ pts: [sh(side), [tcx + side * (1.1 * T.a + 6 * u), sh(side)[1] + 0.4 * HH], [tcx + side * (1.2 * T.a + 10 * u), torsoBot + 0.04 * HH]], front: false });
+  if (mode === "sit" && prop !== "newspaper" && prop !== "cash" && prop !== "letter") for (const side of [-1, 1]) arms.push({ pts: [sh(side), [tcx + side * (1.1 * T.a + 6 * u), sh(side)[1] + 0.4 * HH], [tcx + side * (1.2 * T.a + 10 * u), torsoBot + 0.04 * HH]], front: false });
   else if (mode === "fall") for (const side of [-1, 1]) arms.push({ pts: [sh(side), [tcx + side * (1.15 * T.a + 12 * u), sh(side)[1] - 0.25 * HH], [tcx + side * (1.3 * T.a + 24 * u), sh(side)[1] - 0.68 * HH]], front: false });
   else {
     arms.push({ pts: prop === "shako" ? hang(-1, 0) : hang(-1, -sw), front: false });
@@ -651,6 +651,17 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
       arms.length = 0;
       const up = prop === "spearUp" ? 1 : 0;
       for (const side of [-1, 1]) arms.push({ pts: [sh(side), [tcx + side * (1.0 * T.a + 8 * u), sh(side)[1] + (0.25 - 0.2 * up) * HH], [tcx + side * 10 * u - 8 * u, sh(side)[1] + (0.32 - 0.38 * up) * HH + side * 6 * u]], front: true });
+    } else if (prop === "newspaper") {
+      arms.length = 0;
+      for (const side of [-1, 1]) arms.push({ pts: [sh(side), [tcx + side * (1.15 * T.a + 8 * u), sh(side)[1] + 0.4 * HH], [300 + side * 52 * u, chin + 0.42 * HH]], front: true });
+    } else if (prop === "suitcase") {
+      arms.push({ pts: hang(1, 0), front: true });
+    } else if (prop === "cash" || prop === "letter") {
+      const S = sh(1);
+      arms.push({ pts: [S, [tcx + 1.1 * T.a + 10 * u, S[1] + 0.36 * HH], [tcx + 0.95 * T.a + 18 * u, S[1] + 0.22 * HH]], front: true });
+    } else if (prop === "twoFingers") {
+      const S = sh(1);
+      arms.push({ pts: [S, [tcx + 1.25 * T.a + 30 * u, S[1] + 0.02 * HH], [300 + 1.12 * H.a + 30 * u, chin - 0.5 * H.b]], front: true });
     } else if (prop === "earCup") {
       const S = sh(1);
       arms.push({ pts: [S, [tcx + 1.2 * T.a + 18 * u, S[1] + 0.1 * HH], [300 + 1.05 * H.a + 6 * u, chin - 0.9 * H.b]], front: true });
@@ -755,6 +766,29 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
       p.ell(sx, sy, 5 * u, 5 * u, "#ffffff", 0);
       p.dot(hx, hy, 5.5 * u);
     }
+    if (prop === "suitcase") {
+      const w = 54 * u, h = 40 * u, x0 = hx - w / 2, y0 = hy + 6 * u;
+      p.stroke([[hx - 9 * u, hy + 7 * u], [hx - 9 * u, hy - 3 * u], [hx + 9 * u, hy - 3 * u], [hx + 9 * u, hy + 7 * u]], 3.2 * u, "#3a2414");
+      p.poly([[x0, y0], [x0 + w, y0], [x0 + w, y0 + h], [x0, y0 + h]], "#8a5a2e", 2.6 * u);
+      p.poly([[x0, y0 + 0.3 * h], [x0 + w, y0 + 0.3 * h], [x0 + w, y0 + 0.4 * h], [x0, y0 + 0.4 * h]], "#5a3418", 1.2 * u);
+      for (const k of [0.22, 0.78]) p.poly([[x0 + k * w - 4 * u, y0], [x0 + k * w + 4 * u, y0], [x0 + k * w + 4 * u, y0 + h], [x0 + k * w - 4 * u, y0 + h]], "#5a3418", 1.2 * u);
+      p.dot(hx, hy, 5.5 * u);
+    } else if (prop === "cash") {
+      for (let k = 0; k < 4; k++) { const a = rad(-30 + k * 16), cx3 = hx + 6 * u, cy3 = hy - 8 * u, L2 = 34 * u, W2 = 15 * u;
+        const d: P2 = [Math.sin(a), -Math.cos(a)], n: P2 = [Math.cos(a), Math.sin(a)];
+        const q: P2[] = [[cx3 - n[0] * W2, cy3 - n[1] * W2], [cx3 + n[0] * W2, cy3 + n[1] * W2], [cx3 + n[0] * W2 + d[0] * L2, cy3 + n[1] * W2 + d[1] * L2], [cx3 - n[0] * W2 + d[0] * L2, cy3 - n[1] * W2 + d[1] * L2]];
+        p.poly(q, k % 2 ? "#9cc78a" : "#b9dca0", 1.8 * u); }
+      p.dot(hx, hy, 5.5 * u);
+    } else if (prop === "letter") {
+      const w = 30 * u, h = 40 * u, x0 = hx - w / 2 + 4 * u, y0 = hy - h + 6 * u;
+      p.poly([[x0, y0], [x0 + w, y0], [x0 + w, y0 + h], [x0, y0 + h]], "#f6efd8", 2.2 * u);
+      for (let k = 0; k < 4; k++) p.stroke([[x0 + 5 * u, y0 + 9 * u + k * 6 * u], [x0 + w - 5 * u, y0 + 9 * u + k * 6 * u]], 1.4 * u, "#8a8070");
+      p.ell(x0 + w - 8 * u, y0 + h - 8 * u, 5 * u, 5 * u, "#c0202a", 1.2 * u);
+      p.dot(hx, hy, 5.5 * u);
+    } else if (prop === "twoFingers") {
+      for (const dx of [-3, 4]) p.band([[hx + dx * u, hy], [hx + dx * 1.8 * u, hy - 20 * u]], armCol, 4 * u, 1.4 * u, "round");
+      p.dot(hx, hy, 6 * u);
+    }
     if (prop === "icecream") {
       p.poly([[hx - 8 * u, hy - 12 * u], [hx + 8 * u, hy - 12 * u], [hx, hy + 7 * u]], "#e0a35a", 1.8 * u);
       p.ell(hx, hy - 19 * u, 11 * u, 10 * u, "#f7c6d9", 2.2 * u);
@@ -773,6 +807,16 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
       p.poly(Rh([[hx - 12 * u, hy - 58 * u], [hx + 20 * u, hy - 58 * u], [hx + 20 * u, hy - 42 * u], [hx - 12 * u, hy - 42 * u]]), "#7d848c", 2.2 * u);
       p.dot(hx, hy, 5.5 * u);
     }
+  }
+  if (prop === "newspaper") { // an open broadsheet held at the chest, face left visible
+    const x0 = 300 - 66 * u, x1 = 300 + 66 * u, y0 = chin + 0.2 * HH, y1 = chin + 0.95 * HH;
+    p.poly([[x0, y0], [x1, y0 + 3 * u], [x1, y1], [x0, y1 - 3 * u]], "#f1ead6", 2.6 * u);
+    p.stroke([[300, y0 + 2 * u], [300, y1 - 2 * u]], 1.6 * u, "#b8ae96");
+    p.poly([[x0 + 8 * u, y0 + 8 * u], [x1 - 8 * u, y0 + 10 * u], [x1 - 8 * u, y0 + 20 * u], [x0 + 8 * u, y0 + 18 * u]], "#2a2a2a", 0);
+    for (let k = 0; k < 6; k++) for (const [a0, a1] of [[x0 + 8 * u, 300 - 6 * u], [300 + 6 * u, x1 - 8 * u]]) if (!(a0 > 300 && k < 3)) p.stroke([[a0, y0 + 30 * u + k * 9 * u], [a1, y0 + 31 * u + k * 9 * u]], 2 * u, "#9a9282");
+    const tx = 300 + 32 * u, ty = y0 + 52 * u; // tiny tower picture
+    p.poly([[tx - 14 * u, ty], [tx - 2 * u, ty - 26 * u], [tx + 2 * u, ty - 26 * u], [tx + 14 * u, ty]], "#6b4a35", 1.2 * u);
+    for (const side of [-1, 1]) p.dot(300 + side * 60 * u, chin + 0.45 * HH, 5.5 * u);
   }
   if (prop === "shako") { // carried by the left hand
     const [hx, hy] = arms[0].pts[2];
