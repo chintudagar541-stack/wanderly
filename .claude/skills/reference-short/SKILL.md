@@ -81,9 +81,9 @@ cd animated-shorts && REMOTION_TMP=$PWD/.remotion-tmp REMOTION_GL=swangle COMP=<
   whips).
 - Nothing cartoonish. Run it with `python3 sound.py`, which writes `mix.wav`.
 
-## 8. Owner approval clip, then the full render
-- If the owner did not say "seedha poori bana do", first render a ~10 s clip
-  (`scripts/render_chunks.sh <Comp> 315 out/<name>/clip 160`), mux it, and send it. Wait for approval.
+## 8. Full render (no approval clip)
+- The owner removed the 10 s approval clip (2026-11-07): after the stills check, render the full video directly.
+  Render a short clip only when the owner asks for one.
 - For the full render: `REMOTION_TMP=$PWD/.remotion-tmp REMOTION_GL=swangle scripts/render_chunks.sh <Comp> <frames> out/<name>/full 160`.
   Run it in the background. It is resumable and takes about 10–16 min per 160 frames.
 - Register the composition in `src/Root.tsx`.

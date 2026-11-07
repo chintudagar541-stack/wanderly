@@ -4,8 +4,8 @@ These come straight from the channel owner. Apply all of them to every new video
 
 ## Workflow
 1. Write the script, make the voice, build the world, and check with test stills.
-2. **Before the full render, render a ~10 s clip** (the opening, with final sound) and send it.
-   Wait for "theek hai / poori bana do". If the owner asks for changes, make them and send a new clip.
+2. **No approval clip** (owner, 2026-11-07: "10 sec ki clip wala system hata do, sidha full render kro"). After the
+   stills check, go straight to the full render. Make a short clip only if the owner asks for one.
 3. Full render (`scripts/render_chunks.sh <Comp> <frames> <outDir>`), mux the sound, then QA
    (frame count, loudness about -14 LUFS, contact sheet).
 4. Deliver: the video (render card), **a smaller download copy** (`-crf 23`, sent with display "attach"; the
