@@ -4,9 +4,13 @@ description: Make a complete vertical animated story short (60-90 s) in the owne
 ---
 # Reference-style short: the full pipeline
 
-The template is the Diwali short, "Why India Celebrates Diwali Differently". Its code is in
-`animated-shorts/src/videos/diwali2/` and its audio in `animated-shorts/shorts/diwali2/`. Copy it, don't start from
-zero. Read `animated-shorts/STYLE.md` first: the owner's rules there always apply. Talk to the owner in Hinglish.
+**Engine v2 (use this):** the template is the "Clock Man" demo, `animated-shorts/src/videos/clockman/` (world.ts,
+shots.ts, Clockman.tsx) with its audio in `animated-shorts/shorts/clockman/`. It renders through the shared engine
+`animated-shorts/src/lib3d/` (`Short3D.tsx` renderer, `camera.ts` paths, `kit.ts` modelled props, `textures.ts`
+47 procedural textures). It matches the reference videos' look: soft PBR light + shadows, ambient occlusion, thin ink,
+real dissolves, continuous camera paths, the blue-shadow/warm-highlight grade. The measured reference numbers are in
+`animated-shorts/writer/REFERENCE_SPEC.md`. (The older Diwali short in `src/videos/diwali2/` uses engine v1: only copy
+its effects such as fireworks, diyas and water reflections.) Copy the template, don't start from zero. Read `animated-shorts/STYLE.md` first: the owner's rules there always apply. Talk to the owner in Hinglish.
 
 ## 0. Setup (fresh container)
 ```
@@ -29,40 +33,48 @@ pip install -q kokoro-onnx soundfile scipy
 - To check a pronunciation: `python3 tts/lines.py script.txt out --show`.
 - The output is `voice.wav`, `lines.json` and `words.json`. Use the word times to cut on words.
 
-## 3. World (`src/videos/<name>/world.ts`)
-- Copy diwali2/world.ts. Each place is its own block (its own `Batch`, about 400 units apart on x).
-- Available pieces:
-  - Points lights: `diya()`, `lightString()`, `Flames`.
-  - Decor: `garland()`, `kandil()`, `toran()`.
-  - Water with flame reflections (`refl`).
-  - Fireworks (`Burst`).
-  - Fire that ignites bottom-up (`burn`).
-  - Opening doors (`gate`).
-  - Painted canvas textures for walls, windows, fabric, rangoli and tiles.
-- **Every set must be FULL** (the owner's top rule): props, crowds, patterns, lights, and foreground objects.
-  No empty ground or empty walls.
-- Lights: `LightName` entries with sky gradient + hemi/sun/fog per place; grades in `<Name>.tsx` (`GRADES`).
+## 3. World (`src/videos/<name>/world.ts`, copy clockman's)
+- One `World` class implementing `WorldLike<LightName>` (`root`, `fog`, `set({light, t, cam, look, shadowR})`).
+- Each place is its own block about 300 units apart on x. Build with `Kit` (`k.at(pos, yaw, () => ...)`, `k.box`,
+  `k.cyl`, `k.panel`, `k.floor`, `k.mesh`) and the props in `src/lib3d/kit.ts`: `desk`, `chair`, `bookshelf`,
+  `cabinet`, `plant`, `wallClock`/`clockFace`, `picture`, `windowFrame`, `door`, `deskClutter`, `house`, `pine`,
+  `lampPost`, `fence`. Materials: `M(color, map?, {rough, metal, emissive, ei})`; texture repeat: `rep(tex, w, h, tw, th)`.
+- Textures from `src/lib3d/textures.ts` (see the `TextureSheet` composition): bricks, stoneBlocks, cobblestones,
+  woodFloor, clapboardSiding, roofShingles, plaster, wallpaper, carpetTile, persianRug, marble, tiles, grass, dirt,
+  sand, snow, water, metal, parchment, bookshelf, windowNight/Day, signTex, and more.
+- **Every set must be FULL** (the owner's top rule): furniture, clutter, signs, plants, boxes, crowds, lights,
+  foreground objects. No empty ground or bare walls. Rooms get a ceiling, skirting, a window with light coming in.
+- Lights per place in `set()`: hemisphere sky/ground colours, a sun (soft PCF shadows that follow `look`), fog, point
+  lamps. Interiors: strong warm sun through the window (hard yellow patches), cool bright fill. Night: blue hemi,
+  warm lamp pools and lit windows, falling snow/particles, moon. Moving parts (clock hands, doors) are separate meshes
+  updated in `set()` from `t`.
 
 ## 4. Characters (`outfitOf` in shots.ts)
-- Cards are drawn by `src/videos/dead/toon.ts`.
-- Hats: `turban`, `crown`, `cap`, `hair`, `tophat`, `fedora`, `bonnet`, and `longHair` (women; set `hairStyle` to
-  long, bob, ponytail or bun).
-- Indian women get `jewel: true`, `dupatta`, `bindi` and `sash`.
-- Gods are richly dressed: crown, a blue skin for Raam and Krishna, and jewels. Don't depict the Sikh Gurus: show
-  light instead.
-- Props: `diya`, `sparkler`, `spear`, `bow`, `point`, `["hammer", 0..1]`, `axe`, `letter`, `newspaper`, `cash`,
-  `suitcase`, and others.
-- Expressions: `smile`, `grin`, `laugh`, `shock`, `dazed`, `nervous`, `creepy`, `terror`, `asleep`, `stern`, and others.
-- Actor options: `scale` (giant effigies and idols), `roll` (falling), `tint`, `wave`, `back` (seen from behind),
-  `mode` (stand, stroll, march, sit).
+- Cards are drawn by `src/videos/dead/toon.ts`. Always add `headStyle: "ref"` (cream head, thin outline).
+- Hats: `turban`, `crown`, `cap`, `hair`, `tophat`, `fedora`, `bonnet`, `longHair` (+ `hairStyle` long/bob/ponytail/bun).
+- Indian women get `jewel: true`, `dupatta`, `bindi` and `sash`. Gods richly dressed; never depict the Sikh Gurus.
+- Modes: `stand`, `stroll`, `march`, `sit`, `sitFeetUp`, `lie`, `kneel`, `lean`, `run`, `jump`, `sitFloor`.
+- Props: `diya`, `sparkler`, `spear`, `bow`, `point`, `["hammer", k]`, `["shovel", k]`, `["drum", k]`, `axe`,
+  `letter`, `newspaper`, `cash`, `suitcase`, `phone`, `plate`, `book`, `broom`, `rope`, `garland`, `candle`, `basket`,
+  `juice`, `cup`, `lantern`, `flag`, `torch`, `pot`, `umbrella`, `stick`, `bag` (`propColor`).
+- Expressions: `smile`, `smile_closed`, `grin`, `laugh`, `shock`, `dazed`, `nervous`, `terror`, `asleep`, `stern`, ...
+- Emotion FX: `sweat`, `steam`, `angry` (purple face), `blush`, `zzz`, `tears`, `sparkleEyes`, `question`, `exclaim`,
+  `mouthOpen`.
+- **Act out the key words** (reference rule): "angry" = purple face + steam, "fired" = launched out of frame with a
+  spin (`roll`), "asleep" = zzz, "confused" = "?". Actor options: `scale`, `roll`, `yaw`, `tint`, `back`.
 
-## 5. Shots (`src/videos/<name>/shots.ts`)
-- Write one `add({ a, b, light, dof, cam: move(A, B), actors, fx, whip })` per shot.
-- **Angle changes every 0.7–1.8 s**, cut on words. There are a lot of **close-ups** of faces (camera about 2 m away,
-  fov 34–40), a few wides, and a `whip: ±1` on beat changes.
-- The camera always moves: `move()` keeps a constant speed, and you can also orbit or crane.
-- Use DOF on close shots (`dof` 10–26, plus `focus`) and `warm` point lights on faces at night.
-- The opening and closing shots use the same "home" scene, so the video ends where it started.
+## 5. Shots (`src/videos/<name>/shots.ts`, copy clockman's)
+- `const { S, add, at } = shotList<LightName>()`, then one `add({ a, b, light, dof, focus, dis, actors, cam })` per shot.
+- **Camera rules, measured from the references** (details and numbers in `writer/REFERENCE_SPEC.md`):
+  - **Each shot is ONE continuous move** of 1–4 s with several beats, built with `path([...keys])` (keys
+    `{t, pos, look, fov, ease}`), `orbit(...)`, and `drift(...)` for the slight handheld breathing.
+  - Open a shot with a **quick punch-in that settles** (`ease: "out"` on the key where it lands).
+  - **Low, wide lens** (fov 46–66) close to the props and characters; big face close-ups at ~1–1.5 m.
+  - **Joins: short dissolves** (`dis: 0.2–0.3`) between places/beats; a plain cut only for a gag or a hard beat
+    (e.g. the reaction after "fired"). No whip-pan spam.
+  - Cameras track walking characters and fly through doors/windows into the next space.
+- DOF on close shots (`dof` 7–12 with `focus` on the face), wider shots `dof` 4–6.
+- The opening shot is the hook (the most striking picture of the story); the ending pulls out/cranes up to a wide.
 
 ## 6. Check with stills (always, before rendering)
 ```
@@ -76,6 +88,12 @@ cd animated-shorts && REMOTION_TMP=$PWD/.remotion-tmp REMOTION_GL=swangle COMP=<
   ducked). Use few natural SFX at the right times (fireworks, water, crowd, bells, fire, footsteps, soft whooshes on
   whips).
 - Nothing cartoonish. Run it with `python3 sound.py`, which writes `mix.wav`.
+
+## 7b. Verify against the references (always)
+- After rendering: `python3 scripts/compare_to_refs.py out/<name>/final.mp4` (per-frame analysis at 30 fps of camera
+  motion, transitions, colour, contrast and vignette, compared with the reference averages; fix every WARN you can).
+- Also look at the render frame by frame around every transition and gag: extract with
+  `ffmpeg -ss <t> -i final.mp4 -frames:v 12 out/<name>/qa/f_%02d.jpg` and view a contact sheet.
 
 ## 8. Owner approval clip, then the full render
 - If the owner did not say "seedha poori bana do", first render a ~10 s clip
