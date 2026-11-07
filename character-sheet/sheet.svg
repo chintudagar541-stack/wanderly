@@ -1,0 +1,168 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1600" height="1000" viewBox="0 0 1600 1000">
+<defs>
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40,0 L0,0 0,40" fill="none" stroke="#e4dccb" stroke-width="1"/></pattern>
+  <linearGradient id="sky1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5d8fd6"/><stop offset="1" stop-color="#cfe2f5"/></linearGradient>
+  <linearGradient id="sky2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b3f6b"/><stop offset="1" stop-color="#e9a77c"/></linearGradient>
+  <clipPath id="f1"><rect x="420" y="130" width="340" height="290" rx="14"/></clipPath>
+  <clipPath id="f2"><rect x="1220" y="130" width="340" height="290" rx="14"/></clipPath>
+
+  <!-- ============ EIRIK ============ -->
+  <g id="eHalf">
+    <path d="M0,-345 L58,-345 C60,-280 58,-220 54,-170 L44,-40 L12,-40 L14,-170 C10,-230 6,-280 2,-300 L0,-300Z" fill="#8a7a62"/>
+    <path d="M14,-165 L53,-170 L46,-45 L12,-45Z" fill="#d8cdb4"/>
+    <path d="M14,-140 L52,-152 M13,-115 L50,-127 M13,-90 L48,-102 M12,-65 L47,-77" stroke="#a89c84" stroke-width="2.5" fill="none"/>
+    <path d="M8,-48 L50,-48 C54,-30 56,-12 68,-6 L68,0 L6,0Z" fill="#4a3324"/>
+    <path d="M0,-545 L18,-545 C40,-532 60,-530 70,-522 C70,-490 68,-470 64,-460 C60,-430 56,-400 56,-385 C62,-340 70,-310 74,-288 C50,-282 25,-280 0,-282Z" fill="#4d6b3a"/>
+    <path d="M40,-380 C52,-340 60,-310 64,-290 L74,-288 C70,-310 62,-340 56,-385Z" fill="#36502a" stroke="none"/>
+    <path d="M64,-528 C88,-522 98,-505 100,-470 L104,-400 L100,-345 L74,-345 L76,-400 C74,-430 70,-450 66,-462Z" fill="#4d6b3a"/>
+    <path d="M86,-500 C96,-480 100,-440 102,-400 L100,-345 L92,-345 C94,-400 92,-450 86,-500Z" fill="#36502a" stroke="none"/>
+    <path d="M74,-350 L101,-350 L102,-322 L73,-322Z" fill="#e8dcc4"/>
+    <circle cx="88" cy="-306" r="19" fill="#e8dcc4"/>
+    <path d="M74,-312 L102,-312 M76,-300 L100,-298" stroke="#b9ab8e" stroke-width="2" fill="none"/>
+    <path d="M14,-540 C40,-528 60,-526 68,-520 C68,-480 62,-450 58,-420 L56,-392 L22,-392 C18,-450 14,-500 10,-530Z" fill="#6b4a2e"/>
+    <path d="M28,-470 C30,-440 32,-420 34,-395" stroke="#4e341f" stroke-width="2" fill="none"/>
+    <path d="M10,-548 L20,-538 L28,-546 L36,-534 L46,-542 L52,-530 L62,-536 L66,-524 L76,-526 C66,-512 46,-512 30,-520 C20,-526 12,-534 10,-548Z" fill="#cfc2a8"/>
+    <rect x="0" y="-396" width="60" height="20" fill="#3a2a1e"/>
+  </g>
+  <g id="eFace">
+    <path d="M14,-600 Q24,-611 37,-605 Q27,-595 14,-598Z" fill="#fff"/>
+    <ellipse cx="25" cy="-601" rx="6" ry="7.5" fill="#b8862e" stroke="none"/>
+    <circle cx="25" cy="-601" r="3" fill="#2a1c16" stroke="none"/>
+    <circle cx="23" cy="-604" r="1.8" fill="#fff" stroke="none"/>
+    <path d="M11,-599 Q24,-614 39,-605" fill="none" stroke-width="4.5"/>
+    <path d="M10,-614 L42,-626 L40,-620 L12,-610Z" fill="#5e2412"/>
+    <path d="M44,-610 C50,-612 52,-596 46,-588" fill="#f2c9a5"/>
+  </g>
+  <g id="eBraid">
+    <ellipse cx="-50" cy="-590" rx="9" ry="10" fill="#8a3b1e"/>
+    <ellipse cx="-51" cy="-573" rx="9" ry="10" fill="#8a3b1e"/>
+    <ellipse cx="-52" cy="-556" rx="8.5" ry="10" fill="#8a3b1e"/>
+    <ellipse cx="-53" cy="-539" rx="8" ry="10" fill="#8a3b1e"/>
+    <ellipse cx="-54" cy="-522" rx="7.5" ry="10" fill="#8a3b1e"/>
+    <rect x="-61" y="-512" width="14" height="7" fill="#c9a24a"/>
+    <path d="M-58,-505 L-60,-488 L-54,-494 L-50,-486 L-50,-505Z" fill="#8a3b1e"/>
+  </g>
+  <g id="eirik" stroke="#2a1c16" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+    <ellipse cx="0" cy="-618" rx="52" ry="50" fill="#5e2412"/>
+    <use href="#eHalf"/><use href="#eHalf" transform="scale(-1,1)"/>
+    <!-- hand axe on hip -->
+    <path d="M48,-392 L74,-300" stroke-width="7" stroke="#5a3d22"/>
+    <path d="M62,-345 C80,-360 96,-352 98,-336 C90,-330 80,-328 70,-318Z" fill="#9aa3ab"/>
+    <rect x="-12" y="-398" width="24" height="24" rx="3" fill="#c9a24a"/>
+    <rect x="-15" y="-566" width="30" height="30" fill="#f2c9a5"/>
+    <path d="M-15,-552 Q0,-540 15,-552 L15,-540 Q0,-532 -15,-540Z" fill="#d9a27e" stroke="none"/>
+    <use href="#eBraid"/><use href="#eBraid" transform="scale(-1,1)"/>
+    <path d="M-44,-610 C-44,-575 -25,-552 0,-548 C25,-552 44,-575 44,-610 C44,-650 -44,-650 -44,-610Z" fill="#f2c9a5"/>
+    <path d="M44,-610 C44,-585 34,-565 18,-554 C30,-570 36,-590 36,-612Z" fill="#d9a27e" stroke="none"/>
+    <use href="#eFace"/><use href="#eFace" transform="scale(-1,1)"/>
+    <path d="M-3,-588 L3,-576 L-1,-574" fill="none" stroke-width="2.5"/>
+    <path d="M-42,-592 C-40,-560 -20,-536 0,-532 C20,-536 40,-560 42,-592 C36,-578 30,-568 22,-566 C12,-570 -12,-570 -22,-566 C-30,-568 -36,-578 -42,-592Z" fill="#8a3b1e"/>
+    <path d="M-17,-569 C-8,-577 8,-577 17,-569 C8,-566 -8,-566 -17,-569Z" fill="#8a3b1e"/>
+    <path d="M-8,-561 L8,-561" stroke-width="3"/>
+    <path d="M-48,-612 C-52,-660 -20,-682 0,-680 C28,-682 54,-660 48,-612 C44,-630 36,-638 26,-640 L20,-624 L12,-642 C0,-646 -12,-644 -22,-640 L-26,-622 L-32,-638 C-40,-634 -46,-626 -48,-612Z" fill="#8a3b1e"/>
+    <path d="M-20,-668 C-6,-674 10,-674 24,-666" fill="none" stroke="#c46a3f" stroke-width="4"/>
+    <path d="M-31,-630 L-22,-590" stroke="#b5574a" stroke-width="2.5"/>
+  </g>
+
+  <!-- ============ SIGRUN ============ -->
+  <g id="sHalf">
+    <path d="M14,-548 C50,-540 80,-530 86,-515 C96,-450 100,-360 106,-262 C90,-250 70,-246 50,-252 L40,-300 L0,-300Z" fill="#3e5e5c"/>
+    <path d="M0,-330 L50,-330 C52,-270 50,-220 46,-170 L40,-40 L12,-40 L12,-170 C8,-230 4,-280 2,-300 L0,-300Z" fill="#3b3b44"/>
+    <path d="M10,-150 L46,-156 L44,-30 C48,-15 54,-8 62,-4 L62,0 L8,0Z" fill="#2a2522"/>
+    <path d="M9,-160 L48,-166 L47,-148 L10,-142Z" fill="#4a4038"/>
+    <path d="M0,-545 L16,-545 C34,-534 54,-530 62,-522 C62,-490 58,-470 54,-455 C48,-430 44,-405 44,-385 C52,-330 60,-280 66,-232 C44,-226 22,-226 0,-228Z" fill="#2f3a5c"/>
+    <path d="M32,-380 C44,-330 52,-280 56,-232 L66,-232 C60,-280 52,-330 44,-385Z" fill="#232c47" stroke="none"/>
+    <path d="M0,-242 C22,-240 44,-240 64,-246 L66,-232 C44,-226 22,-226 0,-228Z" fill="#b89a5a"/>
+    <path d="M56,-526 C76,-520 84,-505 86,-475 L90,-400 L88,-340 L66,-340 L66,-400 C64,-430 60,-450 56,-460Z" fill="#2f3a5c"/>
+    <path d="M65,-392 L90,-395 L89,-340 L66,-340Z" fill="#5a3d2a"/>
+    <path d="M10,-548 C40,-545 70,-532 84,-515 C88,-500 86,-490 80,-480 C60,-500 40,-510 20,-520Z" fill="#4e7471"/>
+    <path d="M0,-404 L48,-406 L46,-386 L0,-384Z" fill="#7a3b2a"/>
+  </g>
+  <g id="sHand"><circle cx="77" cy="-326" r="13" fill="#f4d3b6"/></g>
+  <g id="sFace">
+    <path d="M13,-600 Q24,-613 38,-606 Q27,-593 13,-597Z" fill="#fff"/>
+    <ellipse cx="25" cy="-601" rx="6.5" ry="9" fill="#5f9fc4" stroke="none"/>
+    <ellipse cx="25" cy="-602" rx="3" ry="4" fill="#1d2a3a" stroke="none"/>
+    <circle cx="23" cy="-605" r="2" fill="#fff" stroke="none"/>
+    <path d="M10,-599 Q24,-616 40,-606 L44,-610" fill="none" stroke-width="4"/>
+    <path d="M13,-618 Q27,-626 40,-619" fill="none" stroke="#8d95a3" stroke-width="3"/>
+  </g>
+  <g id="sigrun" stroke="#22181a" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M-54,-615 C-58,-560 -52,-540 -40,-540 L40,-540 C52,-540 58,-560 54,-615 C54,-670 -54,-670 -54,-615Z" fill="#a7afbb"/>
+    <use href="#sHalf"/><use href="#sHalf" transform="scale(-1,1)"/>
+    <!-- spear -->
+    <path d="M-77,-760 L-77,0" stroke="#6b4a2e" stroke-width="8"/>
+    <path d="M-77,-830 C-66,-800 -66,-780 -71,-760 L-83,-760 C-88,-780 -88,-800 -77,-830Z" fill="#c3cad1"/>
+    <path d="M-77,-826 L-77,-764" stroke="#8e98a3" stroke-width="1.5"/>
+    <path d="M-85,-762 L-69,-762 L-71,-748 L-83,-748Z" fill="#b89a5a"/>
+    <use href="#sHand"/><use href="#sHand" transform="scale(-1,1)"/>
+    <circle cx="-24" cy="-528" r="8" fill="#c9a24a"/>
+    <rect x="-13" y="-566" width="26" height="30" fill="#f4d3b6"/>
+    <path d="M-13,-552 Q0,-542 13,-552 L13,-541 Q0,-534 -13,-541Z" fill="#dcae8c" stroke="none"/>
+    <path d="M-42,-610 C-42,-578 -24,-555 0,-551 C24,-555 42,-578 42,-610 C42,-648 -42,-648 -42,-610Z" fill="#f4d3b6"/>
+    <path d="M42,-610 C42,-586 32,-566 16,-556 C28,-572 34,-592 34,-612Z" fill="#dcae8c" stroke="none"/>
+    <use href="#sFace"/><use href="#sFace" transform="scale(-1,1)"/>
+    <path d="M-2,-586 L2,-577 L-1,-575" fill="none" stroke-width="2.5"/>
+    <path d="M-7,-565 Q0,-563 7,-566" fill="none" stroke-width="2.5"/>
+    <path d="M-50,-605 C-56,-668 56,-668 50,-605 L44,-594 L38,-622 L30,-604 L22,-630 L10,-610 L0,-634 L-8,-610 L-20,-630 L-28,-604 L-38,-622 L-44,-594Z" fill="#d9dde3"/>
+    <path d="M-50,-608 C-54,-585 -52,-560 -46,-546 L-40,-560 C-44,-575 -44,-592 -42,-604Z" fill="#d9dde3"/>
+    <path d="M50,-608 C54,-585 52,-560 46,-546 L40,-560 C44,-575 44,-592 42,-604Z" fill="#d9dde3"/>
+    <circle cx="-46" cy="-543" r="4.5" fill="#5f9fc4"/>
+    <path d="M-24,-654 C-8,-662 10,-662 26,-654" fill="none" stroke="#ffffff" stroke-width="4"/>
+  </g>
+</defs>
+
+<rect width="1600" height="1000" fill="#f3efe6"/>
+<rect width="1600" height="1000" fill="url(#grid)"/>
+<rect width="1600" height="92" fill="#22181a"/>
+<text x="40" y="58" font-family="Georgia, serif" font-size="34" fill="#f3efe6" letter-spacing="2">WARRIORS OF THE NORTH</text>
+<text x="1560" y="58" font-family="Georgia, serif" font-size="20" fill="#c9a24a" text-anchor="end" letter-spacing="3">CHARACTER SHEET · ORIGINAL DESIGNS</text>
+<line x1="800" y1="110" x2="800" y2="980" stroke="#cbbfa6" stroke-width="2" stroke-dasharray="6 6"/>
+
+<!-- head-unit guides -->
+<g stroke="#d6cbb4" stroke-width="1.5" stroke-dasharray="4 5" font-family="Georgia, serif" font-size="12" fill="#a8997c">
+  <line x1="50" y1="950" x2="360" y2="950"/><line x1="50" y1="865" x2="360" y2="865"/><line x1="50" y1="780" x2="360" y2="780"/><line x1="50" y1="695" x2="360" y2="695"/><line x1="50" y1="610" x2="360" y2="610"/><line x1="50" y1="525" x2="360" y2="525"/><line x1="50" y1="440" x2="360" y2="440"/><line x1="50" y1="355" x2="360" y2="355"/><line x1="50" y1="270" x2="360" y2="270"/>
+  <line x1="850" y1="950" x2="1160" y2="950"/><line x1="850" y1="865" x2="1160" y2="865"/><line x1="850" y1="780" x2="1160" y2="780"/><line x1="850" y1="695" x2="1160" y2="695"/><line x1="850" y1="610" x2="1160" y2="610"/><line x1="850" y1="525" x2="1160" y2="525"/><line x1="850" y1="440" x2="1160" y2="440"/><line x1="850" y1="355" x2="1160" y2="355"/><line x1="850" y1="270" x2="1160" y2="270"/>
+</g>
+
+<ellipse cx="200" cy="952" rx="90" ry="10" fill="#d6cbb4"/>
+<use href="#eirik" transform="translate(200,950)"/>
+<ellipse cx="1000" cy="952" rx="90" ry="10" fill="#d6cbb4"/>
+<use href="#sigrun" transform="translate(1000,950)"/>
+
+<!-- headshots -->
+<rect x="420" y="130" width="340" height="290" rx="14" fill="url(#sky1)"/>
+<g clip-path="url(#f1)"><ellipse cx="480" cy="180" rx="60" ry="18" fill="#fff" opacity=".8"/><ellipse cx="700" cy="220" rx="70" ry="16" fill="#fff" opacity=".7"/><use href="#eirik" transform="translate(590,1360) scale(1.8)"/></g>
+<rect x="420" y="130" width="340" height="290" rx="14" fill="none" stroke="#22181a" stroke-width="3"/>
+<rect x="1220" y="130" width="340" height="290" rx="14" fill="url(#sky2)"/>
+<g clip-path="url(#f2)"><use href="#sigrun" transform="translate(1390,1360) scale(1.8)"/></g>
+<rect x="1220" y="130" width="340" height="290" rx="14" fill="none" stroke="#22181a" stroke-width="3"/>
+
+<g font-family="Georgia, serif" fill="#22181a">
+  <text x="420" y="470" font-size="30" font-weight="bold">EIRIK "STONEHAND"</text>
+  <text x="420" y="498" font-size="16" fill="#7a6a50" letter-spacing="2">FARMHAND BRAWLER · 188 CM</text>
+  <text x="420" y="540" font-size="15">• Fights bare-handed with wrapped fists</text>
+  <text x="420" y="564" font-size="15">• Twin braids, brow scar, short beard</text>
+  <text x="420" y="588" font-size="15">• Wool tunic, leather vest, fur collar</text>
+  <text x="420" y="612" font-size="15">• Hand axe is for firewood, never for people</text>
+  <text x="1220" y="470" font-size="30" font-weight="bold">SIGRUN FROSTVEIL</text>
+  <text x="1220" y="498" font-size="16" fill="#7a6a50" letter-spacing="2">WANDERING SPEAR-MAIDEN · 172 CM</text>
+  <text x="1220" y="540" font-size="15">• Calm, precise, keeps her distance</text>
+  <text x="1220" y="564" font-size="15">• Silver bob with a blue glass bead</text>
+  <text x="1220" y="588" font-size="15">• Teal cloak, bronze brooch, gold-trim tunic</text>
+  <text x="1220" y="612" font-size="15">• Ash-wood spear, iron leaf-blade head</text>
+</g>
+
+<g font-family="Georgia, serif" font-size="11" fill="#5a4c38" text-anchor="middle" stroke="#22181a" stroke-width="2">
+  <text x="420" y="660" font-size="14" text-anchor="start" stroke="none" letter-spacing="2">PALETTE</text>
+  <circle cx="440" cy="695" r="18" fill="#8a3b1e"/><circle cx="495" cy="695" r="18" fill="#f2c9a5"/><circle cx="550" cy="695" r="18" fill="#4d6b3a"/><circle cx="605" cy="695" r="18" fill="#6b4a2e"/><circle cx="660" cy="695" r="18" fill="#8a7a62"/><circle cx="715" cy="695" r="18" fill="#b8862e"/>
+  <g stroke="none"><text x="440" y="728">HAIR</text><text x="495" y="728">SKIN</text><text x="550" y="728">TUNIC</text><text x="605" y="728">VEST</text><text x="660" y="728">PANTS</text><text x="715" y="728">EYES</text></g>
+  <text x="1220" y="660" font-size="14" text-anchor="start" stroke="none" letter-spacing="2">PALETTE</text>
+  <circle cx="1240" cy="695" r="18" fill="#d9dde3"/><circle cx="1295" cy="695" r="18" fill="#f4d3b6"/><circle cx="1350" cy="695" r="18" fill="#2f3a5c"/><circle cx="1405" cy="695" r="18" fill="#4e7471"/><circle cx="1460" cy="695" r="18" fill="#b89a5a"/><circle cx="1515" cy="695" r="18" fill="#5f9fc4"/>
+  <g stroke="none"><text x="1240" y="728">HAIR</text><text x="1295" y="728">SKIN</text><text x="1350" y="728">TUNIC</text><text x="1405" y="728">CLOAK</text><text x="1460" y="728">TRIM</text><text x="1515" y="728">EYES</text></g>
+</g>
+<g font-family="Georgia, serif" font-size="13" fill="#a8997c" font-style="italic">
+  <text x="420" y="790">Front view · 8 heads tall · flat cel shading, light from upper left</text>
+  <text x="1220" y="790">Front view · 8 heads tall · spear held in right hand</text>
+</g>
+</svg>
