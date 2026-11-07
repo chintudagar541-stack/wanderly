@@ -13,3 +13,4 @@ tts/samples/
 tts/*.mp3
 shorts/*/voice/*_preview.mp3
 shorts/*/voice/*_v1_*.wav
+en_US-ryan-high.onnx

@@ -14,13 +14,21 @@ These come straight from the channel owner. Apply all of them to every new video
 5. Commit and push everything (except big media) to the working branch.
 
 ## Script
-- Engaging, a little funny, conversational, like popular history shorts: start with a hook ("Imagine your king..."),
-  use punchy short lines, playful asides and jokes ("the guy who sells samosas"), and a twist or punchline at the end.
-- About 60–75 s and about 170–200 words.
+- **Follow `writer/FORMULA.md`** (from the 10M-view reference shorts):
+  - a weird one-line hook
+  - a "You see," context line
+  - a nobody vs a mocking crowd, with quoted dialogue
+  - escalation
+  - a one-line twist
+  - the hidden mechanism
+  - a short ironic punchline, then a hard stop
+- 215–240 words, about 60 s. Check the script with `python3 writer/check.py script.txt`.
+- For ideas, use `writer/ideas.md` (an idea bank) and the `story-script` skill.
 - Get the facts right. Hedge folklore with "one story says".
 
 ## Voice
-- Kokoro TTS, **am_michael only**. No blends, no other voice.
+- Kokoro TTS, **am_michael** (default). The owner is comparing free look-alike voices of the reference narrator in
+  `tts/voice_match_demo.mp3` (Eric, Piper Ryan, Eric+Fenrir, Eric pitched up). If the owner picks one, write it here.
 - **Fast, energetic pace**, like the reference shorts: `python3 tts/lines.py script.txt outdir --speed 1.12 --pause 0.14 --lead 0.3`
   (about 2.9 words/s, tiny gaps between lines).
 - Indian names get Indian pronunciation via `--fix word=phonemes` (Raam, Raavan, Lakshman, Ayodhyaa,
