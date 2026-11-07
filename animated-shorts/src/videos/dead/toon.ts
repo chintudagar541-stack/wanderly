@@ -19,7 +19,7 @@ export type Build = "adult" | "stout" | "kid";
 export type Outfit = {
   jacket: string; pants: string; boots: string; hat?: string | null; belt?: string | null; buttons?: string; rifle?: boolean;
   sash?: string; sword?: boolean; moustache?: string; skin?: string; head?: number; cap?: string; hair?: string; dress?: string;
-  build?: Build; stars?: boolean; heads?: number; bindi?: boolean;
+  build?: Build; stars?: boolean; heads?: number; bindi?: boolean; beard?: string;
 };
 type P2 = [number, number];
 
@@ -442,6 +442,29 @@ const hatOn = (p: Pen, o: Outfit, hp: P2[], H: Blob, cx: number, hc: number, lig
     for (const dx of [-0.55, 0.55]) { const [qx, qy] = R([[cx + dx * wb, yb - 0.22 * HH]])[0]; p.ell(qx, qy, 4.5 * u, 4.5 * u, "#2e9a5a", 1.6 * u); }
     const [tx, ty] = R([[cx, yb - 0.94 * HH]])[0];
     p.ell(tx, ty, 5 * u, 5 * u, "#fff3b0", 1.6 * u);
+  } else if (o.hat === "crownEU") {
+    hatOn(p, { ...o, hat: "hair" }, hp, H, cx, hc, light, seed, facing, side);
+    const gold = "#f2c14e", yb = crown + 0.22 * HH, wb = 0.9 * H.a, top = yb - 0.42 * HH;
+    const pts: P2[] = [[cx - wb, yb]];
+    for (let k = 0; k <= 4; k++) { const x = cx - wb + (2 * wb * k) / 4; pts.push([x, top - (k % 2 ? 0 : 0.12 * HH)], [x + (k < 4 ? wb / 4 : 0), yb - 0.18 * HH]); }
+    pts.pop(); pts.push([cx + wb, yb]);
+    const body = R(pts);
+    p.shadedFill(body, gold, mul(gold, SH_FELT), light, wb, 0.4);
+    p.poly(body, null, ow);
+    p.poly(R([[cx - wb, yb], [cx + wb, yb], [cx + wb, yb - 0.1 * HH], [cx - wb, yb - 0.1 * HH]]), "#c9962e", ow * 0.7);
+    for (const [dx, col] of [[-0.5, "#2e9a5a"], [0, "#d1202f"], [0.5, "#3f6fd0"]] as const) { const [jx, jy] = R([[cx + dx * wb, yb - 0.05 * HH]])[0]; p.ell(jx, jy, 5 * u, 5 * u, col, 1.6 * u); }
+    for (let k = 0; k <= 4; k += 2) { const [bx, by] = R([[cx - wb + (2 * wb * k) / 4, top - 0.14 * HH]])[0]; p.ell(bx, by, 5 * u, 5 * u, "#fff3b0", 1.4 * u); }
+  } else if (o.hat === "helmK") {
+    // medieval helmet: steel dome, brow band, nose guard, optional plume (o.cap = plume colour)
+    const steel = "#a9b1ba", rim = hc - 14 * u, rx = 1.12 * H.a, ry = rim - (crown - 0.08 * HH);
+    const dome: P2[] = [];
+    for (let i = 0; i <= 24; i++) { const t = Math.PI + (Math.PI * i) / 24; dome.push([cx + rx * Math.cos(t), rim + ry * Math.sin(t)]); }
+    const body = R([...dome, [cx + rx, rim + 26 * u], [cx + rx - 12 * u, rim + 30 * u], [cx + rx - 14 * u, rim + 4 * u], [cx - rx + 14 * u, rim + 4 * u], [cx - rx + 12 * u, rim + 30 * u], [cx - rx, rim + 26 * u]]);
+    p.shadedFill(body, steel, mul(steel, SH_FELT), light, rx, 0.4);
+    p.poly(body, null, ow);
+    p.poly(R([[cx - rx, rim - 2 * u], [cx + rx, rim - 2 * u], [cx + rx, rim + 6 * u], [cx - rx, rim + 6 * u]]), "#7d858e", ow * 0.6);
+    p.poly(R([[cx - 4 * u, rim + 4 * u], [cx + 4 * u, rim + 4 * u], [cx + 3 * u, rim + 30 * u], [cx - 3 * u, rim + 30 * u]]), "#8d959e", ow * 0.5);
+    if (o.cap) { const pl = R([[cx - 6 * u, rim - ry], [cx + 6 * u, rim - ry], [cx + 24 * u, rim - ry - 46 * u], [cx + 4 * u, rim - ry - 30 * u], [cx - 14 * u, rim - ry - 40 * u]]); p.shadedFill(pl, o.cap, mul(o.cap, SH_FELT), light, 20 * u, 0.4); p.poly(pl, null, ow * 0.7); }
   } else if (o.hat === "turban") {
     // pagdi: a wrapped dome with fold lines and a small jewel plume
     const col = o.cap ?? "#d9573a", yb = hc - 18 * u, rx = 1.2 * H.a, ry = yb - (crown - 0.18 * HH);
@@ -509,7 +532,7 @@ const hatOn = (p: Pen, o: Outfit, hp: P2[], H: Blob, cx: number, hc: number, lig
 // ---------------- bodies ----------------
 export type Arms = [P2[], P2[]];
 /** held prop; for the hammer the number is the strike 0 (raised) .. 1 (struck) */
-export type Prop = null | "icecream" | "shako" | ["hammer", number] | "phoneEar" | "phoneHold" | "phoneDrop" | "binoculars" | "earCup" | "point" | "bow" | "bowAim" | "diya" | "sparkler";
+export type Prop = null | "icecream" | "shako" | ["hammer", number] | "phoneEar" | "phoneHold" | "phoneDrop" | "binoculars" | "earCup" | "point" | "bow" | "bowAim" | "diya" | "sparkler" | "spear" | "spearAim" | "spearUp";
 
 const BUILD: Record<Build, { a: number; torso: number; legs: number; tw: number }> = {
   adult: { a: 118, torso: 1.1, legs: 1.4, tw: 0.8 },
@@ -624,6 +647,10 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
     } else if (prop === "sparkler") {
       const S = sh(1);
       arms.push({ pts: [S, [tcx + 1.15 * T.a + 14 * u, S[1] - 0.2 * HH], [tcx + 1.25 * T.a + 22 * u, S[1] - 0.68 * HH]], front: true });
+    } else if (prop === "spearAim" || prop === "spearUp") {
+      arms.length = 0;
+      const up = prop === "spearUp" ? 1 : 0;
+      for (const side of [-1, 1]) arms.push({ pts: [sh(side), [tcx + side * (1.0 * T.a + 8 * u), sh(side)[1] + (0.25 - 0.2 * up) * HH], [tcx + side * 10 * u - 8 * u, sh(side)[1] + (0.32 - 0.38 * up) * HH + side * 6 * u]], front: true });
     } else if (prop === "earCup") {
       const S = sh(1);
       arms.push({ pts: [S, [tcx + 1.2 * T.a + 18 * u, S[1] + 0.1 * HH], [300 + 1.05 * H.a + 6 * u, chin - 0.9 * H.b]], front: true });
@@ -683,6 +710,17 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
     p.inkRing(tp, ow, thick);
   }
   // in front of the body: hands holding props
+  if (prop === "spear") { // upright spear in the right hand
+    const [hx, hy] = arms[arms.length - 1].pts[2];
+    p.band([[hx + 2 * u, hy + 0.9 * HH], [hx + 2 * u, crown - 0.75 * HH]], "#7a4b2a", 4.5 * u, 1.5 * u, "round");
+    p.poly([[hx - 6 * u, crown - 0.72 * HH], [hx + 10 * u, crown - 0.72 * HH], [hx + 2 * u, crown - 1.08 * HH]], "#c9ccd2", 2 * u);
+  }
+  if (prop === "spearAim" || prop === "spearUp") { // spear levelled with both hands (aim: toward screen-left and up; up: steeply up)
+    const up = prop === "spearUp", base: P2 = [300 + 46 * u, chin + 0.95 * HH], dir: P2 = up ? [-0.25, -1] : [-1, -0.42];
+    const L = up ? 1.9 * HH : 2.0 * HH, tip: P2 = [base[0] + dir[0] * L, base[1] + dir[1] * L], n = Math.hypot(dir[0], dir[1]), dx = dir[0] / n, dy = dir[1] / n;
+    p.band([base, tip], "#7a4b2a", 4.5 * u, 1.5 * u, "round");
+    p.poly([[tip[0] - dy * 7 * u, tip[1] + dx * 7 * u], [tip[0] + dy * 7 * u, tip[1] - dx * 7 * u], [tip[0] + dx * 30 * u, tip[1] + dy * 30 * u]], "#c9ccd2", 2 * u);
+  }
   if (prop === "bow") { // bow held upright in the hanging right hand
     const [hx, hy] = arms[arms.length - 1].pts[2], top: P2 = [hx + 4 * u, hy - 0.95 * HH], bot: P2 = [hx + 4 * u, hy + 0.75 * HH];
     p.stroke([top, bot], 1.2 * u, "#f4ead0");
@@ -746,7 +784,7 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
   const Ah = A + headTilt, [cpx, cpy] = rotAbout([300, chin], rad(A), [300, hipY]);
   p.rot = Ah ? [rad(Ah), 300, chin, cpx - 300, cpy - chin] : null;
   if (back) {
-    const hp = blobPts(300, hc, H), hair = o.hair ?? o.cap ?? "#3a2a22";
+    const hp = blobPts(300, hc, H), hair = o.hat === "helmK" ? "#a9b1ba" : o.hat === "crownEU" ? (o.hair ?? "#5a4030") : (o.hair ?? o.cap ?? "#3a2a22");
     p.shadedFill(hp, skin, mul(skin, SH_SKIN), light, H.a);
     p.clip(hp, () => p.ell(300, hc - 0.12 * H.b, 1.25 * H.a, 1.2 * H.b, hair, 0));
     p.inkRing(hp, ow, thick);
@@ -781,6 +819,14 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
   const brim = !!o.hat && o.hat !== "hair" && o.hat !== "bonnet" && o.hat !== "cap" && o.hat !== "longHair" && o.hat !== "jata";
   faceFront(p, 300, hc, W, expr, facing, look, lid, brim, skin, o.moustache, o.build === "stout");
   if (o.bindi) p.ell(300 + 7 * u * facing, hc - 15 * u, 3.2 * u, 3.6 * u, "#d1202f", 0);
+  if (o.beard) { // full beard framing the chin, mouth left visible
+    const bd: P2[] = [];
+    for (let i = 0; i <= 16; i++) { const a = rad(-10 + (200 * i) / 16); bd.push([300 + Math.cos(a) * 0.86 * H.a, hc + 6 * u + Math.sin(a) * 0.95 * H.b]); }
+    bd.push([300 - 0.6 * H.a, hc + 16 * u], [300 - 12 * u, hc + 15 * u], [300, hc + 13 * u], [300 + 12 * u, hc + 15 * u], [300 + 0.6 * H.a, hc + 16 * u]);
+    p.shadedFill(bd, o.beard, mul(o.beard, SH_FELT), light, H.a, 0.4);
+    p.poly(bd, null, ow * 0.8);
+    p.ell(300 + 8 * u * facing, hc + 22 * u, 7 * u, 4 * u, "#5a1e28", 2 * u);
+  }
   if (prop === "binoculars") { // binoculars over the eyes, hands on the barrels
     for (const side of [-1, 1]) { p.ell(300 + side * 14 * u, hc - 2 * u, 12 * u, 13 * u, "#2b2e33", 2.6 * u); p.ell(300 + side * 14 * u, hc - 2 * u, 6 * u, 6.5 * u, "#5d7a9a", 1.6 * u); }
     p.poly([[300 - 4 * u, hc - 8 * u], [300 + 4 * u, hc - 8 * u], [300 + 4 * u, hc + 2 * u], [300 - 4 * u, hc + 2 * u]], "#2b2e33", 1.6 * u);
