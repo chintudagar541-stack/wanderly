@@ -279,20 +279,21 @@ export class World {
       const fab = toon(0xffffff, tex(256, 256, (g) => { g.fillStyle = "#a8202a"; g.fillRect(0, 0, 256, 256); for (let y = 0; y < 256; y += 32) { g.fillStyle = "#e8b84a"; g.fillRect(0, y, 256, 4); for (let x = 0; x < 256; x += 32) { g.beginPath(); g.arc(x + 16, y + 18, 9, 0, Math.PI * 2); g.fill(); g.fillStyle = "#2e7a4a"; g.beginPath(); g.arc(x + 16, y + 18, 4, 0, Math.PI * 2); g.fill(); g.fillStyle = "#e8b84a"; } } }, [3, 2]));
       for (const s of [-1, 1]) { B.add(BOX, fab, [X + s * 8, 9, pz], [0, 0, 0], [10, 18, 3]); B.add(CONE, gold, [X + s * 8, 19.5, pz], [0, Math.PI / 4, 0], [4, 3, 2]); }
       B.add(BOX, fab, [X, 17, pz], [0, 0, 0], [8, 8, 3]); B.add(CONE, gold, [X, 24, pz], [0, Math.PI / 4, 0], [5, 6, 3]); B.add(SPH, gold, [X, 27.3, pz], [0, 0, 0], [0.5, 0.6, 0.5]);
-      const archM = new THREE.Mesh(new THREE.CylinderGeometry(4, 4, 3, 20, 1, false, 0, Math.PI), fab); archM.rotation.set(Math.PI / 2, 0, Math.PI / 2); archM.position.set(X, 9, pz); R.add(archM);
+      for (let q = 0; q < 16; q++) { const a0 = (q / 16) * Math.PI, a1 = ((q + 1) / 16) * Math.PI; B.beam(gold, [X + Math.cos(a0) * 3.4, 9 + Math.sin(a0) * 3.4, pz + 1.5], [X + Math.cos(a1) * 3.4, 9 + Math.sin(a1) * 3.4, pz + 1.5], 0.25); }
       for (let k = 0; k < 7; k++) { const r = 3.5 + k * 0.7; for (let q = 0; q <= 30; q++) { const a = (q / 30) * Math.PI; strings.push({ p: [X + Math.cos(a) * r, 9 + Math.sin(a) * r, pz + 1.6], order: 0, tint: STR[(k + q) % 5] }); } }
       for (let y = 1; y < 18; y += 0.9) for (const s of [-1, 1]) for (let x = 3.5; x < 13; x += 0.9) if ((Math.floor(x + y) % 3) === 0) strings.push({ p: [X + s * x, y, pz + 1.6], order: 0, tint: STR[Math.floor(x * 3 + y) % 5] });
       // inside: dark red backdrop, gold halo, pedestal (the idol is a card), hibiscus garlands, lamps
       B.add(BOX, toon(0x3a0a1a), [X, 8, pz - 8], [0, 0, 0], [16, 16, 0.5]); B.add(BOX, toon(0x5a1a2a), [X, 0.2, pz - 4], [0, 0, 0], [16, 0.4, 8]);
       for (const s of [-1, 1]) B.add(BOX, fab, [X + s * 7.5, 8, pz - 4], [0, 0, 0], [1, 16, 8]);
-      const halo = new THREE.Mesh(new THREE.RingGeometry(2.4, 3.4, 48), new THREE.MeshBasicMaterial({ color: 0xffc040, toneMapped: false, side: THREE.DoubleSide })); halo.position.set(X, IDOL[1] + 3.7, pz - 7.6); R.add(halo);
-      for (let k = 0; k < 24; k++) { const a = (k / 24) * Math.PI * 2; B.add(CONE, gold, [X + Math.cos(a) * 3.8, IDOL[1] + 3.7 + Math.sin(a) * 3.8, pz - 7.62], [0, 0, a - Math.PI / 2], [0.25, 0.7, 0.05]); }
+      const halo = new THREE.Mesh(new THREE.RingGeometry(1.25, 1.75, 48), new THREE.MeshBasicMaterial({ color: 0xffc040, toneMapped: false, side: THREE.DoubleSide })); halo.position.set(X, IDOL[1] + 3.55, IDOL[2] - 0.3); R.add(halo);
+      for (let k = 0; k < 24; k++) { const a = (k / 24) * Math.PI * 2; B.add(CONE, gold, [X + Math.cos(a) * 2.0, IDOL[1] + 3.55 + Math.sin(a) * 2.0, IDOL[2] - 0.32], [0, 0, a - Math.PI / 2], [0.14, 0.4, 0.03]); }
       B.add(BOX, gold, [X, IDOL[1] / 2, IDOL[2]], [0, 0, 0], [4, IDOL[1], 2.4]); B.add(BOX, red, [X, IDOL[1] + 0.05, IDOL[2]], [0, 0, 0], [4.2, 0.1, 2.6]);
       for (let k = 0; k < 3; k++) garland(B, [X - 6, 15 - k * 0.8, pz - 6], [X + 6, 15 - k * 0.8, pz - 6], 1.6, 30);
       for (let k = 0; k < 10; k++) { diya(B, X - 2.2 + k * 0.5, IDOL[1] + 0.1, IDOL[2] + 1.0, 1.4); }
       for (const s of [-1, 1]) for (let k = 0; k < 3; k++) { B.add(CYL8, gold, [X + s * (3.2 + k * 1.2), 1.2, pz - 3 + k], [0, 0, 0], [0.1, 2.4, 0.1]); diyas.push({ p: [X + s * (3.2 + k * 1.2), 2.5, pz - 3 + k], order: 0 }); }
       // the street: light tunnel gates of rings, stalls, more buildings with balconies
-      for (let z = pz + 6; z < pz + 70; z += 6) { for (let q = 0; q <= 40; q++) { const a = (q / 40) * Math.PI; strings.push({ p: [X + Math.cos(a) * 7, Math.sin(a) * 9, z], order: 0, tint: STR[(q + z) % 5] }); }
+      for (let z = pz + 6; z < pz + 70; z += 6) { for (let q = 0; q < 20; q++) { const a0 = (q / 20) * Math.PI, a1 = ((q + 1) / 20) * Math.PI; B.beam(toon(0xc9962e), [X + Math.cos(a0) * 7, Math.sin(a0) * 9, z - 0.1], [X + Math.cos(a1) * 7, Math.sin(a1) * 9, z - 0.1], 0.12); }
+        for (let q = 0; q <= 60; q++) { const a = (q / 40) * Math.PI; strings.push({ p: [X + Math.cos(a) * 7, Math.sin(a) * 9, z], order: 0, tint: STR[(q + z) % 5] }); strings.push({ p: [X + Math.cos(a) * 6.4, Math.sin(a) * 8.3, z], order: 0, tint: STR[(q + z + 2) % 5] }); }
         for (let q = 0; q < 12; q++) { const a = (q / 12) * Math.PI * 2; strings.push({ p: [X + Math.cos(a) * 1.4, 7.3 + Math.sin(a) * 1.4, z], order: 0, tint: [1, 0.3, 0.6] }); } }
       for (const s of [-1, 1]) for (let z = pz + 6, i = 0; z < pz + 80; z += 7, i++) { const H = 9 + (i % 3) * 3, x = X + s * 13;
         B.add(BOX, toon(0xffffff, wallTex(["#e8d0b0", "#c9a8a0", "#d9c9a8", "#b8a0c0"][i % 4], "#f4f1ea", i)), [x, H / 2, z], [0, 0, 0], [8, H, 7]);
@@ -335,7 +336,7 @@ export class World {
         for (let q = 0; q < 230; q++) { const x = X - 70 + q * (140 / 230) + (k % 2) * 0.3; if (k % 3 === 2 && q % 3) continue; diya(B, x, y + 0.16, z - 0.1, 1, 0); if (k < 6) refl.push({ p: [x, 2 * WATER_Y - (y + 0.16) - 0.1, z + 0.7 + k * 0.4], order: 0, tint: [1, 0.55, 0.2] }); } }
       // tall old buildings and temple shikharas crowding the ghats
       const cols = ["#e8b88a", "#f2d0a0", "#d9a8a0", "#f4ead6", "#e8c0d0", "#c9b090"];
-      for (let i = 0; i < 26; i++) { const x = X - 66 + i * 5.2 + rnd(i) * 1.5, w = 4.6, h = 8 + rnd(i + 1) * 12, z = -15 - rnd(i + 2) * 6, c = cols[i % 6];
+      for (let i = 0; i < 26; i++) { const x = X - 66 + i * 5.2 + rnd(i) * 1.5, w = 4.6, h = 4.5 + rnd(i + 1) * 5, z = -15 - rnd(i + 2) * 4, c = cols[i % 6];
         B.add(BOX, toon(0xffffff, palaceTex(c, "#f4f1ea")), [x, WATER_Y + 5 + h / 2, z], [0, 0, 0], [w, h, 6]);
         if (i % 4 === 1) { B.add(CONE, toon(parseInt(c.slice(1), 16)), [x, WATER_Y + 5 + h + 4, z], [0, Math.PI / 4, 0], [2.4, 8, 2.4]); for (let q = 0; q < 4; q++) B.add(CYL8, toon(0xf4f1ea), [x, WATER_Y + 5 + h + 0.8 + q * 1.6, z], [0, 0, 0], [2.0 - q * 0.4, 0.3, 2.0 - q * 0.4]); B.add(PRISM, toon(0xe86a2a), [x + 0.5, WATER_Y + 5 + h + 9.4, z], [Math.PI / 2, 0, Math.PI / 2], [0.4, 0.04, 1.0]); }
         else if (i % 4 === 3) B.add(DOME, toon(0xf4f1ea), [x, WATER_Y + 5 + h, z], [0, 0, 0], [1.6, 1.6, 1.6]);
@@ -379,7 +380,7 @@ export class World {
       ayodhya: { hs: 0xb090e8, hg: 0x4a2a5a, hi: 1.3, sc: 0xc0b0ff, si: 1.0, sd: [-0.5, 0.7, 0.6], fog: 0x7a4a9a, fn: 50, ff: 260 },
       close: { hs: 0xa088e8, hg: 0x5a3a5a, hi: 1.35, sc: 0xc8b8ff, si: 0.9, sd: [-0.4, 0.8, 0.5], fog: 0x4a2a7a, fn: 30, ff: 160 },
       amritsar: { hs: 0xa898f0, hg: 0x4a3a5a, hi: 1.3, sc: 0xffe0b0, si: 1.0, sd: [-0.4, 0.7, 0.6], fog: 0x3a2a7a, fn: 50, ff: 260 },
-      gwalior: { hs: 0x8898e0, hg: 0x3a3a5a, hi: 1.2, sc: 0xfff0c0, si: 1.4, sd: [0, 0.35, -1], fog: 0x2a2a6a, fn: 40, ff: 220 },
+      gwalior: { hs: 0xa0a8f0, hg: 0x4a4a6a, hi: 1.7, sc: 0xfff0c0, si: 1.4, sd: [0, 0.35, -1], fog: 0x2a2a6a, fn: 40, ff: 220 },
       kolkata: { hs: 0xc080d0, hg: 0x5a2a4a, hi: 1.3, sc: 0xffc0a0, si: 0.8, sd: [-0.3, 0.8, 0.5], fog: 0x4a1a5a, fn: 30, ff: 180 },
       goa: { hs: 0xa0a0e0, hg: 0x6a4a4a, hi: 1.35, sc: 0xffb080, si: 1.6, sd: [0.6, 0.25, -0.7], fog: 0xc08a9a, fn: 50, ff: 260 },
       varanasi: { hs: 0xb090e8, hg: 0x4a2a5a, hi: 1.3, sc: 0xc0b0ff, si: 1.0, sd: [-0.5, 0.7, 0.6], fog: 0x6a3a8a, fn: 50, ff: 260 },
