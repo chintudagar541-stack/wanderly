@@ -52,12 +52,15 @@ These come straight from the channel owner. Apply all of them to every new video
   lamps, trees, banners, carpets, books, crates), crowds of background characters, patterned surfaces
   (carpets, tiles, fabrics, wallpapers), foreground objects to frame shots. Check every still for empty areas
   before rendering.
-- **Camera like the reference (Tughlaq coin / Diwali shorts):**
-  - Lots of **close-ups** and medium close-ups of faces and props. Wides are only for establishing shots.
-  - The **angle changes about every 1–1.5 s**, with cuts on words.
-  - The camera **never stands still**: steady push-ins, dollies, orbits, a little handheld drift.
-  - Fast moves and **whip pans** (yaw swing + motion blur) on beat changes.
-  - **Depth of field** on close shots (background soft, subject sharp), plus sun shadows and glow on lights.
+- **Camera and transitions, measured from the references (2026-11-07). These replace the old "cut every second" rule:**
+  - **(Almost) no hard cuts.** Frame-difference analysis of the four 60 s references found only a handful of hard cuts.
+  - **Between places: a dissolve** of about 0.2 s (6 frames), often matched on an object at the same screen position.
+  - **Inside a place: one long, continuous camera move** of 2–5 s with several beats: push in, orbit, crane up/down,
+    pull out. The frame "changes every second" because the camera and the characters keep moving, not because of cuts.
+  - The camera **tracks characters** as they walk, and **flies through doors and windows** into the next room.
+  - **Low, wide lens** (fov 60–75) close to the ground or props. Characters lean into the lens for big close-ups.
+  - Moves are eased. Openings use a quick **punch-in that settles** (ease-out). There is no shaky whip-pan spam.
+  - On key words, characters do the thing the word says: face turns purple + steam on "purple", launched on "fired".
 - Characters act: talking mouths (`talk()`), gestures, props in hands, blinking, sparkle glints on key props.
 - **Women characters** (toon.ts): hair is drawn behind the body.
   - Use `hat: "longHair"` + `hairStyle: "long" | "bob" | "ponytail" | "bun"`.

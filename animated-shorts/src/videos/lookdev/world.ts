@@ -4,7 +4,7 @@ import * as THREE from "three";
 import { NOINK } from "../bridge/ink";
 import { canvasTex } from "../eiffel/lib";
 import { Batch, Kit, M, rep, defaultPal, desk, chair, bookshelf, cabinet, plant, wallClock, picture, windowFrame, door, deskClutter, house, pine, lampPost, fence, V3, rnd, CONE, BOX } from "../../lib3d/kit";
-const TX = {}; // swapped to the texture library (src/lib3d/textures.ts) once it lands
+import * as TX from "../../lib3d/textures";
 
 export type LightName = "room" | "dusk";
 export const RX = 0, SX = 300;
@@ -41,13 +41,13 @@ export class World {
     // ================= ROOM (6 x 6 x 3.2, window in the left wall) =================
     k.at([RX, 0, 0], 0, () => {
       const W = 6, D = 6, H = 3.2;
-      const wallM = M(0xffffff, rep(tx("bricks", () => quick("#7ccaa0", "#5aa880", "brick"), { paint: "#80c8a4", grout: "#5aa884" }), W, H, 1, 1));
-      const floorM = M(0xffffff, rep(tx("woodFloor", () => quick("#b07a48", "#7a4a28", "plank")), W, D, 1, 1));
+      const wallM = M(0xffffff, rep(TX.bricks("#7fc79a", "#4f8c6a"), W, H, 1, 1));
+      const floorM = M(0xffffff, rep(TX.woodFloor({ color: "#b07a48", kind: "boards" }), W, D, 1, 1));
       k.floor(floorM, [0, 0, 0], W, D);
       k.panel(wallM, [0, H / 2, -D / 2], W, H);
-      k.panel(M(0xffffff, rep(tx("bricks", () => quick("#7ccaa0", "#5aa880", "brick"), { paint: "#80c8a4", grout: "#5aa884" }), D, H, 1, 1)), [W / 2, H / 2, 0], D, H, -Math.PI / 2);
+      k.panel(M(0xffffff, rep(TX.bricks("#7fc79a", "#4f8c6a"), D, H, 1, 1)), [W / 2, H / 2, 0], D, H, -Math.PI / 2);
       // left wall with a window hole (four panels around it)
-      const lw = M(0xffffff, rep(tx("bricks", () => quick("#7ccaa0", "#5aa880", "brick"), { paint: "#80c8a4", grout: "#5aa884" }), 2, 1, 1, 1));
+      const lw = M(0xffffff, rep(TX.bricks("#7fc79a", "#4f8c6a"), 2, 1, 1, 1));
       const wz = -0.4, ww = 1.6, wy0 = 0.9, wy1 = 2.4;
       k.mesh(new THREE.PlaneGeometry(D / 2 + wz - ww / 2 + 0.0, H), lw, [-W / 2, H / 2, (-D / 2 + wz - ww / 2) / 2], [0, Math.PI / 2, 0]);
       k.mesh(new THREE.PlaneGeometry(D / 2 - wz - ww / 2, H), lw, [-W / 2, H / 2, (D / 2 + wz + ww / 2) / 2], [0, Math.PI / 2, 0]);
@@ -60,7 +60,7 @@ export class World {
       k.box(M(0xf2efe8), [0, 0.06, -D / 2 + 0.03], [W, 0.12, 0.06]); k.box(M(0xf2efe8), [W / 2 - 0.03, 0.06, 0], [0.06, 0.12, D]);
       k.box(M(0x5aa884), [0, 1.0, -D / 2 + 0.02], [W, 0.06, 0.04]);
       // rug, desk, chairs, shelves, cabinet, plants, clock, pictures, ceiling lamp, door
-      k.floor(M(0xffffff, tx("rug", () => quick("#a8402a", "#e8b84a", "noise"))), [0.5, 0.005, -1.4], 2.6, 1.9);
+      k.floor(M(0xffffff, TX.persianRug()), [0.5, 0.005, -1.4], 2.6, 1.9);
       k.at([0.6, 0, -1.6], 0, () => { desk(k, P, 1.6, 0.8); k.at([0, 0.76, 0], 0, () => deskClutter(k, P, 3)); });
       k.at([0.6, 0, -2.35], 0, () => chair(k, P));
       k.at([-0.4, 0, -0.6], 0.4, () => chair(k, P));
@@ -83,13 +83,13 @@ export class World {
 
     // ================= STREET (dusk) =================
     k.at([SX, 0, 0], 0, () => {
-      k.floor(M(0xffffff, rep(tx("dirt", () => quick("#b89a78", "#9a7a58", "noise")), 8, 140, 2, 2)), [0, 0.005, -40], 8, 140);
-      k.floor(M(0xffffff, rep(tx("grass", () => quick("#6a9a4a", "#4a7a3a", "noise")), 200, 200, 2, 2)), [0, 0, -40], 200, 200);
+      k.floor(M(0xffffff, rep(TX.dirt({ color: "#b89a78" }), 8, 140, 2, 2)), [0, 0.005, -40], 8, 140);
+      k.floor(M(0xffffff, rep(TX.grass(), 200, 200, 2, 2)), [0, 0, -40], 200, 200);
       const walls = [0xd9e4f0, 0x9ac0d8, 0xf2d0a0, 0xa8c8a0, 0xe8b0a0, 0xf4f1ea], roofs = [0x5a4a5a, 0x6a3a3a, 0x3a4a5a];
       for (const s of [-1, 1]) for (let i = 0; i < 7; i++) { const z = 10 - i * 11 + (s > 0 ? 4 : 0), seed = i * 2 + (s > 0 ? 1 : 0);
         k.at([s * 10, 0, z], s > 0 ? -Math.PI / 2 : Math.PI / 2, () => {
-          house(k, { w: 6 + rnd(seed) * 1.5, d: 7, h: 3.4 + (seed % 3 === 0 ? 2.6 : 0), wall: M(0xffffff, rep(tx("clapboardSiding", () => quick("#" + walls[seed % 6].toString(16).padStart(6, "0"), "rgba(0,0,0,0.15)", "siding"), { color: "#" + walls[seed % 6].toString(16).padStart(6, "0") }), 7, 6, 1, 1)),
-            trim: M(0xf4f1ea), roof: M(roofs[seed % 3]), door: M([0x8a3a2a, 0x2a4a6a, 0x3a6a3a][seed % 3]), win: new THREE.MeshBasicMaterial({ map: winLit(), toneMapped: false }), seed });
+          house(k, { w: 6 + rnd(seed) * 1.5, d: 7, h: 3.4 + (seed % 3 === 0 ? 2.6 : 0), wall: M(0xffffff, rep(TX.clapboardSiding({ color: "#" + walls[seed % 6].toString(16).padStart(6, "0"), seed }), 7, 6, 1, 1)),
+            trim: M(0xf4f1ea), roof: M(0xffffff, rep(TX.roofShingles({ color: "#" + roofs[seed % 3].toString(16).padStart(6, "0"), seed }), 4, 8)), door: M([0x8a3a2a, 0x2a4a6a, 0x3a6a3a][seed % 3]), win: new THREE.MeshBasicMaterial({ map: winLit(), toneMapped: false }), seed });
           fence(k, M(0xf4f1ea), [-3.2, 0, 6.2], [-1, 0, 6.2]); fence(k, M(0xf4f1ea), [1, 0, 6.2], [3.2, 0, 6.2]);
           k.at([2.2, 0, 6.6], 0, () => pine(k, 3 + rnd(seed + 3) * 2, M(0x2e6a4a), M(0x6a4a2a)));
         }); }

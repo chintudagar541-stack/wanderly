@@ -22,7 +22,11 @@ export type Outfit = {
   build?: Build; stars?: boolean; heads?: number; bindi?: boolean; beard?: string;
   /** with hat "longHair": the hairstyle (default long); jewel = jhumkas, necklace, maang tikka; dupatta = its colour */
   hairStyle?: "long" | "bob" | "ponytail" | "bun"; jewel?: boolean; dupatta?: string;
+  /** "ref": the reference-short head look: near-white cream skin (#f7f2ea unless `skin` is set), soft grey shading on the
+   *  shadow side, a thinner even outline and slightly smaller features. Default (undefined) = the old look. */
+  headStyle?: "ref";
 };
+export const REF_SKIN = "#f7f2ea";
 type P2 = [number, number];
 
 const rad = (d: number) => (d * Math.PI) / 180;
@@ -232,7 +236,7 @@ const DEF_LIGHT = rad(-120);
 // ---------------- faces ----------------
 export type Expr = "neutral" | "stern" | "grin" | "laugh" | "whistle" | "nervous" | "shock" | "relief" | "relief_open" | "dazed"
   | "pained" | "smile" | "smile_closed" | "lick" | "creepy" | "terror" | "asleep" | "worried";
-type EyeK = "dot" | "small" | "lid" | "slit" | "happy" | "dash" | "squeeze" | "shock" | "shockHalf" | "spiral";
+type EyeK = "dot" | "small" | "lid" | "slit" | "happy" | "dash" | "squeeze" | "shock" | "shockHalf" | "spiral" | "sparkle";
 type MouthK = "dash" | "frown" | "smirk" | "smile" | "smileWide" | "grin" | "laugh" | "o" | "O" | "wave" | "teeth" | "lick" | "creep";
 /** eyes [back, front], brows [inner, outer] offsets in u (+ = down), mouth kind */
 const FACE: Record<Expr, { eye: [EyeK, EyeK]; brow: [number, number]; mouth: MouthK }> = {
@@ -273,6 +277,11 @@ const eye = (p: Pen, kind: EyeK, x: number, ey: number, u: number, side: number,
     case "shock": case "shockHalf":
       p.ell(x, ey, 11 * u, 11 * u, WHITE, 2.6 * u); p.dot(lx - side * 1.5 * u, ey + 1.5 * u, 3 * u);
       if (kind === "shockHalf") { p.ell(x, ey, 11 * u, 11 * u, skin, 0, 180, 360); p.stroke([[x - 11 * u, ey], [x + 11 * u, ey]], 2.6 * u); }
+      break;
+    case "sparkle": // big shiny eyes: ink oval, two white catchlights
+      p.ell(lx, ey, 7 * u, 8.5 * u, INK, 0);
+      p.ell(lx + 2.6 * u, ey - 3 * u, 2.7 * u, 2.9 * u, WHITE, 0);
+      p.dot(lx - 2.6 * u, ey + 3.4 * u, 1.3 * u, WHITE);
       break;
     default: {
       const s: P2[] = [];
@@ -323,20 +332,31 @@ const mouth = (p: Pen, kind: MouthK, mx: number, my: number, u: number, k = 1) =
 
 /** face v2 (front / 3-4). u = 1 % of the head path width W. Eyes 26u apart on the centre line, brows 20u up, mouth 20u
  *  down, everything slid toward the facing side. No blush, no catchlights. */
+/** talking mouth: a flat-topped open "D", 0 = barely open .. 1 = wide (tongue from 0.35, teeth band from 0.5) */
+const talkMouth = (p: Pen, mx: number, my: number, u: number, k: number) => {
+  const rx = (7 + 5 * k) * u, ry = (3 + 11 * k) * u, y = my - 3 * u;
+  p.ell(mx, y, rx, ry, MOUTH, 0, 0, 180);
+  if (k > 0.5) p.clip(ellPts(mx, y, rx, ry, 0, 180), () => p.poly([[mx - rx, y], [mx + rx, y], [mx + rx, y + 2.6 * u], [mx - rx, y + 2.6 * u]], WHITE, 0));
+  if (k > 0.35) p.ell(mx + 1.5 * u, y + 0.68 * ry, 0.45 * rx, 0.26 * ry, TONGUE, 0);
+  p.ell(mx, y, rx, ry, null, 3 * u, 0, 180);
+};
+
+type FaceFx = { eyeDy?: number; sparkle?: boolean; mouthOpen?: number; scale?: number };
 const faceFront = (p: Pen, cx: number, cy: number, W: number, expr: Expr, facing: number, look: number, lid: number, brim: boolean,
-  skin: string, moustache?: string, stout = false) => {
-  const u = W / 100, F = FACE[expr], fx = cx + 7 * u * facing;
-  const ex = (F.eye[0] === "shock" ? 12 : 13) * u, ey = cy;
+  skin: string, moustache?: string, stout = false, fxo: FaceFx = {}) => {
+  const u = (W / 100) * (fxo.scale ?? 1), F = FACE[expr], fx = cx + 7 * u * facing;
+  const ex = (F.eye[0] === "shock" ? 12 : 13) * u, ey = cy + (fxo.eyeDy ?? 0) * u;
   for (const side of [-1, 1]) {
     const x = fx + side * ex;
-    const kind = eyeKind(F.eye[(facing ? side === facing : side > 0) ? 1 : 0], lid);
+    const kind = fxo.sparkle ? "sparkle" : eyeKind(F.eye[(facing ? side === facing : side > 0) ? 1 : 0], lid);
     eye(p, kind, x, ey, u, side, look, skin);
     const [dI, dO] = F.brow, by = ey - (brim ? 17 : 20) * u;
     if (kind === "shock" || kind === "shockHalf") p.arc(x, by - 6 * u, 9 * u, 3 * u, 200, 340, 4 * u);
     else taper(p, [x - side * 8.5 * u, by + dI * u], [x + side * 8.5 * u, by + dO * u], 5 * u, 2.5 * u);
   }
   const mx = cx + 8 * u * facing, my = cy + 20 * u;
-  mouth(p, F.mouth, mx, my, u);
+  if (fxo.mouthOpen !== undefined && fxo.mouthOpen > 0.04) talkMouth(p, mx, my, u, clamp(fxo.mouthOpen, 0, 1));
+  else mouth(p, F.mouth, mx, my, u);
   if (moustache) for (const s of [-1, 1])
     taper(p, [mx + s * 1.5 * u, cy + 12.5 * u], [mx + s * (stout ? 19 : 15) * u, cy + (stout ? 10.5 : 15) * u], stout ? 5.5 * u : 4.5 * u, 1.6 * u, moustache);
   if (expr === "nervous") p.ell(cx + 40 * u * (facing || 1), cy - 22 * u, 3 * u, 5 * u, "#9fd4ff", 2 * u);
@@ -553,7 +573,17 @@ const hatOn = (p: Pen, o: Outfit, hp: P2[], H: Blob, cx: number, hc: number, lig
 // ---------------- bodies ----------------
 export type Arms = [P2[], P2[]];
 /** held prop; for the hammer the number is the strike 0 (raised) .. 1 (struck) */
-export type Prop = null | "icecream" | "shako" | ["hammer", number] | "phoneEar" | "phoneHold" | "phoneDrop" | "binoculars" | "earCup" | "point" | "bow" | "bowAim" | "diya" | "sparkler" | "spear" | "spearAim" | "spearUp" | "newspaper" | "suitcase" | "cash" | "letter" | "twoFingers" | "moneyCase" | "axe";
+export type Prop = null | "icecream" | "shako" | ["hammer", number] | "phoneEar" | "phoneHold" | "phoneDrop" | "binoculars" | "earCup" | "point" | "bow" | "bowAim" | "diya" | "sparkler" | "spear" | "spearAim" | "spearUp" | "newspaper" | "suitcase" | "cash" | "letter" | "twoFingers" | "moneyCase" | "axe"
+  /** shovel: 0 = blade pushed into the ground .. 1 = lifted with a clod of earth; drum (dhol at the waist): beat 0 = right
+   *  stick up / left stick on the skin .. 1 = right stick on the skin / left stick up */
+  | ["shovel", number] | ["drum", number]
+  | "phone" | "cup" | "juice" | "plate" | "book" | "lantern" | "broom" | "rope" | "flag" | "torch" | "basket" | "pot" | "umbrella"
+  | "stick" | "cane" | "bag" | "garland" | "candle";
+export type Mode = "march" | "stroll" | "stand" | "sit" | "fall" | "sitFeetUp" | "lie" | "kneel" | "lean" | "run" | "jump" | "sitFloor";
+const isTool = (prop: Prop, name: string): prop is [any, number] => Array.isArray(prop) && prop[0] === name;
+const propName = (prop: Prop): string => (Array.isArray(prop) ? prop[0] : prop ?? "");
+const NEW_PROPS = new Set(["shovel", "drum", "phone", "cup", "juice", "plate", "book", "lantern", "broom", "rope", "flag", "torch", "basket", "pot",
+  "umbrella", "stick", "cane", "bag", "garland", "candle"]);
 
 const BUILD: Record<Build, { a: number; torso: number; legs: number; tw: number }> = {
   adult: { a: 118, torso: 1.1, legs: 1.4, tw: 0.8 },
@@ -562,8 +592,25 @@ const BUILD: Record<Build, { a: number; torso: number; legs: number; tw: number 
 };
 
 export type FrontOpts = {
-  phase?: number; expr?: Expr; mode?: "march" | "stroll" | "stand" | "sit" | "fall"; look?: number; blink?: boolean | number; lift?: number;
+  /** sitFeetUp: leaning back on a chair, legs raised toward the viewer, big soles (feet on a desk); lie: lying flat, card
+   *  drawn horizontally at 0.7 scale with the head on the left, resting on the sole line (coffins, beds); kneel: on both
+   *  knees; lean: upper body tilted (tilt, default 16 deg) with forearms resting forward (window sill); run: fast stride,
+   *  arms pumping (phase); jump: airborne, arms up in a V, knees tucked; sitFloor: cross-legged on the ground */
+  phase?: number; expr?: Expr; mode?: Mode; look?: number; blink?: boolean | number; lift?: number;
   prop?: Prop; tilt?: number; headTilt?: number; wave?: number;
+  /** colour of flag / umbrella / bag / book cover / pot / basket (each has its own default) */
+  propColor?: string;
+  // ---- face / emotion FX ----
+  /** sweat drops 0..1 (1-3 drops) */ sweat?: number;
+  /** anger steam puffs from the head sides 0..1 */ steam?: number;
+  /** anger tint 0..1: purple rising from the chin (1 = whole head) */ angry?: number;
+  /** pink cheeks 0..1 */ blush?: number;
+  /** sleeping Z's; a number 0..1 drifts them upward (animate it) */ zzz?: boolean | number;
+  /** tear streams 0..1 (length) */ tears?: number;
+  /** big shiny eyes + sparkles */ sparkleEyes?: boolean;
+  /** "?" above the head */ question?: boolean;
+  /** "!" above the head */ exclaim?: boolean;
+  /** talking mouth override 0..1 (<= 0.04 falls back to the expression's mouth) */ mouthOpen?: number;
   /** seen from behind: no face, hair over the head */
   back?: boolean; /** phone screen glow 0..1 */ glow?: number;
   /** canvas angle the key light comes FROM (painted crescent + thick outline side) */
@@ -575,22 +622,166 @@ const footStroke = (p: Pen, a: P2, b: P2, w: number, col: string) => {
   p.stroke([a, b], w, col);
 };
 
-export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
-  const { phase = 0, expr = "neutral", mode = "march", look = 0, blink = false, lift = 60, prop = null, tilt = 0, headTilt = 0, wave,
+/** where the head ended up, in final canvas units (for placing speech bubbles / extra FX): centre and half-width */
+export type FrontInfo = { head: P2; r: number };
+let NO_FLOAT = false; // set while lie() draws the inner upright figure; floating FX are drawn by the outer call
+
+/** big shoe seen sole-on (toe up, heel toward the ground): feet raised toward the viewer */
+const soleShoe = (p: Pen, x: number, y: number, side: number, u: number, col: string, ow: number) => {
+  const dark = col === INK ? "#3a2c3c" : shade(col, 0.62), rot = side * 8;
+  p.ell(x, y, 17 * u, 26 * u, dark, ow * 0.75, 0, 360, rot); // sole
+  p.ell(x - side * 0.6 * u, y - 4 * u, 13 * u, 18 * u, col === INK ? "#4a3a4c" : col, 0, 0, 360, rot); // tread face
+  p.clip(ellPts(x, y, 17 * u, 26 * u, 0, 360, rot), () => {
+    p.stroke([[x - 17 * u, y + 13 * u + side * 2 * u], [x + 17 * u, y + 13 * u - side * 2 * u]], 2.2 * u, INK); // heel break
+    for (let k = 0; k < 3; k++) p.stroke([[x - 7 * u, y - 14 * u + k * 7 * u], [x + 7 * u, y - 14 * u + k * 7 * u]], 1.5 * u, dark);
+  });
+};
+
+/** ink-rimmed thick stroke with a chosen rim (lighter than Pen.line, for small marks) */
+const inked = (p: Pen, pts: P2[], w: number, col: string, rim: number) => { p.stroke(pts, w + 2 * rim, INK); p.stroke(pts, w, col); };
+
+/** tear / sweat drop, round end at (x, y), point up */
+const drop = (p: Pen, x: number, y: number, s: number, col: string, rim: number, ang = 0) => {
+  const pts: P2[] = [[x, y - 2.1 * s]];
+  for (let i = 0; i <= 16; i++) { const a = rad(-35 + (250 * i) / 16); pts.push([x + s * Math.cos(a), y + s * Math.sin(a)]); }
+  const rp = rotPts(pts, rad(ang), x, y);
+  p.poly(rp, col, rim);
+  p.ell(x - 0.35 * s, y - 0.1 * s, 0.22 * s, 0.38 * s, "rgba(255,255,255,0.85)", 0);
+};
+
+/** cartoon cloud puff (outline only around the union of its circles) */
+const puff = (p: Pen, x: number, y: number, R: number, col: string, rim: number) => {
+  const c: [number, number, number][] = [[0, 0, 1], [-0.72, 0.28, 0.7], [0.72, 0.22, 0.74], [0.05, -0.5, 0.72]];
+  for (const [dx, dy, k] of c) p.ell(x + dx * R, y + dy * R, k * R + rim, k * R + rim, INK, 0);
+  for (const [dx, dy, k] of c) p.ell(x + dx * R, y + dy * R, k * R, k * R, col, 0);
+  p.ell(x - 0.25 * R, y - 0.3 * R, 0.3 * R, 0.22 * R, "#ffffff", 0);
+};
+
+const star4 = (p: Pen, x: number, y: number, s: number, col: string, rim: number) => {
+  const pts: P2[] = [];
+  for (let k = 0; k < 8; k++) { const r = k % 2 ? 0.28 * s : s, a = rad(k * 45 - 90); pts.push([x + r * Math.cos(a), y + r * Math.sin(a)]); }
+  p.poly(pts, col, rim);
+};
+
+/** floating FX around a head (upright, final canvas units): steam, sweat, Z's, ?, !, sparkles. `top` = how far above the
+ *  head centre the head-gear reaches (in head half-widths), so "?" / "!" clear tall hats. */
+const floaters = (p: Pen, c: P2, r: number, o: FrontOpts, top = 1) => {
+  p.rot = null;
+  const u = r / 50, [x, y] = c, rim = 1.8 * u;
+  const steam = clamp(o.steam ?? 0, 0, 1), sweat = clamp(o.sweat ?? 0, 0, 1);
+  if (steam > 0) for (const side of [-1, 1]) for (let i = 0; i < 3; i++) {
+    const R = (15 - 3 * i) * u * (0.45 + 0.55 * steam);
+    puff(p, x + side * (1.02 + 0.2 * i) * r, y - (0.15 + 0.42 * i) * r - 0.2 * r * steam, R, i ? "#e9e7ee" : "#f6f5fa", rim);
+  }
+  if (sweat > 0) {
+    const spots: [number, number, number][] = [[0.95, -0.55, 18], [-1.0, -0.38, -18], [1.1, -0.08, 26]];
+    for (let i = 0; i < Math.ceil(sweat * 3 - 1e-6); i++) { const [dx, dy, a] = spots[i]; drop(p, x + dx * r, y + dy * r, (5.5 + 2 * sweat) * u, "#9fd8ff", rim, a); }
+  }
+  if (o.zzz) {
+    const t = typeof o.zzz === "number" ? ((o.zzz % 1) + 1) % 1 : 0;
+    for (let i = 0; i < 3; i++) {
+      const s = (11 + 4 * i) * u, k = i + t, zx = x + (0.85 + 0.34 * k) * r, zy = y - (0.7 + 0.45 * k) * r;
+      inked(p, [[zx - s / 2, zy - s / 2], [zx + s / 2, zy - s / 2], [zx - s / 2, zy + s / 2], [zx + s / 2, zy + s / 2]], 0.24 * s, "#ffffff", 1.6 * u);
+    }
+  }
+  const S = 0.85 * r, want = y - (1.6 + Math.max(0, top - 1)) * r, qy = Math.max(want, 0.5 * S + 6), qx = x + (qy > want + 1 ? 1.25 * r : 0);
+  const both = !!o.question && !!o.exclaim;
+  if (o.question) {
+    const cx = qx + (both ? -0.28 : 0.1) * r, cy = qy, hook: P2[] = [];
+    for (let i = 0; i <= 14; i++) { const a = rad(195 + (215 * i) / 14); hook.push([cx + 0.2 * S * Math.cos(a), cy - 0.2 * S + 0.2 * S * Math.sin(a)]); }
+    hook.push([cx, cy + 0.08 * S], [cx, cy + 0.17 * S]);
+    inked(p, hook, 0.12 * S, "#ffd84a", 2 * u);
+    p.ell(cx, cy + 0.38 * S, 0.085 * S + 2 * u, 0.085 * S + 2 * u, INK, 0); p.ell(cx, cy + 0.38 * S, 0.085 * S, 0.085 * S, "#ffd84a", 0);
+  }
+  if (o.exclaim) {
+    const cx = qx + (both ? 0.3 : 0.1) * r, cy = qy;
+    p.poly([[cx - 0.09 * S, cy - 0.42 * S], [cx + 0.09 * S, cy - 0.42 * S], [cx + 0.045 * S, cy + 0.18 * S], [cx - 0.045 * S, cy + 0.18 * S]], "#ff4b3a", 2 * u);
+    p.ell(cx, cy + 0.38 * S, 0.085 * S, 0.085 * S, "#ff4b3a", 2 * u);
+  }
+  if (o.sparkleEyes) for (const [dx, dy, s] of [[-1.12, -0.7, 11], [1.15, -0.85, 13], [1.0, -1.25, 7]] as const) star4(p, x + dx * r, y + dy * r, s * u, "#fff3a0", 1.4 * u);
+};
+
+/** lying flat: the upright figure drawn into a rotated, scaled frame (head on the left), resting on the sole line */
+const lieFront = (p: Pen, o: Outfit, opts: FrontOpts): FrontInfo => {
+  const g = p.g, k = 0.7, Y0 = 588, Xc = 300, Yc = 975 - 92;
+  g.save(); g.translate(Xc, Yc); g.rotate(-Math.PI / 2); g.scale(k, k); g.translate(-300, -Y0);
+  NO_FLOAT = true;
+  let inner: FrontInfo;
+  try { inner = bodyFront(p, o, { ...opts, mode: "stand" }); } finally { NO_FLOAT = false; g.restore(); }
+  const [x, y] = inner.head, head: P2 = [Xc + k * (y - Y0), Yc - k * (x - 300)];
+  floaters(p, head, inner.r * k, opts);
+  return { head, r: inner.r * k };
+};
+
+export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts): FrontInfo => {
+  if (opts.mode === "lie") return lieFront(p, o, opts);
+  const { phase = 0, expr = "neutral", mode = "march", look = 0, blink = false, lift = 60, prop = null, headTilt = 0, wave,
     light = DEF_LIGHT, facing = 0, seed = 1, back = false, glow = 0 } = opts;
-  const Bd = BUILD[o.build ?? "adult"], skin = o.skin ?? SKIN, two = Math.PI * 2, lid = lidOf(blink);
+  const tilt = opts.tilt ?? (mode === "lean" ? 16 : prop === "rope" ? 10 : 0);
+  const refHead = o.headStyle === "ref";
+  const Bd = BUILD[o.build ?? "adult"], skin = o.skin ?? (refHead ? REF_SKIN : SKIN), two = Math.PI * 2, lid = lidOf(blink);
+  const skinSh = refHead ? mix(skin, "#a9a3b4", 0.42) : mul(skin, SH_SKIN);
   const H = headBlob(seed, Bd.a, facing), W = 2 * H.a, HH = 2 * H.b, u = W / 100;
   const tall = (1 + Bd.torso + Bd.legs) * HH, sole = 975;
   // body bob 5 % (march) / 3 % (stroll) of the height, lowest at contact (phase 0 and 0.5)
-  const bob = mode === "march" ? 0.025 * tall * Math.cos(2 * two * phase) : mode === "stroll" ? 0.015 * tall * Math.cos(2 * two * phase) : 0;
-  const torsoBot = mode === "sit" ? sole - 0.2 * HH : sole - Bd.legs * HH + bob;
+  const bob = mode === "march" ? 0.025 * tall * Math.cos(2 * two * phase) : mode === "stroll" ? 0.015 * tall * Math.cos(2 * two * phase)
+    : mode === "run" ? 0.02 * tall * Math.cos(2 * two * phase) : 0;
+  const torsoBot = mode === "sit" ? sole - 0.2 * HH : mode === "sitFeetUp" ? sole - 0.62 * HH : mode === "sitFloor" ? sole - 0.14 * HH
+    : mode === "kneel" ? sole - 0.6 * HH : mode === "jump" ? sole - Bd.legs * HH - 0.3 * HH : mode === "run" ? sole - 0.94 * Bd.legs * HH + bob
+    : sole - Bd.legs * HH + bob;
   const chin = torsoBot - Bd.torso * HH, hc = chin - H.b, crown = hc - H.b, hipY = torsoBot - 0.12 * HH;
   const thick = thickAngle(light), ow = 5 * u;
   const legCol = mix(o.pants, INK, 0.55), armCol = mix(o.jacket, INK, 0.5), footCol = o.boots;
   const legW = 5.8 * u, footW = 7.5 * u;
+  const dressed = !!o.dress;
+  /** legs that sit in front of the torso (raised / crossed), drawn after it */
+  const frontLegs: (() => void)[] = [];
   // ---- legs + feet (not rotated) ----
   p.rot = null;
-  if (mode === "sit") {
+  if (mode === "sitFeetUp") {
+    frontLegs.push(() => {
+      for (const side of [-1, 1]) {
+        const h: P2 = [300 + side * 16 * u, torsoBot - 0.1 * HH], k: P2 = [300 + side * 30 * u, torsoBot + 0.08 * HH], a: P2 = [300 + side * 36 * u, sole - 0.36 * HH];
+        p.stroke(curve(h, k, a), legW * 1.1, legCol);
+        soleShoe(p, 300 + side * 38 * u, sole - 0.2 * HH, side, u, footCol, ow);
+      }
+    });
+  } else if (mode === "sitFloor") {
+    // thighs out to the knees behind the torso; shins cross in front (right shin on top), feet tucked under
+    const lw = legW * 1.25, kY = sole - 0.26 * HH;
+    for (const side of [-1, 1]) p.stroke([[300 + side * 16 * u, hipY], [300 + side * 62 * u, kY]], lw, legCol);
+    frontLegs.push(() => {
+      for (const side of [1, -1]) { // shin from the knee down across to the opposite side, foot tucked under the other knee
+        const k: P2 = [300 + side * 62 * u, kY], an: P2 = [300 - side * 40 * u, sole - 0.07 * HH];
+        if (!dressed) { p.stroke([[300 + side * 30 * u, sole - 0.2 * HH], k], lw, legCol); p.stroke([k, an], lw, legCol); p.ell(k[0], k[1], 0.5 * lw, 0.5 * lw, legCol, 0); }
+        footStroke(p, an, [an[0] - side * 14 * u, an[1] + 1 * u], footW, footCol);
+      }
+    });
+  } else if (mode === "kneel") {
+    // both knees on the ground; the shins run back and out behind them, soles of the feet showing at the sides
+    for (const side of [-1, 1]) {
+      const kn: P2 = [300 + side * 20 * u, sole - 7 * u], ft: P2 = [300 + side * 46 * u, sole - 17 * u];
+      p.stroke([kn, ft], legW, mix(legCol, INK, 0.3));
+      p.ell(ft[0] + side * 3 * u, ft[1] - 3 * u, 6.5 * u, 9 * u, footCol === INK ? "#3a2c3c" : shade(footCol, 0.75), 2 * u, 0, 360, side * -35);
+      p.stroke([[300 + side * 15 * u, hipY], kn], legW, legCol);
+      p.ell(kn[0], kn[1] + 1 * u, 6.5 * u, 4.5 * u, legCol, 0);
+    }
+  } else if (mode === "run") {
+    for (const [side, ph] of [[-1, 0], [1, 0.5]] as const) {
+      const c = Math.sin(two * (phase + ph)), up = Math.max(0, c), bk = Math.max(0, -c);
+      const nk: P2 = [300 + side * 22 * u, hipY + 0.68 * HH], nf: P2 = [300 + side * 24 * u, sole - 4 * u];
+      const kn = c >= 0 ? lerp2(nk, [300 + side * 36 * u, hipY + 0.1 * HH], up) : lerp2(nk, [300 + side * 24 * u, hipY + 0.6 * HH], bk);
+      const f = c >= 0 ? lerp2(nf, [300 + side * 26 * u, hipY + 0.58 * HH], up) : lerp2(nf, [300 + side * 48 * u, hipY + 0.86 * HH], bk);
+      p.stroke([[300 + side * 15 * u, hipY], kn, f], legW, c < 0 ? mix(legCol, INK, 0.25) : legCol);
+      footStroke(p, [f[0] - side * 3 * u, f[1]], [f[0] + side * (13 - 6 * bk) * u, f[1] + (0.5 - 8 * bk) * u], footW, footCol);
+    }
+  } else if (mode === "jump") {
+    for (const side of [-1, 1]) {
+      const kn: P2 = [300 + side * 46 * u, hipY + 0.4 * HH], f: P2 = [300 + side * 30 * u, hipY + 0.78 * HH];
+      p.stroke([[300 + side * 15 * u, hipY], kn, f], legW, legCol);
+      footStroke(p, [f[0] + side * 2 * u, f[1]], [f[0] + side * 15 * u, f[1] + 4 * u], footW, footCol);
+    }
+  } else if (mode === "sit") {
     for (const side of [-1, 1]) {
       const h: P2 = [300 + side * 15 * u, hipY], k: P2 = [300 + side * 36 * u, hipY + 0.2 * HH], f: P2 = [300 + side * 44 * u, sole - 8 * u];
       p.stroke(curve(h, k, f), legW, legCol);
@@ -615,18 +806,18 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
     const L = mode === "march" ? lift * 1.25 : mode === "stroll" ? lift * 0.55 : 0;
     for (const [side, ph] of [[-1, 0], [1, 0.5]] as const) {
       const up = Math.max(0, Math.sin(two * (phase + ph))) * L;
-      const hx = 300 + side * 15 * u, fx = 300 + side * 22 * u, fy = sole - 4 * u - up;
+      const hx = 300 + side * 15 * u, fx = 300 + side * (mode === "lean" ? 30 : 22) * u, fy = sole - 4 * u - up;
       const k: P2 = [(hx + fx) / 2 + side * (1.5 * u + up * 0.16), (hipY + fy) / 2 - up * 0.08];
       p.stroke(curve([hx, hipY], k, [fx, fy]), legW, legCol);
       footStroke(p, [fx - side * 3 * u, fy], [fx + side * 13 * u, fy + 0.5 * u], footW, footCol);
     }
   }
   // ---- upper body: rotates about the hips (tilt + a small weight-shift sway on every step) ----
-  const sway = mode === "march" ? 1.6 * Math.sin(two * phase) : mode === "stroll" ? 1.0 * Math.sin(two * phase) : 0;
+  const sway = mode === "march" ? 1.6 * Math.sin(two * phase) : mode === "stroll" ? 1.0 * Math.sin(two * phase) : mode === "run" ? 2.2 * Math.sin(two * phase) : 0;
   const A = tilt + sway;
   p.rot = A ? [rad(A), 300, hipY] : null;
   if (o.hat === "longHair" && !back) hairBack(p, o, H, 300, hc, light, thick, ow);
-  const dress = !!o.dress && mode !== "fall";
+  const dress = dressed && mode !== "fall";
   const T: Blob = { a: ((Bd.tw / 2) * W) / 1.06, b: 0.5 * (torsoBot - (chin - 0.25 * HH)), nTop: 2.2, nBot: 2.6, egg: o.build === "stout" ? 0.17 : 0.12,
     asym: 0.04 * facing, rot: 0, noise: 0.006, seed: seed + 7 };
   const tcx = 300 + 3 * u * facing, tcy = torsoBot - T.b, tp = blobPts(tcx, tcy, T);
@@ -642,10 +833,33 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
   const rifle = !!o.rifle && (mode === "march" || mode === "stand" || mode === "stroll");
   type Arm = { pts: [P2, P2, P2]; front: boolean };
   const arms: Arm[] = [];
-  if (mode === "sit" && prop !== "newspaper" && prop !== "cash" && prop !== "letter") for (const side of [-1, 1]) arms.push({ pts: [sh(side), [tcx + side * (1.1 * T.a + 6 * u), sh(side)[1] + 0.4 * HH], [tcx + side * (1.2 * T.a + 10 * u), torsoBot + 0.04 * HH]], front: false });
+  /** the free arm's pose in each mode (no prop in that hand) */
+  const defArm = (side: number): Arm => {
+    const S = sh(side);
+    if (mode === "run") { // elbows bent ~90 deg, pumping against the legs: forward hand up by the chest, back hand low and out
+      const f = side * Math.sin(two * phase), k = (f + 1) / 2;
+      const E = lerp2([tcx + side * (1.15 * T.a + 22 * u), S[1] + 0.34 * HH], [tcx + side * (1.12 * T.a + 10 * u), S[1] + 0.4 * HH], k);
+      const Hd = lerp2([tcx + side * (1.3 * T.a + 34 * u), S[1] + 0.62 * HH], [tcx + side * 0.15 * T.a, S[1] - 0.02 * HH], k);
+      return { pts: [S, E, Hd], front: f > 0 };
+    }
+    if (mode === "jump") return { pts: [S, [tcx + side * (1.12 * T.a + 16 * u), S[1] - 0.24 * HH], [tcx + side * (1.25 * T.a + 34 * u), S[1] - 0.72 * HH]], front: false };
+    if (mode === "lean") return { pts: [S, [tcx + side * (1.12 * T.a + 16 * u), S[1] + 0.4 * HH], [300 + side * 22 * u, S[1] + 0.5 * HH]], front: true };
+    if (mode === "sitFeetUp") return { pts: [S, [tcx + side * (1.1 * T.a + 6 * u), S[1] + 0.44 * HH], [300 + side * 12 * u, torsoBot - 0.3 * HH]], front: true };
+    if (mode === "sitFloor") return { pts: [S, [tcx + side * (1.1 * T.a + 10 * u), S[1] + 0.5 * HH], [300 + side * 60 * u, sole - 0.2 * HH]], front: true };
+    return { pts: hang(side, side < 0 ? -sw : sw), front: false };
+  };
+  const pn = propName(prop), np = NEW_PROPS.has(pn);
+  // ---- key points of the new props (shared by the arm poses and the drawing) ----
+  const X = (dx: number) => 300 + dx * u, Y = (dy: number) => chin + dy * u, Sy = chin + 0.12 * HH;
+  const ex = (side: number, dx: number) => tcx + side * (1.1 * T.a + dx * u);
+  const kTool = Array.isArray(prop) ? clamp(prop[1], 0, 1) : 0;
+  const shovelG = lerp2([X(-14), Y(44)], [X(-30), Y(70)], kTool), shovelB = lerp2([X(58), sole - 36 * u], [X(86), Y(6)], kTool);
+  const drumC: P2 = [300, torsoBot - 0.16 * HH], drumL = 56 * u, drumR = 21 * u;
+  const broomT: P2 = [X(26), Y(26)], broomB: P2 = [X(-40), sole - 30 * u];
+  if (mode === "sit" && prop !== "newspaper" && prop !== "cash" && prop !== "letter" && !np) for (const side of [-1, 1]) arms.push({ pts: [sh(side), [tcx + side * (1.1 * T.a + 6 * u), sh(side)[1] + 0.4 * HH], [tcx + side * (1.2 * T.a + 10 * u), torsoBot + 0.04 * HH]], front: false });
   else if (mode === "fall") for (const side of [-1, 1]) arms.push({ pts: [sh(side), [tcx + side * (1.15 * T.a + 12 * u), sh(side)[1] - 0.25 * HH], [tcx + side * (1.3 * T.a + 24 * u), sh(side)[1] - 0.68 * HH]], front: false });
   else {
-    arms.push({ pts: prop === "shako" ? hang(-1, 0) : hang(-1, -sw), front: false });
+    arms.push(prop === "shako" ? { pts: hang(-1, 0), front: false } : defArm(-1));
     if (rifle) {
       const G = lerp2(R0, R1, 0.1);
       arms.push({ pts: [sh(1), [tcx + 1.12 * T.a + 5 * u, sh(1)[1] + 0.45 * HH], G], front: false });
@@ -696,12 +910,41 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
     } else if (prop === "icecream") {
       const S = sh(1);
       arms.push({ pts: [S, [tcx + 1.05 * T.a + 4 * u, S[1] + 0.45 * HH], [tcx + 0.5 * T.a, S[1] + 0.4 * HH]], front: true });
-    } else if (Array.isArray(prop)) {
+    } else if (np) {
+      const both = (L: P2, R: P2, eL: P2, eR: P2) => { arms.length = 0; arms.push({ pts: [sh(-1), eL, L], front: true }, { pts: [sh(1), eR, R], front: true }); };
+      const one = (Hd: P2, E: P2) => arms.push({ pts: [sh(1), E, Hd], front: true });
+      const sym = (hx: number, hy: number, edx: number, ey: number) => both([X(-hx), hy], [X(hx), hy], [ex(-1, edx), ey], [ex(1, edx), ey]);
+      switch (pn) {
+        case "shovel": both(shovelG, lerp2(shovelG, shovelB, 0.38), [ex(-1, 6), Sy + 0.36 * HH], [ex(1, 12), Sy + 0.42 * HH]); break;
+        case "drum": {
+          const yH = drumC[1] - 8 * u, yU = drumC[1] - 44 * u;
+          both([X(-70), yH + (yU - yH) * kTool], [X(70), yU + (yH - yU) * kTool], [ex(-1, 18), Sy + 0.36 * HH], [ex(1, 18), Sy + 0.36 * HH]);
+          break;
+        }
+        case "phone": sym(11, Y(44), 6, Sy + 0.42 * HH); break;
+        case "juice": one([X(29), Y(28)], [ex(1, 14), Sy + 0.46 * HH]); break;
+        case "cup": one([X(24), Y(-7)], [ex(1, 22), Sy + 0.3 * HH]); break;
+        case "plate": sym(50, Y(60), 12, Sy + 0.4 * HH); break;
+        case "book": sym(33, Y(58), 8, Sy + 0.44 * HH); break;
+        case "lantern": one([X(62), Y(64)], [ex(1, 12), Sy + 0.36 * HH]); break;
+        case "broom": both(lerp2(broomT, broomB, 0.42), lerp2(broomT, broomB, 0.1), [ex(-1, 4), Sy + 0.5 * HH], [ex(1, 12), Sy + 0.42 * HH]); break;
+        case "rope": both([X(-66), Y(44)], [X(-40), Y(54)], [ex(-1, 16), Sy + 0.26 * HH], [X(10), Y(64)]); break;
+        case "flag": one([X(60), Y(-30)], [ex(1, 24), Sy + 0.02 * HH]); break;
+        case "torch": one([X(60), Y(-24)], [ex(1, 24), Sy + 0.04 * HH]); break;
+        case "basket": sym(52, crown - 4 * u, 24, Y(-30)); break;
+        case "pot": one([X(36), crown - 20 * u], [ex(1, 26), Y(-34)]); break;
+        case "umbrella": one([X(16), Y(46)], [ex(1, 10), Sy + 0.44 * HH]); break;
+        case "stick": case "cane": one([X(62), Y(84)], [ex(1, 10), Sy + 0.42 * HH]); break;
+        case "garland": sym(62, Y(-34), 26, Sy + 0.2 * HH); break;
+        case "candle": sym(8, Y(56), 4, Sy + 0.46 * HH); break;
+        default: arms.push(defArm(1)); // bag: both arms free
+      }
+    } else if (isTool(prop, "hammer")) {
       const S = sh(1), k = clamp(prop[1], 0, 1);
       const E = lerp2([tcx + 1.1 * T.a + 10 * u, S[1] - 0.15 * HH], [tcx + 1.2 * T.a + 10 * u, S[1] + 0.3 * HH], k);
       const Hd = lerp2([tcx + 1.15 * T.a + 14 * u, S[1] - 0.55 * HH], [tcx + 1.45 * T.a + 22 * u, S[1] + 0.35 * HH], k);
       arms.push({ pts: [S, E, Hd], front: true });
-    } else arms.push({ pts: hang(1, sw), front: false });
+    } else arms.push(defArm(1));
   }
   const drawArm = (a: Arm) => { p.stroke(curve(a.pts[0], a.pts[1], a.pts[2]), 5.2 * u, armCol); p.dot(a.pts[2][0], a.pts[2][1], 5.5 * u); };
   // behind the body: rifle, sword, arms
@@ -709,7 +952,7 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
     p.band([R0, R1], "#7a4b2a", 5 * u, 1.5 * u, "round");
     p.band([lerp2(R0, R1, 0.6), R1], "#8d949c", 2.4 * u, 1.2 * u, "round");
   }
-  if (o.sword && mode !== "sit") {
+  if (o.sword && mode !== "sit" && mode !== "sitFeetUp" && mode !== "sitFloor" && mode !== "kneel" && mode !== "jump") {
     const s0: P2 = [tcx - 0.75 * T.a, torsoBot - 0.2 * HH];
     p.band([s0, [s0[0] - Math.sin(rad(25)) * 0.8 * HH, s0[1] + Math.cos(rad(25)) * 0.8 * HH]], "#c9ccd2", 3 * u, 1.2 * u, "round");
   }
@@ -717,7 +960,9 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
   // torso / dress: shaded fill -> clothing clipped to it -> thick-thin ink ring
   if (dress) {
     // lehenga / saree: a flared pleated skirt from the waist with a gold border, a fitted blouse, a dupatta, jewellery
-    const sk = o.dress!, bord = o.sash ?? mul(o.dress!, [0.7, 0.7, 0.7]), yw = torsoBot - 0.2 * HH, yh = mode === "sit" ? sole + 0.06 * HH : sole - 0.08 * HH, tw = 0.82 * T.a, hw = (mode === "sit" ? 1.75 : 1.42) * T.a;
+    const sk = o.dress!, bord = o.sash ?? mul(o.dress!, [0.7, 0.7, 0.7]), yw = torsoBot - 0.2 * HH, yh = mode === "sit" ? sole + 0.06 * HH : mode === "sitFloor" ? sole - 0.01 * HH : mode === "kneel" ? sole - 0.03 * HH
+      : mode === "sitFeetUp" ? torsoBot + 0.22 * HH : mode === "run" || mode === "jump" ? torsoBot + 0.72 * HH : sole - 0.08 * HH,
+      tw = 0.82 * T.a, hw = (mode === "sit" ? 1.75 : mode === "sitFloor" ? 2.0 : 1.42) * T.a;
     const skirt: P2[] = [[tcx - tw, yw], [tcx + tw, yw]];
     for (let i = 0; i <= 10; i++) { const x = tcx + hw - (2 * hw * i) / 10; skirt.push([x, yh + (i % 2 ? 3 * u : 0) - Math.abs(i - 5) * 0.6 * u]); }
     p.gradFill(skirt, sk, mul(sk, SH_CLOTH), light);
@@ -755,6 +1000,234 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
     if (o.sash) { const s = facing || 1; p.poly([[tcx + s * 0.55 * T.a, torsoBot - 0.3 * HH], [tcx + s * 0.75 * T.a, torsoBot + 0.05 * HH], [tcx + s * 0.45 * T.a, torsoBot + 0.02 * HH]], o.sash, 1.6 * u); }
     p.inkRing(tp, ow, thick);
   }
+  // ---- new props, in three layers: under the front arms, over them (hands redrawn on top), after the head ----
+  const handDots = () => { for (const a of arms) if (a.front) p.dot(a.pts[2][0], a.pts[2][1], 5.5 * u); };
+  const pc = opts.propColor, WOOD = "#8a5a34", fsc = refHead ? 0.88 : 1;
+  const drawProp = (stage: "under" | "over" | "head") => {
+    if (!np) return;
+    if (stage === "under") {
+      if (pn === "bag") { // strap over the left shoulder across to a satchel on the right hip
+        const bc: P2 = [X(46), torsoBot - 0.06 * HH], col = pc ?? "#8a5a2e";
+        p.band([[X(-24), Y(2)], [X(38), bc[1] - 14 * u]], "#5a3418", 4 * u, 1.2 * u, "round");
+        p.poly(rrect(bc[0] - 21 * u, bc[1] - 15 * u, bc[0] + 21 * u, bc[1] + 17 * u, 5 * u), col, 2.4 * u);
+        p.poly([[bc[0] - 21 * u, bc[1] - 15 * u], [bc[0] + 21 * u, bc[1] - 15 * u], [bc[0] + 19 * u, bc[1] + 2 * u], [bc[0], bc[1] + 6 * u], [bc[0] - 19 * u, bc[1] + 2 * u]], shade(col, 0.78), 2 * u);
+        p.ell(bc[0], bc[1] + 4 * u, 3.5 * u, 3 * u, "#e8c45a", 1.2 * u);
+      } else if (pn === "drum") { // dhol across the waist on a neck strap
+        const [cx, cy] = drumC, L = drumL, R = drumR, body = pc ?? "#b5653f";
+        for (const s of [-1, 1]) p.band([[X(s * 18), Y(4)], [cx + s * (L - 10 * u), cy - R + 2 * u]], "#c0353a", 3 * u, 1 * u, "round");
+        const top: P2[] = [], bot: P2[] = [];
+        for (let i = 0; i <= 12; i++) { const t = i / 12, x = cx - L + 2 * L * t, b = 4 * u * Math.sin(Math.PI * t); top.push([x, cy - R - b]); bot.push([x, cy + R + b]); }
+        const shell = [...top, ...bot.reverse()];
+        p.gradFill(shell, body, mul(body, SH_CLOTH), light, 0.3);
+        p.clip(shell, () => {
+          const zz: P2[] = [];
+          for (let i = 0; i <= 10; i++) zz.push([cx - L + 6 * u + ((2 * L - 12 * u) * i) / 10, cy + (i % 2 ? R + 6 * u : -R - 6 * u)]);
+          p.stroke(zz, 1.6 * u, "#f4e6c0");
+          for (const s of [-1, 1]) p.stroke([[cx + s * (L - 8 * u), cy - R - 6 * u], [cx + s * (L - 8 * u), cy + R + 6 * u]], 3 * u, "#e8c45a");
+        });
+        p.poly(shell, null, 2.6 * u);
+        for (const s of [-1, 1]) p.ell(cx + s * L, cy, 8 * u, R + 1 * u, "#efe3c4", 2.6 * u);
+      } else if (pn === "umbrella") { // shaft (behind the head) + J handle
+        const x = X(16);
+        p.band([[x, Y(58)], [x, crown - 60 * u]], "#3a2a22", 2.4 * u, 1 * u, "round");
+        p.band(curve([x, Y(58)], [x - 2 * u, Y(68)], [x - 9 * u, Y(63)]), "#5a3418", 4 * u, 1.2 * u, "round");
+      }
+      return;
+    }
+    if (stage === "over") {
+      switch (pn) {
+        case "shovel": {
+          const G = shovelG, B = shovelB, d = Math.hypot(B[0] - G[0], B[1] - G[1]), dx = (B[0] - G[0]) / d, dy = (B[1] - G[1]) / d, nx = -dy, ny = dx;
+          const at = (a: number, n: number): P2 => [B[0] + dx * a * u + nx * n * u, B[1] + dy * a * u + ny * n * u];
+          p.band([[G[0] - dx * 4 * u, G[1] - dy * 4 * u], B], "#a0703c", 4.4 * u, 1.3 * u, "round");
+          p.band([[G[0] - dx * 5 * u + nx * 8 * u, G[1] - dy * 5 * u + ny * 8 * u], [G[0] - dx * 5 * u - nx * 8 * u, G[1] - dy * 5 * u - ny * 8 * u]], "#a0703c", 4 * u, 1.3 * u, "round");
+          const blade = [at(0, 8), at(4, 12), at(26, 12.5), at(38, 0), at(26, -12.5), at(4, -12)];
+          p.poly(blade, "#a9b1ba", 2.2 * u);
+          p.stroke([at(4, 0), at(30, 0)], 1.3 * u, "#7d858e");
+          p.poly([at(-6, 3.6), at(4, 4.6), at(4, -4.6), at(-6, -3.6)], "#7d858e", 1.6 * u);
+          if (kTool > 0.35) { // a clod of earth on the blade, bits flying off it
+            const c = at(20, -2);
+            p.ell(c[0], c[1] - 6 * u, 13 * u, 9 * u, "#7a5230", 2 * u);
+            if (kTool > 0.6) for (let i = 0; i < 4; i++) p.ell(c[0] - (8 - i * 8) * u, c[1] - (22 + 7 * (i % 2)) * u, 3.2 * u, 2.8 * u, "#7a5230", 1.4 * u);
+          }
+          if (kTool < 0.5) { const t = at(36, 0); p.ell(t[0], sole - 5 * u, 30 * u, 8 * u, "#7a5230", 2.2 * u); p.ell(t[0] - 9 * u, sole - 8 * u, 7 * u, 3 * u, "#9a6a40", 0); }
+          break;
+        }
+        case "drum": {
+          const ang0 = Math.atan2(-30, -12), ang1 = Math.atan2(14, -16);
+          arms.forEach((a, i) => {
+            const side = i ? 1 : -1, k = i ? kTool : 1 - kTool, an = ang0 + (ang1 - ang0) * k, L = (i ? 26 : 30) * u;
+            const [hx, hy] = a.pts[2], tip: P2 = [hx - side * Math.abs(Math.cos(an)) * L, hy + Math.sin(an) * L];
+            if (i) p.band(curve([hx + side * 3 * u, hy + 2 * u], [(hx + tip[0]) / 2, (hy + tip[1]) / 2 - 3 * u], tip), "#7a4b2a", 3.6 * u, 1.2 * u, "round");
+            else p.band([[hx + side * 3 * u, hy + 2 * u], tip], "#d9b27a", 2.2 * u, 1.1 * u, "round");
+          });
+          break;
+        }
+        case "phone": {
+          p.poly(rrect(X(-11), Y(16), X(11), Y(50), 3.5 * u), "#22232b", 2.4 * u);
+          p.poly(rrect(X(-8), Y(20), X(8), Y(45), 1.5 * u), mix("#2c3a4c", "#cfeeff", 0.35 + 0.65 * glow), 0);
+          break;
+        }
+        case "juice": {
+          const g0: P2[] = [[X(12), Y(2)], [X(32), Y(2)], [X(29.5), Y(38)], [X(14.5), Y(38)]];
+          p.poly(g0, "rgba(225,242,255,0.8)", 0);
+          p.poly([[X(12.8), Y(10)], [X(31.2), Y(10)], [X(29.5), Y(38)], [X(14.5), Y(38)]], pc ?? "#ffa62b", 0);
+          p.stroke([[X(15.5), Y(13)], [X(16.5), Y(33)]], 1.6 * u, "rgba(255,255,255,0.7)");
+          p.poly(g0, null, 2.2 * u);
+          p.ell(X(31), Y(3), 7 * u, 7 * u, "#f6dc3a", 1.6 * u, 180, 360, -20);
+          break;
+        }
+        case "plate": {
+          p.ell(300, Y(60), 54 * u, 12 * u, "#c9ccd4", 2.4 * u);
+          p.ell(300, Y(58.5), 46 * u, 8.5 * u, "#eceef2", 0);
+          const rows: [number, number[]][] = [[50, [-21, -7, 7, 21]], [39, [-14, 0, 14]], [28, [-7, 7]], [17, [0]]];
+          for (const [yy, xs] of rows) for (const xx of xs) {
+            p.ell(X(xx), Y(yy), 7.6 * u, 7.2 * u, pc ?? "#f39a2b", 1.6 * u);
+            p.dot(X(xx - 2.5), Y(yy - 2.5), 1.3 * u, "#ffd08a"); p.dot(X(xx + 2), Y(yy + 1), 1 * u, "#c9701a");
+          }
+          break;
+        }
+        case "book": {
+          const col = pc ?? "#a23a3a";
+          p.poly([[X(-38), Y(30)], [X(0), Y(34)], [X(38), Y(30)], [X(38), Y(64)], [X(0), Y(67)], [X(-38), Y(64)]], col, 2.4 * u);
+          for (const s of [-1, 1]) {
+            p.poly([[X(s * 1), Y(35)], [X(s * 35), Y(31)], [X(s * 35), Y(61)], [X(s * 1), Y(64)]], "#f8f1de", 1.6 * u);
+            for (let k = 0; k < 4; k++) p.stroke([[X(s * 6), Y(40 + k * 5.5)], [X(s * 29), Y(37.5 + k * 5.5)]], 1.2 * u, "#9a9282");
+          }
+          break;
+        }
+        case "lantern": {
+          const [hx, hy] = arms[arms.length - 1].pts[2];
+          p.ell(hx, hy + 30 * u, 32 * u, 32 * u, "rgba(255,200,90,0.28)", 0);
+          p.stroke(curve([hx - 8 * u, hy + 12 * u], [hx, hy - 2 * u], [hx + 8 * u, hy + 12 * u]), 1.6 * u);
+          p.poly([[hx - 7 * u, hy + 10 * u], [hx + 7 * u, hy + 10 * u], [hx + 12 * u, hy + 16 * u], [hx - 12 * u, hy + 16 * u]], "#3a3d47", 1.8 * u);
+          p.poly(rrect(hx - 10 * u, hy + 16 * u, hx + 10 * u, hy + 40 * u, 3 * u), "#ffe9a0", 2 * u);
+          p.poly([[hx, hy + 20 * u], [hx + 4 * u, hy + 29 * u], [hx, hy + 34 * u], [hx - 4 * u, hy + 29 * u]], "#ff9a1a", 0);
+          p.ell(hx, hy + 30 * u, 1.6 * u, 3 * u, "#fff8d0", 0);
+          for (const s of [-1, 1]) p.stroke([[hx + s * 10 * u, hy + 16 * u], [hx + s * 10 * u, hy + 40 * u]], 2.4 * u, "#3a3d47");
+          p.poly(rrect(hx - 12 * u, hy + 40 * u, hx + 12 * u, hy + 45 * u, 1.5 * u), "#3a3d47", 1.6 * u);
+          break;
+        }
+        case "broom": {
+          const T0 = broomT, B = broomB, d = Math.hypot(B[0] - T0[0], B[1] - T0[1]), dx = (B[0] - T0[0]) / d, dy = (B[1] - T0[1]) / d;
+          const fan: P2[] = [[B[0] - dy * 5 * u, B[1] + dx * 5 * u], [B[0] + dy * 5 * u, B[1] - dx * 5 * u], [X(-20), sole - 2 * u], [X(-46), sole + 1 * u], [X(-70), sole - 3 * u]];
+          p.poly(fan, "#d9b25a", 2.2 * u);
+          p.clip(fan, () => { for (let k = 0; k < 7; k++) p.stroke([B, [X(-70 + k * 8), sole]], 1.1 * u, "#a8843a"); });
+          p.band([T0, [B[0] + dx * 4 * u, B[1] + dy * 4 * u]], "#c99a5a", 3.6 * u, 1.2 * u, "round");
+          p.band([[B[0] - dy * 6 * u - dx * 2 * u, B[1] + dx * 6 * u - dy * 2 * u], [B[0] + dy * 6 * u - dx * 2 * u, B[1] - dx * 6 * u - dy * 2 * u]], "#c0353a", 3 * u, 1 * u);
+          break;
+        }
+        case "rope": {
+          const pts = curve([X(-170), Y(40)], [X(-60), Y(46)], [X(-40), Y(54)], 8);
+          pts.push(...curve([X(-40), Y(54)], [X(-30), Y(84)], [X(-8), Y(118)], 8).slice(1));
+          inked(p, pts, 4.6 * u, "#c9a06a", 1.2 * u);
+          for (let i = 1; i < pts.length - 1; i++) { const [x0, y0] = pts[i]; p.stroke([[x0 - 1.5 * u, y0 - 2 * u], [x0 + 1.5 * u, y0 + 2 * u]], 1 * u, "#8a6a3a"); }
+          break;
+        }
+        case "flag": {
+          const [hx, hy] = arms[arms.length - 1].pts[2], top = crown - 56 * u, col = pc ?? "#ff9933", ph = phase * Math.PI * 2;
+          p.band([[hx, hy + 46 * u], [hx, top]], WOOD, 3.4 * u, 1.2 * u, "round");
+          const up: P2[] = [], dn: P2[] = [];
+          for (let i = 0; i <= 12; i++) { const t = i / 12, w = 4 * u * t * Math.sin(t * 5 + ph); up.push([hx + 2 * u + 54 * u * t, top + 4 * u + w]); dn.push([hx + 2 * u + 54 * u * t, top + 40 * u + w - 3 * u * t]); }
+          const cloth = [...up, ...dn.reverse()];
+          p.gradFill(cloth, col, mul(col, SH_CLOTH), light, 0.4);
+          p.clip(cloth, () => { for (let k = 1; k < 3; k++) { const x = hx + 2 * u + 18 * k * u; p.stroke([[x, top], [x + 4 * u, top + 44 * u]], 1.4 * u, mul(col, [0.8, 0.8, 0.8])); } });
+          p.poly(cloth, null, 2.2 * u);
+          p.ell(hx, top - 3 * u, 4 * u, 4 * u, "#e8c45a", 1.4 * u);
+          break;
+        }
+        case "torch": {
+          const [hx, hy] = arms[arms.length - 1].pts[2], fx0 = hx + 3 * u, fy0 = hy - 34 * u, fl = Math.sin(phase * 40) * 2 * u;
+          p.ell(fx0, fy0 - 18 * u, 36 * u, 36 * u, "rgba(255,170,60,0.26)", 0);
+          p.band([[hx - 2 * u, hy + 22 * u], [fx0, fy0 + 4 * u]], "#7a4b2a", 4.2 * u, 1.3 * u, "round");
+          const flame = (s: number, col: string, rim: number) => p.poly([[fx0 - 11 * u * s, fy0], [fx0 - 9 * u * s, fy0 - 18 * u * s], [fx0 - 3 * u * s + fl, fy0 - 30 * u * s], [fx0 + 1 * u * s + fl, fy0 - 44 * u * s],
+            [fx0 + 6 * u * s, fy0 - 26 * u * s], [fx0 + 11 * u * s, fy0 - 16 * u * s], [fx0 + 10 * u * s, fy0]], col, rim);
+          flame(1, "#ff7a1a", 2 * u); flame(0.62, "#ffc93a", 0); flame(0.3, "#fff6d0", 0);
+          p.ell(fx0, fy0 + 2 * u, 8 * u, 5 * u, "#5a3a2a", 1.6 * u);
+          break;
+        }
+        case "candle": {
+          p.ell(300, Y(16), 26 * u, 26 * u, "rgba(255,200,90,0.3)", 0);
+          p.poly(rrect(X(-5), Y(24), X(5), Y(56), 1.5 * u), pc ?? "#f6f0e0", 2 * u);
+          p.ell(300, Y(24), 5 * u, 1.6 * u, "#e8dcc0", 0);
+          p.stroke([[300, Y(24)], [300, Y(20)]], 1.2 * u);
+          p.poly([[X(-3.5), Y(17)], [X(0), Y(5)], [X(3.5), Y(17)], [X(0), Y(21)]], "#ffb43a", 1.4 * u);
+          p.ell(300, Y(16.5), 1.5 * u, 2.6 * u, "#fff6d0", 0);
+          break;
+        }
+        case "garland": {
+          const L = arms[0].pts[2], R = arms[1].pts[2], n = 26;
+          for (let i = 0; i <= n; i++) {
+            const t = i / n, x = L[0] + (R[0] - L[0]) * t, y = L[1] + (R[1] - L[1]) * t + 72 * u * 4 * t * (1 - t);
+            p.ell(x, y, 5.6 * u, 5.6 * u, i % 2 ? "#ffc21a" : "#ff8c1a", 1.4 * u);
+          }
+          const by = (L[1] + R[1]) / 2 + 72 * u;
+          p.poly([[X(-4), by + 4 * u], [X(4), by + 4 * u], [X(0), by + 16 * u]], "#3f9a4a", 1.4 * u);
+          break;
+        }
+        case "stick": case "cane": {
+          const [hx, hy] = arms[arms.length - 1].pts[2];
+          p.band([[hx + 3 * u, hy - 4 * u], [X(68), sole - 2 * u]], "#7a4b2a", 3.8 * u, 1.2 * u, "round");
+          const crook: P2[] = [];
+          for (let i = 0; i <= 10; i++) { const a = rad(-(i * 180) / 10); crook.push([hx - 5 * u + 8 * u * Math.cos(a), hy - 4 * u + 8 * u * Math.sin(a)]); }
+          p.band(crook, "#7a4b2a", 3.8 * u, 1.2 * u, "round");
+          break;
+        }
+      }
+      handDots();
+      return;
+    }
+    // stage "head": things in front of / on top of the head (drawn in the upper-body frame)
+    const mxp = 300 + 8 * u * fsc * facing, myp = hc + 20 * u * fsc;
+    if (pn === "juice") { // striped straw from the glass to the mouth
+      const st: P2[] = [[X(19), Y(8)], [mxp + 1.5 * u, myp + 1 * u]];
+      inked(p, st, 2.6 * u, "#ffffff", 1 * u);
+      for (let k = 1; k < 6; k += 2) { const a = lerp2(st[0], st[1], k / 6), b = lerp2(st[0], st[1], (k + 1) / 6); p.stroke([a, b], 2.6 * u, "#e8434e"); }
+    } else if (pn === "cup") { // kulhad tipped to the lips
+      const c: P2 = [X(14), hc + 30 * u * fsc + 2 * u], R = (pts: P2[]) => rotPts(pts, rad(-28), c[0], c[1]);
+      p.poly(R([[c[0] - 12 * u, c[1] - 11 * u], [c[0] + 12 * u, c[1] - 11 * u], [c[0] + 8 * u, c[1] + 11 * u], [c[0] - 8 * u, c[1] + 11 * u]]), "#b8643a", 2.2 * u);
+      const [rx, ry] = R([[c[0], c[1] - 11 * u]])[0];
+      p.ell(rx, ry, 12 * u, 3 * u, "#8a4426", 1.8 * u, 0, 360, -28);
+      p.dot(X(24), Y(-7), 5.5 * u);
+    } else if (pn === "basket") {
+      const b0 = crown + 8 * u, b1 = crown - 24 * u;
+      for (const [dx, dy, r, col] of [[-30, -4, 11, "#e2453c"], [-10, -10, 12, "#f39a2b"], [12, -8, 12, "#7bbf4a"], [32, -3, 10, "#f2c14e"], [0, 2, 10, "#e2453c"]] as const)
+        p.ell(X(dx), b1 + dy * u, r * u, r * u, col, 1.8 * u);
+      const bk: P2[] = [[X(-60), b1], [X(60), b1], [X(40), b0], [X(-40), b0]], col = pc ?? "#c9934a";
+      p.gradFill(bk, col, mul(col, SH_CLOTH), light, 0.3);
+      p.clip(bk, () => {
+        for (let k = 1; k < 4; k++) p.stroke([[X(-62), b1 + k * 8 * u], [X(62), b1 + k * 8 * u]], 1.4 * u, mul(col, [0.72, 0.72, 0.72]));
+        for (let k = -6; k <= 6; k++) p.stroke([[X(k * 9), b1], [X(k * 6.4), b0]], 1.2 * u, mul(col, [0.8, 0.8, 0.8]));
+      });
+      p.poly(bk, null, 2.4 * u);
+      p.ell(300, b1, 61 * u, 5 * u, shade(col, 0.85), 2.2 * u);
+      for (const a of arms) p.dot(a.pts[2][0], a.pts[2][1], 5.5 * u);
+    } else if (pn === "pot") { // matka balanced on the head, steadied by the right hand
+      const col = pc ?? "#c4643a", cy = crown - 22 * u;
+      const body = ellPts(300, cy, 36 * u, 28 * u);
+      p.shadedFill(body, col, mul(col, SH_FELT), light, 36 * u, 0.4);
+      p.clip(body, () => { const zz: P2[] = []; for (let i = 0; i <= 14; i++) zz.push([X(-36 + (72 * i) / 14), cy - 2 * u + (i % 2 ? 4 : -4) * u]); p.stroke(zz, 1.6 * u, "#f4e6c0"); });
+      p.poly(body, null, 2.4 * u);
+      p.poly([[X(-10), cy - 25 * u], [X(10), cy - 25 * u], [X(13), cy - 34 * u], [X(-13), cy - 34 * u]], col, 2.2 * u);
+      p.ell(300, cy - 34 * u, 15 * u, 4 * u, shade(col, 0.7), 2 * u);
+      const [hx, hy] = arms[arms.length - 1].pts[2];
+      p.dot(hx, hy, 5.5 * u);
+    } else if (pn === "umbrella") {
+      const cx = X(16), rim = crown - 14 * u, rx = 92 * u, ry = 50 * u, col = pc ?? "#d6404e", n = 6;
+      const can: P2[] = [];
+      for (let i = 0; i <= 24; i++) { const a = Math.PI + (Math.PI * i) / 24; can.push([cx + rx * Math.cos(a), rim + ry * Math.sin(a)]); }
+      for (let i = 0; i < n; i++) for (let j = 1; j <= 6; j++) { const t = (i + j / 6) / n; can.push([cx + rx - 2 * rx * t, rim - 7 * u * Math.sin(Math.PI * ((j / 6)))]); }
+      p.gradFill(can, col, mul(col, SH_CLOTH), light, 0.35);
+      p.clip(can, () => {
+        for (let i = 0; i < n; i += 2) { const x0 = cx - rx + (2 * rx * i) / n, x1 = cx - rx + (2 * rx * (i + 1)) / n; p.poly([[cx, rim - ry], [x1, rim + 2 * u], [x0, rim + 2 * u]], "rgba(255,255,255,0.18)", 0); }
+        for (let i = 1; i < n; i++) p.stroke([[cx, rim - ry], [cx - rx + (2 * rx * i) / n, rim]], 1.3 * u, mul(col, [0.6, 0.6, 0.6]));
+      });
+      p.poly(can, null, 2.6 * u);
+      p.band([[cx, rim - ry + 1 * u], [cx, rim - ry - 10 * u]], "#3a2a22", 2.4 * u, 1 * u, "round");
+    }
+  };
+  if (frontLegs.length) { const r0 = p.rot; p.rot = null; for (const fn of frontLegs) fn(); p.rot = r0; }
+  drawProp("under");
   // in front of the body: hands holding props
   if (prop === "spear") { // upright spear in the right hand
     const [hx, hy] = arms[arms.length - 1].pts[2];
@@ -843,7 +1316,7 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
       p.dot(hx - 4 * u, hy + 2 * u, 5.5 * u); p.dot(hx + 4 * u, hy + 3 * u, 5 * u);
     } else if (prop === "phoneDrop") {
       p.dot(hx, hy, 5.5 * u);
-    } else if (Array.isArray(prop)) {
+    } else if (isTool(prop, "hammer")) {
       const ang = rad(-70 + 105 * clamp(prop[1], 0, 1));
       const Rh = (pts: P2[]) => rotPts(pts, ang, hx, hy);
       p.band(Rh([[hx, hy + 12 * u], [hx, hy - 44 * u]]), "#8a5a34", 5 * u, 1.5 * u, "round");
@@ -876,17 +1349,21 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
     p.ell(hx, hy + 31 * u, 3.5 * u, 3.5 * u, "#2b7a4b", 1.5 * u);
     p.dot(hx, hy, 5.5 * u);
   }
+  drawProp("over");
+  const bodyRot = p.rot;
   // ---- head: rotates with the body, plus its own tilt about the chin ----
   const Ah = A + headTilt, [cpx, cpy] = rotAbout([300, chin], rad(A), [300, hipY]);
   p.rot = Ah ? [rad(Ah), 300, chin, cpx - 300, cpy - chin] : null;
   if (back) {
     const hp = blobPts(300, hc, H), hair = o.hat === "helmK" ? "#a9b1ba" : o.hat === "crownEU" ? (o.hair ?? "#5a4030") : (o.hair ?? o.cap ?? "#3a2a22");
-    p.shadedFill(hp, skin, mul(skin, SH_SKIN), light, H.a);
+    p.shadedFill(hp, skin, skinSh, light, H.a);
     p.clip(hp, () => p.ell(300, hc - 0.12 * H.b, 1.25 * H.a, 1.2 * H.b, hair, 0));
     p.inkRing(hp, ow, thick);
     p.stroke([[300 - 6 * u, crown + 0.3 * HH], [300 + 2 * u, crown + 0.42 * HH]], 1.4 * u);
+    const headB = p.P(300, hc);
+    if (!NO_FLOAT) floaters(p, headB, H.a, opts, hatTop(o));
     p.rot = null;
-    return;
+    return { head: headB, r: H.a };
   }
   hatBehind(p, o, H, 300, hc, light, thick, ow, false);
   if (o.heads) { // extra heads fanned behind on two arcs (Ravana)
@@ -897,7 +1374,7 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
       const ar = rad(deg), x = 300 + Math.sin(ar) * rr * H.a * 1.55, y = hc + 0.25 * HH - Math.cos(ar) * rr * H.b * 1.55;
       const Hs = { ...H, a: H.a * 0.5, b: H.b * 0.5, seed: H.seed + Math.round(deg) };
       const sp = blobPts(x, y, Hs);
-      p.shadedFill(sp, skin, mul(skin, SH_SKIN), light, Hs.a);
+      p.shadedFill(sp, skin, skinSh, light, Hs.a);
       p.inkRing(sp, ow * 0.6, thick);
       const top = y - Hs.b, gw = 0.8 * Hs.a;
       p.poly([[x - gw, top + 6 * u], [x - gw * 0.6, top - 16 * u], [x, top - 26 * u], [x + gw * 0.6, top - 16 * u], [x + gw, top + 6 * u]], "#e8b84a", ow * 0.5);
@@ -905,8 +1382,16 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
     }
   }
   const hp = blobPts(300, hc, H);
-  p.shadedFill(hp, skin, mul(skin, SH_SKIN), light, H.a);
-  p.inkRing(hp, ow, thick);
+  if (refHead) p.shadedFill(hp, skin, skinSh, light, H.a, 0.55, 0.62, 1.32); // soft grey turn on the shadow side
+  else p.shadedFill(hp, skin, skinSh, light, H.a);
+  const angry = clamp(opts.angry ?? 0, 0, 1);
+  if (angry > 0) { // purple rising from the chin
+    const g = p.g, [ax, ay] = p.P(300, hc + H.b), [bx, by] = p.P(300, hc + H.b - (0.15 + 2.1 * angry) * H.b), gr = g.createLinearGradient(ax, ay, bx, by);
+    const A = 0.55 + 0.35 * angry;
+    gr.addColorStop(0, `rgba(150,62,160,${A})`); gr.addColorStop(0.55, `rgba(165,75,170,${A * 0.92})`); gr.addColorStop(1, "rgba(170,80,170,0)");
+    p.path(hp, true); g.fillStyle = gr; g.fill();
+  }
+  if (refHead) p.inkRing(hp, ow * 0.7, thick, 0.2); else p.inkRing(hp, ow, thick);
   if (o.hat === "longHair") {
     const hair = o.hair ?? "#1f1612", a = H.a, b = H.b, cx = 300;
     const fr: P2[] = [[cx - a * 1.06, hc + 0.62 * b]];
@@ -928,7 +1413,20 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
     p.stroke([[300 - 0.3 * H.a, crown + 0.06 * HH], [300 + 0.3 * H.a, crown + 0.06 * HH]], 3 * u, "#e8b84a");
   }
   const brim = !!o.hat && o.hat !== "hair" && o.hat !== "bonnet" && o.hat !== "cap" && o.hat !== "longHair" && o.hat !== "jata";
-  faceFront(p, 300, hc, W, expr, facing, look, lid, brim, skin, o.moustache, o.build === "stout");
+  faceFront(p, 300, hc, W, expr, facing, look, lid, brim, skin, o.moustache, o.build === "stout",
+    { eyeDy: pn === "phone" || pn === "book" ? 4 : 0, sparkle: opts.sparkleEyes, mouthOpen: opts.mouthOpen, scale: refHead ? 0.88 : 1 });
+  const fxX = 300 + 7 * u * fsc * facing, blush = clamp(opts.blush ?? 0, 0, 1), tears = clamp(opts.tears ?? 0, 0, 1);
+  if (blush > 0) for (const s of [-1, 1]) {
+    const bx = fxX + s * 27 * u * fsc, by = hc + 11 * u * fsc;
+    p.ell(bx, by, 9 * u, 5 * u, `rgba(255,105,130,${(0.55 * blush).toFixed(3)})`, 0);
+    if (blush > 0.5) for (const k of [-1, 0, 1]) p.stroke([[bx + (k * 4 - 1.5) * u, by + 2 * u], [bx + (k * 4 + 1.5) * u, by - 2 * u]], 1.1 * u, "rgba(200,60,90,0.7)");
+  }
+  if (tears > 0) for (const s of [-1, 1]) { // streams down the cheeks from under the eyes
+    const x = fxX + s * 13 * u * fsc, y0 = hc + 6 * u * fsc, L = (10 + 34 * tears) * u;
+    const st = curve([x, y0], [x + s * 3 * u, y0 + L * 0.5], [x + s * 5 * u, y0 + L], 8);
+    inked(p, st, 4.2 * u, "#8fd3ff", 1.1 * u);
+    if (tears > 0.4) drop(p, x + s * 6 * u, y0 + L + 8 * u, 3.2 * u, "#8fd3ff", 1.1 * u);
+  }
   if (o.bindi) p.ell(300 + 7 * u * facing, hc - 15 * u, 3.2 * u, 3.6 * u, "#d1202f", 0);
   if (o.hat === "longHair" && o.jewel) for (const s of [-1, 1]) { // jhumka earrings
     const ex = 300 + s * H.a * 0.98, ey = hc + 0.3 * H.b;
@@ -955,8 +1453,16 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
     if (glow > 0) p.poly([[ex - 3.5 * u, ey - 22 * u], [ex + 5 * u, ey - 21 * u], [ex + 5.5 * u, ey + 3 * u], [ex - 3 * u, ey + 2 * u]], mix("#22232b", "#d9f2ff", glow * 0.6), 0);
     p.dot(ex + 3 * u, ey - 2 * u, 6 * u);
   }
+  const headC = p.P(300, hc);
+  p.rot = bodyRot;
+  drawProp("head");
+  if (!NO_FLOAT) floaters(p, headC, H.a, opts, Math.max(hatTop(o), pn === "umbrella" ? 2.1 : pn === "pot" ? 1.9 : pn === "basket" ? 1.5 : 1));
   p.rot = null;
+  return { head: headC, r: H.a };
 };
+
+/** rough height of the head-gear above the head centre, in head half-widths (for "?" / "!" placement) */
+const hatTop = (o: Outfit) => ({ tophat: 2.3, shako: 1.7, shako_tall: 1.9, crown: 2.0, crownEU: 1.5, helmK: o.cap ? 1.9 : 1.1, turban: 1.2, fedora: 1.3, peaked: 1.3 } as Record<string, number>)[o.hat ?? ""] ?? 1;
 
 export type SideOpts = {
   phase?: number; expr?: Expr; mode?: "march" | "stand" | "swing" | "push"; blink?: boolean | number; stomp?: number; pose?: number;

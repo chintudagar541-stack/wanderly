@@ -4,11 +4,11 @@
 // changes. Post: InkPass -> lens blur (thin-lens DOF per shot) -> bloom -> NEUTRAL tone map -> per-light grade.
 // Sun shadows (PCF soft) follow the subject; character cards cast shadows through their alpha.
 // Voice by Kokoro (am_michael, fast pace); sound is muxed after the render.
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { AbsoluteFill, getInputProps, useCurrentFrame } from "remotion";
 import { ThreeCanvas } from "@remotion/three";
-import { useThree } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { EffectComposer } from "@react-three/postprocessing";
 import { BlendFunction, BloomEffect, ToneMappingEffect, ToneMappingMode } from "postprocessing";
 import { InkPass, NOINK } from "../bridge/ink";
@@ -16,7 +16,7 @@ import { LensBlur } from "../bridge/lensblur";
 import { GradeEffect, GradeParams } from "../bridge/grade";
 import { World, LightName } from "./world";
 import { Pen, bodyFront } from "../dead/toon";
-import { TOTAL, FPS, Shot, ActorDef, shotAt, kickAt, whipAt, outfitOf, DURATION as DURATION_S } from "./shots";
+import { TOTAL, FPS, Shot, ActorDef, SHOTS, shotAt, outfitOf, smooth, DURATION as DURATION_S } from "./shots";
 import { N8AOPostPass } from "n8ao";
 import { Grain } from "../dead/inserts";
 
@@ -59,43 +59,20 @@ class Card {
   constructor(parent: THREE.Object3D) { this.mesh.layers.set(NOINK); this.mesh.renderOrder = 1; this.mesh.visible = false; this.mesh.castShadow = true; this.mesh.customDepthMaterial = this.depth; parent.add(this.mesh); }
 }
 
-const tmp = new THREE.Vector3(), right = new THREE.Vector3(), up = new THREE.Vector3(), fwd = new THREE.Vector3(), fpt = new THREE.Vector3();
+const tmp = new THREE.Vector3(), fwd = new THREE.Vector3(), fpt = new THREE.Vector3(), dbs = new THREE.Vector2();
 const MS = Number((getInputProps() as { ms?: number }).ms ?? 4);
 const ON = () => ({ ao: true, lens: true, bloom: true, shadows: true, ...((getInputProps() as { post?: Record<string, boolean> }).post ?? {}) });
-const Inner: React.FC<{ shot: Shot; t: number }> = ({ shot, t }) => {
-  const on = useMemo(ON, []);
-  const { camera, scene, gl } = useThree();
-  const W = world();
-  const cards = useMemo(() => new Map<string, Card>(), []);
-  if (W.root.parent !== scene) { scene.add(W.root); scene.background = new THREE.Color(0x8ab0d8); scene.fog = W.fog; }
-  gl.shadowMap.enabled = on.shadows; gl.shadowMap.type = THREE.PCFSoftShadowMap;
-  useEffect(() => () => { scene.remove(W.root); }, [scene, W]);
-  const fx = useMemo(() => ({
-    ink: new InkPass(scene, camera as THREE.PerspectiveCamera, { widthNear: 2.8, widthFar: 1.6, distNear: 3, distFar: 120, depthLo: 0.012, depthHi: 0.035 }),
-    ao: (() => { const p = new N8AOPostPass(scene, camera, 1080, 1920); p.configuration.aoRadius = 1.2; p.configuration.distanceFalloff = 0.6; p.configuration.intensity = 3; p.configuration.halfRes = true; p.configuration.gammaCorrection = false; return p; })(),
-    lens: new LensBlur({ maxCoC: 22, nearScale: 1.1 }),
-    bloom: makeBloom(),
-    tone: new ToneMappingEffect({ mode: ToneMappingMode.NEUTRAL }),
-    grade: new GradeEffect(GRADES.room, 1),
-  }), [camera, scene]);
-  useEffect(() => () => { try { (fx.ink as unknown as { dispose?: () => void }).dispose?.(); } catch { /* disposed by the composer */ } }, [fx]);
+type FX = { ink: InkPass; ao: { configuration: Record<string, unknown> }; lens: LensBlur; bloom: BloomEffect; tone: ToneMappingEffect; grade: GradeEffect };
 
-  const cam = camera as THREE.PerspectiveCamera;
+/** pose the world, the camera, the character cards and the post effects for one shot at time t */
+const pose = (W: World, cam: THREE.PerspectiveCamera, cards: Map<string, Card>, fx: FX, shot: Shot, t: number) => {
   const u = (t - shot.a) / (shot.b - shot.a);
   const c = shot.cam(t, u);
-  cam.position.set(...c.pos); cam.fov = c.fov; cam.near = 0.1; cam.far = 3000; cam.updateProjectionMatrix();
+  cam.position.set(...c.pos); cam.fov = c.fov; cam.near = 0.05; cam.far = 3000; cam.updateProjectionMatrix();
   cam.lookAt(...c.look);
-  // handheld drift (scaled to the subject distance) + whip pans + beat kicks
-  const dist = Math.hypot(c.look[0] - c.pos[0], c.look[1] - c.pos[1], c.look[2] - c.pos[2]);
-  const hh = Math.min(1, 0.35 + dist * 0.02);
-  const [whipYaw] = whipAt(t), kick = kickAt(t);
-  right.set(1, 0, 0).applyQuaternion(cam.quaternion); up.set(0, 1, 0).applyQuaternion(cam.quaternion);
-  cam.position.addScaledVector(right, (0.018 * Math.sin(t * 1.3) + 0.01 * Math.sin(t * 2.9 + 1)) * hh + 0.012 * kick).addScaledVector(up, (0.012 * Math.sin(t * 1.7 + 2) + 0.006 * Math.sin(t * 3.7)) * hh);
-  cam.rotateY((whipYaw * Math.PI) / 180);
-  cam.rotateZ((((c.roll ?? 0) + 0.25 * Math.sin(t * 0.8) * hh + 0.7 * kick) * Math.PI) / 180);
+  if (c.roll) cam.rotateZ((c.roll * Math.PI) / 180);
   cam.updateMatrixWorld();
   W.set({ light: shot.light, t, cam: c.pos, look: c.look, shadowR: shot.shadowR });
-  // actors
   for (const card of cards.values()) card.mesh.visible = false;
   for (const a of shot.actors ? shot.actors(t) : []) {
     let card = cards.get(a.who);
@@ -104,21 +81,62 @@ const Inner: React.FC<{ shot: Shot; t: number }> = ({ shot, t }) => {
     m.visible = true; m.position.set(...a.pos);
     m.scale.set(a.scale ?? 1, a.scale ?? 1, 1);
     m.rotation.order = "YXZ"; m.rotation.set(0, Math.atan2(cam.position.x - a.pos[0], cam.position.z - a.pos[2]) + (a.yaw ?? 0), a.roll ?? 0);
-    const d = Math.max(0.3, tmp.set(...a.pos).setY(a.pos[1] + 1.2).distanceTo(cam.position));
-    const px = (2.16 / (2 * d * Math.tan((cam.fov * Math.PI) / 360))) * 1920;
+    const d = Math.max(0.3, tmp.set(...a.pos).setY(a.pos[1] + 1.2 * (a.scale ?? 1)).distanceTo(cam.position));
+    const px = ((2.16 * (a.scale ?? 1)) / (2 * d * Math.tan((cam.fov * Math.PI) / 360))) * 1920;
     const k = Math.min(3.2, Math.max(0.6, Math.ceil((px / 1000) * 1.15 * 5) / 5));
     card.mat.map = cardTex(a.who, a, k); card.depth.map = card.mat.map;
     card.mat.color.setRGB(...(a.tint ?? [1, 1, 1]));
     card.mat.needsUpdate = true; card.depth.needsUpdate = true;
   }
-  // depth of field: focus on the look point (or the shot's focus point)
   cam.getWorldDirection(fwd);
   fpt.set(...(shot.focus ?? c.look));
   fx.lens.focus = Math.max(0.3, fpt.sub(cam.position).dot(fwd));
   fx.lens.cInf = shot.dof;
   fx.grade.set(GRADES[shot.light]);
+};
+
+const Inner: React.FC<{ t: number }> = ({ t }) => {
+  const on = useMemo(ON, []);
+  const { camera, scene, gl } = useThree();
+  const W = world();
+  const cards = useMemo(() => new Map<string, Card>(), []);
+  if (W.root.parent !== scene) { scene.add(W.root); scene.background = new THREE.Color(0x8ab0d8); scene.fog = W.fog; }
+  gl.shadowMap.enabled = on.shadows; gl.shadowMap.type = THREE.PCFSoftShadowMap;
+  useEffect(() => () => { scene.remove(W.root); }, [scene, W]);
+  const fx = useMemo<FX>(() => ({
+    ink: new InkPass(scene, camera as THREE.PerspectiveCamera, { widthNear: 2.8, widthFar: 1.6, distNear: 3, distFar: 120, depthLo: 0.012, depthHi: 0.035 }),
+    ao: (() => { const p = new N8AOPostPass(scene, camera, 1080, 1920); p.configuration.aoRadius = 1.2; p.configuration.distanceFalloff = 0.6; p.configuration.intensity = 3; p.configuration.halfRes = true; p.configuration.gammaCorrection = false; return p; })(),
+    lens: new LensBlur({ maxCoC: 22, nearScale: 1.1 }),
+    bloom: makeBloom(),
+    tone: new ToneMappingEffect({ mode: ToneMappingMode.NEUTRAL }),
+    grade: new GradeEffect(GRADES.room, 1),
+  }), [camera, scene]);
+  useEffect(() => () => { try { (fx.ink as unknown as { dispose?: () => void }).dispose?.(); } catch { /* disposed by the composer */ } }, [fx]);
+  const composer = useRef<{ render: (d?: number) => void } | null>(null);
+  // dissolve: the previous shot is rendered first (full post stack), copied, then blended over the current one
+  const ov = useMemo(() => {
+    gl.getDrawingBufferSize(dbs);
+    const tex = new THREE.FramebufferTexture(dbs.x, dbs.y);
+    // the copied pixels are already display values: draw them back 1:1 (a ShaderMaterial skips colour conversion)
+    const mat = new THREE.ShaderMaterial({ uniforms: { map: { value: tex }, opacity: { value: 1 } }, transparent: true, depthTest: false, depthWrite: false,
+      vertexShader: "varying vec2 vUv; void main() { vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }",
+      fragmentShader: "uniform sampler2D map; uniform float opacity; varying vec2 vUv; void main() { gl_FragColor = vec4(texture2D(map, vUv).rgb, opacity); }" });
+    const sc = new THREE.Scene(); const q = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), mat); q.position.z = -0.5; q.frustumCulled = false; sc.add(q);
+    return { tex, mat, sc, cam: new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1) };
+  }, [gl]);
+  const cam = camera as THREE.PerspectiveCamera;
+  const cur = shotAt(t), prev = SHOTS[SHOTS.indexOf(cur) - 1];
+  const dis = cur.dis && prev && t < cur.a + cur.dis ? smooth((t - cur.a) / cur.dis) : 1;
+  useFrame(() => {
+    if (dis < 1 && composer.current) { pose(W, cam, cards, fx, prev!, t); composer.current.render(); gl.copyFramebufferToTexture(ov.tex); }
+    pose(W, cam, cards, fx, cur, t);
+  }, 1);
+  useFrame(() => {
+    if (dis >= 1) return;
+    ov.mat.uniforms.opacity.value = 1 - dis; const ac = gl.autoClear; gl.autoClear = false; gl.setRenderTarget(null); gl.render(ov.sc, ov.cam); gl.autoClear = ac;
+  }, 3);
   return (
-    <EffectComposer multisampling={MS}>
+    <EffectComposer multisampling={MS} renderPriority={2} ref={composer as never}>
       {([on.ao ? <primitive key="ao" object={fx.ao} dispose={null} /> : null, <primitive key="ink" object={fx.ink} dispose={null} />,
         on.lens ? <primitive key="pre" object={fx.lens.pre} dispose={null} /> : null,
         on.lens ? <primitive key="main" object={fx.lens.main} dispose={null} /> : null,
@@ -129,25 +147,22 @@ const Inner: React.FC<{ shot: Shot; t: number }> = ({ shot, t }) => {
   );
 };
 
-const Scene3D: React.FC<{ shot: Shot; t: number }> = ({ shot, t }) => {
-  const [, blur] = whipAt(t);
-  return (
-    <AbsoluteFill style={{ filter: blur > 0.5 ? `blur(${blur.toFixed(1)}px)` : undefined }}>
-      <ThreeCanvas width={1080} height={1920} shadows gl={{ antialias: false, stencil: false, toneMappingExposure: 1.0 }} camera={{ fov: 40, near: 0.1, far: 3000 }}>
-        <Inner shot={shot} t={t} />
-      </ThreeCanvas>
-    </AbsoluteFill>
-  );
-};
+const Scene3D: React.FC<{ t: number }> = ({ t }) => (
+  <AbsoluteFill>
+    <ThreeCanvas width={1080} height={1920} shadows gl={{ antialias: false, stencil: false, toneMappingExposure: 1.0, preserveDrawingBuffer: true }} camera={{ fov: 40, near: 0.1, far: 3000 }}>
+      <Inner t={t} />
+    </ThreeCanvas>
+  </AbsoluteFill>
+);
 
 export const LookdevShort: React.FC = () => {
   const f = useCurrentFrame();
   const t = f / FPS;
   const shot = shotAt(t);
-  const fadeIn = Math.max(0, 1 - t / 0.3);
+  const fadeIn = 0;
   return (
     <AbsoluteFill style={{ background: "#000" }}>
-      <Scene3D shot={shot} t={t} />
+      <Scene3D t={t} />
       <Grain f={f} k={0.04} />
       {t > DURATION_S - 0.7 && <AbsoluteFill style={{ background: "#000", opacity: Math.min(1, (t - (DURATION_S - 0.7)) / 0.6) }} />}
       {fadeIn > 0 && <AbsoluteFill style={{ background: "#000", opacity: fadeIn }} />}

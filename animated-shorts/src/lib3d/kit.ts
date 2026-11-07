@@ -141,8 +141,8 @@ export const deskClutter = (k: Kit, P: Pal, seed = 1) => {
   for (let i = 0; i < 6; i++) k.box(P.white, [-0.35 + rnd(seed + i) * 0.04, 0.005 + i * 0.008, rnd(seed + i * 3) * 0.04], [0.3, 0.007, 0.4], [0, (rnd(seed * 7 + i) - 0.5) * 0.3, 0]);
   k.cyl(M(0xe8e2d4), [0.25, 0.06, 0.1], 0.045, 0.12, [0, 0, 0], CYL); k.box(M(0xe8e2d4), [0.3, 0.07, 0.1], [0.03, 0.06, 0.015]);
   k.cyl(M(0x2a5a8a), [0.45, 0.06, -0.15], 0.04, 0.12); for (let i = 0; i < 4; i++) k.cyl(M([0xd1202f, 0x1a1a1a, 0x2a4ab0, 0xe8b84a][i]), [0.44 + (i % 2) * 0.02, 0.15, -0.16 + (i > 1 ? 0.02 : 0)], 0.006, 0.16, [0.1 * (i - 1.5), 0, 0.1]);
-  k.cyl(P.dark, [-0.6, 0.015, -0.2], 0.08, 0.03); k.beam(P.dark, [-0.6, 0.03, -0.2], [-0.55, 0.35, -0.22], 0.02); k.beam(P.dark, [-0.55, 0.35, -0.22], [-0.41, 0.4, -0.12], 0.02);
-  k.add(CONE, M(0x2e7a4a), [-0.38, 0.36, -0.1], [0.09, 0.12, 0.09], [0.4, 0, -0.6]);
+  k.cyl(P.dark, [0.68, 0.015, -0.25], 0.08, 0.03); k.beam(P.dark, [0.68, 0.03, -0.25], [0.66, 0.35, -0.27], 0.02); k.beam(P.dark, [0.66, 0.35, -0.27], [0.52, 0.4, -0.17], 0.02);
+  k.add(CONE, M(0x2e7a4a), [0.49, 0.36, -0.15], [0.09, 0.12, 0.09], [0.4, 0, 0.6]);
 };
 /** gabled house with clapboard walls, a porch with posts and railings, steps, windows, door, chimney.
  *  Front faces local +z; footprint w x d; walls up to eave height h. */
