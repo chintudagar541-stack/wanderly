@@ -7,6 +7,7 @@
 import * as THREE from "three";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import { NOINK } from "../bridge/ink";
+import { decorate, skyLanternPos } from "./decor";
 
 export type LightName = "golden" | "forest" | "dusk" | "night" | "fire" | "modern";
 
@@ -124,6 +125,7 @@ export class World {
   skyMat = new THREE.MeshBasicMaterial({ side: THREE.BackSide, fog: false, toneMapped: false, depthWrite: false });
   skies: Record<LightName, THREE.Texture>;
   fog = new THREE.Fog(0x000000, 40, 400);
+  lanterns!: Flames; skyLanterns!: Flames;
   cityFlames: Flames; streetFlames: Flames; homeFlames: Flames; stringLights: Flames; fireworks: Flames; petals: Flames;
   warm: THREE.PointLight[] = [];
   bedDoor = 0;
@@ -143,6 +145,7 @@ export class World {
       for (let i = 0; i < 500; i++) { g.fillStyle = rnd(i) < 0.5 ? "rgba(120,90,50,0.25)" : "rgba(230,200,150,0.25)"; g.fillRect(rnd(i + 1) * 256, rnd(i + 2) * 256, 3, 3); }
     }, [80, 80])));
     ground.rotation.x = -Math.PI / 2; R.add(ground);
+    const D = decorate(R, toon);
     const grass = toon(0x6f9a45);
     for (const [x, z, w, d] of [[-160, 0, 160, 160], [0, 130, 300, 120], [0, -140, 300, 100]] as const) {
       const g = new THREE.Mesh(new THREE.PlaneGeometry(w, d), grass); g.rotation.x = -Math.PI / 2; g.position.set(x, 0.02, z); R.add(g);
@@ -201,7 +204,14 @@ export class World {
     B.add(DOME, gold, [0, 14.8, -50], [0, 0, 0], [6, 7, 6]); B.add(CONE, gold, [0, 23, -50], [0, 0, 0], [0.4, 2.4, 0.4]);
     for (const x of [-13, 13]) { B.add(DOME, gold, [x, 14.8, -50], [0, 0, 0], [3, 3.6, 3]); B.add(CYL, white, [x, 7, -43.8], [0, 0, 0], [1.1, 14, 1.1]); }
     for (let k = 0; k < 6; k++) B.add(BOX, toon(0xf4ead6), [0, 0.25 + k * 0.3, -42.5 + k * 0.7], [0, 0, 0], [14 - k, 0.3, 0.8]); // steps
-    B.add(BOX, toon(0x3a2430), [0, 3.8, -43.9], [0, 0, 0], [5, 5.5, 0.2]);
+    B.add(BOX, toon(0xffffff, canvasTex(256, 280, (g) => { // carved palace door with gold studs and an arch
+      g.fillStyle = "#7a3a1e"; g.fillRect(0, 0, 256, 280);
+      g.fillStyle = "#e8c48a"; g.beginPath(); g.moveTo(0, 0); g.lineTo(256, 0); g.lineTo(256, 70); g.quadraticCurveTo(128, -10, 0, 70); g.closePath(); g.fill();
+      g.strokeStyle = "#3a1a0e"; g.lineWidth = 6; g.beginPath(); g.moveTo(128, 50); g.lineTo(128, 280); g.stroke();
+      for (const x0 of [14, 142]) for (const y0 of [70, 175]) { g.strokeStyle = "#4a220e"; g.lineWidth = 8; g.strokeRect(x0 + 8, y0, 92, 90); }
+      g.fillStyle = "#f2c14e"; for (let x = 24; x < 256; x += 26) for (let y = 80; y < 270; y += 26) { g.beginPath(); g.arc(x, y, 3.5, 0, Math.PI * 2); g.fill(); }
+      g.strokeStyle = "#f2c14e"; g.lineWidth = 6; g.beginPath(); g.moveTo(0, 70); g.quadraticCurveTo(128, -10, 256, 70); g.stroke();
+    })), [0, 3.8, -43.9], [0, 0, 0], [5, 5.5, 0.2]);
     lampRow(-17, 14.85, -43.9, 17, -43.9, 40);
     for (let k = 0; k < 6; k++) lampRow(-7 + k * 0.5, 0.55 + k * 0.3, -42.5 + k * 0.7, 7 - k * 0.5, -42.5 + k * 0.7, 12);
     garland(-2.5, 6.8, -43.7, 2.5, -43.7, 0.8);
@@ -221,6 +231,7 @@ export class World {
       lampRow(x - w / 2, h + 0.02, z + w / 2, x + w / 2, z + w / 2, 6);
       lampRow(x - w / 2, h + 0.02, z - w / 2, x - w / 2, z + w / 2, 6);
     }
+    for (const l of D.lamps) if (l.p[0] < 100) city.push(l);
     this.cityFlames = new Flames(R, city, 0.75);
     // a few warm lights so the walls glow orange at night
     for (const [x, y, z] of [[0, 3, 30], [0, 3, 10], [0, 3, -12], [0, 4, -36], [0, 10, 42]] as const) {
@@ -291,7 +302,10 @@ export class World {
       B.add(BOX, toon(0xffffff, windowLit(["#5a5a7a", "#6a5a6a", "#4a5a7a"][i % 3])), [x, h / 2, z], [0, 0, 0], [w, h, w]);
       for (let k = 0; k < 20; k++) strings.push({ p: [x - w / 2 + (k + 0.5) * w / 20, h + 0.1, z + w / 2], order: 0, tint: cols[(k + i) % cols.length] });
     }
+    for (const l of D.lamps) if (l.p[0] >= 100) home.push(l);
     this.homeFlames = new Flames(R, home, 0.45);
+    this.lanterns = new Flames(R, D.lanterns, 0.42);
+    this.skyLanterns = new Flames(R, Array.from({ length: 36 }, () => ({ p: [0, 0, 0] as [number, number, number], order: 0, tint: [1, 0.6, 0.2] as [number, number, number] })), 1.1);
     this.stringLights = new Flames(R, strings, 0.26);
     this.streetFlames = this.homeFlames;
     // fireworks: 8 bursts x 70 sparks, positions updated per frame
@@ -331,7 +345,12 @@ export class World {
     this.fog.color.set(P.fog); this.fog.near = P.fn; this.fog.far = P.ff;
     const city = o.city ?? 0;
     this.warm.forEach((l, i) => { l.intensity = i < 5 ? P.warm * Math.min(1, city * 1.5) : (L === "modern" ? 10 * Math.min(1, (o.home ?? 0) * 2) : 0); });
-    for (const f of [this.cityFlames, this.homeFlames, this.stringLights, this.fireworks, this.petals]) { f.mat.uniforms.uTime.value = o.t; f.mat.uniforms.uPx.value = o.px; }
+    for (const f of [this.cityFlames, this.homeFlames, this.stringLights, this.fireworks, this.petals, this.lanterns, this.skyLanterns]) { f.mat.uniforms.uTime.value = o.t; f.mat.uniforms.uPx.value = o.px; }
+    this.lanterns.mat.uniforms.uLit.value = o.strings ?? 0;
+    this.skyLanterns.mat.uniforms.uLit.value = o.strings ?? 0;
+    const sl = this.skyLanterns.pts.geometry.attributes.position as THREE.BufferAttribute;
+    for (let k = 0; k < 36; k++) sl.setXYZ(k, ...skyLanternPos(k, o.t));
+    sl.needsUpdate = true;
     this.cityFlames.mat.uniforms.uLit.value = city * 1.05;
     this.homeFlames.mat.uniforms.uLit.value = (o.home ?? 0) * 1.05;
     this.stringLights.mat.uniforms.uLit.value = o.strings ?? 0;

@@ -14,7 +14,7 @@ import { NOINK } from "../bridge/ink";
 import { GradeEffect, GradeParams } from "../bridge/grade";
 import { World, LightName } from "./world";
 import { Pen, bodyFront } from "../dead/toon";
-import { SHOTS, TOTAL, FPS, Shot, ActorDef, shotAt, kickAt, outfitOf, DURATION as DURATION_S } from "./shots";
+import { SHOTS, TOTAL, FPS, Shot, ActorDef, shotAt, kickAt, outfitOf, extras, DURATION as DURATION_S } from "./shots";
 import { Insert, Overlays, Grain } from "./inserts";
 
 export const DIWALI_FRAMES = TOTAL;
@@ -50,7 +50,7 @@ const cardTex = (who: string, a: ActorDef, back: boolean, k: number) => {
   t = new THREE.CanvasTexture(c);
   t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
   texCache.set(key, t);
-  while (texCache.size > 48) { const [k0, t0] = texCache.entries().next().value as [string, THREE.CanvasTexture]; texCache.delete(k0); t0.dispose(); }
+  while (texCache.size > 140) { const [k0, t0] = texCache.entries().next().value as [string, THREE.CanvasTexture]; texCache.delete(k0); t0.dispose(); }
   return t;
 };
 class Card {
@@ -91,7 +91,7 @@ const Inner: React.FC<{ shot: Shot; t: number }> = ({ shot, t }) => {
   }
   // actors
   for (const card of cards.values()) card.mesh.visible = false;
-  for (const a of shot.actors ? shot.actors(t) : []) {
+  for (const a of [...(shot.actors ? shot.actors(t) : []), ...extras(cam.position.x, ws.light)]) {
     let card = cards.get(a.who);
     if (!card) { card = new Card(W.root); cards.set(a.who, card); }
     const m = card.mesh;

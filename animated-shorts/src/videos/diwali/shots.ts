@@ -32,6 +32,12 @@ const MEN = ["#f4f1e8", "#e3c26a", "#9ad0e0", "#e0907a", "#c9e0a0"], TURB = ["#d
 export const outfitOf = (who: string): Outfit => {
   if (OUTFITS[who]) return OUTFITS[who];
   const i = parseInt(who.slice(1)) || 0;
+  if (who[0] === "n") { // modern neighbours
+    const k = i % 3;
+    if (k === 0) return { jacket: ["#f2c14e", "#e84a8a", "#4fc3f7", "#f4f1e8"][i % 4], pants: "#f4f1e8", boots: "#6a4a2a", hat: "hair", hair: "#2a1d18", skin: [WHEAT, BROWN, FAIR][i % 3] };
+    if (k === 1) return { jacket: "#f2c14e", pants: SAREE[i % 5], dress: SAREE[i % 5], boots: WHEAT, hat: "longHair", hair: "#1f1612", skin: [WHEAT, FAIR, BROWN][i % 3], bindi: true };
+    return { jacket: ["#ff8a65", "#9ccc65", "#ba68c8"][i % 3], pants: "#3b5b9a", boots: "#f4f1e8", hat: "hair", hair: "#2a1d18", skin: [WHEAT, BROWN][i % 2], build: "kid" };
+  }
   if (who[0] === "m") return { jacket: MEN[i % 5], pants: "#f4f1e8", boots: "#8a5a3a", hat: "turban", cap: TURB[i % 5], skin: [WHEAT, BROWN, FAIR][i % 3], moustache: i % 2 ? "#2a1d18" : undefined };
   return { jacket: SAREE[(i + 2) % 5], pants: SAREE[i % 5], dress: SAREE[i % 5], boots: WHEAT, hat: "longHair", hair: "#1f1612", skin: [WHEAT, FAIR, BROWN][i % 3], bindi: true };
 };
@@ -89,7 +95,7 @@ add({ a: 9.45, b: 12.3, kind: "3d",
 add({ a: 12.3, b: 14.9, kind: "book", overlay: (t) => ({ flash: 1 - ramp(t, 12.3, 12.7) }) });
 // 6 "... a prince named Rama ..." : Ayodhya, golden hour, Rama on the palace steps
 add({ a: 14.9, b: 17.2, kind: "3d",
-  cam: glide({ pos: [0, 2.7, -35.2], look: [0, 2.6, -41.5], fov: 38 }, { pos: [0, 2.7, -36.4], look: [0, 2.7, -41.5], fov: 34 }, 0.05),
+  cam: glide({ pos: [0.3, 2.2, -31.5], look: [0, 3.6, -42], fov: 46 }, { pos: [0.25, 2.25, -33.0], look: [0, 3.5, -42], fov: 42 }, 0.05),
   actors: (t) => [
     { who: "rama", pos: [0, 1.6, -41.0], opts: { mode: "stand", expr: "smile_closed", prop: "bow", blink: blinkAt(t, 1) }, tint: GOLD },
     { who: "m1", pos: [-1.6, 0.6, -39.4], opts: { mode: "stand", expr: "smile", blink: blinkAt(t, 11) }, tint: GOLD },
@@ -219,6 +225,25 @@ add({ a: 62.2, b: DURATION, kind: "3d",
     { who: "kid", pos: [FAM_X + 0.9, 0, FAM_Z + 0.2], opts: { mode: "stand", expr: "grin", prop: "sparkler", wave: t * 3 }, tint: LAMP },
   ],
   world: () => ({ light: "modern", home: 1, strings: 1, fireworks: 1 }) });
+
+/** background townspeople / neighbours so streets never look empty (static poses: drawn once, cached) */
+export const extras = (camX: number, light: LightName): ActorDef[] => {
+  const out: ActorDef[] = [];
+  if (Math.abs(camX) < 100 && (light === "golden" || light === "dusk" || light === "night")) {
+    const tint = light === "golden" ? GOLD : light === "dusk" ? DUSK : LAMP;
+    const spots: V3[] = [];
+    for (let z = -28; z <= 22; z += 6.2) spots.push([4.7, 0, z]);
+    for (let z = -26; z <= 8; z += 6.8) spots.push([-4.8, 0, z]);
+    spots.forEach((p, i) => out.push({ who: (i % 2 ? "w" : "m") + (20 + i), pos: p, tint,
+      opts: { mode: "stand", expr: (["smile", "grin", "smile_closed", "laugh"] as const)[i % 4], prop: light === "night" && i % 3 === 0 ? "diya" : null, wave: light === "dusk" && i % 4 === 1 ? 0.8 : undefined } }));
+  }
+  if (camX > 100 && light === "modern") {
+    const spots: V3[] = [[MX + 4.0, 0, 3], [MX + 4.3, 0, -5], [MX - 4.0, 0, -7], [MX + 3.9, 0, -16], [MX - 4.2, 0, -18], [MX + 4.2, 0, -25], [MX - 3.9, 0, 1], [MX - 4.1, 0, -27]];
+    spots.forEach((p, i) => out.push({ who: "n" + i, pos: p, tint: LAMP,
+      opts: { mode: "stand", expr: (["grin", "smile", "laugh", "smile_closed"] as const)[i % 4], prop: i % 3 === 2 ? "sparkler" : i % 3 === 1 ? "diya" : null, wave: 0.3 } }));
+  }
+  return out;
+};
 
 export const SHOTS = S;
 export const shotAt = (t: number) => S.find((s) => t >= s.a && t < s.b) ?? S[S.length - 1];
