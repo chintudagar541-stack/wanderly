@@ -12,7 +12,7 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { EffectComposer } from "@react-three/postprocessing";
 import { BlendFunction, BloomEffect, ToneMappingEffect, ToneMappingMode } from "postprocessing";
 import { InkPass, NOINK } from "../videos/bridge/ink";
-import { LensBlur } from "../videos/bridge/lensblur";
+import { Dof, DistPass } from "./dof";
 import { GradeEffect, GradeParams } from "../videos/bridge/grade";
 import { Pen, bodyFront, Outfit } from "../videos/dead/toon";
 import { N8AOPostPass } from "n8ao";
@@ -72,15 +72,15 @@ class Card {
 
 const tmp = new THREE.Vector3(), fwd = new THREE.Vector3(), fpt = new THREE.Vector3(), dbs = new THREE.Vector2();
 const MS = Number((getInputProps() as { ms?: number }).ms ?? 4);
-const ON = () => ({ ao: true, lens: true, bloom: true, shadows: true, ...((getInputProps() as { post?: Record<string, boolean> }).post ?? {}) });
-type FX = { mb: DirBlurEffect; ink: InkPass; ao: { configuration: Record<string, unknown> }; lens: LensBlur; bloom: BloomEffect; tone: ToneMappingEffect; grade: GradeEffect };
+const ON = () => ({ ao: true, lens: true, bloom: true, shadows: true, mb: true, ...((getInputProps() as { post?: Record<string, boolean> }).post ?? {}) });
+type FX = { mb: DirBlurEffect; ink: InkPass; ao: { configuration: Record<string, unknown> }; lens: Dof; bloom: BloomEffect; tone: ToneMappingEffect; grade: GradeEffect };
 
 /** pose the world, the camera, the character cards and the post effects for one shot at time t */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const pose = (C: ShortConfig<any>, W: WorldLike<any>, cam: THREE.PerspectiveCamera, cards: Map<string, Card>, fx: FX, shot: Shot<any>, t: number) => {
   const u = (t - shot.a) / (shot.b - shot.a);
   const c = shot.cam(t, u);
-  cam.position.set(...c.pos); cam.fov = c.fov; cam.near = 0.05; cam.far = 3000; cam.updateProjectionMatrix();
+  cam.position.set(...c.pos); cam.fov = c.fov; cam.near = 0.1; cam.far = 3000; cam.updateProjectionMatrix();
   cam.lookAt(...c.look);
   if (c.roll) cam.rotateZ((c.roll * Math.PI) / 180);
   cam.updateMatrixWorld();
@@ -118,6 +118,7 @@ const pose = (C: ShortConfig<any>, W: WorldLike<any>, cam: THREE.PerspectiveCame
   }
   fx.lens.focus = Math.max(0.3, fpt.sub(cam.position).dot(fwd));
   fx.lens.cInf = shot.dof;
+  const dbgF = (getInputProps() as { dbgFocus?: number }).dbgFocus; if (dbgF) fx.lens.focus = dbgF;
   fx.grade.set(C.grades[shot.light]);
   // motion blur from the camera's screen-space motion over half a frame (180 deg shutter)
   const pc = shot.cam(Math.max(shot.a, t - 1 / 60), (Math.max(shot.a, t - 1 / 60) - shot.a) / (shot.b - shot.a));
@@ -134,15 +135,16 @@ const Inner: React.FC<{ t: number; C: ShortConfig<any>; W: WorldLike<any> }> = (
   if (W.root.parent !== scene) { scene.add(W.root); scene.background = new THREE.Color(0x8ab0d8); scene.fog = W.fog; }
   gl.shadowMap.enabled = on.shadows; gl.shadowMap.type = THREE.PCFSoftShadowMap;
   useEffect(() => () => { scene.remove(W.root); }, [scene, W]);
+  const dist = useMemo(() => new DistPass(), []);
   const fx = useMemo<FX>(() => ({
     ink: new InkPass(scene, camera as THREE.PerspectiveCamera, { widthNear: C.ink?.near ?? 5, widthFar: C.ink?.far ?? 2.6, color: C.ink?.color ?? "#1d1a30", distNear: 3, distFar: 120, depthLo: 0.012, depthHi: 0.035 }),
     ao: (() => { const p = new N8AOPostPass(scene, camera, 1080, 1920); p.configuration.aoRadius = 1.2; p.configuration.distanceFalloff = 0.6; p.configuration.intensity = 3; p.configuration.halfRes = true; p.configuration.gammaCorrection = false; return p; })(),
-    lens: new LensBlur({ maxCoC: 22, nearScale: 1.1 }),
+    lens: new Dof(dist.rt.texture, { maxCoC: 22, nearScale: 1.1 }),
     bloom: makeBloom(C.bloom),
     tone: new ToneMappingEffect({ mode: ToneMappingMode.NEUTRAL }),
     grade: new GradeEffect(Object.values(C.grades)[0] as GradeParams, 1),
     mb: new DirBlurEffect(),
-  }), [camera, scene]);
+  }), [camera, scene, dist]);
   useEffect(() => () => { try { (fx.ink as unknown as { dispose?: () => void }).dispose?.(); } catch { /* disposed by the composer */ } }, [fx]);
   const composer = useRef<{ render: (d?: number) => void } | null>(null);
   // dissolve: the previous shot is rendered first (full post stack), copied, then blended over the current one
@@ -160,8 +162,9 @@ const Inner: React.FC<{ t: number; C: ShortConfig<any>; W: WorldLike<any> }> = (
   const cur = C.shotAt(t), prev = C.shots[C.shots.indexOf(cur) - 1];
   const dis = cur.dis && prev && t < cur.a + cur.dis ? smooth((t - cur.a) / cur.dis) : 1;
   useFrame(() => {
-    if (dis < 1 && composer.current) { pose(C, W, cam, cards, fx, prev!, t); composer.current.render(); gl.copyFramebufferToTexture(ov.tex); }
-    pose(C, W, cam, cards, fx, cur, t);
+    const depthPass = () => { if (on.lens) dist.render(gl, scene, cam, [...cards.values()].filter((c) => c.mesh.visible).map((c) => c.mesh)); };
+    if (dis < 1 && composer.current) { pose(C, W, cam, cards, fx, prev!, t); depthPass(); composer.current.render(); gl.copyFramebufferToTexture(ov.tex); }
+    pose(C, W, cam, cards, fx, cur, t); depthPass();
   }, 1);
   useFrame(() => {
     if (dis >= 1) return;
@@ -172,7 +175,7 @@ const Inner: React.FC<{ t: number; C: ShortConfig<any>; W: WorldLike<any> }> = (
       {([on.ao ? <primitive key="ao" object={fx.ao} dispose={null} /> : null, <primitive key="ink" object={fx.ink} dispose={null} />,
         on.lens ? <primitive key="pre" object={fx.lens.pre} dispose={null} /> : null,
         on.lens ? <primitive key="main" object={fx.lens.main} dispose={null} /> : null,
-        <primitive key="mb" object={fx.mb} dispose={null} />,
+        on.mb ? <primitive key="mb" object={fx.mb} dispose={null} /> : null,
         on.bloom ? <primitive key="bloom" object={fx.bloom} dispose={null} /> : null,
         <primitive key="tone" object={fx.tone} dispose={null} />,
         <primitive key="grade" object={fx.grade} dispose={null} />].filter(Boolean) as unknown as JSX.Element)}
