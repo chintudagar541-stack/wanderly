@@ -1,0 +1,25 @@
+[lib] model ClassicNightstand_01 1
+[lib] model WoodenChair_01 1
+[lib] built oldradio 69 frames 4s 75 objects
+Blender 4.2.3 LTS (hash 0e22e4fcea03 built 2024-10-14 23:31:34)
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Saved: '/home/runner/work/wanderly/wanderly/out/oldradio.png'
+Time: 08:50.03 (Saving: 00:00.75)
+
+[lib] rendered /home/runner/work/wanderly/wanderly/out/oldradio.png 530s
+[lib] saved /home/runner/work/wanderly/wanderly/out/oldradio.jpg
+
+Blender quit
