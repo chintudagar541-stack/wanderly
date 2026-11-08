@@ -1,10 +1,11 @@
 Blender 4.2.3 LTS (hash 0e22e4fcea03 built 2024-10-14 23:31:34)
-Info: Fluid: Bake All complete! (25.21)
-[lib] bake {'FINISHED'} 25s
-[lib] built molasses_flow 27s objects 910
+Info: Fluid: Bake All complete! (31.59)
+[lib] bake {'FINISHED'} 32s
+[lib] built molasses_flow 33s objects 910
 Saved: '/home/runner/work/wanderly/wanderly/out/molasses_flow.png'
-Time: 00:48.99 (Saving: 00:00.25)
+Time: 01:01.38 (Saving: 00:00.31)
 
-[lib] rendered /home/runner/work/wanderly/wanderly/out/molasses_flow.png 49s
+[lib] rendered /home/runner/work/wanderly/wanderly/out/molasses_flow.png 61s
+[lib] saved /home/runner/work/wanderly/wanderly/out/molasses_flow.jpg
 
 Blender quit

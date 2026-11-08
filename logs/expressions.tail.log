@@ -25,8 +25,9 @@ Warning: degenerated triangle detected, correcting
 Warning: degenerated triangle detected, correcting
 Warning: degenerated triangle detected, correcting
 Saved: '/home/runner/work/wanderly/wanderly/out/expressions.png'
-Time: 00:41.22 (Saving: 00:00.25)
+Time: 00:38.32 (Saving: 00:00.29)
 
-[lib] rendered /home/runner/work/wanderly/wanderly/out/expressions.png 41s
+[lib] rendered /home/runner/work/wanderly/wanderly/out/expressions.png 38s
+[lib] saved /home/runner/work/wanderly/wanderly/out/expressions.jpg
 
 Blender quit

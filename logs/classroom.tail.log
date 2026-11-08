@@ -21,8 +21,9 @@ Warning: edge 452 - 456 appears twice, correcting
 Warning: edge 456 - 452 appears twice, correcting
 Warning: edge 452 - 456 appears twice, correcting
 Saved: '/home/runner/work/wanderly/wanderly/out/classroom.png'
-Time: 01:21.83 (Saving: 00:00.31)
+Time: 01:22.46 (Saving: 00:00.31)
 
 [lib] rendered /home/runner/work/wanderly/wanderly/out/classroom.png 82s
+[lib] saved /home/runner/work/wanderly/wanderly/out/classroom.jpg
 
 Blender quit

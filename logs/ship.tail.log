@@ -15,8 +15,9 @@ Warning: edge 14 - 16 appears twice, correcting
 Warning: edge 16 - 18 appears twice, correcting
 Warning: edge 18 - 20 appears twice, correcting
 Saved: '/home/runner/work/wanderly/wanderly/out/ship.png'
-Time: 00:45.85 (Saving: 00:00.32)
+Time: 00:46.11 (Saving: 00:00.32)
 
 [lib] rendered /home/runner/work/wanderly/wanderly/out/ship.png 46s
+[lib] saved /home/runner/work/wanderly/wanderly/out/ship.jpg
 
 Blender quit

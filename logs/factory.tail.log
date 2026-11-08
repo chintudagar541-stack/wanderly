@@ -6,8 +6,9 @@ Error: Failed to read blend file '/tmp/ph/overhead_crane/overhead_crane_1k.blend
 
 [lib] built factory 1s objects 207
 Saved: '/home/runner/work/wanderly/wanderly/out/factory.png'
-Time: 01:20.45 (Saving: 00:00.30)
+Time: 01:18.61 (Saving: 00:00.30)
 
-[lib] rendered /home/runner/work/wanderly/wanderly/out/factory.png 80s
+[lib] rendered /home/runner/work/wanderly/wanderly/out/factory.png 79s
+[lib] saved /home/runner/work/wanderly/wanderly/out/factory.jpg
 
 Blender quit

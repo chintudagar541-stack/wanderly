@@ -1,5 +1,5 @@
 [lib] model Barrel_01 1
-[lib] built harbour 2s objects 547
+[lib] built harbour 1s objects 547
 Blender 4.2.3 LTS (hash 0e22e4fcea03 built 2024-10-14 23:31:34)
 Warning: degenerated triangle detected, correcting
 Warning: degenerated triangle detected, correcting
@@ -36,8 +36,9 @@ Warning: edge 14 - 16 appears twice, correcting
 Warning: edge 16 - 18 appears twice, correcting
 Warning: edge 18 - 20 appears twice, correcting
 Saved: '/home/runner/work/wanderly/wanderly/out/harbour.png'
-Time: 00:47.02 (Saving: 00:00.25)
+Time: 00:51.76 (Saving: 00:00.40)
 
-[lib] rendered /home/runner/work/wanderly/wanderly/out/harbour.png 47s
+[lib] rendered /home/runner/work/wanderly/wanderly/out/harbour.png 52s
+[lib] saved /home/runner/work/wanderly/wanderly/out/harbour.jpg
 
 Blender quit

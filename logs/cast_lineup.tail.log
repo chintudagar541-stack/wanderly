@@ -25,8 +25,9 @@ Warning: degenerated triangle detected, correcting
 Warning: degenerated triangle detected, correcting
 Warning: degenerated triangle detected, correcting
 Saved: '/home/runner/work/wanderly/wanderly/out/cast_lineup.png'
-Time: 01:21.99 (Saving: 00:00.31)
+Time: 01:23.42 (Saving: 00:00.32)
 
-[lib] rendered /home/runner/work/wanderly/wanderly/out/cast_lineup.png 82s
+[lib] rendered /home/runner/work/wanderly/wanderly/out/cast_lineup.png 84s
+[lib] saved /home/runner/work/wanderly/wanderly/out/cast_lineup.jpg
 
 Blender quit

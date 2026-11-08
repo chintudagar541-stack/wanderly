@@ -1,8 +1,9 @@
-[lib] built courtroom 0s objects 139
+[lib] built courtroom 1s objects 139
 Blender 4.2.3 LTS (hash 0e22e4fcea03 built 2024-10-14 23:31:34)
 Saved: '/home/runner/work/wanderly/wanderly/out/courtroom.png'
-Time: 00:41.11 (Saving: 00:00.22)
+Time: 00:39.17 (Saving: 00:00.21)
 
-[lib] rendered /home/runner/work/wanderly/wanderly/out/courtroom.png 41s
+[lib] rendered /home/runner/work/wanderly/wanderly/out/courtroom.png 39s
+[lib] saved /home/runner/work/wanderly/wanderly/out/courtroom.jpg
 
 Blender quit

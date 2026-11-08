@@ -26,8 +26,9 @@ Warning: degenerated triangle detected, correcting
 Warning: degenerated triangle detected, correcting
 Warning: degenerated triangle detected, correcting
 Saved: '/home/runner/work/wanderly/wanderly/out/desert.png'
-Time: 01:32.67 (Saving: 00:00.27)
+Time: 01:01.05 (Saving: 00:00.22)
 
-[lib] rendered /home/runner/work/wanderly/wanderly/out/desert.png 93s
+[lib] rendered /home/runner/work/wanderly/wanderly/out/desert.png 61s
+[lib] saved /home/runner/work/wanderly/wanderly/out/desert.jpg
 
 Blender quit

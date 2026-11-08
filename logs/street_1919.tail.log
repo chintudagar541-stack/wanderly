@@ -3,8 +3,9 @@
 [lib] built street_1919 2s objects 1683
 Blender 4.2.3 LTS (hash 0e22e4fcea03 built 2024-10-14 23:31:34)
 Saved: '/home/runner/work/wanderly/wanderly/out/street_1919.png'
-Time: 01:13.87 (Saving: 00:00.31)
+Time: 01:08.53 (Saving: 00:00.25)
 
-[lib] rendered /home/runner/work/wanderly/wanderly/out/street_1919.png 74s
+[lib] rendered /home/runner/work/wanderly/wanderly/out/street_1919.png 69s
+[lib] saved /home/runner/work/wanderly/wanderly/out/street_1919.jpg
 
 Blender quit

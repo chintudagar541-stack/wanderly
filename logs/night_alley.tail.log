@@ -1,9 +1,10 @@
 [lib] model metal_trash_can 8
-[lib] built night_alley 2s objects 1111
+[lib] built night_alley 1s objects 1111
 Blender 4.2.3 LTS (hash 0e22e4fcea03 built 2024-10-14 23:31:34)
 Saved: '/home/runner/work/wanderly/wanderly/out/night_alley.png'
-Time: 02:41.29 (Saving: 00:00.40)
+Time: 02:23.96 (Saving: 00:00.31)
 
-[lib] rendered /home/runner/work/wanderly/wanderly/out/night_alley.png 161s
+[lib] rendered /home/runner/work/wanderly/wanderly/out/night_alley.png 144s
+[lib] saved /home/runner/work/wanderly/wanderly/out/night_alley.jpg
 
 Blender quit

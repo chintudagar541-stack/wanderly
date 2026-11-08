@@ -1,8 +1,9 @@
-[lib] built car 1s objects 1322
+[lib] built car 2s objects 1322
 Blender 4.2.3 LTS (hash 0e22e4fcea03 built 2024-10-14 23:31:34)
 Saved: '/home/runner/work/wanderly/wanderly/out/car.png'
-Time: 01:05.79 (Saving: 00:00.25)
+Time: 01:10.40 (Saving: 00:00.32)
 
-[lib] rendered /home/runner/work/wanderly/wanderly/out/car.png 66s
+[lib] rendered /home/runner/work/wanderly/wanderly/out/car.png 70s
+[lib] saved /home/runner/work/wanderly/wanderly/out/car.jpg
 
 Blender quit
