@@ -573,7 +573,7 @@ const hatOn = (p: Pen, o: Outfit, hp: P2[], H: Blob, cx: number, hc: number, lig
 // ---------------- bodies ----------------
 export type Arms = [P2[], P2[]];
 /** held prop; for the hammer the number is the strike 0 (raised) .. 1 (struck) */
-export type Prop = null | "icecream" | "shako" | ["hammer", number] | "phoneEar" | "phoneHold" | "phoneDrop" | "binoculars" | "earCup" | "point" | "bow" | "bowAim" | "diya" | "sparkler" | "spear" | "spearAim" | "spearUp" | "newspaper" | "suitcase" | "cash" | "letter" | "twoFingers" | "moneyCase" | "axe"
+export type Prop = null | "icecream" | "shako" | ["hammer", number] | "phoneEar" | "phoneHold" | "phoneDrop" | "binoculars" | "earCup" | "point" | "bow" | "bowAim" | "diya" | "sparkler" | "spear" | "spearAim" | "spearUp" | "pole" | "newspaper" | "suitcase" | "cash" | "letter" | "twoFingers" | "moneyCase" | "axe"
   /** shovel: 0 = blade pushed into the ground .. 1 = lifted with a clod of earth; drum (dhol at the waist): beat 0 = right
    *  stick up / left stick on the skin .. 1 = right stick on the skin / left stick up */
   | ["shovel", number] | ["drum", number]
@@ -914,6 +914,11 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts): FrontInfo => {
     } else if (prop === "sparkler") {
       const S = sh(1);
       arms.push({ pts: [S, [tcx + 1.15 * T.a + 14 * u, S[1] - 0.2 * HH], [tcx + 1.25 * T.a + 22 * u, S[1] - 0.68 * HH]], front: true });
+    } else if (prop === "pole") { // both hands up the pole (see the pole drawing)
+      arms.length = 0;
+      const d = facing || 1, base: P2 = [300 - d * 10 * u, chin + 0.95 * HH], n = Math.hypot(0.42, 1), dx = (d * 0.42) / n, dy = -1 / n;
+      for (const [side, k] of [[-d, 0.42], [d, 0.95]] as const) { const Hd: P2 = [base[0] + dx * k * HH, base[1] + dy * k * HH], S = sh(side);
+        arms.push({ pts: [S, [(S[0] + Hd[0]) / 2 + side * 8 * u, (S[1] + Hd[1]) / 2 + 10 * u], Hd], front: true }); }
     } else if (prop === "spearAim" || prop === "spearUp" || prop === "axe") {
       arms.length = 0;
       const up = prop === "spearAim" ? 0 : 1;
@@ -1265,6 +1270,7 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts): FrontInfo => {
     p.band([[hx + 2 * u, hy + 0.9 * HH], [hx + 2 * u, crown - 0.75 * HH]], "#7a4b2a", 4.5 * u, 1.5 * u, "round");
     p.poly([[hx - 6 * u, crown - 0.72 * HH], [hx + 10 * u, crown - 0.72 * HH], [hx + 2 * u, crown - 1.08 * HH]], "#c9ccd2", 2 * u);
   }
+  // prop "pole": only the two raised hands are drawn on the card; the long pole itself is a 3D mesh in the world
   if (prop === "spearAim" || prop === "spearUp") { // spear levelled with both hands (aim: toward screen-left and up; up: steeply up)
     const up = prop === "spearUp", base: P2 = [300 + 46 * u, chin + 0.95 * HH], dir: P2 = up ? [-0.25, -1] : [-1, -0.42];
     const L = up ? 1.9 * HH : 2.0 * HH, tip: P2 = [base[0] + dir[0] * L, base[1] + dir[1] * L], n = Math.hypot(dir[0], dir[1]), dx = dir[0] / n, dy = dir[1] / n;

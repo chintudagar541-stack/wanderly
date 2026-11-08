@@ -14,6 +14,7 @@ import { Diwali2Short, DIWALI2_FRAMES } from "./videos/diwali2/Diwali2";
 import { TextureSheet } from "./lib3d/TextureSheet";
 import { LookdevShort, LOOKDEV_FRAMES } from "./videos/lookdev/Lookdev";
 import { ClockmanShort, CLOCKMAN_FRAMES } from "./videos/clockman/Clockman";
+import { KnockerShort, KNOCKER_FRAMES } from "./videos/knocker/Knocker";
 
 // Register each new short next to BridgeShort (1080x1920, 30 fps; final render uses --scale 1.3333 for 1440x2560).
 export const RemotionRoot: React.FC = () => (
@@ -21,6 +22,7 @@ export const RemotionRoot: React.FC = () => (
     <Composition id="BridgeShort" component={BridgeShort} durationInFrames={BRIDGE_FRAMES} fps={30} width={1080} height={1920} />
     <Composition id="LookdevShort" component={LookdevShort} durationInFrames={LOOKDEV_FRAMES} fps={30} width={1080} height={1920} />
     <Composition id="ClockmanShort" component={ClockmanShort} durationInFrames={CLOCKMAN_FRAMES} fps={30} width={1080} height={1920} />
+    <Composition id="KnockerShort" component={KnockerShort} durationInFrames={KNOCKER_FRAMES} fps={30} width={1080} height={1920} />
     <Composition id="Diwali2Short" component={Diwali2Short} durationInFrames={DIWALI2_FRAMES} fps={30} width={1080} height={1920} />
     <Composition id="ToonTest" component={ToonTest} durationInFrames={1} fps={30} width={1080} height={2400} />
     <Composition id="WalkTest" component={WalkTest} durationInFrames={1} fps={30} width={1080} height={966} />

@@ -4,6 +4,19 @@
 import type { FrontOpts } from "../videos/dead/toon";
 
 export type V3 = [number, number, number];
+
+/** Canonical vertical-FOV presets (degrees) measured against the channel reference shorts.
+ *  Keep perspective low by placing the camera near the subject/ground, not by widening the lens excessively.
+ */
+export const CAMERA_FOV = {
+  establishing: 62,
+  travel: 60,
+  twoShot: 56,
+  medium: 54,
+  closeUp: 48,
+  extremeCloseUp: 45,
+} as const;
+export type CameraPreset = keyof typeof CAMERA_FOV;
 export type Cam = { pos: V3; look: V3; fov: number; roll?: number };
 export type ActorDef = { who: string; pos: V3; opts: FrontOpts; tint?: V3; scale?: number; roll?: number; yaw?: number };
 export type Shot<L extends string = string> = {
@@ -26,6 +39,15 @@ export const ramp = (t: number, a: number, b: number) => smooth((t - a) / (b - a
  *  with Catmull-Rom tangents in time, so velocity stays continuous (no stop at a key). ease "out" on a key makes the
  *  segment that ENDS at it a punch that settles; "in" starts slow; "inout" both. */
 export type Key = { t: number; pos: V3; look: V3; fov: number; roll?: number; ease?: "out" | "in" | "inout" };
+
+/** Create a camera key using the shared preset table; callers can override FOV for a deliberate lens choice. */
+export const cameraKey = (
+  t: number,
+  pos: V3,
+  look: V3,
+  preset: CameraPreset,
+  options: Pick<Key, "roll" | "ease"> & { fov?: number } = {},
+): Key => ({ t, pos, look, fov: options.fov ?? CAMERA_FOV[preset], ...(options.roll === undefined ? {} : { roll: options.roll }), ...(options.ease === undefined ? {} : { ease: options.ease }) });
 export const path = (keys: Key[]) => (t: number): Cam => {
   const n = keys.length; if (t <= keys[0].t) return keys[0]; if (t >= keys[n - 1].t) return keys[n - 1];
   let i = 0; while (i < n - 2 && t > keys[i + 1].t) i++;

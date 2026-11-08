@@ -10,7 +10,7 @@ shots.ts, Clockman.tsx) with its audio in `animated-shorts/shorts/clockman/`. It
 47 procedural textures). It matches the reference videos' look: soft PBR light + shadows, ambient occlusion, thin ink,
 real dissolves, continuous camera paths, the blue-shadow/warm-highlight grade. The measured reference numbers are in
 `animated-shorts/writer/REFERENCE_SPEC.md`. (The older Diwali short in `src/videos/diwali2/` uses engine v1: only copy
-its effects such as fireworks, diyas and water reflections.) Copy the template, don't start from zero. Read `animated-shorts/STYLE.md` first: the owner's rules there always apply. Talk to the owner in Hinglish.
+its effects such as fireworks, diyas and water reflections.) Copy the template, don't start from zero. Read `animated-shorts/STYLE.md` and `animated-shorts/DIRECTOR_PLAYBOOK.md` first: these are the canonical visual and technical rules. If older notes conflict, follow the precedence rules in DIRECTOR_PLAYBOOK.md. Talk to the owner in Hinglish.
 
 ## 0. Setup (fresh container)
 ```
@@ -66,10 +66,10 @@ pip install -q kokoro-onnx soundfile scipy
 ## 5. Shots (`src/videos/<name>/shots.ts`, copy clockman's)
 - `const { S, add, at } = shotList<LightName>()`, then one `add({ a, b, light, dof, focus, dis, actors, cam })` per shot.
 - **Camera rules, measured from the references** (details and numbers in `writer/REFERENCE_SPEC.md`):
-  - **Each shot is ONE continuous move** of 1–4 s with several beats, built with `path([...keys])` (keys
+  - **Each shot is ONE continuous move** usually 2–5 s (average 2.4–3.4 s) with several beats, built with `path([...keys])` (keys
     `{t, pos, look, fov, ease}`), `orbit(...)`, and `drift(...)` for the slight handheld breathing.
   - Open a shot with a **quick punch-in that settles** (`ease: "out"` on the key where it lands).
-  - **Low, wide lens** (fov 46–66) close to the props and characters; big face close-ups at ~1–1.5 m.
+  - **Lens presets (single source of truth):** travel/wide/two-shots 55–65°; medium 50–60°; face close-ups 45–50°. Use low camera placement for perspective, not extreme wide-angle distortion. Big face close-ups are typically ~1–1.5 m away.
   - **Joins: short dissolves** (`dis: 0.2–0.3`) between places/beats; a plain cut only for a gag or a hard beat
     (e.g. the reaction after "fired"). No whip-pan spam.
   - Cameras track walking characters and fly through doors/windows into the next space.
@@ -81,7 +81,7 @@ pip install -q kokoro-onnx soundfile scipy
 cd animated-shorts && REMOTION_TMP=$PWD/.remotion-tmp REMOTION_GL=swangle COMP=<Comp> node scripts/bridge-stills.mjs out/<name>/st/a_ f1,f2,... 0.5
 ```
 - Render one frame per shot. Make contact sheets with ffmpeg `xstack` and look at them.
-- Fix anything empty, badly framed (faces cut, a pole in front of a face), or wrong.
+- Fix anything empty, badly framed (faces cut, a pole in front of a face), or wrong. Also run the shot/world diagnostics described in `DIRECTOR_PLAYBOOK.md`; diagnostics support, but do not replace, looking at the rendered stills.
 
 ## 7. Sound (`shorts/<name>/audio/sound.py`)
 - Copy diwali2's script. Keep the music light (drone, pluck melody and a soft pulse, at -16 dB under the voice,
@@ -111,3 +111,10 @@ ffmpeg -i out/<name>/final.mp4 -c:v libx264 -crf 23 -c:a copy -movflags +faststa
 - Send `final.mp4` (render) and the crf-23 copy (display "attach"), plus a caption: title, a Hinglish caption,
   an English caption and hashtags.
 - Commit and push the code, scripts, voice and json files (not `out/`).
+
+
+## 10. Visual-system authority (v3)
+- `animated-shorts/DIRECTOR_PLAYBOOK.md` is the authoritative production standard for environment density, camera presets, shot rhythm, materials, lighting and QA.
+- `src/lib3d/Short3D.tsx` + `src/lib3d/camera.ts` + `src/lib3d/kit.ts` are the canonical shared engine-v2 stack. Use `src/videos/clockman/` as the template.
+- `src/videos/capital/` is an older/experimental composition-specific renderer and is not the default template for new shorts. Reuse an isolated effect only after checking its dependencies and compatibility.
+- Never infer that a feature exists just because a skill asks for it. Inspect the implementation and report any missing feature before promising it.

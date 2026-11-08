@@ -1,6 +1,6 @@
 # House style for every short (owner's standing instructions)
 
-These come straight from the channel owner. Apply all of them to every new video without being reminded.
+These come straight from the channel owner. Apply all of them to every new video without being reminded. For technical conflicts, `animated-shorts/DIRECTOR_PLAYBOOK.md` is the canonical tie-breaker; the measured `writer/REFERENCE_SPEC.md` takes precedence over older approximate notes.
 
 ## Workflow
 1. Write the script, make the voice, build the world, and check with test stills.
@@ -58,7 +58,7 @@ These come straight from the channel owner. Apply all of them to every new video
   - **Inside a place: one long, continuous camera move** of 2–5 s with several beats: push in, orbit, crane up/down,
     pull out. The frame "changes every second" because the camera and the characters keep moving, not because of cuts.
   - The camera **tracks characters** as they walk, and **flies through doors and windows** into the next room.
-  - **Low, wide lens** (fov 60–75) close to the ground or props. Characters lean into the lens for big close-ups.
+  - **Lens presets (canonical):** 55–65° for travel/wides/two-shots; 50–60° for medium shots; 45–50° for face close-ups. Keep the camera low when the composition needs strong perspective; do not fake perspective with an ultra-wide lens. See `DIRECTOR_PLAYBOOK.md`.
   - Moves are eased. Openings use a quick **punch-in that settles** (ease-out). There is no shaky whip-pan spam.
   - On key words, characters do the thing the word says: face turns purple + steam on "purple", launched on "fired".
 - Characters act: talking mouths (`talk()`), gestures, props in hands, blinking, sparkle glints on key props.
@@ -73,9 +73,9 @@ These come straight from the channel owner. Apply all of them to every new video
   (no horns, "wah-wah", cash registers, ...).
 
 ## Engine notes
-- New-style renderer: `src/videos/capital/Capital.tsx`. It has the lens blur (needs `EffectComposer multisampling 4`,
-  or the frame goes black), bloom, PCF soft sun shadows that follow the subject, whip pans, and handheld drift.
-  Shots: `move()` / `orbit()` in `capital/shots.ts`.
+- **Canonical engine v2 for new shorts:** `src/lib3d/Short3D.tsx` with `src/lib3d/camera.ts`, `src/lib3d/kit.ts` and `src/lib3d/textures.ts`; use `src/videos/clockman/` as the starter template.
+- `src/videos/capital/Capital.tsx` is an older/experimental composition-specific renderer, not the default template. Its effects may be reused only after checking compatibility with engine v2.
 - Build each set as its own Batch so meshes cull. Interiors and far sets go far apart.
+- Run the world/shot diagnostics in `src/lib3d/quality.ts` during development, then inspect actual contact sheets. A passing diagnostic is not visual approval.
 - Test stills: `REMOTION_TMP=$PWD/.remotion-tmp REMOTION_GL=swangle COMP=<Comp> node scripts/bridge-stills.mjs out/<x>/st/a_ f1,f2 0.5`.
 - Character design check: the `ToonTest` composition, a line-up sheet.
