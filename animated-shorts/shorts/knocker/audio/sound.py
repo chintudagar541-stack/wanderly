@@ -7,7 +7,7 @@ import numpy as np
 from scipy.signal import butter, sosfilt, fftconvolve
 
 SR = 48000
-DUR = 9.6
+DUR = 32.9
 N = int(SR * DUR)
 HERE = os.path.dirname(os.path.abspath(__file__))
 rng = np.random.default_rng(23)
@@ -102,12 +102,34 @@ def crash(k=1.0):   # ceiling tiles breaking: a dull thump plus brittle cracks
 def knock(k=1.0):   # wooden pole tip on window glass: a short hollow tock with a glassy ring
     tt = t_(0.12); return (bp(rng.standard_normal(len(tt)), 900, 3500) * np.exp(-tt * 70) + np.sin(2 * np.pi * 2300 * tt) * np.exp(-tt * 45) * 0.25) * k
 
+def ring(d):   # a wind-up alarm bell: fast hammer on two bells
+    tt = t_(d); f = np.sign(np.sin(2 * np.pi * 18 * tt)) * 0.5 + 0.5
+    x = (np.sin(2 * np.pi * 2400 * tt) + 0.6 * np.sin(2 * np.pi * 3150 * tt)) * f * np.exp(-((tt * 18) % 1) * 3)
+    return x * env(len(tt), 0.01, 0.1) * 0.5
+def pea(k=1.0):
+    tt = t_(0.08); return (bp(rng.standard_normal(len(tt)), 2500, 7000) * np.exp(-tt * 90) + np.sin(2 * np.pi * 3100 * tt) * np.exp(-tt * 60) * 0.3) * k
+def coins():
+    out = np.zeros(int(0.6 * SR))
+    for i in range(5): tt = t_(0.25); place(out, sum(np.sin(2 * np.pi * f * tt) for f in (3200 + 300 * i, 4700 + 250 * i)) * np.exp(-tt * 20) * 0.2, 0.06 * i + rng.uniform(0, 0.02))
+    return out
+def birds(d):
+    out = np.zeros(int(d * SR))
+    for at in np.arange(0.2, d, 0.55):
+        tt = t_(0.12); f = 3200 + 900 * np.sin(2 * np.pi * 14 * tt); place(out, np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-tt * 18) * 0.25, float(at + rng.uniform(0, 0.2)))
+    return out
+
 sfx = np.zeros(N)
-place(sfx, wind(9.6), 0.0, 0.35)
-for at in np.arange(5.1 + 1 / 16, 9.4, 0.25):   # matches tapAt(): a knock at each peak, 4 per second
-    place(sfx, knock(rng.uniform(0.7, 1.0)), float(at), 0.55 if at < 7.85 else 0.25)
-for at in (2.9, 4.3): place(sfx, whoosh(0.4), at - 0.2, 0.1)
-place(sfx, whoosh(0.35), 7.6, 0.25)
+for a, b in ((0, 9.75), (13.15, 22.35)): place(sfx, wind(b - a), a, 0.35)
+for a, b in ((9.75, 13.15), (22.35, 32.9)): place(sfx, birds(b - a), a, 0.3); place(sfx, murmur(b - a), a, 0.08)
+for at in np.arange(5.1 + 1 / 16, 8.5, 0.25): place(sfx, knock(rng.uniform(0.7, 1.0)), float(at), 0.55 if at < 7.85 else 0.25)
+for at in np.arange(31.2 + 1 / 16, 32.9, 0.25): place(sfx, knock(rng.uniform(0.7, 1.0)), float(at), 0.5)
+for at in (15.5, 15.85, 16.2, 16.55): place(sfx, pea(0.9), at + 0.35, 0.5)
+place(sfx, coins(), 11.5, 0.45)
+place(sfx, ring(1.3), 25.9, 0.5); place(sfx, ring(1.2), 29.6, 0.45)
+for a, b, z in ((8.5, 9.75, 1.6), (20.4, 22.35, 1.4), (25.4, 28.75, 1.2)):
+    for at in np.arange(a + 0.1, b, 1 / z / 1.0 * 0.5): place(sfx, crunch(rng.uniform(0.5, 0.9)), float(at), 0.25)
+for at in (2.9, 4.3, 8.5, 9.75, 13.15, 14.42, 17.65, 20.4, 22.35, 25.4, 28.75): place(sfx, whoosh(0.4), at - 0.2, 0.1)
+place(sfx, whoosh(0.35), 7.6, 0.25); place(sfx, whoosh(0.4), 15.5, 0.25); place(sfx, whoosh(0.3), 19.5, 0.2)
 sfx = reverb(sfx, 1.2, 0.22)
 
 # ---------------- music: light, curious plucks over a soft bass and a ticking pulse ----------------
