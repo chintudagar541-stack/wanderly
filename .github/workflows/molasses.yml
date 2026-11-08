@@ -1,0 +1,86 @@
+# Renders the Molasses Flood short (three.js) on 20 machines at once, joins the pieces,
+# adds the voiceover, and publishes the MP4 as an artifact and on the branch.
+# Starts automatically when the project on this branch changes, or by hand from the Actions tab.
+name: Render molasses short
+
+on:
+  push:
+    branches: [claude/molasses-short]
+    paths: ['molasses-short/src/**', 'molasses-short/index.html', 'molasses-short/audio/**', 'molasses-short/render-chunk.mjs', '.github/workflows/molasses.yml']
+  workflow_dispatch:
+    inputs:
+      width: { description: "Output width (1080 = 1080x1920)", default: "1080", required: true }
+
+permissions:
+  contents: write
+
+concurrency:
+  group: molasses-render
+  cancel-in-progress: true
+
+env:
+  WIDTH: ${{ github.event.inputs.width || '1080' }}
+  FPS: 30
+  TOTAL_FRAMES: 1845      # 61.5 s
+  CHUNK: 93               # 20 machines
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs: { starts: "${{ steps.p.outputs.starts }}" }
+    steps:
+      - id: p
+        run: echo "starts=$(python3 -c "import json;print(json.dumps(list(range(0,${TOTAL_FRAMES},${CHUNK}))))")" >> $GITHUB_OUTPUT
+
+  render:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix: { start: "${{ fromJson(needs.plan.outputs.starts) }}" }
+    defaults: { run: { working-directory: molasses-short } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm install --no-audit --no-fund
+      - run: npx playwright install --with-deps chromium
+      - run: sudo apt-get install -y -qq ffmpeg
+      - name: Render frames ${{ matrix.start }}+
+        run: |
+          A=${{ matrix.start }}; B=$((A + CHUNK)); [ $B -gt $TOTAL_FRAMES ] && B=$TOTAL_FRAMES
+          mkdir -p chunks
+          node render-chunk.mjs $WIDTH $A $B chunks/c_$(printf %05d $A).mp4 $FPS
+      - uses: actions/upload-artifact@v4
+        with: { name: "chunk-${{ matrix.start }}", path: molasses-short/chunks/*.mp4, retention-days: 2 }
+
+  join:
+    needs: render
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: molasses-short } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: { pattern: "chunk-*", path: molasses-short/chunks, merge-multiple: true }
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Join chunks and add the voiceover
+        run: |
+          ls chunks/c_*.mp4 | sort | sed "s#^#file '#; s#\$#'#" | sed "s#file 'chunks/#file '#" > chunks/list.txt
+          ffmpeg -v error -y -f concat -safe 0 -i chunks/list.txt -c copy joined.mp4
+          mkdir -p output
+          ffmpeg -v error -y -i joined.mp4 -i audio/voice.mp3 \
+            -filter_complex "[1:a]loudnorm=I=-14:TP=-1:LRA=11,apad[a]" -map 0:v:0 -map "[a]" \
+            -c:v copy -c:a aac -b:a 192k -ar 48000 -shortest -movflags +faststart output/molasses-flood.mp4
+          ffprobe -v error -show_entries format=duration:stream=width,height -of compact output/molasses-flood.mp4
+          ls -lh output
+      - uses: actions/upload-artifact@v4
+        with: { name: molasses-flood-video, path: molasses-short/output/molasses-flood.mp4, retention-days: 30 }
+      - name: Save the video on this branch
+        run: |
+          cd ..
+          git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f molasses-short/output/molasses-flood.mp4
+          git commit -m "Rendered molasses-flood.mp4 [skip ci]" || exit 0
+          git push

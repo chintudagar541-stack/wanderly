@@ -1,0 +1,13 @@
+{
+  "name": "molasses-short",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "npx http-server . -p 5173 -c-1",
+    "render": "node render.mjs 1080 30"
+  },
+  "dependencies": {
+    "playwright": "1.48.2"
+  }
+}

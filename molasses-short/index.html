@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Molasses Tank</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
+<script type="importmap">
+{ "imports": { "three": "./vendor/three.module.js" } }
+</script>
+<style>
+  html,body{margin:0;height:100%;background:#0b0d13;color:#e8eaf2;font:14px system-ui,sans-serif}
+  #wrap{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+  #stage{position:relative;height:min(86vh,calc(92vw*16/9));aspect-ratio:9/16;background:#000;border-radius:6px;overflow:hidden}
+  #stage canvas{position:absolute;inset:0;width:100%;height:100%}
+  #bar{display:flex;gap:10px;align-items:center;width:min(92vw,420px)}
+  button{background:#e39a2d;border:0;color:#1a1206;font-weight:700;padding:8px 14px;border-radius:6px;cursor:pointer}
+  button.ghost{background:#222838;color:#e8eaf2}
+  input[type=range]{flex:1;accent-color:#e39a2d}
+  #time{font-variant-numeric:tabular-nums;min-width:84px;text-align:right;color:#9aa3b8}
+  body.render #bar{display:none}
+  body.render #wrap{justify-content:flex-start;gap:0}
+  body.render #stage{height:auto;border-radius:0}
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="stage"><canvas id="cv"></canvas><canvas id="ov"></canvas></div>
+  <div id="bar">
+    <button id="play">Play</button>
+    <input id="seek" type="range" min="0" max="615" value="0">
+    <button id="voice" class="ghost">Voice: on</button>
+    <span id="time">0.0 / 61.5</span>
+  </div>
+</div>
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>
