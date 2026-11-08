@@ -1,0 +1,16 @@
+node_modules/
+out/
+backup/
+.remotion-tmp/
+
+# generated audio (rebuild with shorts/*/audio/sound.py)
+shorts/*/audio/*.wav
+shorts/*/audio/stems/
+
+# TTS model files (download, see tts/speak.py) and generated samples
+tts/models/
+tts/samples/
+tts/*.mp3
+shorts/*/voice/*_preview.mp3
+shorts/*/voice/*_v1_*.wav
+en_US-ryan-high.onnx
