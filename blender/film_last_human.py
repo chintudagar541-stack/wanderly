@@ -175,7 +175,7 @@ def computer(loc):
     t2 = text('> online_', (loc[0] - .08, loc[1] - .195, .98), size=.04, col='#40ff80', emit=6, extrude=0)
     return scr, t1, t2
 
-def set_city(mood='day', msg=False, seed=2, blocks=6, rooftop=None):
+def set_city(mood='day', msg=False, seed=2, blocks=6, rooftop=None, park=True):
     if mood == 'day': hdri(SKY, strength=1.0, rot=120); sun(140, 28, 4.2, color='#ffe2c0'); exposure(.3)
     else: hdri(DUSK, strength=1.0, rot=-40); sun(-60, 8, 4.0, color='#ff9a58'); exposure(1.1)
     rnd = random.Random(seed)
@@ -189,7 +189,7 @@ def set_city(mood='day', msg=False, seed=2, blocks=6, rooftop=None):
     for bx in range(-blocks, blocks + 1):
         for by in range(-blocks, blocks + 1):
             cx, cy = bx * 32, by * 32
-            if (bx, by) == (1, 1):
+            if park and (bx, by) == (1, 1):
                 env.grass_patch((26, 26), (cx, cy, .05), count=24000, length=.12)
                 for k in range(5): lib.place(tree, (cx + rnd.uniform(-9, 9), cy + rnd.uniform(-9, 9), 0), rnd.uniform(0, 6), rnd.uniform(.9, 1.2))
                 continue
@@ -339,7 +339,7 @@ def set_hotel(mess=False, cold=False):
 
 def set_rooftop():
     H = 44.0
-    set_city('dusk', blocks=4, seed=5)
+    set_city('dusk', blocks=3, seed=5, park=False)
     # our rooftop sits above the city at the edge of a block
     box('ourbld', (14, 14, H), (-60, -60, H / 2), T('brick', 4))
     box('roofdeck', (14.4, 14.4, .4), (-60, -60, H + .2), T('concrete', 2))

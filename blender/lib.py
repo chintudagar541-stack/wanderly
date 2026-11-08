@@ -405,7 +405,7 @@ def ink(collection, thickness=5.0, crease=False):
     sc.render.use_freestyle = True; sc.render.line_thickness_mode = 'ABSOLUTE'
     if DRAFT: thickness *= .5
     vl = bpy.context.view_layer; vl.use_freestyle = True
-    fs = vl.freestyle_settings; fs.mode = 'EDITOR'; fs.crease_angle = math.radians(120)
+    fs = vl.freestyle_settings; fs.mode = 'EDITOR'; fs.crease_angle = math.radians(120); fs.use_culling = True
     for ls in list(fs.linesets): fs.linesets.remove(ls)
     ls = fs.linesets.new('ink')
     ls.select_by_visibility = True; ls.visibility = 'VISIBLE'

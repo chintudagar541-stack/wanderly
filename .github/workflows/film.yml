@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
-concurrency: { group: film-render, cancel-in-progress: true }
+concurrency: { group: 'film-render-${{ github.sha }}', cancel-in-progress: false }
 env:
   BLENDER: blender-4.2.3-linux-x64
 jobs:
@@ -75,15 +75,22 @@ jobs:
         with: { name: 'chunk-${{ matrix.job.id }}', path: 'out/', retention-days: 7 }
   join:
     needs: [plan, render]
-    if: needs.plan.outputs.mode == 'video'
+    if: always() && needs.plan.outputs.mode == 'video'
     runs-on: ubuntu-latest
+    permissions: { contents: read, actions: read }
     steps:
       - uses: actions/checkout@v5
+      - id: base
+        run: echo "run=$(jq -r '.base_run // empty' blender/film.json)" >> $GITHUB_OUTPUT
+      - if: steps.base.outputs.run != ''
+        uses: actions/download-artifact@v4
+        with: { path: art, pattern: 'chunk-*', merge-multiple: true, run-id: '${{ steps.base.outputs.run }}', github-token: '${{ github.token }}' }
       - uses: actions/download-artifact@v4
         with: { path: art, pattern: 'chunk-*', merge-multiple: true }
       - run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg >/dev/null
-          ls art | grep -c mp4
+          N=$(ls art/chunk_*.mp4 | wc -l); E=$(python3 blender/plan_film.py $(jq -r .film blender/film.json) video $(jq -r .chunk blender/film.json) | jq length); echo "chunks $N of $E"
+          [ "$N" = "$E" ] || { echo "missing chunks"; exit 1; }
           for f in $(ls art/chunk_*.mp4 | sort); do echo "file '$PWD/$f'" >> list.txt; done
           ffmpeg -loglevel error -y -f concat -safe 0 -i list.txt -c copy video.mp4
           V=$(jq -r .voice blender/films_${{ needs.plan.outputs.film }}.json); END=$(jq -r .end blender/films_${{ needs.plan.outputs.film }}.json)
