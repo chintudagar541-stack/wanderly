@@ -63,6 +63,13 @@ jobs:
           git config user.name "github-actions"; git config user.email "github-actions@users.noreply.github.com"
           git add previews/film logs/film; git commit -qm "film still ${{ matrix.job.shot }} [skip ci]" || exit 0
           for i in 1 2 3 4 5 6 7 8; do git pull --rebase -q && git push -q && break; sleep $((RANDOM % 9 + 3)); done
+      - name: Save log of a failed chunk to the branch
+        if: failure() && needs.plan.outputs.mode == 'video'
+        run: |
+          mkdir -p logs/film; tail -c 30000 out/log.txt > logs/film/fail_${{ matrix.job.id }}_${{ matrix.job.shot }}.log 2>/dev/null || echo "no log" > logs/film/fail_${{ matrix.job.id }}.log
+          git config user.name "github-actions"; git config user.email "github-actions@users.noreply.github.com"
+          git add logs/film; git commit -qm "film fail log [skip ci]" || exit 0
+          for i in 1 2 3 4 5 6 7 8; do git pull --rebase -q && git push -q && break; sleep $((RANDOM % 9 + 3)); done
       - if: always() && needs.plan.outputs.mode == 'video'
         uses: actions/upload-artifact@v4
         with: { name: 'chunk-${{ matrix.job.id }}', path: 'out/', retention-days: 7 }
