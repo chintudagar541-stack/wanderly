@@ -1,0 +1,218 @@
+{
+ "worker": {
+  "spec": {
+   "body": "#c8a23a",
+   "costume": "vest",
+   "shirt": "#e8dfcc",
+   "hat": "flatcap",
+   "hatCol": "#2c3f66",
+   "hatCol2": "#e9e4d8",
+   "hair": "sideburn",
+   "hairCol": "#5a3a22"
+  },
+  "pose": {
+   "face": "smug",
+   "armL": [
+    0.3,
+    0.2
+   ],
+   "armR": [
+    1.6,
+    0.9
+   ]
+  },
+  "ratio": 1.642578125
+ },
+ "foreman": {
+  "spec": {
+   "body": "#2c2a36",
+   "costume": "suit",
+   "tie": "#a8322b",
+   "hat": "top",
+   "hatCol": "#1d1b22",
+   "hatCol2": "#8a2f2a",
+   "mustache": true,
+   "buttons": 2,
+   "scarf": "#7a2b2b"
+  },
+  "pose": {
+   "face": "unimpressed",
+   "armL": [
+    0.15,
+    0.1
+   ],
+   "armR": [
+    0.2,
+    0.15
+   ]
+  },
+  "ratio": 1.642578125
+ },
+ "judge": {
+  "spec": {
+   "body": "#17151c",
+   "costume": "robe",
+   "robe": true,
+   "bodyLen": 2.2,
+   "hat": "wig",
+   "sash": "#7a1f22"
+  },
+  "pose": {
+   "face": "deadpan",
+   "armL": [
+    0.3,
+    0.3
+   ],
+   "armR": [
+    2.4,
+    0.6
+   ],
+   "props": [
+    {
+     "type": "gavel",
+     "hand": "R"
+    }
+   ]
+  },
+  "ratio": 3.142578125
+ },
+ "mother": {
+  "spec": {
+   "body": "#6e3a66",
+   "costume": "dress",
+   "flare": 1.3,
+   "bodyLen": 1.5,
+   "hair": "bun",
+   "hat": "bun",
+   "hairCol": "#2e2118",
+   "shoes": "#5a2a2a"
+  },
+  "pose": {
+   "face": "angry",
+   "armL": [
+    0.35,
+    0.9
+   ],
+   "armR": [
+    2.0,
+    0.5
+   ],
+   "props": [
+    {
+     "type": "bottle",
+     "hand": "R"
+    }
+   ]
+  },
+  "ratio": 2.142578125
+ },
+ "kid": {
+  "spec": {
+   "body": "#b5432f",
+   "costume": "coat",
+   "buttons": 3,
+   "double": true,
+   "buttonCol": "#e8d48a",
+   "hat": "beanie",
+   "hatCol": "#2f6b7a",
+   "hatCol2": "#e9c25a",
+   "scale": 0.72,
+   "belt": "#2a2430",
+   "beltY": 0.55
+  },
+  "pose": {
+   "face": "grin",
+   "armL": [
+    0.4,
+    0.2
+   ],
+   "armR": [
+    2.8,
+    0.1
+   ],
+   "props": [
+    {
+     "type": "cup",
+     "hand": "R"
+    }
+   ]
+  },
+  "ratio": 1.642578125
+ },
+ "fireman": {
+  "spec": {
+   "body": "#223047",
+   "costume": "coat",
+   "buttons": 3,
+   "double": true,
+   "buttonCol": "#e3c160",
+   "hat": "helmet",
+   "hatCol": "#b3312a",
+   "gloves": "#3a2e28",
+   "belt": "#3a2e28",
+   "beltY": 0.6
+  },
+  "pose": {
+   "face": "shock",
+   "armL": [
+    0.6,
+    0.4
+   ],
+   "armR": [
+    0.6,
+    0.4
+   ]
+  },
+  "ratio": 1.642578125
+ },
+ "sailor": {
+  "spec": {
+   "body": "#f2efe8",
+   "costume": "stripes",
+   "stripe": "#2e4a7a",
+   "hat": "sailor"
+  },
+  "pose": {
+   "face": "talk",
+   "armL": [
+    0.3,
+    0.2
+   ],
+   "armR": [
+    1.2,
+    1.2
+   ]
+  },
+  "ratio": 1.642578125
+ },
+ "oldman": {
+  "spec": {
+   "body": "#7a5636",
+   "costume": "coat",
+   "buttons": 3,
+   "buttonCol": "#3a2a1a",
+   "hair": "side",
+   "hairCol": "#bdb8b0",
+   "scarf": "#3f6b4a",
+   "bodyLen": 1.1
+  },
+  "pose": {
+   "face": "worry",
+   "armL": [
+    0.3,
+    0.2
+   ],
+   "armR": [
+    0.35,
+    0.3
+   ],
+   "props": [
+    {
+     "type": "cane",
+     "hand": "R"
+    }
+   ]
+  },
+  "ratio": 1.5712890625
+ }
+}
