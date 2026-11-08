@@ -85,6 +85,8 @@ class Actor:
                        armL=('a', .25, .15), armR=('a', .25, .15), legs=('stand',), bob=0.0)
         self.faces = []
         self.props = []
+        self.ev = {}
+        self.smooth = {'loc', 'facing', 'lean', 'side', 'head', 'armL', 'armR', 'bob'}
 
     # ---------------------------------------------------------------- pose maths (local space, unscaled)
     def _arm(self, sd, spec, bendz):
@@ -126,7 +128,36 @@ class Actor:
         return out
 
     def key(self, f, **kw):
-        st = self.st; st.update({k: v for k, v in kw.items() if v is not None})
+        """Record pose values from frame f on. Values between two keys of the same attribute are blended smoothly."""
+        kw = {k: v for k, v in kw.items() if v is not None}
+        if 'face' in kw: self.faces.append((f, kw.pop('face')))
+        for sd in ('L', 'R'):
+            v = kw.get('arm' + sd)
+            if v and v[0] == 'a':          # store every arm pose as a hand target so poses blend smoothly
+                hd = self._arm(sd, v, 0)[2]; kw['arm' + sd] = ('t', hd.x * (-1 if sd == 'L' else 1), hd.y, hd.z)
+        for k, v in kw.items(): self.ev.setdefault(k, {})[f] = v
+
+    def _val(self, attr, f):
+        tl = self.ev.get(attr)
+        if not tl: return self.st[attr]
+        fs = sorted(tl)
+        if fs[0] > 1 and attr in self.smooth and attr != 'loc':
+            tl = dict(tl); d = self.st[attr]
+            if attr in ('armL', 'armR') and d[0] == 'a':
+                sd = attr[-1]; hd = self._arm(sd, d, 0)[2]; d = ('t', hd.x * (-1 if sd == 'L' else 1), hd.y, hd.z)
+            tl[1] = d; fs = sorted(tl)
+        prev = [x for x in fs if x <= f]; nxt = [x for x in fs if x > f]
+        if not prev: return tl[fs[0]]
+        a = prev[-1]; va = tl[a]
+        if not nxt or attr in ('legs',): return va
+        b = nxt[0]; vb = tl[b]
+        if b - a > 1 and attr in self.smooth:
+            t = (f - a) / (b - a); t = t * t * (3 - 2 * t)
+            return _mix(va, vb, t)
+        return va
+
+    def _apply(self, f):
+        st = {k: self._val(k, f) for k in self.st}
         loc = Vector(st['loc'])
         self.root.location = loc + Vector((0, 0, st['bob']))
         self.root.rotation_euler = (0, 0, math.radians(st['facing']))
@@ -135,7 +166,6 @@ class Actor:
         self.torso.keyframe_insert('rotation_euler', frame=f)
         h = st['head']; self.head.rotation_euler = (math.radians(h[1]), math.radians(h[2]), math.radians(h[0]))
         self.head.keyframe_insert('rotation_euler', frame=f)
-        # limbs: torso lean rotates shoulders around the hip pivot
         R = self.torso.rotation_euler.to_matrix(); piv = Vector((0, 0, self.z0))
         tw = lambda v: piv + R @ (v - piv)
         for sd in ('L', 'R'):
@@ -145,33 +175,38 @@ class Actor:
             for i, p in enumerate((sh, ctrl, hd)):
                 pt = self.arms[sd].data.splines[0].points[i]; pt.co = (p.x, p.y, p.z, 1); pt.keyframe_insert('co', frame=f)
             self.hands[sd].location = hd; self.hands[sd].keyframe_insert('location', frame=f)
-        lg = self._legs(st['legs'])
-        for sd, (hip, knee, foot) in lg.items():
+        for sd, (hip, knee, foot) in self._legs(st['legs']).items():
             if sd in self.legs:
                 ctrl = knee * 2 - (hip + foot) / 2
                 for i, p in enumerate((hip, ctrl, foot + Vector((0, 0, .02)))):
                     pt = self.legs[sd].data.splines[0].points[i]; pt.co = (p.x, p.y, p.z, 1); pt.keyframe_insert('co', frame=f)
             self.shoes[sd].location = foot + Vector((0, -.045, -.02)); self.shoes[sd].keyframe_insert('location', frame=f)
-        if 'face' in kw and kw['face']: self.faces.append((f, kw['face']))
 
-    def walk(self, f0, f1, p0, p1, stride=.22, cadence=1.0, face=None, run=False, **kw):
-        """Walk from p0 to p1 over frames f0..f1 with a proper step cycle; facing follows the path."""
+    def walk(self, f0, f1, p0, p1, stride=.22, face=None, run=False, **kw):
+        """Walk from p0 to p1 over frames f0..f1 with a step cycle; facing follows the path."""
         p0, p1 = Vector(p0), Vector(p1); d = p1 - p0
         facing = math.degrees(math.atan2(d.x, -d.y)) if d.length > 1e-3 else self.st['facing']
-        steps_per_m = 1 / (stride * 2) if not run else 1 / (stride * 2.6)
-        total = d.length * steps_per_m * math.tau
+        total = d.length / (stride * (2.6 if run else 2)) * math.tau
+        if face: self.faces.append((f0, face))
+        for k, v in kw.items(): self.ev.setdefault(k, {})[f0] = v
         for f in range(f0, f1 + 1):
-            t = (f - f0) / max(1, f1 - f0)
-            ph = total * t
-            bob = abs(math.sin(ph)) * (.05 if run else .025)
-            self.key(f, loc=tuple(p0 + d * t), facing=facing, bob=bob, legs=('walk', ph, stride * (1.5 if run else 1), .2 if run else .1),
-                     lean=(8 if run else 2), face=face if f == f0 else None, **kw)
+            t = (f - f0) / max(1, f1 - f0); ph = total * t
+            self.ev.setdefault('loc', {})[f] = tuple(p0 + d * t); self.ev.setdefault('facing', {})[f] = facing
+            self.ev.setdefault('bob', {})[f] = abs(math.sin(ph)) * (.05 if run else .025)
+            self.ev.setdefault('legs', {})[f] = ('walk', ph, stride * (1.5 if run else 1), .2 if run else .1)
+        self.ev.setdefault('lean', {})[f0] = 8 if run else 2
 
     def face_at(self, f, name):
         self.faces.append((f, name))
 
     def finish(self, f_end, blink=True, seed=1):
-        """Bake the face timeline (with automatic blinks) into constant keys on the face sequence."""
+        """Bake pose events into keyframes, then the face timeline (with automatic blinks)."""
+        frames = sorted({f for tl in self.ev.values() for f in tl} | {1})
+        walking = 'legs' in self.ev and len(self.ev['legs']) > 3
+        if walking or any(len(tl) > 1 for tl in self.ev.values()):
+            lo, hi = frames[0], min(frames[-1], f_end)
+            frames = sorted(set(frames) | set(range(lo, hi + 1, 2 if not walking else 1)))
+        for f in frames: self._apply(f)
         if not self.faces: self.faces = [(1, self.st['face'])]
         tl = sorted(self.faces); iu = self.fnode.image_user
         rnd = random.Random(seed); keys = []
@@ -186,6 +221,14 @@ class Actor:
             iu.frame_offset = ORDER.index(n) if n in ORDER else 0
             iu.keyframe_insert('frame_offset', frame=f)
         constant(self.fmat.node_tree)
+
+def _mix(a, b, t):
+    if isinstance(a, (int, float)) and isinstance(b, (int, float)): return a + (b - a) * t
+    if isinstance(a, tuple) and isinstance(b, tuple) and len(a) == len(b):
+        if a and isinstance(a[0], str):
+            return (a[0],) + tuple(_mix(x, y, t) for x, y in zip(a[1:], b[1:])) if a[0] == b[0] else (a if t < .5 else b)
+        return tuple(_mix(x, y, t) for x, y in zip(a, b))
+    return a if t < .5 else b
 
 def constant(idblock):
     ad = idblock.animation_data

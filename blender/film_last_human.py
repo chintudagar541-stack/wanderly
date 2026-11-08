@@ -72,7 +72,7 @@ def room(w, d, h, wall='#e8dccb', floor='woodfloor', windows=(), night=False, fr
     box('skirting', (w, .03, .12), (0, d / 2 - .015, .06), S('#f2efe8', .5))
     for (y, ww, z0, z1) in windows:
         if night:
-            area((-w / 2 - .6, y, (z0 + z1) / 2), (0, y, (z0 + z1) / 2 - .3), max(ww, z1 - z0), 120, '#7a9cff')
+            area((-w / 2 - .6, y, (z0 + z1) / 2), (0, y, (z0 + z1) / 2 - .3), max(ww, z1 - z0), 260, '#7a9cff')
         else:
             area((-w / 2 - .6, y, (z0 + z1) / 2), (0, y, (z0 + z1) / 2 - .5), max(ww, z1 - z0), 900, '#fff1dc')
         box('curtainL', (.08, .35, z1 - z0 + .6), (-w / 2 + .1, y - ww / 2 - .2, (z0 + z1) / 2 + .2), S('#8a3a2a', .9))
@@ -106,15 +106,15 @@ def old_radio(loc, rot=0.0):
 def set_bedroom(night=False, radio=True):
     room(5, 5.5, 2.8, '#d8c8b0', windows=[(0.4, 1.3, .9, 2.3)], night=night)
     if not night: sun(-90, 25, 5, color='#ffe8c8', angle=1.0)
-    else: exposure(.4)
+    else: exposure(.9)
     bed((.9, 1.5), blanket='#3a5a8a')
-    ns = lib.model(['ClassicNightstand_01']); lib.place(ns, (-.35, 2.4, 0), 0) or box('nightstand', (.5, .45, .6), (-.35, 2.4, .3), T('woodpanel', 1))
+    box('nightstand', (.5, .45, .6), (-.35, 2.4, .3), T('woodpanel', 1, '#8a5a34'), bevel=.02)
     box('phone', (.09, .17, .012), (-.35, 2.3, .62), S('#111111', .2, coat=1))
     scr = mat('phonescr', '#000000', rough=.1, emit='#bcd8ff', emit_strength=0)
     box('screen', (.08, .155, .002), (-.35, 2.3, .627), scr)
     box('desk', (.7, 1.4, .05), (2.1, -1.2, .75), T('woodpanel', 1, '#7a4a28'), bevel=.01)
     for dy in (-.6, .6): box('deskleg', (.6, .05, .75), (2.1, -1.2 + dy, .375), T('woodpanel', 1, '#7a4a28'))
-    ch = lib.model(['WoodenChair_01', 'SchoolChair_01']); lib.place(ch, (1.45, -1.2, 0), -math.pi / 2)
+    cyl('stool', .2, .45, (1.45, -1.2, .225), T('woodpanel', 1, '#5a3418'), seg=24)
     out = dict(screen=scr)
     if radio:
         r, dial, lamp = old_radio((2.2, -1.2, .775), -math.pi / 2); out.update(dial=dial, rlamp=lamp)
@@ -177,7 +177,7 @@ def computer(loc):
 
 def set_city(mood='day', msg=False, seed=2, blocks=6, rooftop=None):
     if mood == 'day': hdri(SKY, strength=1.0, rot=120); sun(140, 28, 4.2, color='#ffe2c0'); exposure(.3)
-    else: hdri(DUSK, strength=.7, rot=-40); sun(-60, 6, 3.0, color='#ff9a58'); exposure(.7)
+    else: hdri(DUSK, strength=1.0, rot=-40); sun(-60, 8, 4.0, color='#ff9a58'); exposure(1.1)
     rnd = random.Random(seed)
     env.ground('asphalt', (600, 600), scale=4)
     lit = .08 if mood == 'day' else .45
@@ -209,7 +209,6 @@ def set_city(mood='day', msg=False, seed=2, blocks=6, rooftop=None):
         t = text('HELLO?', (x, y, h + .02), rot=(0, 0, 0), size=w * .28, col='#f2efe8', extrude=0)
         x, y, h, w = min(tops, key=lambda t: abs(t[0] + 19) + abs(t[1] - 13))
         text('HELP', (x, y, h + .02), rot=(0, 0, .3), size=w * .3, col='#e8c23a', extrude=0)
-    env.fog((900, 900, 160), (0, 0, 80), density=.0009 if mood == 'day' else .0016, col='#c8d4e4' if mood == 'day' else '#e8b890')
     return tops
 
 def set_market():
@@ -351,9 +350,10 @@ def set_rooftop():
     acu = lib.model(['exterior_aircon_unit']); lib.place(acu, (-56, -63, H + .4), 0)
     return Vector((-60, -60, H + .4))
 
-def mannequin(loc, facing=0.0):
+def make_mannequin(loc, facing=0.0, n=10):
     m = Actor('worker', body_col='#ece6dc', tag='mannequin')
     m.key(1, loc=loc, facing=facing, legs=('sit',), armL=('a', .3, .4, -.3), armR=('a', .3, .4, -.3))
+    m.finish(n, blink=False)
     return m
 
 # =========================================================================== helpers
@@ -408,7 +408,7 @@ def nocalls(n):
 def silence(n):
     set_street('day', seed=13)
     h = hero(); h.key(1, loc=(0, 0, 0), facing=0, face='deadpan', armL=('a', .12, .05), armR=('a', .12, .05)); h.key(n, head=(-6, 0, 0)); h.finish(n)
-    cam = Cam(26); push(cam, n, (0, -14, 7.5), (0, -16, 9.5), (0, 0, .8), (0, 0, .6))
+    cam = Cam(24); push(cam, n, (-1.0, -4.4, 5.5), (-1.2, -4.6, 7.5), (0, 0, .8), (0, 0, .6))
 
 @shot
 def dream(n):
@@ -463,7 +463,7 @@ def call(n):
     h = hero(); h.key(1, loc=(0, -1.35, .1), facing=180, legs=('sit',), face='worry', armR=('t', .3, -.05, h.z1 + .2), armL=('a', .3, .5, -.2))
     box('phone', (.025, .09, .16), (0, 0, 0), S('#111', .2, coat=1)).parent = h.hands['R']
     h.key(int(n * .58), face='sad', head=(0, 10, 0)); h.key(n, head=(0, 12, 0)); h.finish(n)
-    cam = Cam(45, 2.0); push(cam, n, (-.4, -.1, 1.05), (-.3, -.3, 1.04), (0, -1.35, 1.02))
+    cam = Cam(35, 2.8); push(cam, n, (-.7, .35, 1.1), (-.55, .15, 1.08), (0, -1.35, 1.0))
 
 @shot
 def realize(n):
@@ -489,7 +489,7 @@ def internet(n):
     h = hero(); h.key(1, loc=(1.8, .1, 0), facing=180, face='hopeful', lean=6); h.finish(n)
     t2.hide_render = False; t2.keyframe_insert('hide_render', frame=1)
     for f in range(1, n, 12): t2.hide_render = (f // 12) % 2 == 1; t2.keyframe_insert('hide_render', frame=f)
-    cam = Cam(40, 2.8); push(cam, n, (2.35, -.75, 1.45), (2.2, -.5, 1.38), (1.8, .82, 1.02))
+    cam = Cam(32, 2.8); push(cam, n, (1.0, .5, 1.2), (1.1, .45, 1.15), (1.85, .1, 1.05))
 
 @shot
 def clocks(n):
@@ -552,15 +552,12 @@ def curb(n):
     set_street('dusk', seed=19)
     h = hero(); h.key(1, loc=(0, 5.2, -.05), facing=0, legs=('sit',), lean=16, face='sad', armL=('a', .4, .9, -.3), armR=('a', .4, .9, -.3), head=(0, 10, 0))
     h.key(n, head=(-8, 12, 0)); h.finish(n)
-    cam = Cam(26, 4); push(cam, n, (-4.5, -3.5, 1.4), (-4.0, -2.8, 1.6), (0, 5.2, .9))
-
-@shot
-def mannequin_(n): pass
+    cam = Cam(28, 3.2); push(cam, n, (-1.8, 1.6, .9), (-1.5, 2.1, 1.0), (0, 5.2, .7))
 
 @shot
 def mannequin(n):
     set_street('day', seed=20, cafe=True)
-    mq = mannequin((-3.3, 6.4, .28), -90)
+    mq = make_mannequin((-3.3, 6.4, .28), -90, n)
     h = hero(); h.key(1, loc=(-4.7, 6.4, .28), facing=90, legs=('sit',), face='talk', armL=('a', .4, .7, -.3), armR=('a', .9, .6, -.4))
     for f in range(10, int(n * .6), 10): h.key(f, armR=('a', .7 + (f % 20) / 40, .8, -.4), face='talk' if f % 20 else 'happy')
     h.key(int(n * .65), face='sad', armR=('a', .4, .7, -.3), head=(0, 8, 0)); h.finish(n)
@@ -600,12 +597,12 @@ def radiomic(n):
     h = hero(); h.key(1, loc=(1.45, -1.2, .12), facing=90, legs=('sit',), lean=14, face='talk', armL=('a', .4, .7, -.3), armR=('t', .2, -.35, h.z1 - .1))
     for f in range(8, n, 8): h.key(f, face='talk' if (f // 8) % 2 else 'hopeful')
     h.finish(n)
-    cam = Cam(34, 2.0); push(cam, n, (2.3, -2.6, 1.3), (2.2, -2.3, 1.3), (1.6, -1.2, 1.2))
+    cam = Cam(32, 2.8); push(cam, n, (2.3, -2.4, 1.3), (2.2, -2.2, 1.3), (1.5, -1.2, 1.15))
 
 @shot
 def hoping(n):
     set_city('dusk', msg=True, seed=2)
-    cam = Cam(24); cam.key(1, pos=(-20, -60, 55), look=(0, 0, 0)); cam.key(n, pos=(-40, -95, 80), look=(0, -5, 0))
+    cam = Cam(24); cam.key(1, pos=(-5, -45, 70), look=(0, -5, 0)); cam.key(n, pos=(-15, -70, 95), look=(0, -8, 0))
 
 def radio_scene(n, face_keys, cam_fn, flicker=None, die=None):
     o = set_bedroom(night=True)
@@ -624,29 +621,28 @@ def radio_scene(n, face_keys, cam_fn, flicker=None, die=None):
 @shot
 def oldradio(n):
     radio_scene(n, [(1, dict(face='lonely')), (int(n * .6), dict(head=(0, 6, 0)))],
-                lambda c: push(c, n, (.9, -2.9, 1.25), (1.1, -2.4, 1.2), (2.0, -1.2, .95)))
+                lambda c: push(c, n, (2.5, -2.6, 1.5), (2.35, -2.3, 1.4), (1.8, -1.2, 1.05)))
 
 @shot
 def hearvoice(n):
     radio_scene(n, [(1, dict(face='lonely')), (6, dict(face='shock', head=(0, -6, 0), lean=4))],
-                lambda c: push(c, n, (2.25, -1.85, 1.3), (2.15, -1.75, 1.3), (1.45, -1.2, 1.25), lens0=40))
+                lambda c: push(c, n, (2.15, -2.05, 1.3), (2.05, -1.9, 1.3), (1.45, -1.2, 1.2), lens0=36))
 
 @shot
 def humanvoice(n):
-    radio_scene(n, [(1, dict(face='gasp'))], lambda c: push(c, n, (1.75, -1.3, 1.0), (1.85, -1.27, .98), (2.2, -1.2, .97), lens0=40), flicker=True)
+    radio_scene(n, [(1, dict(face='gasp'))], lambda c: push(c, n, (1.75, -1.85, 1.15), (1.82, -1.75, 1.12), (2.2, -1.2, .97), lens0=40), flicker=True)
 
 @shot
 def itsays(n):
     radio_scene(n, [(1, dict(face='scared', lean=22, head=(0, 8, 0)))],
-                lambda c: push(c, n, (1.3, -2.4, 1.25), (1.4, -2.2, 1.22), (1.75, -1.2, 1.1)), flicker=True)
+                lambda c: push(c, n, (2.0, -2.5, 1.3), (1.95, -2.3, 1.25), (1.7, -1.2, 1.1)), flicker=True)
 
 @shot
 def foundyou(n):
-    radio_scene(n, [(1, dict(face='gasp', lean=20))], lambda c: push(c, n, (1.9, -1.32, 1.0), (1.97, -1.3, .99), (2.2, -1.2, .96), lens0=45), flicker=True)
+    radio_scene(n, [(1, dict(face='gasp', lean=20))], lambda c: push(c, n, (1.7, -1.95, 1.1), (1.8, -1.8, 1.07), (2.2, -1.2, .96), lens0=45), flicker=True)
 
 @shot
 def silent(n):
     radio_scene(n, [(1, dict(face='shock', lean=12)), (int(n * .55), dict(face='scared'))],
-                lambda c: push(c, n, (2.4, -1.9, 1.35), (2.2, -1.75, 1.33), (1.45, -1.2, 1.25), lens0=36), die=14)
+                lambda c: push(c, n, (2.2, -2.2, 1.35), (2.05, -2.0, 1.33), (1.45, -1.2, 1.2), lens0=34), die=14)
 
-del SHOTS['mannequin_']
