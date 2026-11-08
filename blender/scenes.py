@@ -208,7 +208,7 @@ def meadow_village():
     FR('meadow', cands=['meadow_2', 'kloofendal_48d_partly_cloudy', 'spruit_sunrise', 'rolling_hills'], strength=.9, rot=140)
     sun(-30, 32, 3.4)
     env.displaced_ground('grassy', (220, 220), (0, 40, -.3), strength=3.0, noise=20, scale=3, tint='#a8b070')
-    env.grass_patch((26, 18), (0, -2, 0), count=160000, length=.18)
+    env.grass_patch((26, 18), (0, -2, 0), count=90000, length=.18)
     path = plane('path', 1.8, 26, (2, -2, .02), T('dirt', 1.5)); path.rotation_euler = (0, 0, .25)
     for i, (x, y, r) in enumerate(((-7, 9, .2), (6, 12, -.3), (17, 22, .1))): env.cottage((x, y, 0), r, seed=i)
     tree = lib.model(['island_tree_02', 'island_tree_01', 'jacaranda_tree'])

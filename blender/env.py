@@ -179,9 +179,9 @@ def stall(loc, rot=0.0, cloth='#b8332a', cloth2='#efe6d4', w=3.0, d=1.8, seed=0,
             crate(tuple(loc2), rot, (.8, .5, .2), fill=produce[i % len(produce)], n=16, seed=seed * 7 + i)
     return r
 
-def grass_patch(size, loc=(0, 0, 0), count=60000, length=.16, ground_key='grassy', col1='#2f4a18', col2='#8aa44a', density_scale=1.0, children=6):
+def grass_patch(size, loc=(0, 0, 0), count=60000, length=.16, ground_key='grassy', col1='#2f4a18', col2='#8aa44a', density_scale=1.0, children=4):
     o = plane('grass_ground', size[0], size[1], loc, T(ground_key, 2.5, '#9aa070'), sub=40)
-    if lib.DRAFT: count //= 4
+    if lib.DRAFT: count //= 6
     ps = o.modifiers.new('grass', 'PARTICLE_SYSTEM').particle_system; st = ps.settings
     st.type = 'HAIR'; st.count = int(count * density_scale); st.hair_length = length; st.use_advanced_hair = True
     st.emit_from = 'FACE'; st.use_emit_random = True; st.normal_factor = 1.0; st.factor_random = .25

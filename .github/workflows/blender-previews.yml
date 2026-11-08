@@ -47,8 +47,7 @@ jobs:
           ./$BLENDER/blender -b --factory-startup -noaudio --python-exit-code 1 -P blender/run.py -- ${{ matrix.scene }} out/${{ matrix.scene }}.png 2>&1 | grep -v "^Fra:" | tee out/${{ matrix.scene }}.log | tail -400
       - if: always()
         run: |
-          [ -f out/${{ matrix.scene }}.png ] && ffmpeg -loglevel error -y -i out/${{ matrix.scene }}.png -q:v 3 out/${{ matrix.scene }}.jpg || true
-          tail -c 60000 out/${{ matrix.scene }}.log > out/${{ matrix.scene }}.tail.log 2>/dev/null || true
+                    tail -c 60000 out/${{ matrix.scene }}.log > out/${{ matrix.scene }}.tail.log 2>/dev/null || true
       - if: always()
         uses: actions/upload-artifact@v4
         with: { name: 'scene-${{ matrix.scene }}', path: out/, retention-days: 14 }
@@ -62,6 +61,7 @@ jobs:
         with: { path: art }
       - run: |
           mkdir -p previews logs
+          ls -R art | head -80
           find art -name '*.jpg' -exec cp {} previews/ \;
           find art -name '*.json' -exec cp {} previews/ \;
           find art -name '*.tail.log' -exec cp {} logs/ \;

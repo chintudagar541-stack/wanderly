@@ -200,6 +200,9 @@ def camera(loc, look, lens=30, focus=None, fstop=None):
 def render(path):
     sc = bpy.context.scene; sc.render.filepath = path
     t = time.time(); bpy.ops.render.render(write_still=True); log('rendered', path, f'{time.time() - t:.0f}s')
+    jp = path.rsplit('.', 1)[0] + '.jpg'
+    st = sc.render.image_settings; st.file_format = 'JPEG'; st.quality = 92
+    bpy.data.images['Render Result'].save_render(jp, scene=sc); log('saved', jp)
 
 # ------------------------------------------------------------------ materials
 def mat(name, color='#cccccc', rough=.5, metal=0.0, emit=None, emit_strength=0.0, coat=0.0, sss=0.0, alpha=1.0, trans=0.0, spec=.5):
