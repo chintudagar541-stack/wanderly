@@ -21,7 +21,9 @@ export type Cam = { pos: V3; look: V3; fov: number; roll?: number };
 export type ActorDef = { who: string; pos: V3; opts: FrontOpts; tint?: V3; scale?: number; roll?: number; yaw?: number };
 export type Shot<L extends string = string> = {
   id: number; a: number; b: number; cam: (t: number, u: number) => Cam; actors?: (t: number) => ActorDef[]; light: L; dof: number;
-  focus?: V3; shadowR?: number;
+  /** what the lens focuses on: a point, a point over time, or "auto" (the default when the shot has actors): the face of
+   *  the character nearest the frame centre, so characters are never left soft by a stale focus point */
+  focus?: V3 | ((t: number) => V3) | "auto"; shadowR?: number;
   /** dissolve in from the previous shot over this many seconds (0 / undefined = cut) */
   dis?: number;
 };

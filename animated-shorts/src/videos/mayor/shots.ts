@@ -55,7 +55,7 @@ export const PLAN: Plan = {
 // ================= shots =================
 // A. 0-5.05 bedroom: the TV news (insert) -> pan to Kevin asleep on "Kevin" -> he sits up, shocked, on "mayor"
 const KS: V3 = [BED[0], 0.5, BED[2] - 0.45];
-add({ a: 0, b: 5.05, light: "morning", dof: 9, focus: TV, shadowR: 6,
+add({ a: 0, b: 5.05, light: "morning", dof: 9, shadowR: 6,
   actors: (t) => [{ who: "kevin", pos: t < 2.6 ? [BED[0] - 0.1, BED[1] - 0.04, BED[2] - 0.2] : KS, scale: 0.78,
     opts: (t < 2.6 ? { mode: "lie", expr: "asleep", zzz: (t * 0.8) % 1 } : t < 3.9 ? { mode: "sit", expr: "dazed", blink: t < 2.8 } : { mode: "sit", expr: "shock", exclaim: true, sweat: ramp(t, 4.0, 4.5) }) as FrontOpts }],
   cam: drift(path([
@@ -67,7 +67,7 @@ add({ a: 0, b: 5.05, light: "morning", dof: 9, focus: TV, shadowR: 6,
   ])) });
 
 // B. 5.05-7.0 bedroom: close on Kevin, baffled, the TV glowing in the foreground ("The problem? He had never even visited that town.")
-add({ a: 5.05, b: 7.0, dis: DIS, light: "morning", dof: 10, focus: [KS[0], 1.15, KS[2]], shadowR: 6,
+add({ a: 5.05, b: 7.0, dis: DIS, light: "morning", dof: 10, shadowR: 6,
   actors: (t) => [{ who: "kevin", pos: KS, scale: 0.78, opts: { mode: "sit", expr: t < 5.7 ? "dazed" : "nervous", question: t > 5.6, headTilt: Math.sin(t * 2) * 6 } }],
   cam: drift(path([
     K(5.05, [KS[0] - 0.9, 1.2, KS[2] + 0.9], [KS[0], 1.15, KS[2]], "closeUp"),
@@ -81,12 +81,12 @@ const committee = (t: number): ActorDef[] => [
   { who: "off2", pos: [HX - 4.0, 0.3, -1.6], scale: 0.76, opts: { mode: "sit", facing: 1, expr: t > 10.2 ? "nervous" : "smile_closed" } },
   { who: "off3", pos: [HX - 4.0, 0.3, -0.6], scale: 0.76, opts: { mode: "sit", facing: 1, expr: t > 10.2 ? "dazed" : "neutral", question: t > 10.4 } },
 ];
-add({ a: 7.0, b: 10.9, dis: DIS, light: "hall", dof: 7, shadowR: 10, focus: [HX, 1.5, -1],
+add({ a: 7.0, b: 10.9, dis: DIS, light: "hall", dof: 7, shadowR: 10,
   actors: (t) => [{ who: "oldmayor", pos: OM(t), scale: 0.8, opts: { mode: "stroll", facing: -1, phase: t * 1.4, expr: "smile_closed", prop: "suitcase" } }, ...committee(t)],
   cam: (t: number) => { const p = OM(t), u = smooth((t - 7.0) / 3.9); return { pos: [p[0] + 1.2 - u * 1.6, 1.55, p[2] + 2.3], look: [p[0] - u * 2.4, 1.4, p[2] - 0.3 - u * 1.2], fov: 52 }; } });
 
 // D. 10.9-14.75 insert: the list of people who owe the town money, KEVIN circled; top-down push-in
-add({ a: 10.9, b: 14.75, dis: DIS, light: "hall", dof: 6, focus: LIST, shadowR: 4,
+add({ a: 10.9, b: 14.75, dis: DIS, light: "hall", dof: 6, shadowR: 4,
   cam: path([
     K(10.9, [LIST[0] + 0.05, 1.75, LIST[2] + 0.35], [LIST[0], LIST[1], LIST[2]], "medium"),
     K(13.0, [LIST[0] - 0.02, 1.32, LIST[2] + 0.1], [LIST[0] - 0.06, LIST[1], LIST[2] + 0.02], "closeUp", { ease: "out" }),
@@ -95,14 +95,14 @@ add({ a: 10.9, b: 14.75, dis: DIS, light: "hall", dof: 6, focus: LIST, shadowR: 
 
 // E. 14.75-17.2 town hall: Kevin walks up the red carpet between clapping officials; crane up to the enormous chair ("everyone believed he was qualified")
 const KW = (t: number): V3 => [HX, 0, lerp(1.5, -3.6, (t - 14.75) / 2.45)];
-add({ a: 14.75, b: 17.2, dis: DIS, light: "hall", dof: 6, shadowR: 12, focus: [HX, 1.4, -2],
+add({ a: 14.75, b: 17.2, dis: DIS, light: "hall", dof: 6, shadowR: 12,
   actors: (t) => [{ who: "kevin", pos: KW(t), scale: 0.78, opts: { mode: "stroll", back: true, phase: t * 1.5, expr: "nervous" } },
     ...[[-1.6, -0.5], [1.6, -0.2], [-1.7, -2.2], [1.7, -2.6], [-1.5, 1.0]].map(([x, z], i) => ({ who: ["off1", "off2", "off3", "r6", "r1"][i] + "#e" + i, pos: [HX + x, 0, z] as V3, scale: 0.76,
       opts: { mode: "stand", facing: x < 0 ? 1 : -1, expr: i % 2 ? "laugh" : "grin", wave: Math.abs(Math.sin(t * 8 + i)), phase: t } as FrontOpts }))],
   cam: (t: number) => { const p = KW(t), u = smooth((t - 14.75) / 2.45); return { pos: [HX + 0.4, 1.4 + u * 1.6, p[2] + 2.6 + u * 0.6], look: [HX, 1.4 + u * 1.5, p[2] - 3 - u * 1.5], fov: lerp(54, 58, u) }; } });
 
 // F. 17.2-19.9 Kevin tiny in the giant chair, an official hands him the problems; low-angle push-in, he gulps
-add({ a: 17.2, b: 19.9, dis: DIS, light: "hall", dof: 8, focus: [THRONE[0], 1.9, THRONE[2]], shadowR: 8,
+add({ a: 17.2, b: 19.9, dis: DIS, light: "hall", dof: 8, shadowR: 8,
   actors: (t) => [{ who: "kevin", pos: THRONE, scale: 0.78, opts: { mode: "sit", expr: t < 18.6 ? "smile" : "nervous", sweat: ramp(t, 18.6, 19.2) } },
     { who: "off1", pos: [HX + 1.35, 0.4, -5.4], scale: 0.76, opts: { mode: "stand", facing: -1, expr: "grin", prop: "letter", phase: t } }],
   cam: drift(path([
@@ -111,7 +111,7 @@ add({ a: 17.2, b: 19.9, dis: DIS, light: "hall", dof: 8, focus: [THRONE[0], 1.9,
   ])) });
 
 // G. 19.9-21.35 blackout street at night: residents with candles, fuming ("The town had no electricity,")
-add({ a: 19.9, b: 21.35, dis: DIS, light: "dark", dof: 6, shadowR: 14, focus: [TX0 - 4.6, 1.4, -6],
+add({ a: 19.9, b: 21.35, dis: DIS, light: "dark", dof: 6, shadowR: 14,
   actors: (t) => crowdAt(t, [[TX0 - 4.6, -5.6], [TX0 - 5.4, -6.6], [TX0 - 3.8, -7.4], [TX0 - 5.6, -8.4]], (i) => ({ mode: "stand", expr: "stern", angry: i % 2 ? 0.5 : 0.9, steam: i === 0 ? 1 : 0, prop: "candle" }), "g"),
   cam: drift(path([
     K(19.9, [TX0 - 2.4, 1.5, -3.0], [TX0 - 4.8, 1.5, -6.6], "medium"),
@@ -119,14 +119,14 @@ add({ a: 19.9, b: 21.35, dis: DIS, light: "dark", dof: 6, shadowR: 14, focus: [T
   ])) });
 
 // H. 21.35-22.5 day: a car crashes through the potholes straight at the low camera ("the roads were full of holes,")
-add({ a: 21.35, b: 22.5, dis: DIS, light: "day", dof: 4, shadowR: 14, focus: [TX0 + 1.6, 0.6, -9],
+add({ a: 21.35, b: 22.5, dis: DIS, light: "day", dof: 4, shadowR: 14,
   cam: path([
     K(21.35, [TX0 + 0.6, 0.35, -3.0], [TX0 + 1.4, 0.55, -14], "travel"),
     K(22.5, [TX0 + 0.3, 0.3, -2.4], [TX0 + 1.6, 0.6, -7], "travel"),
   ]) });
 
 // I. 22.5-25.4 the pool, taken over by ducks; swimmers in towels stare; low over the water, push in
-add({ a: 22.5, b: 25.4, dis: DIS, light: "day", dof: 5, shadowR: 12, focus: [POOL[0], 0.5, POOL[2]],
+add({ a: 22.5, b: 25.4, dis: DIS, light: "day", dof: 5, shadowR: 12,
   actors: (t) => crowdAt(t, [[POOL[0] - 6.0, POOL[2] + 1.0], [POOL[0] - 6.0, POOL[2] - 0.6], [POOL[0] + 6.0, POOL[2] + 0.4]], (i) => ({ mode: "stand", expr: i === 1 ? "shock" : "dazed", question: true, facing: i < 2 ? 1 : -1 }), "i"),
   cam: drift(path([
     K(22.5, [POOL[0] - 3.5, 0.75, POOL[2] + 5.6], [POOL[0], 0.1, POOL[2]], "establishing"),
@@ -135,7 +135,7 @@ add({ a: 22.5, b: 25.4, dis: DIS, light: "day", dof: 5, shadowR: 12, focus: [POO
 
 // J. 25.4-28.75 Kevin at the pool edge sizes it up, ducks in the foreground; on "decision" (27.86) the finger goes up
 const KP: V3 = [POOL[0] - 2.2, 0.06, POOL[2] + 3.9];
-add({ a: 25.4, b: 28.75, dis: DIS, light: "day", dof: 9, shadowR: 10, focus: [KP[0], 1.4, KP[2]],
+add({ a: 25.4, b: 28.75, dis: DIS, light: "day", dof: 9, shadowR: 10,
   actors: (t) => [{ who: "kevin", pos: KP, scale: 0.78, opts: { mode: "stand", facing: 0, phase: t, expr: t < 27.8 ? "dazed" : "grin", headTilt: t < 27.8 ? 8 : 0, prop: t > 27.8 ? "point" : null, sparkleEyes: t > 27.9 } },
     { who: "off1#j", pos: [KP[0] + 1.0, 0.06, KP[2] + 0.4], scale: 0.76, opts: { mode: "stand", facing: -1, expr: "nervous", phase: t, prop: "letter" } }],
   cam: drift(path([
@@ -146,7 +146,7 @@ add({ a: 25.4, b: 28.75, dis: DIS, light: "day", dof: 9, shadowR: 10, focus: [KP
 
 // K. 28.75-30.98 the podium, low angle past a line of capped ducks in the foreground; slow push-in; they salute on "security"
 const KPOD: V3 = [PODIUM[0], 1.0, PODIUM[2] - 0.55];
-add({ a: 28.75, b: 30.98, dis: DIS, light: "day", dof: 7, shadowR: 12, focus: [KPOD[0], 2.1, KPOD[2]],
+add({ a: 28.75, b: 30.98, dis: DIS, light: "day", dof: 7, shadowR: 12,
   actors: (t) => [{ who: "kevin", pos: KPOD, scale: 0.78, opts: { mode: "stand", facing: 0, phase: t, expr: "grin", prop: "point" } },
     ...crowdAt(t, [[PODIUM[0] - 3.2, PODIUM[2] - 1.4], [PODIUM[0] + 3.0, PODIUM[2] - 1.6]], () => ({ mode: "stand", expr: "dazed" }), "k", 0.5)],
   cam: drift(path([
@@ -156,7 +156,7 @@ add({ a: 28.75, b: 30.98, dis: DIS, light: "day", dof: 7, shadowR: 12, focus: [K
 
 // L. 30.98-33.24 the duck patrol marches at duck height toward the lens; a thief with a bag runs into them and freezes (32.2)
 const TH = (t: number): V3 => [TX0 + 0.2, 0, Math.min(-12.6, lerp(-6, -12.6, (t - 30.98) / 1.2))];
-add({ a: 30.98, b: 33.24, dis: DIS, light: "day", dof: 6, shadowR: 12, focus: [TX0, 0.5, -14.2],
+add({ a: 30.98, b: 33.24, dis: DIS, light: "day", dof: 6, shadowR: 12,
   actors: (t) => [{ who: "thief", pos: TH(t), scale: 0.78, opts: (t < 32.15 ? { mode: "run", facing: 0, back: true, phase: t * 2.2, expr: "grin", prop: "bag" } : { mode: "stand", facing: 0, expr: "terror", sweat: 1, exclaim: true, back: false, prop: "bag" }) as FrontOpts }],
   cam: path([
     K(30.98, [TX0 - 0.6, 0.32, -10.6], [TX0, 0.4, -18], "travel"),
@@ -165,7 +165,7 @@ add({ a: 30.98, b: 33.24, dis: DIS, light: "day", dof: 6, shadowR: 12, focus: [T
   ]) });
 
 // M. 33.24-34.26 the street cheers Kevin ("People started loving him.")
-add({ a: 33.24, b: 34.26, dis: DIS, light: "day", dof: 7, shadowR: 12, focus: [TX0 - 4.9, 1.45, -1],
+add({ a: 33.24, b: 34.26, dis: DIS, light: "day", dof: 7, shadowR: 12,
   actors: (t) => [{ who: "kevin", pos: [TX0 - 4.9, 0.12, -1.0], scale: 0.78, opts: { mode: "stand", expr: "laugh", wave: Math.abs(Math.sin(t * 7)), phase: t, blush: 0.6 } },
     ...crowdAt(t, [[TX0 - 3.8, -0.3], [TX0 - 5.9, -0.2], [TX0 - 3.6, -2.0], [TX0 - 5.8, -2.3]], (i) => ({ mode: "stand", expr: i % 2 ? "laugh" : "grin", wave: Math.abs(Math.sin(t * 8 + i)), sparkleEyes: i === 1 }), "m", 0.12)],
   cam: drift(path([
@@ -174,23 +174,23 @@ add({ a: 33.24, b: 34.26, dis: DIS, light: "day", dof: 7, shadowR: 12, focus: [T
   ])) });
 
 // N. 34.26-36.1 night: the street lights up house by house as the camera cranes up ("Within a week, the town had electricity,")
-add({ a: 34.26, b: 36.1, dis: DIS, light: "night", dof: 3, shadowR: 16, focus: [TX0, 2, -12],
+add({ a: 34.26, b: 36.1, dis: DIS, light: "night", dof: 3, shadowR: 16,
   cam: drift(path([
     K(34.26, [TX0 + 1.0, 1.6, 6.0], [TX0 - 1.0, 2.2, -10], "travel"),
     K(36.1, [TX0 + 1.4, 6.5, 8.0], [TX0, 2.5, -18], "establishing", { ease: "inout" }),
   ])) });
 
 // O. 36.1-36.85 day: the car glides along the smooth new road (low tracking alongside) ("repaired roads,")
-add({ a: 36.1, b: 36.85, dis: DIS, light: "day", dof: 4, shadowR: 14, focus: [TX0 + 1.6, 0.8, -15],
+add({ a: 36.1, b: 36.85, dis: DIS, light: "day", dof: 4, shadowR: 14,
   cam: (t: number) => { const z = lerp(-18.5, -10.5, (t - 36.05) / 0.85); return { pos: [TX0 - 1.2, 0.5, z + 2.6], look: [TX0 + 1.6, 0.7, z - 0.4], fov: 56 }; } });
 
 // P. 36.85-38.9 extreme close-up of the lead duck in his tiny security hat; he salutes; the patrol behind ("and ducks wearing tiny security hats.")
-add({ a: 36.85, b: 38.9, dis: DIS, light: "day", dof: 10, shadowR: 6, focus: [TX0, 0.75, -11.4],
+add({ a: 36.85, b: 38.9, dis: DIS, light: "day", dof: 10, shadowR: 6,
   cam: (t: number) => { const z = -12 + (t - 36.8) * 0.5; const u = smooth((t - 36.85) / 2.05); return { pos: [TX0 + 0.15 - u * 0.1, 0.72, z + 1.9 - u * 0.75], look: [TX0, 0.68, z], fov: 48 }; } });
 
 // Q. 38.9-42.17 the square: confetti, the cheering crowd, Kevin on stage; push in to the results board on "ninety eight" (40.57)
 const KST: V3 = [PODIUM[0] + 1.2, 0.5, PODIUM[2] - 0.9];
-add({ a: 38.9, b: 42.17, dis: DIS, light: "day", dof: 5, shadowR: 16, focus: [KST[0], 1.8, KST[2]],
+add({ a: 38.9, b: 42.17, dis: DIS, light: "day", dof: 5, shadowR: 16,
   actors: (t) => [{ who: "kevin", pos: KST, scale: 0.78, opts: { mode: t < 40.6 ? "jump" : "stand", expr: "laugh", phase: t, sparkleEyes: true } },
     ...crowdAt(t, [[PODIUM[0] - 2.6, PODIUM[2] + 4.4], [PODIUM[0] - 1.0, PODIUM[2] + 4.8], [PODIUM[0] + 0.8, PODIUM[2] + 4.5], [PODIUM[0] + 2.6, PODIUM[2] + 4.9], [PODIUM[0] - 3.6, PODIUM[2] + 5.6], [PODIUM[0] + 3.8, PODIUM[2] + 5.4]],
       (i) => ({ mode: "stand", back: true, wave: Math.abs(Math.sin(t * 8 + i)) }), "q")],
@@ -203,7 +203,7 @@ add({ a: 38.9, b: 42.17, dis: DIS, light: "day", dof: 5, shadowR: 16, focus: [KS
 
 // R. 42.17-45.3 Kevin, alone with the board: confused, then slowly suspicious ("He was confused. Until he discovered who the other two percent were.")
 const KR: V3 = [PODIUM[0] + 1.6, 0.5, PODIUM[2] - 0.8];
-add({ a: 42.17, b: 45.3, dis: DIS, light: "day", dof: 10, shadowR: 10, focus: [KR[0], 1.62, KR[2]],
+add({ a: 42.17, b: 45.3, dis: DIS, light: "day", dof: 10, shadowR: 10,
   actors: (t) => [{ who: "kevin", pos: KR, scale: 0.78, opts: { mode: "stand", facing: t < 43.9 ? 1 : -1, expr: t < 43.9 ? "dazed" : "stern", question: t < 43.9, phase: t, headTilt: t < 43.9 ? 10 : -4 } }],
   cam: drift(path([
     K(42.17, [KR[0] - 0.9, 1.7, KR[2] + 2.0], [KR[0], 1.62, KR[2]], "closeUp"),
@@ -211,7 +211,7 @@ add({ a: 42.17, b: 45.3, dis: DIS, light: "day", dof: 10, shadowR: 10, focus: [K
   ]), 0.015) });
 
 // S. 45.3-48.6 the twist: WHIP to the ducks with their tiny campaign posters, up to the VOTE QUACKERS poster on "candidate", whip back to Kevin's horror
-add({ a: 45.3, b: 48.6, light: "day", dof: 8, shadowR: 10, focus: [POSTER[0] + 1.2, 0.6, POSTER[2] + 1.6],
+add({ a: 45.3, b: 48.6, light: "day", dof: 8, shadowR: 10,
   actors: (t) => [{ who: "kevin", pos: KR, scale: 0.78, opts: (t < 47.4 ? { mode: "stand", facing: -1, expr: "stern", phase: t } : { mode: "stand", facing: 0, expr: "terror", sweat: 1, exclaim: true, phase: t }) as FrontOpts }],
   cam: path([
     K(45.3, [KR[0] - 0.4, 1.65, KR[2] + 1.4], [KR[0] - 1.5, 1.4, KR[2]], "closeUp"),

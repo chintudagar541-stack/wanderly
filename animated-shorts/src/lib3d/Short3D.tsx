@@ -104,7 +104,18 @@ const pose = (C: ShortConfig<any>, W: WorldLike<any>, cam: THREE.PerspectiveCame
     card.mat.needsUpdate = true; card.depth.needsUpdate = true;
   }
   cam.getWorldDirection(fwd);
-  fpt.set(...(shot.focus ?? c.look));
+  // focus: explicit point / function, else (auto) the face of the visible character nearest the frame centre, else the look point
+  const acts = shot.actors ? shot.actors(t) : [];
+  if (typeof shot.focus === "function") fpt.set(...shot.focus(t));
+  else if (Array.isArray(shot.focus)) fpt.set(...shot.focus);
+  else {
+    let best = Infinity; fpt.set(...c.look);
+    for (const a of acts) {
+      tmp.set(a.pos[0], a.pos[1] + 1.1 * (a.scale ?? 1), a.pos[2]); const dz = tmp.clone().sub(cam.position).dot(fwd); if (dz < 0.2) continue;
+      const q = tmp.clone().project(cam); if (Math.abs(q.x) > 1 || Math.abs(q.y) > 1) continue;
+      const sc = Math.hypot(q.x, q.y * 0.6); if (sc < best) { best = sc; fpt.copy(tmp); }
+    }
+  }
   fx.lens.focus = Math.max(0.3, fpt.sub(cam.position).dot(fwd));
   fx.lens.cInf = shot.dof;
   fx.grade.set(C.grades[shot.light]);
