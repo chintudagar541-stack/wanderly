@@ -1,41 +1,24 @@
+[lib] model metal_trash_can 8
 Traceback (most recent call last):
   File "/home/runner/work/wanderly/wanderly/blender/run.py", line 12, in <module>
     scenes.SCENES[name]()
-  File "/home/runner/work/wanderly/wanderly/blender/scenes.py", line 311, in night_alley
-    box('neon', (.1, 2.2, .5), (x, y, z), S('#fff', .3, emit=c, emit_strength=30))
-                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/work/wanderly/wanderly/blender/env.py", line 45, in S
-    if k not in _T: _T[k] = mat('m' + col, col, rough=rough, **kw)
-                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/work/wanderly/wanderly/blender/lib.py", line 205, in mat
-    b.inputs['Base Color'].default_value = (*lin(color), 1); b.inputs['Roughness'].default_value = rough
-                                             ^^^^^^^^^^
-  File "/home/runner/work/wanderly/wanderly/blender/lib.py", line 18, in lin
-    c = c.lstrip('#'); c = tuple(int(c[i:i + 2], 16) / 255 for i in (0, 2, 4))
-                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/work/wanderly/wanderly/blender/lib.py", line 18, in <genexpr>
-    c = c.lstrip('#'); c = tuple(int(c[i:i + 2], 16) / 255 for i in (0, 2, 4))
-                                 ^^^^^^^^^^^^^^^^^^^
-ValueError: invalid literal for int() with base 16: ''
+  File "/home/runner/work/wanderly/wanderly/blender/scenes.py", line 316, in night_alley
+    character('sailor', (-.4, -.4, 0), face='sideeye', look_at=(-1.5, -6, 0))
+  File "/home/runner/work/wanderly/wanderly/blender/chars.py", line 76, in character
+    me = hs.data; uv = me.uv_layers.active.data
+                       ^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'data'
 Blender 4.2.3 LTS (hash 0e22e4fcea03 built 2024-10-14 23:31:34)
 Traceback (most recent call last):
   File "/home/runner/work/wanderly/wanderly/blender/run.py", line 12, in <module>
     scenes.SCENES[name]()
-  File "/home/runner/work/wanderly/wanderly/blender/scenes.py", line 311, in night_alley
-    box('neon', (.1, 2.2, .5), (x, y, z), S('#fff', .3, emit=c, emit_strength=30))
-                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/work/wanderly/wanderly/blender/env.py", line 45, in S
-    if k not in _T: _T[k] = mat('m' + col, col, rough=rough, **kw)
-                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/work/wanderly/wanderly/blender/lib.py", line 205, in mat
-    b.inputs['Base Color'].default_value = (*lin(color), 1); b.inputs['Roughness'].default_value = rough
-                                             ^^^^^^^^^^
-  File "/home/runner/work/wanderly/wanderly/blender/lib.py", line 18, in lin
-    c = c.lstrip('#'); c = tuple(int(c[i:i + 2], 16) / 255 for i in (0, 2, 4))
-                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/work/wanderly/wanderly/blender/lib.py", line 18, in <genexpr>
-    c = c.lstrip('#'); c = tuple(int(c[i:i + 2], 16) / 255 for i in (0, 2, 4))
-                                 ^^^^^^^^^^^^^^^^^^^
-ValueError: invalid literal for int() with base 16: ''
+  File "/home/runner/work/wanderly/wanderly/blender/scenes.py", line 316, in night_alley
+    character('sailor', (-.4, -.4, 0), face='sideeye', look_at=(-1.5, -6, 0))
+  File "/home/runner/work/wanderly/wanderly/blender/chars.py", line 76, in character
+    me = hs.data; uv = me.uv_layers.active.data
+                       ^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'data'
+
+Error: script failed, file: 'blender/run.py', exiting.
 
 Blender quit
