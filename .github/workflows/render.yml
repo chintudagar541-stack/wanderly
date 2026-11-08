@@ -1,0 +1,108 @@
+# Fast cloud render: splits a video into chunks, renders them on many GitHub machines at the same time, then joins
+# them, rebuilds the sound mix, muxes, and uploads the finished MP4 (plus a smaller upload copy) as an artifact.
+#
+# Run it from the GitHub app or website: Actions -> "Render video" -> Run workflow, pick the video, press the button.
+# This repo is public, so these Actions minutes are free and unlimited. The video project lives on the branch given in
+# the "branch" input (default: claude/animated-shorts-setup-d3661j); the workflow checks that branch out.
+# When it finishes (about 15-30 min), open the run and download the "video" artifact at the bottom of the page.
+name: Render video
+
+on:
+  workflow_dispatch:
+    inputs:
+      video:
+        description: "Video folder name (shorts/<name>), e.g. mayor, knocker, clockman"
+        required: true
+        default: mayor
+      composition:
+        description: "Remotion composition id, e.g. MayorShort, KnockerShort, ClockmanShort"
+        required: true
+        default: MayorShort
+      chunk:
+        description: "Frames per machine (smaller = more machines, faster)"
+        required: true
+        default: "75"
+      branch:
+        description: "Branch that holds the animated-shorts project"
+        required: true
+        default: claude/animated-shorts-setup-d3661j
+
+concurrency:
+  group: render-${{ github.event.inputs.composition }}
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      starts: ${{ steps.p.outputs.starts }}
+      total: ${{ steps.p.outputs.total }}
+    defaults: { run: { working-directory: animated-shorts } }
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: "${{ github.event.inputs.branch }}" }
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: npm, cache-dependency-path: animated-shorts/package-lock.json }
+      - run: npm ci --no-audit --no-fund
+      - id: p
+        name: Count frames and split into chunks
+        run: |
+          TOTAL=$(npx remotion compositions src/index.ts 2>/dev/null | awk -v c="${{ github.event.inputs.composition }}" '$1==c {print $4}')
+          if [ -z "$TOTAL" ]; then echo "composition not found"; exit 1; fi
+          CH=${{ github.event.inputs.chunk }}
+          STARTS=$(python3 -c "import json;print(json.dumps(list(range(0,$TOTAL,$CH))))")
+          echo "total=$TOTAL" >> $GITHUB_OUTPUT; echo "starts=$STARTS" >> $GITHUB_OUTPUT
+          echo "frames: $TOTAL, chunks: $STARTS"
+
+  render:
+    needs: plan
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        start: ${{ fromJson(needs.plan.outputs.starts) }}
+    defaults: { run: { working-directory: animated-shorts } }
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: "${{ github.event.inputs.branch }}" }
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: npm, cache-dependency-path: animated-shorts/package-lock.json }
+      - run: npm ci --no-audit --no-fund
+      - name: Render frames ${{ matrix.start }}+
+        env: { REMOTION_GL: swangle }
+        run: |
+          A=${{ matrix.start }}; B=$((A + ${{ github.event.inputs.chunk }} - 1)); T=${{ needs.plan.outputs.total }}; [ $B -ge $T ] && B=$((T - 1))
+          mkdir -p out/chunks
+          npx remotion render src/index.ts ${{ github.event.inputs.composition }} out/chunks/c_$(printf %05d $A).mp4 \
+            --frames=$A-$B --codec h264 --crf 18 --gl=swangle --concurrency=$(nproc) --timeout=180000
+      - uses: actions/upload-artifact@v4
+        with: { name: "chunk-${{ matrix.start }}", path: animated-shorts/out/chunks/*.mp4, retention-days: 1 }
+
+  join:
+    needs: [plan, render]
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: animated-shorts } }
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: "${{ github.event.inputs.branch }}" }
+      - uses: actions/download-artifact@v4
+        with: { pattern: "chunk-*", path: animated-shorts/out/chunks, merge-multiple: true }
+      - name: Install ffmpeg and the sound tools
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          pip install -q numpy scipy soundfile
+      - name: Join the chunks
+        run: |
+          cd out/chunks && ls c_*.mp4 | sort | sed "s#^#file '#; s#\$#'#" > list.txt && cd ../..
+          ffmpeg -v error -y -f concat -safe 0 -i out/chunks/list.txt -c copy out/joined.mp4
+      - name: Rebuild the sound mix and mux
+        run: |
+          V=${{ github.event.inputs.video }}
+          python3 shorts/$V/audio/sound.py
+          ffmpeg -v error -y -i out/joined.mp4 -i shorts/$V/audio/mix.wav -map 0:v:0 -map 1:a:0 -c:v copy \
+            -af loudnorm=I=-14:TP=-1:LRA=11 -ar 48000 -c:a aac -b:a 192k -shortest -movflags +faststart out/${V}_final.mp4
+          ffmpeg -v error -y -i out/${V}_final.mp4 -c:v libx264 -crf 23 -c:a copy -movflags +faststart out/${V}_upload.mp4
+          ls -lh out/*.mp4
+      - uses: actions/upload-artifact@v4
+        with: { name: video, path: "animated-shorts/out/*_final.mp4\nanimated-shorts/out/*_upload.mp4", retention-days: 14 }
