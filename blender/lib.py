@@ -318,7 +318,7 @@ def cyl(name, r, h, loc=(0, 0, 0), m=None, seg=24, rot=(0, 0, 0), r2=None, cap=T
     return o
 
 def sphere(name, r, loc=(0, 0, 0), m=None, seg=32, rings=16, scale=(1, 1, 1), c=None, rot=(0, 0, 0)):
-    bm = bmesh.new(); bmesh.ops.create_uvsphere(bm, u_segments=seg, v_segments=rings, radius=r, calc_uvs=True)
+    bm = bmesh.new(); bm.loops.layers.uv.new('UVMap'); bmesh.ops.create_uvsphere(bm, u_segments=seg, v_segments=rings, radius=r, calc_uvs=True)
     for v in bm.verts: v.co = Vector((v.co.x * scale[0], v.co.y * scale[1], v.co.z * scale[2]))
     o = obj_from_bm(name, bm, m, c, smooth=True); o.location = loc; o.rotation_euler = rot; return o
 
@@ -340,7 +340,7 @@ def torus(name, R1, r, loc=(0, 0, 0), m=None, rot=(0, 0, 0), seg=32, mseg=10, c=
     o = obj_from_bm(name, bm, m, c, smooth=True); o.location = loc; o.rotation_euler = rot; return o
 
 def plane(name, sx, sy, loc=(0, 0, 0), m=None, rot=(0, 0, 0), c=None, sub=0):
-    bm = bmesh.new(); bmesh.ops.create_grid(bm, x_segments=max(1, sub), y_segments=max(1, sub), size=.5, calc_uvs=True)
+    bm = bmesh.new(); bm.loops.layers.uv.new('UVMap'); bmesh.ops.create_grid(bm, x_segments=max(1, sub), y_segments=max(1, sub), size=.5, calc_uvs=True)
     for v in bm.verts: v.co = Vector((v.co.x * sx, v.co.y * sy, 0))
     o = obj_from_bm(name, bm, m, c); o.location = loc; o.rotation_euler = rot; return o
 
