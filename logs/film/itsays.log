@@ -1,0 +1,27 @@
+[lib] model ClassicNightstand_01 1
+[lib] model WoodenChair_01 1
+[lib] built itsays 26 frames 3s 75 objects
+Blender 4.2.3 LTS (hash 0e22e4fcea03 built 2024-10-14 23:31:34)
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Saved: '/home/runner/work/wanderly/wanderly/out/itsays.png'
+Time: 11:46.40 (Saving: 00:00.92)
+
+[lib] rendered /home/runner/work/wanderly/wanderly/out/itsays.png 706s
+[lib] saved /home/runner/work/wanderly/wanderly/out/itsays.jpg
+
+Blender quit
