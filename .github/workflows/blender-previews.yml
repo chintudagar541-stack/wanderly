@@ -44,7 +44,7 @@ jobs:
         run: |
           mkdir -p out
           set -o pipefail
-          ./$BLENDER/blender -b --factory-startup -noaudio -P blender/run.py -- ${{ matrix.scene }} out/${{ matrix.scene }}.png 2>&1 | grep -v "^Fra:" | tee out/${{ matrix.scene }}.log | tail -400
+          ./$BLENDER/blender -b --factory-startup -noaudio --python-exit-code 1 -P blender/run.py -- ${{ matrix.scene }} out/${{ matrix.scene }}.png 2>&1 | grep -v "^Fra:" | tee out/${{ matrix.scene }}.log | tail -400
       - if: always()
         run: |
           [ -f out/${{ matrix.scene }}.png ] && ffmpeg -loglevel error -y -i out/${{ matrix.scene }}.png -q:v 3 out/${{ matrix.scene }}.jpg || true

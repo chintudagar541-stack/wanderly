@@ -15,7 +15,9 @@ def log(*a): print('[lib]', *a, flush=True)
 # ------------------------------------------------------------------ colour
 def lin(c):
     if isinstance(c, str):
-        c = c.lstrip('#'); c = tuple(int(c[i:i + 2], 16) / 255 for i in (0, 2, 4))
+        c = c.lstrip('#')
+        if len(c) == 3: c = ''.join(ch * 2 for ch in c)
+        c = tuple(int(c[i:i + 2], 16) / 255 for i in (0, 2, 4))
     f = lambda v: v / 12.92 if v <= 0.04045 else ((v + 0.055) / 1.055) ** 2.4
     return tuple(f(v) for v in c[:3])
 
@@ -364,9 +366,11 @@ def lathe(name, prof, seg=40, m=None, c=None, sy=1.0):
     """prof: list of (r, z) from bottom to top. r = 0 closes the end."""
     bm = bmesh.new(); rings = []
     for (r, z) in prof:
-        if r < 1e-6: rings.append([bm.verts.new((0, 0, z))]); continue
+        if r < 1e-4: rings.append([bm.verts.new((0, 0, z))]); continue
         rings.append([bm.verts.new((r * math.cos(math.tau * i / seg), r * sy * math.sin(math.tau * i / seg), z)) for i in range(seg)])
+    rings = [r for i, r in enumerate(rings) if not (len(r) == 1 and i > 0 and len(rings[i - 1]) == 1)]
     for A, Bq in zip(rings, rings[1:]):
+        if len(A) == 1 and len(Bq) == 1: continue
         if len(A) == 1:
             for i in range(seg): bm.faces.new((A[0], Bq[(i + 1) % seg], Bq[i]))
         elif len(Bq) == 1:
