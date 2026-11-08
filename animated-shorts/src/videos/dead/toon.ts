@@ -727,7 +727,7 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts): FrontInfo => {
   const bob = mode === "march" ? 0.025 * tall * Math.cos(2 * two * phase) : mode === "stroll" ? 0.015 * tall * Math.cos(2 * two * phase)
     : mode === "run" ? 0.02 * tall * Math.cos(2 * two * phase) : mode === "stand" || mode === "sit" ? 0.004 * tall * Math.sin(two * phase * 0.35) : 0;
   const profSit = facing !== 0 && !o.dress && mode === "sit";
-  const torsoBot = profSit ? sole - 0.62 * HH : mode === "sit" ? sole - 0.2 * HH : mode === "sitFeetUp" ? sole - 0.62 * HH : mode === "sitFloor" ? sole - 0.14 * HH
+  const torsoBot = profSit ? sole - 0.62 * HH : mode === "sit" ? sole - 0.2 * HH : mode === "sitFeetUp" ? sole - 0.44 * HH : mode === "sitFloor" ? sole - 0.14 * HH
     : mode === "kneel" ? sole - 0.6 * HH : mode === "jump" ? sole - Bd.legs * HH - 0.3 * HH : mode === "run" ? sole - 0.94 * Bd.legs * HH + bob
     : sole - Bd.legs * HH + bob;
   const chin = torsoBot - Bd.torso * HH, hc = chin - H.b, crown = hc - H.b, hipY = torsoBot - 0.12 * HH;
@@ -766,9 +766,9 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts): FrontInfo => {
   } else if (mode === "sitFeetUp") {
     frontLegs.push(() => {
       for (const side of [-1, 1]) {
-        const h: P2 = [300 + side * 16 * u, torsoBot - 0.1 * HH], k: P2 = [300 + side * 30 * u, torsoBot + 0.08 * HH], a: P2 = [300 + side * 36 * u, sole - 0.36 * HH];
+        const h: P2 = [300 + side * 16 * u, torsoBot - 0.1 * HH], k: P2 = [300 + side * 30 * u, torsoBot + 0.08 * HH], a: P2 = [300 + side * 36 * u, sole - 0.24 * HH];
         p.stroke(curve(h, k, a), legW * 1.1, legCol);
-        soleShoe(p, 300 + side * 38 * u, sole - 0.2 * HH, side, u, footCol, ow);
+        soleShoe(p, 300 + side * 38 * u, sole - 0.12 * HH, side, u, footCol, ow);
       }
     });
   } else if (mode === "sitFloor") {

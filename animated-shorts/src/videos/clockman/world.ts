@@ -109,8 +109,10 @@ export class World implements WorldLike<LightName> {
       for (const x of [-1.2, 1.2]) k.box(M(0xffffff, undefined, { emissive: 0xffffff, ei: 1.4 }), [x, H - 0.02, -0.6], [0.5, 0.03, 1.2]);
       k.box(M(0xfbfaf6), [0, 0.05, -D / 2 + 0.02], [W, 0.1, 0.05]); k.box(M(0xfbfaf6), [W / 2 - 0.02, 0.05, 0], [0.05, 0.1, D]);
       // Walter's desk (back wall), the boss's door (front right), cabinets, shelves, plants, boxes
-      k.at([0.2, 0, -2.0], 0, () => { desk(k, P, 1.7, 0.8); k.at([0, 0.76, 0], 0, () => deskClutter(k, P, 3)); });
-      k.at([0.2, 0, -2.55], 0, () => chair(k, P, M(0x2a3a6a)));
+      k.at([0.2, 0, -2.3], 0, () => { desk(k, P, 1.7, 0.8); k.at([0, 0.76, 0], 0, () => deskClutter(k, P, 3)); });
+      k.at([0.2, 0, -2.62], 0, () => { // tall office chair behind Walter (the reference's dark swivel chair)
+        const cm = M(0x2c3550); k.box(cm, [0, 0.62, 0.05], [0.5, 0.08, 0.46]); k.box(cm, [0, 1.12, -0.2], [0.5, 0.78, 0.08]); k.cyl(M(0x3a3a44), [0, 0.32, 0.05], 0.04, 0.55);
+        for (let i = 0; i < 5; i++) { const a = (i / 5) * Math.PI * 2; k.box(M(0x3a3a44), [Math.sin(a) * 0.17, 0.05, 0.05 + Math.cos(a) * 0.17], [0.05, 0.04, 0.36], [0, a, 0]); } });
       k.at([-0.55, 0, -2.62], 0.3, () => chair(k, P, M(0x2a3a6a)));
       k.at([2.2, 0, 0.6], -Math.PI / 2, () => { desk(k, P, 1.5, 0.75); k.at([0, 0.76, 0], 0, () => deskClutter(k, P, 7)); });
       k.at([W / 2 - 0.18, 0, -2.0], -Math.PI / 2, () => bookshelf(k, P, 1.2, 2.0, 0.32, 4));
@@ -172,6 +174,40 @@ export class World implements WorldLike<LightName> {
         const bell = new THREE.PointLight(0xffc070, 4, 8, 1.5); bell.position.set(TWX, 12.5, TOWER[2]); R.add(bell);
       });
       k.box(trim, [0, 0.3, TOWER[2] + 4], [8, 0.6, 0.4]);
+      // ---- density pass (the references never leave the ground or the background empty) ----
+      const wood = M(0x7a4a2a), woodD = M(0x5a3420), snowM = M(0xf4f8ff), ink = M(0x23232c);
+      // back rows of houses (visible between and above the front row), all with lit windows
+      for (const s2 of [-1, 1]) for (let i = 0; i < 7; i++) { const z = 4 - i * 10 + (s2 > 0 ? 3 : -2), seed = 20 + i * 2 + (s2 > 0 ? 1 : 0);
+        k.at([s2 * (21 + rnd(seed) * 3), 0, z], s2 > 0 ? -Math.PI / 2 : Math.PI / 2, () => house(k, { w: 6, d: 6, h: 3.6 + (seed % 2) * 2.4, wall: M(0xffffff, rep(TX.clapboardSiding({ color: walls[seed % 6], seed }), 7, 6, 1, 1)),
+          trim, roof: snowRoof, door: M(doors[seed % 3]), win: new THREE.MeshBasicMaterial({ map: winLit(seed), toneMapped: false }), seed, porch: false })); }
+      // string lights zig-zagging across the street between the lamp posts
+      const bulb = M(0xffe0a0, undefined, { emissive: 0xffb050, ei: 3 });
+      for (const z of [-4, -9, -29]) { const y0 = 4.2, sag = 0.7;   // rows kept clear of the camera paths
+        for (let i = 0; i <= 14; i++) { const u2 = i / 14, x = -4.6 + 9.2 * u2, y = y0 - sag * 4 * u2 * (1 - u2), zz = z - 2.5 * u2; k.add(CONE, bulb, [x, y - 0.08, zz], [0.07, 0.12, 0.07]); }
+        k.beam(ink, [-4.6, 4.2, z], [0, 3.5, z - 1.25], 0.015); k.beam(ink, [0, 3.5, z - 1.25], [4.6, 4.2, z - 2.5], 0.015); }
+      // street clutter: barrels, crates, benches, snowmen, sleds, mailboxes, signs, a market stall, a cart
+      const barrel = (x: number, z: number) => { k.cyl(wood, [x, 0.42, z], 0.3, 0.84, [0, 0, 0], CYL); for (const y of [0.15, 0.69]) k.cyl(ink, [x, y, z], 0.31, 0.05); k.cyl(snowM, [x, 0.86, z], 0.29, 0.05); };
+      const crate = (x: number, z: number, r: number, sz = 0.6) => { k.box(M(0xb08050), [x, sz / 2, z], [sz, sz, sz], [0, r, 0]); k.box(snowM, [x, sz + 0.03, z], [sz * 0.95, 0.06, sz * 0.95], [0, r, 0]); };
+      const snowman = (x: number, z: number) => { k.add(CONE, snowM, [x, 0.3, z], [0, 0, 0]); k.cyl(snowM, [x, 0.3, z], 0.38, 0.6, [0, 0, 0], CYL); k.cyl(snowM, [x, 0.85, z], 0.27, 0.45, [0, 0, 0], CYL); k.cyl(snowM, [x, 1.25, z], 0.19, 0.34, [0, 0, 0], CYL);
+        k.cyl(ink, [x, 1.5, z], 0.13, 0.22); k.cyl(ink, [x, 1.4, z], 0.2, 0.03); k.add(CONE, M(0xf08020), [x, 1.28, z + 0.22], [0.04, 0.16, 0.04], [Math.PI / 2, 0, 0]); k.box(M(0xc02a2a), [x, 1.08, z], [0.42, 0.08, 0.42]); };
+      const bench = (x: number, z: number, r: number) => k.at([x, 0, z], r, () => { k.box(wood, [0, 0.45, 0], [1.6, 0.06, 0.45]); k.box(wood, [0, 0.75, -0.2], [1.6, 0.3, 0.05]); for (const sx of [-0.7, 0.7]) k.box(ink, [sx, 0.22, 0], [0.06, 0.45, 0.4]); k.box(snowM, [0, 0.5, 0], [1.55, 0.05, 0.42]); });
+      for (const [x, z] of [[-5.6, 1], [5.8, -3], [-5.4, -12], [5.6, -17], [-5.9, -24], [6.0, -31]]) { barrel(x, z); barrel(x + 0.5, z - 0.6); crate(x - 0.3, z + 0.9, 0.3); crate(x + 0.2, z + 1.4, -0.4, 0.45); }
+      for (const [x, z, r] of [[-5.6, -6, Math.PI / 2], [5.7, -9, -Math.PI / 2], [-5.6, -20, Math.PI / 2], [5.7, -26, -Math.PI / 2]]) bench(x, z, r);
+      for (const [x, z] of [[-3.6, -14], [3.8, -21], [-4.0, -35]]) snowman(x, z);
+      // market stall with a striped awning and lantern glow
+      k.at([5.8, 0, -36], -Math.PI / 2, () => { k.box(wood, [0, 0.5, 0], [2.4, 1.0, 0.9]); for (const sx of [-1.15, 1.15]) k.box(woodD, [sx, 1.3, 0.4], [0.08, 2.6, 0.08]);
+        k.box(M(0xffffff, TX.awningStripes({ a: "#c8302c", b: "#f4efe4" })), [0, 2.55, 0.15], [2.6, 0.08, 1.4], [0.25, 0, 0]); k.box(snowM, [0, 2.62, 0.12], [2.5, 0.06, 1.3], [0.25, 0, 0]);
+        for (let i = 0; i < 6; i++) k.add(CONE, M([0xe85a2a, 0xf2c84a, 0x6aa84a][i % 3]), [-0.9 + i * 0.36, 1.08, 0.1], [0.12, 0.16, 0.12]); k.box(bulb, [0, 2.2, 0.5], [0.16, 0.22, 0.16]); });
+      // a horse-less delivery cart and a sled
+      k.at([-6.2, 0, -29], 0.3, () => { k.box(wood, [0, 0.8, 0], [1.2, 0.5, 2.0]); for (const sz of [-0.7, 0.7]) for (const sx of [-0.65, 0.65]) k.cyl(woodD, [sx, 0.45, sz], 0.45, 0.08, [0, 0, Math.PI / 2]); k.box(snowM, [0, 1.07, 0], [1.1, 0.06, 1.9]); k.beam(woodD, [0, 0.7, 1.0], [0, 0.4, 2.4], 0.07); });
+      k.at([3.2, 0, -10], -0.4, () => { k.box(M(0xb83a2a), [0, 0.22, 0], [0.5, 0.06, 1.1]); for (const sx of [-0.22, 0.22]) k.beam(ink, [sx, 0.04, -0.55], [sx, 0.04, 0.6], 0.04); });
+      // wreaths on the front-row doors are implied by the lit porches; add hanging shop signs
+      for (const [x, z, txt] of [[-4.2, -4, "BAKERY"], [4.4, -15, "POST"], [-4.2, -27, "TAILOR"]] as const) { k.beam(ink, [x, 3.0, z], [x + (x < 0 ? -0.9 : 0.9), 3.0, z], 0.04);
+        k.panel(M(0xffffff, sign([txt], "#2a3a6a", "#f2c84a")), [x + (x < 0 ? -0.5 : 0.5), 2.6, z + 0.03], 0.9, 0.45); }
+      // the far hills: dense distant window lights (instanced emissive dots)
+      const far = M(0xffc070, undefined, { emissive: 0xffa040, ei: 4 });
+      for (let i = 0; i < 260; i++) { const s3 = rnd(i + 400) < 0.5 ? -1 : 1, x = s3 * (30 + rnd(i + 401) * 90), z = -60 - rnd(i + 402) * 120; k.box(far, [x, 0.6 + rnd(i + 403) * 6 + Math.abs(x) * 0.08, z], [0.35, 0.45, 0.1]); }
+      for (let i = 0; i < 70; i++) { const s4 = rnd(i + 600) < 0.5 ? -1 : 1; k.at([s4 * (8 + rnd(i + 601) * 30), 0, -55 - rnd(i + 602) * 60], 0, () => pine(k, 4 + rnd(i + 603) * 5, M(0x1e4a44), M(0x4a3428), snowM)); }
     });
     // falling snow
     const N = 2600, pos = new Float32Array(N * 3);
