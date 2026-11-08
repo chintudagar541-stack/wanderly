@@ -1,24 +1,9 @@
 [lib] model metal_trash_can 8
-Traceback (most recent call last):
-  File "/home/runner/work/wanderly/wanderly/blender/run.py", line 12, in <module>
-    scenes.SCENES[name]()
-  File "/home/runner/work/wanderly/wanderly/blender/scenes.py", line 316, in night_alley
-    character('sailor', (-.4, -.4, 0), face='sideeye', look_at=(-1.5, -6, 0))
-  File "/home/runner/work/wanderly/wanderly/blender/chars.py", line 76, in character
-    me = hs.data; uv = me.uv_layers.active.data
-                       ^^^^^^^^^^^^^^^^^^^^^^^^
-AttributeError: 'NoneType' object has no attribute 'data'
+[lib] built night_alley 2s objects 1111
 Blender 4.2.3 LTS (hash 0e22e4fcea03 built 2024-10-14 23:31:34)
-Traceback (most recent call last):
-  File "/home/runner/work/wanderly/wanderly/blender/run.py", line 12, in <module>
-    scenes.SCENES[name]()
-  File "/home/runner/work/wanderly/wanderly/blender/scenes.py", line 316, in night_alley
-    character('sailor', (-.4, -.4, 0), face='sideeye', look_at=(-1.5, -6, 0))
-  File "/home/runner/work/wanderly/wanderly/blender/chars.py", line 76, in character
-    me = hs.data; uv = me.uv_layers.active.data
-                       ^^^^^^^^^^^^^^^^^^^^^^^^
-AttributeError: 'NoneType' object has no attribute 'data'
+Saved: '/home/runner/work/wanderly/wanderly/out/night_alley.png'
+Time: 02:41.29 (Saving: 00:00.40)
 
-Error: script failed, file: 'blender/run.py', exiting.
+[lib] rendered /home/runner/work/wanderly/wanderly/out/night_alley.png 161s
 
 Blender quit

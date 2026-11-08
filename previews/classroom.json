@@ -1,0 +1,11 @@
+{
+ "scene": "classroom",
+ "polyhaven": [
+  "SchoolChair_01",
+  "SchoolDesk_01",
+  "dark_wood",
+  "painted_plaster_wall",
+  "wood_floor"
+ ],
+ "world": "World"
+}

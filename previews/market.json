@@ -1,0 +1,21 @@
+{
+ "scene": "market",
+ "polyhaven": [
+  "Barrel_01",
+  "CoffeeCart_01",
+  "brick_wall_02",
+  "cobblestone_floor_04",
+  "concrete_floor_02",
+  "food_apple_01",
+  "food_lime_01",
+  "food_pomegranate_01",
+  "lemon",
+  "painted_plaster_wall",
+  "red_brick_03",
+  "sweet_potato",
+  "urban_street_01",
+  "wood_planks",
+  "yellow_onion"
+ ],
+ "world": "World"
+}

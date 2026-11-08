@@ -1,0 +1,12 @@
+{
+ "scene": "harbour",
+ "polyhaven": [
+  "Barrel_01",
+  "castle_wall_slates",
+  "concrete_floor_02",
+  "industrial_sunset_02",
+  "red_brick_03",
+  "wood_planks"
+ ],
+ "world": "World"
+}

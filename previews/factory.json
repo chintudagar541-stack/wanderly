@@ -1,0 +1,13 @@
+{
+ "scene": "factory",
+ "polyhaven": [
+  "Barrel_01",
+  "concrete_floor_02",
+  "metal_plate",
+  "modular_industrial_pipes_01",
+  "overhead_crane",
+  "red_brick_03",
+  "rusty_metal_02"
+ ],
+ "world": "World"
+}

@@ -3,25 +3,20 @@ Error: Failed to read blend file '/tmp/ph/lifebuoy/lifebuoy_1k.blend', not a ble
 [lib] model failed ['lifebuoy'] Error: Failed to read blend file '/tmp/ph/lifebuoy/lifebuoy_1k.blend', not a blend file
 
 [lib] model Barrel_01 1
-Traceback (most recent call last):
-  File "/home/runner/work/wanderly/wanderly/blender/run.py", line 12, in <module>
-    scenes.SCENES[name]()
-  File "/home/runner/work/wanderly/wanderly/blender/scenes.py", line 166, in ship
-    character('sailor', (-1.2, -3.4, 1.55), face='talk', look_at=(-3.5, -8, 0), arms={'armL': (.3, .2), 'armR': (2.7, .3)})
-  File "/home/runner/work/wanderly/wanderly/blender/chars.py", line 76, in character
-    me = hs.data; uv = me.uv_layers.active.data
-                       ^^^^^^^^^^^^^^^^^^^^^^^^
-AttributeError: 'NoneType' object has no attribute 'data'
-Traceback (most recent call last):
-  File "/home/runner/work/wanderly/wanderly/blender/run.py", line 12, in <module>
-    scenes.SCENES[name]()
-  File "/home/runner/work/wanderly/wanderly/blender/scenes.py", line 166, in ship
-    character('sailor', (-1.2, -3.4, 1.55), face='talk', look_at=(-3.5, -8, 0), arms={'armL': (.3, .2), 'armR': (2.7, .3)})
-  File "/home/runner/work/wanderly/wanderly/blender/chars.py", line 76, in character
-    me = hs.data; uv = me.uv_layers.active.data
-                       ^^^^^^^^^^^^^^^^^^^^^^^^
-AttributeError: 'NoneType' object has no attribute 'data'
+[lib] built ship 1s objects 140
+Warning: edge 0 - 1 appears twice, correcting
+Warning: edge 1 - 4 appears twice, correcting
+Warning: edge 4 - 6 appears twice, correcting
+Warning: edge 6 - 8 appears twice, correcting
+Warning: edge 8 - 10 appears twice, correcting
+Warning: edge 10 - 12 appears twice, correcting
+Warning: edge 12 - 14 appears twice, correcting
+Warning: edge 14 - 16 appears twice, correcting
+Warning: edge 16 - 18 appears twice, correcting
+Warning: edge 18 - 20 appears twice, correcting
+Saved: '/home/runner/work/wanderly/wanderly/out/ship.png'
+Time: 00:45.85 (Saving: 00:00.32)
 
-Error: script failed, file: 'blender/run.py', exiting.
+[lib] rendered /home/runner/work/wanderly/wanderly/out/ship.png 46s
 
 Blender quit

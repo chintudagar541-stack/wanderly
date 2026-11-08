@@ -1,0 +1,13 @@
+{
+ "scene": "cast_lineup",
+ "polyhaven": [
+  "brick_wall_02",
+  "cobblestone_floor_04",
+  "concrete_floor_02",
+  "floor_tiles_06",
+  "kloppenheim_06",
+  "painted_plaster_wall",
+  "red_brick_03"
+ ],
+ "world": "World"
+}

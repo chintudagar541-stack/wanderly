@@ -1,0 +1,9 @@
+{
+ "scene": "courtroom",
+ "polyhaven": [
+  "dark_wood",
+  "painted_plaster_wall",
+  "wood_floor"
+ ],
+ "world": "World"
+}

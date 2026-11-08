@@ -1,0 +1,17 @@
+{
+ "scene": "street_1919",
+ "polyhaven": [
+  "Barrel_01",
+  "brick_wall_02",
+  "cobblestone_floor_04",
+  "concrete_floor_02",
+  "fire_hydrant",
+  "floor_tiles_06",
+  "kloppenheim_06",
+  "painted_plaster_wall",
+  "red_brick_03",
+  "rusty_metal_02",
+  "wood_planks"
+ ],
+ "world": "World"
+}

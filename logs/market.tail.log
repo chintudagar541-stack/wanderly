@@ -6,26 +6,35 @@
 [lib] model food_pomegranate_01 1
 [lib] model CoffeeCart_01 3
 [lib] model Barrel_01 1
-Traceback (most recent call last):
-  File "/home/runner/work/wanderly/wanderly/blender/run.py", line 12, in <module>
-    scenes.SCENES[name]()
-  File "/home/runner/work/wanderly/wanderly/blender/scenes.py", line 100, in market
-    character('mother', (-.6, -2.6, 0), face='talk', look_at=(cam.x, cam.y, 0))
-  File "/home/runner/work/wanderly/wanderly/blender/chars.py", line 76, in character
-    me = hs.data; uv = me.uv_layers.active.data
-                       ^^^^^^^^^^^^^^^^^^^^^^^^
-AttributeError: 'NoneType' object has no attribute 'data'
+[lib] built market 8s objects 2926
 Blender 4.2.3 LTS (hash 0e22e4fcea03 built 2024-10-14 23:31:34)
-Traceback (most recent call last):
-  File "/home/runner/work/wanderly/wanderly/blender/run.py", line 12, in <module>
-    scenes.SCENES[name]()
-  File "/home/runner/work/wanderly/wanderly/blender/scenes.py", line 100, in market
-    character('mother', (-.6, -2.6, 0), face='talk', look_at=(cam.x, cam.y, 0))
-  File "/home/runner/work/wanderly/wanderly/blender/chars.py", line 76, in character
-    me = hs.data; uv = me.uv_layers.active.data
-                       ^^^^^^^^^^^^^^^^^^^^^^^^
-AttributeError: 'NoneType' object has no attribute 'data'
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Warning: degenerated triangle detected, correcting
+Saved: '/home/runner/work/wanderly/wanderly/out/market.png'
+Time: 01:47.09 (Saving: 00:00.32)
 
-Error: script failed, file: 'blender/run.py', exiting.
+[lib] rendered /home/runner/work/wanderly/wanderly/out/market.png 108s
 
 Blender quit
