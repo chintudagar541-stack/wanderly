@@ -1,0 +1,9 @@
+[lib] built yourname 55 frames 6s 2397 objects
+Blender 4.2.3 LTS (hash 0e22e4fcea03 built 2024-10-14 23:31:34)
+Saved: '/home/runner/work/wanderly/wanderly/out/yourname.png'
+Time: 12:15.06 (Saving: 00:01.25)
+
+[lib] rendered /home/runner/work/wanderly/wanderly/out/yourname.png 735s
+[lib] saved /home/runner/work/wanderly/wanderly/out/yourname.jpg
+
+Blender quit
