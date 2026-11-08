@@ -72,13 +72,13 @@ export class World implements WorldLike<LightName> {
   fog = new THREE.Fog(0xffffff, 60, 400);
   lamps: THREE.PointLight[] = [];
   office: THREE.Object3D[] = []; town: THREE.Object3D[] = [];
-  clockMesh: THREE.Mesh; snow: THREE.Points; moon: THREE.Sprite;
+  clockMesh: THREE.Mesh; snow: THREE.Points; moon: THREE.Sprite; bokeh: THREE.Sprite[] = [];
 
   constructor() {
     const R = this.root, B = new Batch(), k = new Kit(B, R);
     this.skies = {
       office: skyTex([[0, "#3a7ae8"], [0.45, "#8cc4f4"], [0.5, "#d8ecf8"], [1, "#d8ecf8"]]),
-      night: skyTex([[0, "#0a1240"], [0.25, "#1a2a80"], [0.44, "#4a4ab8"], [0.5, "#9a7ad0"], [0.52, "#6a6ac0"], [1, "#2a2a70"]], 260),
+      night: skyTex([[0, "#0c2b90"], [0.3, "#1340bc"], [0.47, "#5a7ae8"], [0.5, "#96b3ff"], [0.53, "#4a6ad8"], [1, "#2a40a0"]], 260),
     };
     this.sky = new THREE.Mesh(new THREE.SphereGeometry(900, 24, 16), this.skyMat); this.sky.layers.set(NOINK); R.add(this.sky);
     const P: Pal = { wood: M(0xe6e7ec), woodD: M(0xc9cbd4), metal: M(0x8a9098, undefined, { rough: 0.4, metal: 0.5 }), white: M(0xfbfaf6), dark: M(0x2a2a34) };
@@ -87,9 +87,9 @@ export class World implements WorldLike<LightName> {
     const before = R.children.length;
     k.at([OX, 0, 0], 0, () => {
       const W = 6, D = 6, H = 3;
-      const wallT = blockWall("#bdeaa8", "#92c884");
-      const wm = (w: number, h: number) => M(0xffffff, rep(wallT, w, h, 2, 1));
-      k.floor(M(0xffffff, rep(TX.carpetTile({ field: "#3a64e0", motif: "#4a74ec", accent: "#3258cc" }), W, D, 1.5, 1.5)), [0, 0, 0], W, D);
+      const wallT = blockWall("#a8e0b0", "#d6f0d8");
+      const wm = (w: number, h: number) => M(0xffffff, rep(wallT, w, h, 2.6, 1.3));
+      k.floor(M(0xffffff, rep(TX.carpetTile({ field: "#1a58e4", motif: "#2462ea", accent: "#164cd0" }), W, D, 1.5, 1.5)), [0, 0, 0], W, D);
       k.panel(wm(W, H), [0, H / 2, -D / 2], W, H);
       k.panel(wm(D, H), [W / 2, H / 2, 0], D, H, -Math.PI / 2);
       k.panel(wm(W, H), [0, H / 2, D / 2], W, H, Math.PI);
@@ -105,7 +105,7 @@ export class World implements WorldLike<LightName> {
       k.at([-W / 2, (wy0 + wy1) / 2, wz], Math.PI / 2, () => windowFrame(k, ww, wy1 - wy0, M(0xfbfaf6), { cols: 2, rows: 2 }));
       // venetian blind slats half down
       for (let i = 0; i < 9; i++) k.box(M(0xf0f0f4), [-W / 2 + 0.1, wy1 - 0.05 - i * 0.06, wz], [0.07, 0.012, ww], [0, 0, 0.5]);
-      k.mesh(new THREE.PlaneGeometry(W, D), M(0xffffff, rep(ceilingTiles(), W, D, 0.6, 0.6)), [0, H, 0], [Math.PI / 2, 0, 0]);
+      k.mesh(new THREE.PlaneGeometry(W, D), M(0xffffff, rep(ceilingTiles(), W, D, 0.6, 0.6), { emissive: 0xc8ccd8, ei: 0.55 }), [0, H, 0], [Math.PI / 2, 0, 0]);
       for (const x of [-1.2, 1.2]) k.box(M(0xffffff, undefined, { emissive: 0xffffff, ei: 1.4 }), [x, H - 0.02, -0.6], [0.5, 0.03, 1.2]);
       k.box(M(0xfbfaf6), [0, 0.05, -D / 2 + 0.02], [W, 0.1, 0.05]); k.box(M(0xfbfaf6), [W / 2 - 0.02, 0.05, 0], [0.05, 0.1, D]);
       // Walter's desk (back wall), the boss's door (front right), cabinets, shelves, plants, boxes
@@ -127,6 +127,11 @@ export class World implements WorldLike<LightName> {
       k.at([W / 2 - 0.01, 1.6, 1.4], -Math.PI / 2, () => picture(k, sign(["ACME", "& SONS"], "#2a3a6a", "#f2c84a"), 0.9, 0.45, 0x2a2a34));
       // the big wall clock (its face is a separate mesh so the hands can spin)
       k.at([WALLCLOCK[0], WALLCLOCK[1], -D / 2], 0, () => { k.cyl(M(0x2a2a34), [0, 0, 0.03], 0.5, 0.06, [Math.PI / 2, 0, 0]); k.cyl(M(0xc0262a), [0, 0, 0.07], 0.47, 0.04, [Math.PI / 2, 0, 0]); });
+      // hard yellow sun patches (the ref2 look): additive parallelograms on the back wall and the carpet
+      const patch = (pts: number[][]) => { const g2 = new THREE.BufferGeometry(); g2.setAttribute("position", new THREE.Float32BufferAttribute(pts.flat(), 3)); g2.setIndex([0, 1, 2, 0, 2, 3]);
+        const m2 = new THREE.Mesh(g2, new THREE.MeshBasicMaterial({ color: 0xffd21e, transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false, side: THREE.DoubleSide })); m2.layers.set(NOINK); R.add(m2); };
+      patch([[-2.95, 1.1, -D / 2 + 0.012], [-1.0, 0.55, -D / 2 + 0.012], [-0.55, 1.75, -D / 2 + 0.012], [-2.95, 2.45, -D / 2 + 0.012]]);
+      patch([[-2.95, 0.012, -1.4], [-1.2, 0.012, -2.2], [-0.4, 0.012, -1.0], [-2.95, 0.012, 0.2]]);
       // sun beams (soft additive volumes from the window)
       const bt = beamTex();
       for (const [dz, w] of [[-0.35, 0.7], [0.35, 0.6]] as const) { const s = new THREE.Mesh(new THREE.PlaneGeometry(w, 4.2), new THREE.MeshBasicMaterial({ map: bt, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false, side: THREE.DoubleSide }));
@@ -174,6 +179,8 @@ export class World implements WorldLike<LightName> {
     const sg = new THREE.BufferGeometry(); sg.setAttribute("position", new THREE.BufferAttribute(pos, 3));
     this.snow = new THREE.Points(sg, new THREE.PointsMaterial({ color: 0xffffff, size: 0.07, transparent: true, opacity: 0.85, depthWrite: false, fog: false }));
     this.snow.layers.set(NOINK); this.snow.frustumCulled = false; R.add(this.snow);
+    const bk = canvasTex(64, 64, (g) => { const gr = g.createRadialGradient(32, 32, 4, 32, 32, 31); gr.addColorStop(0, "rgba(255,255,255,0.9)"); gr.addColorStop(0.6, "rgba(220,230,255,0.5)"); gr.addColorStop(1, "rgba(220,230,255,0)"); g.fillStyle = gr; g.fillRect(0, 0, 64, 64); });
+    for (let i = 0; i < 26; i++) { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: bk, transparent: true, opacity: 0.55, depthWrite: false, fog: false, toneMapped: false })); sp.layers.set(NOINK); this.bokeh.push(sp); R.add(sp); }
     this.moon = new THREE.Sprite(new THREE.SpriteMaterial({ map: moonTex(), fog: false, toneMapped: false, depthWrite: false })); this.moon.layers.set(NOINK); this.moon.scale.set(60, 60, 1); R.add(this.moon);
     this.town = R.children.slice(b2);
 
@@ -189,8 +196,8 @@ export class World implements WorldLike<LightName> {
     this.sky.position.set(...o.cam);
     this.skyMat.map = this.skies[L]; this.skyMat.needsUpdate = true;
     const P = {
-      office: { hs: 0xeef2ff, hg: 0x8a96c8, hi: 2.1, sc: 0xffd860, si: 6.5, sd: [-0.75, 0.42, 0.52], fog: 0xc8d8f0, fn: 40, ff: 300, lamp: 1.2 },
-      night: { hs: 0x8a9af8, hg: 0x5a5ab8, hi: 1.9, sc: 0xb8c8ff, si: 1.6, sd: [0.35, 0.8, 0.45], fog: 0x3a3a90, fn: 30, ff: 170, lamp: 14 },
+      office: { hs: 0xf2f4ff, hg: 0xb0b8e0, hi: 2.6, sc: 0xffd860, si: 6.5, sd: [-0.75, 0.42, 0.52], fog: 0xc8d8f0, fn: 40, ff: 300, lamp: 1.2 },
+      night: { hs: 0x8aa0ff, hg: 0x5a6ae0, hi: 2.6, sc: 0xb8c8ff, si: 1.8, sd: [0.35, 0.8, 0.45], fog: 0x6a88f0, fn: 30, ff: 190, lamp: 14 },
     }[L];
     this.hemi.color.set(P.hs); this.hemi.groundColor.set(P.hg); this.hemi.intensity = P.hi;
     this.sun.color.set(P.sc); this.sun.intensity = P.si;
@@ -209,5 +216,9 @@ export class World implements WorldLike<LightName> {
     for (let i = 0; i < arr.length / 3; i++) { const sp = 0.6 + rnd(i + 3e4) * 0.6; arr[i * 3 + 1] = (((rnd(i + 1e4) * 18 - o.t * sp) % 18) + 18) % 18; arr[i * 3] = TWX + (rnd(i) - 0.5) * 40 + Math.sin(o.t * 0.8 + i) * 0.3; }
     pa.needsUpdate = true;
     this.moon.position.set(TWX - 60, 150, -420);
+    // foreground bokeh flakes in a box in front of the camera (0.5-2.2 m), drifting down
+    const c = new THREE.Vector3(...o.cam), f = new THREE.Vector3(...o.look).sub(c).normalize(), rt = new THREE.Vector3().crossVectors(f, new THREE.Vector3(0, 1, 0)).normalize(), up = new THREE.Vector3().crossVectors(rt, f);
+    this.bokeh.forEach((sp, i) => { sp.visible = L === "night"; const d = 0.5 + rnd(i + 70) * 1.7, x = (rnd(i + 80) - 0.5) * 1.3 * d, y = ((((rnd(i + 90) - o.t * (0.12 + rnd(i) * 0.1)) % 1) + 1) % 1 - 0.5) * 2.0 * d;
+      sp.position.copy(c).addScaledVector(f, d).addScaledVector(rt, x).addScaledVector(up, y); const sz = 0.02 + rnd(i + 99) * 0.03; sp.scale.set(sz, sz, 1); });
   }
 }

@@ -24,13 +24,13 @@ export type ShortConfig<L extends string> = {
   world: () => WorldLike<L>; shots: Shot<L>[]; shotAt: (t: number) => Shot<L>; outfitOf: (who: string) => Outfit;
   grades: Record<L, GradeParams>; duration: number; fps?: number;
   /** seconds of fade to black at the end (0 = none) */ fadeOut?: number;
-  bloom?: { intensity?: number; threshold?: number }; ink?: { near?: number; far?: number }; grain?: number;
+  bloom?: { intensity?: number; threshold?: number }; ink?: { near?: number; far?: number; color?: string }; grain?: number;
 };
-/** the house grade: cool blue-violet shadows, warm highlights, rich saturation, a soft dark-blue vignette (measured
- *  on the references: shadows sit around RGB(30,35,90), highlights cream/yellow, corners ~35% darker) */
-export const REF_GRADE: GradeParams = { ky: [0.02, 0.1, 0.25, 0.55, 0.83, 0.95, 1], sat: [1.18, 1.22, 1.08], tintS: [0.03, 0.01], tintM: [0.004, 0], tintH: [-0.016, 0.01], vig: [0.34, 0.32] };
+/** the house grade, fitted to writer/REFERENCE_SPEC.md: lifted blacks (~28/255) and soft whites (~222/255), medium
+ *  saturation, cool blue-violet shadows, warm highlights; vignette per scene (day ~0.9 corners, night ~0.6-0.7) */
+export const REF_GRADE: GradeParams = { ky: [0.11, 0.19, 0.31, 0.5, 0.69, 0.8, 0.87], sat: [0.92, 0.92, 0.85], tintS: [0.025, 0.008], tintM: [0.004, 0], tintH: [-0.012, 0.008], vig: [0.14, 0.4] };
 const makeBloom = (o: { intensity?: number; threshold?: number } = {}) => {
-  const b = new BloomEffect({ blendFunction: BlendFunction.ADD, intensity: o.intensity ?? 0.5, luminanceThreshold: o.threshold ?? 0.85, luminanceSmoothing: 0.25, mipmapBlur: true, levels: 6, radius: 0.6 });
+  const b = new BloomEffect({ blendFunction: BlendFunction.ADD, intensity: o.intensity ?? 0.75, luminanceThreshold: o.threshold ?? 0.8, luminanceSmoothing: 0.25, mipmapBlur: true, levels: 6, radius: 0.6 });
   const mip = b.mipmapBlurPass, setSize = mip.setSize.bind(mip);
   mip.setSize = (w: number, h: number) => setSize(Math.round((1920 * w) / Math.max(h, 1)), 1920);
   return b;
@@ -55,11 +55,18 @@ const cardTex = (outfitOf: (w: string) => Outfit, who: string, a: ActorDef, k: n
   while (texCache.size > 160) { const [k0, t0] = texCache.entries().next().value as [string, THREE.CanvasTexture]; texCache.delete(k0); t0.dispose(); }
   return t;
 };
+// a soft dark contact patch under standing characters (references: characters never float)
+const BLOB_TEX = (() => { const c = document.createElement("canvas"); c.width = c.height = 64; const g = c.getContext("2d")!; const gr = g.createRadialGradient(32, 32, 2, 32, 32, 32);
+  gr.addColorStop(0, "rgba(10,10,30,0.55)"); gr.addColorStop(1, "rgba(10,10,30,0)"); g.fillStyle = gr; g.fillRect(0, 0, 64, 64); return new THREE.CanvasTexture(c); })();
+const BLOB_GEO = new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2);
+/** cards are LIT by the scene (half lambert, half self-lit so faces never go muddy), per the reference spec */
+export const CARD_LIGHT = { lit: 0.62, self: 0.48 };
 class Card {
-  mat = new THREE.MeshBasicMaterial({ alphaTest: 0.5, side: THREE.DoubleSide });
+  mat = new THREE.MeshLambertMaterial({ alphaTest: 0.5, side: THREE.DoubleSide, emissive: 0xffffff, emissiveIntensity: CARD_LIGHT.self });
+  blob = new THREE.Mesh(BLOB_GEO, new THREE.MeshBasicMaterial({ map: BLOB_TEX, transparent: true, depthWrite: false }));
   depth = new THREE.MeshDepthMaterial({ depthPacking: THREE.RGBADepthPacking, alphaTest: 0.5 });
   mesh = new THREE.Mesh(CARD_GEO, this.mat);
-  constructor(parent: THREE.Object3D) { this.mesh.layers.set(NOINK); this.mesh.renderOrder = 1; this.mesh.visible = false; this.mesh.castShadow = true; this.mesh.customDepthMaterial = this.depth; parent.add(this.mesh); }
+  constructor(parent: THREE.Object3D) { this.mesh.layers.set(NOINK); this.mesh.renderOrder = 1; this.mesh.visible = false; this.mesh.castShadow = true; this.mesh.customDepthMaterial = this.depth; parent.add(this.mesh); this.blob.layers.set(NOINK); this.blob.renderOrder = 0; parent.add(this.blob); }
 }
 
 const tmp = new THREE.Vector3(), fwd = new THREE.Vector3(), fpt = new THREE.Vector3(), dbs = new THREE.Vector2();
@@ -77,7 +84,7 @@ const pose = (C: ShortConfig<any>, W: WorldLike<any>, cam: THREE.PerspectiveCame
   if (c.roll) cam.rotateZ((c.roll * Math.PI) / 180);
   cam.updateMatrixWorld();
   W.set({ light: shot.light, t, cam: c.pos, look: c.look, shadowR: shot.shadowR });
-  for (const card of cards.values()) card.mesh.visible = false;
+  for (const card of cards.values()) { card.mesh.visible = false; card.blob.visible = false; }
   for (const a of shot.actors ? shot.actors(t) : []) {
     let card = cards.get(a.who);
     if (!card) { card = new Card(W.root); cards.set(a.who, card); }
@@ -89,7 +96,10 @@ const pose = (C: ShortConfig<any>, W: WorldLike<any>, cam: THREE.PerspectiveCame
     const px = ((2.16 * (a.scale ?? 1)) / (2 * d * Math.tan((cam.fov * Math.PI) / 360))) * 1920;
     const k = Math.min(3.2, Math.max(0.6, Math.ceil((px / 1000) * 1.15 * 5) / 5));
     card.mat.map = cardTex(C.outfitOf, a.who, a, k); card.depth.map = card.mat.map;
-    card.mat.color.setRGB(...(a.tint ?? [1, 1, 1]));
+    const tn = a.tint ?? [1, 1, 1]; card.mat.color.setRGB(tn[0] * CARD_LIGHT.lit, tn[1] * CARD_LIGHT.lit, tn[2] * CARD_LIGHT.lit);
+    card.mat.emissive.setRGB(...tn); card.mat.emissiveMap = card.mat.map;
+    const ground = a.opts.mode !== "jump" && !a.roll && (a.opts.mode === "stand" || a.opts.mode === "stroll" || a.opts.mode === "march" || a.opts.mode === "run" || a.opts.mode === undefined);
+    if (ground) { const sc = a.scale ?? 1; card.blob.visible = true; card.blob.position.set(a.pos[0], a.pos[1] + 0.012, a.pos[2]); card.blob.scale.set(0.75 * sc, 1, 0.42 * sc); }
     card.mat.needsUpdate = true; card.depth.needsUpdate = true;
   }
   cam.getWorldDirection(fwd);
@@ -108,7 +118,7 @@ const Inner: React.FC<{ t: number; C: ShortConfig<any>; W: WorldLike<any> }> = (
   gl.shadowMap.enabled = on.shadows; gl.shadowMap.type = THREE.PCFSoftShadowMap;
   useEffect(() => () => { scene.remove(W.root); }, [scene, W]);
   const fx = useMemo<FX>(() => ({
-    ink: new InkPass(scene, camera as THREE.PerspectiveCamera, { widthNear: C.ink?.near ?? 2.8, widthFar: C.ink?.far ?? 1.6, distNear: 3, distFar: 120, depthLo: 0.012, depthHi: 0.035 }),
+    ink: new InkPass(scene, camera as THREE.PerspectiveCamera, { widthNear: C.ink?.near ?? 5, widthFar: C.ink?.far ?? 2.6, color: C.ink?.color ?? "#1d1a30", distNear: 3, distFar: 120, depthLo: 0.012, depthHi: 0.035 }),
     ao: (() => { const p = new N8AOPostPass(scene, camera, 1080, 1920); p.configuration.aoRadius = 1.2; p.configuration.distanceFalloff = 0.6; p.configuration.intensity = 3; p.configuration.halfRes = true; p.configuration.gammaCorrection = false; return p; })(),
     lens: new LensBlur({ maxCoC: 22, nearScale: 1.1 }),
     bloom: makeBloom(C.bloom),

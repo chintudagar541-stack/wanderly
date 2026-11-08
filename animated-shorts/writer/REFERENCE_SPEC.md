@@ -84,6 +84,11 @@ Per move type (86 segments of 1 s or longer, median values):
   - a foreground object wiping the lens (ref4: the locomotive passes the camera);
   - dust or a glow bloom that dissolves into the next place (ref3 at 48 s and 61 s);
   - a loop ending, where the last shot returns to the opening image (ref1 bell, ref2 FIRE button).
+- **No-cut place changes:** besides dissolves and whips, the refs change place inside one continuous move:
+  - a **fly-in**: a push of 150-450 %/s for 6-15 frames into a window, stall or eye;
+  - a **sky or wall wipe**: tilt up to plain sky or along a canyon wall and come down somewhere else;
+  - an **occlusion wipe**: a train or prop crosses the lens.
+  ref4's first 11.6 s is one take that visits 5 places this way.
 
 ---
 
@@ -268,7 +273,139 @@ clipping), **medium saturation**, and normal contrast that comes from value desi
 
 ---
 
-## 7. Tools
+## 7. Shot-by-shot breakdowns
+
+### How to read these tables
+- **Times:** seconds. "In" is the transition into the shot; dissolve and whip lengths are in frames.
+- **Moves:** measured means from the tool.
+  - Push and pull are image-scale change in %/s.
+  - "Track L" means the camera moves left: the picture slides right.
+  - "Crane up" means the camera rises or tilts up: the picture slides down.
+  - Values are %W/s. "Peak" is the 95th-percentile speed in frame widths per second.
+- **Lens:** the estimated three.js vertical `fov` and the framing: ECU (extreme close-up), CU (close-up), MCU (medium
+  close-up), MS (medium shot), WS (wide shot), TD (top-down).
+- **Merged rows:** one row can hold several beats of one continuous move, separated by ";". Rows shorter than 0.3 s
+  that lie inside a whip are merged into the whip.
+- **Fly-in:** a push of 150-450 %/s lasting 6-15 frames that carries the camera into the next place without any cut
+  (ref4 0-12 s, ref5 at 28.8 s and 40.7 s). The detector correctly finds no cut there.
+- **Masked moves:** the camera passes a uniform surface (sky, canyon wall, a train passing the lens) and comes out in
+  a new place, also with no cut (ref4 at 3.2 s and 8.5 s).
+
+### ref1: bell/coffin (dissolve-driven, 0 cuts, 18 dissolves of median 9 f, painted ink world)
+| start | dur | place | camera move (measured) | lens / framing | starts → ends | in | characters |
+|---|---|---|---|---|---|---|---|
+| 0.0 | 3.2 | sunset graveyard, open grave | crane up and over the grave while pushing in (+45 %/s, up 41 %W/s, roll +5°/s; peak 2.5 W/s), tilting down to top-down | 60° WS → TD CU | 2-shot of two men at eye level → top-down on the man in the coffin | start | gravediggers smirk; the buried man grins and holds a string tied to his finger |
+| 3.5 | 6.5 | bell post → ground cross-section with a row of graves | one long crane down (12 %W/s, constant), then a slow push to the coffin at 8-9.5 s | 55° MS, side elevation | bell and string → buried man in a cut-away coffin | dissolve 9 f (string to string) | the buried man blinks and smiles; a terrified watcher in a nightcap sits in the window behind |
+| 10.2 | 2.9 | night snow graveyard, bell post with a name plate | orbit: pull -16 %/s, track R 15 %W/s, crane up 15 %W/s, roll -2°/s, ease-out | 55° low MS | post close → bell and town behind | dissolve 9 f (match: post to post) | the bell swings by itself; a snow puff blows off the roof |
+| 13.5 | 3.7 | attic bedroom, candlelit | push-in +49 %/s, ease-in, ending in a face CU | 50° MS → CU | man in bed → his half-asleep face filling the frame | dissolve 11 f (ghosted bell over the attic) | the man in a nightcap wakes, squints and talks; in the last beat his face leans into the lens |
+| 17.5 | 1.3 | through the window → snowy main street | pull -32 %/s (passes through the window frame), symmetrical street | 60° low WS, horizon at 40 % | window → street vanishing point | dissolve 10 f (fly-through window) | none (houses with warm porches) |
+| 19.1 | 2.7 | porch at night, lanterns | gentle push +6 %/s, ease-out | 50° MCU, 3 characters | 3-shot → slightly tighter | dissolve 10 f | man, wife with shovel and child argue "No, you check"; sweat drop; mouths per word |
+| 22.1 | 1.5 | snowy street outside the doctor's house | push +15 %/s while tracking L 14 %W/s, roll -3°/s | 60° WS | street → doorway | dissolve 10 f | wife drags the doctor out of bed across the snow |
+| 24.0 | 3.1 | lantern-lit porch | slow drift (7 %W/s), ease-in-out | 50° MCU group | doctor centre, others behind | dissolve 9 f | doctor in pyjamas raises the death certificate; others stare |
+| 27.4 | 1.6 | widow's house at night | fast push +93 %/s with track L 44 %W/s into the bay window (peak 1.4 W/s) | 60° WS → window CU | house front → black window glass | dissolve 10 f | none |
+| 29.2 | 8.0 | dark parlour with rocking chair (3 beats) | dolly in over the rug; orbit to a CU of the widow with a light shaft across her face; pan R to the wall bell and tally sheet; push to the bell. Mean push +32 %/s | 60° WS → 45° CU → 50° insert | wide room → bell on the wall | dissolve 6 f (window → interior, a fly-through) | widow rocks, half-lidded, talks ("three short, one long") |
+| 37.5 | 2.7 | sunny room with coffin on sawhorses | crane up 10 %W/s, ease-out | 50° MCU | bell → the man sitting up in the coffin | dissolve 8 f (match: wall bell → bell in hand) | the "dead" man grins, rings the bell; certificates fly |
+| 40.3 | 0.9 | death certificate | pull-out and crane up (-84 %/s, up 80 %W/s; peak 1.8 W/s) | ECU → MCU | paper fills the frame → the man holding it | dissolve 5 f | the man shows the certificate smugly |
+| 41.5 | 4.7 | day garden by a purple house | pull -20 %/s, ease-out; low ground camera at the soil | 55° low MS | head poking from the soil → widow beside him with shovel | dissolve 7 f | the man rises from the vegetable bed with a cabbage leaf on his head; widow digs him out, then he runs off through town |
+| 46.5 | 1.3 | night parlour | pull -44 %/s, track L 29 %W/s | 60° WS | widow CU → room wide | dissolve 9 f | widow rocking |
+| 48.1 | 4.3 | night parlour, 3 angles | slow pushes (+6 to +12 %/s) with dissolves of 5-7 f between angles | 45° CU, 55° MS | CU → MS → CU | dissolves 7, 5, 7 f | widow listens all night, eyes closed and then open |
+| 52.0 | 0.9 | parlour → dusk graveyard | dissolve of 13 f during a push | 55° | widow → bell post | dissolve 13 f (match: wall bell → graveyard bell) | none |
+| 52.9 | 6.7 | dusk snow graveyard, pink sky | pull -14 %/s with a slow orbit, ease-out | 55° low MS, horizon at 45 % | bell post CU → widow with shovel by the new grave mound | dissolve 8 f | widow stands smug with a ledger; a crow lands; it ends on her pose (a loop back to the opening bell) |
+
+### ref2: Japanese office (dissolve-driven, 0 cuts, 20 dissolves of median 5 f, 2 whips, flat 3D with ink lines)
+| start | dur | place | camera move (measured) | lens / framing | starts → ends | in | characters |
+|---|---|---|---|---|---|---|---|
+| 0.0 | 1.2 | boss office, FIRE button | push +30 %/s with crane up 46 %W/s (peak 3.3 W/s), heavy foreground DOF | 50° CU on the button, boss blurred behind | button ECU → boss | start | a giant hand slams the FIRE button |
+| 1.2 | 1.3 | same | whip up 4 f (5.1 W/s), then whip down 7 f (6.3 W/s) | 55° | button → ceiling → office | whip | the employee is launched upward on an ejector seat |
+| 2.6 | 2.0 | Japanese office with shoji window | crane up 31 %W/s, ease-out | 55° MS | seat flying → hole in the ceiling | dissolve 5 f | the employee flies through the roof, arms up |
+| 4.8 | 3.0 | open-plan office with blue carpet | tracking with the walk, track L 34 %W/s, constant | 60° MS | boss and worker walk past desks → cubicles | dissolve 7 f | boss leads the new worker past colleagues |
+| 8.0 | 1.4 | corridor, "Career Development Room" door | push +45 %/s with track R 28 %W/s, ease-out | 55° MS → door CU | pair → door sign | dissolve 5 f | the worker looks at the door |
+| 9.5 | 4.2 | small green brick room | pull -37 %/s with crane down 29 %W/s, ease-out | ECU → 60° WS | wall clock ECU → bare desk with an empty to-do tray | dissolve 5 f | the worker sits alone, no computer |
+| 13.9 | 2.2 | same room, yellow light patch | push +13 %/s, ease-in-out | 55° MS | room → worker | dissolve 5 f | feet up on the desk, scrolling the phone; a colleague passes |
+| 16.2 | 5.4 | doorway, desk details (4 short shots) | pushes of +13 to +72 %/s (peak 0.7 W/s); a top-down with roll -10°/s | 45° CU; TD | boss with gift box → box CU → calendar → desk TD | dissolves 5, 4, 5 f | boss grins with a red box ("nothing inside"); a desk-top phone |
+| 21.6 | 4.1 | open office | push +72 %/s, ease-in, ending on the phone screen (peak 3.1 W/s) | 55° MS → screen ECU | coworkers staring → "Inbox (0)" fills the frame | dissolve 7 f | coworkers stare at the worker walking in; the phone shows an empty inbox |
+| 25.8 | 2.9 | old desk with framed photo | pull -69 %/s with track L 17 %W/s, ease-out | ECU → 55° MS | photo → someone else at his old desk | dissolve 4 f | a new colleague sits at his desk with the family photo |
+| 28.9 | 4.4 | calendar → green room door | track R 18 %W/s, ease-out | 50° CU → MCU | "NOV FRI 18" calendar → boss's head pops in at the door | dissolve 7 f (calendar dissolve) | boss grins widely, cheeks red |
+| 33.5 | 2.9 | corner desk in a sun patch | pull -14 %/s, ease-in | 55° MS | worker CU → desk | dissolve 7 f | "the guy in the corner" sits happily for three years |
+| 36.6 | 2.9 | office tower exterior at dusk | pull -37 %/s, ease-out | 60° WS, city behind | one lit window → the whole building | dissolve 5 f | silhouettes in windows |
+| 39.8 | 2.7 | green room | push +32 %/s, ease-in-out | 55° MS → MCU | two relaxed workers | dissolve 9 f | two workers, feet up, drinks with straws |
+| 42.8 | 2.4 | green room, door | orbit: track R 37 %W/s, push +15 %/s, roll -7°/s, ease-in | 60° WS | door → desk | dissolve 9 f | a worker walks in on Monday; the desk is gone |
+| 45.4 | 2.1 | emptied desk | push +26 %/s, roll +4°/s | 50° MS | desk → holes in the desk | dissolve 6 f | none |
+| 47.7 | 1.8 | office doorway | push +47 %/s, ease-in | 55° MCU | two colleagues → the door behind | dissolve 6 f | colleagues (purple, yellow) stare, deadpan |
+| 49.8 | 4.2 | night corridor, warm wall lamp | track R 15 %W/s, ease-out | 55° MS; fire-alarm CU | door → fire alarm "labor law" CU | dissolve 9 f | none; a warm light pool on the blue wall |
+| 54.1 | 6.4 | night corridor → door | push +16 %/s with track L 11 %W/s, ease-in | 50° MCU → door CU | boss grinning → door sign with the worker visible through the window | dissolve 3 f | boss grins and explains; it ends on the worker trapped in the room (a loop to the opening) |
+
+### ref3: bronze dragon jar (19 dissolves of median 6 f, 4 whips, 1 cut, soft 3D with painted textures)
+| start | dur | place | camera move (measured) | lens / framing | starts → ends | in | characters |
+|---|---|---|---|---|---|---|---|
+| 0.0 | 2.0 | candlelit palace hall | push +17 %/s, ease-in-out; whip up 12 f (6.5 W/s) at 1.97 s | 50° MCU → dragon-head ECU | scholar by the jar → golden dragon head with a ball in its mouth | start | scholar talks, gestures, sweats |
+| 2.4 | 0.7 | throne room | pull -51 %/s with track R 34 %W/s | 60° WS | jar shoulder → emperor and guards on the throne dais | whip | emperor glares; guards stand |
+| 3.1 | 1.0 | hall | push +9 %/s | 50° MCU | scholar by the jar | **hard cut** (1 f) | the scholar explains, eyes wide |
+| 4.1 | 1.5 | hall | crane up 9 %W/s with roll -3°/s; whip up 11 f (5.0 W/s) | 50° CU | scholar → whip | dissolve 8 f | scholar raises a finger |
+| 5.6 | 1.7 | throne room | pull -24 %/s, ease-in-out | 45° CU → MS | emperor CU → court | whip | the emperor and guards burst out laughing |
+| 7.6 | 5.9 | hall, jar with 8 dragons and frogs | slow arc: track L 10 %W/s, crane down 8 %W/s; push into the jar body at 11-13 s | 60° WS → 50° CU | whole jar → one dragon and frog | dissolve 6 f | none (prop shot; frogs with open mouths) |
+| 13.6 | 4.1 | palace balcony, blue sky; courtyard with an army | drift 35 %W/s over the army, ease-out | 60° high WS | emperor on the balcony → thousands of soldiers | dissolve 6 f | emperor stands, unimpressed |
+| 18.1 | 2.3 | hall, weeks later | push +58 %/s with crane down 30 %W/s (peak 3.2 W/s) | 55° MS → frog ECU | scholar with the crowd → frog holding the ball | dissolve 9 f | the crowd watches; the ball has dropped |
+| 20.5 | 2.0 | wine cup → throne | pull -100 %/s with crane up 47 %W/s (peak 4.4 W/s), ease-out | ECU → 45° CU | ripple in the cup → emperor's face | dissolve 5 f (cup ripple) | emperor sips and frowns |
+| 22.6 | 1.4 | throne | small orbit (5 %W/s) | 50° MCU | none | dissolve 4 f | emperor, unimpressed |
+| 24.2 | 2.7 | banquet hall | push +11 %/s, ease-out | 55° MS | none | dissolve 5 f | courtiers laugh at the table, one falls back |
+| 27.0 | 2.6 | city gate, market | slow drift, ease-out | 60° low WS, road to the gate | none | dissolve 5 f | crowd watches the scholar leave with the jar |
+| 29.9 | 1.9 | sunset hillside | crane up 17 %W/s with roll +3°/s | 60° WS, sun disc | none | dissolve 7 f (gate dust → sunset) | the scholar drags the jar on a cart uphill |
+| 32.0 | 1.0 | sunset farmland camp | push +8 %/s | 60° WS | none | dissolve 8 f | camp with fire, jar beside |
+| 33.2 | 4.0 | moonlit field | pull -29 %/s with crane down 9 %W/s, ease-out | 45° CU → 55° MS | sleeping scholar ("Z Z") → jar with frogs | dissolve 6 f | scholar sleeps; a ball drops; the frogs' eyes glow |
+| 37.4 | 3.1 | prison cell window | slow pull (-9 %/s) | 50° MCU through the bars | none | dissolve 5 f (through the bars) | the scholar shouts from the cell, terrified |
+| 40.6 | 3.0 | castle wall walk at night | push +15 %/s, ease-out | 55° MS | none | dissolve 5 f | a guard mocks ("your frogs hungry again?") |
+| 43.8 | 2.2 | castle gate at night | static (1 %W/s) | 55° MS | none | dissolve 5 f | the scholar walks with a lantern, worried |
+| 46.2 | 2.6 | morning field → distant city | crane up; whip up 5 f (4.0 W/s) | 60° WS | jar and scholar → city with a smoke column | dissolve 6 f | a messenger arrives |
+| 49.0 | 6.3 | inside the jar (mechanism) | slow rotating top-down: roll -15°/s, push +10 %/s | 55° TD | smoke dissolves into a glowing pendulum → rods | dissolve 13 f (smoke → interior glow) | none (mechanism explainer, bloom on the lamps) |
+| 55.7 | 2.6 | jar exterior, sunset | pull -21 %/s with crane down 21 %W/s, ease-in-out | 50° CU | dragon drops the ball → frog | dissolve 13 f | none |
+| 58.5 | 1.4 | far mountain; whip | pan R; whip R 17 f (3.6 W/s) | 60° WS | mountain → jar on the hill | dissolve 6 f | none |
+| 59.9 | 4.9 | hill with jar → earthquake cross-section | tilt down 26 %W/s, then 12 %W/s | 60° WS → section | jar at sunset → glowing crack through the ground layers | whip; dissolve 10 f | none |
+
+### ref4: railroad canyon (11 dissolves of median 8 f, 5 whips, 1 cut, game-engine 3D, sun and motion blur)
+| start | dur | place | camera move (measured) | lens / framing | starts → ends | in | characters |
+|---|---|---|---|---|---|---|---|
+| 0.0 | 11.6 | **one continuous move** through 5 places (mean push +54 %/s, roll +4°/s) | low orbit around the worker sawing a rail (0-1.8 s); a 90° orbit as he stands (1.8-2.5); dolly along the rails by the cliff; the locomotive passes the lens as an **occlusion wipe** (3.0-3.5); flies out over the canyon edge and pans across trestles (3.8-7); tilts down into the canyon (7.5-8.3); tilts up to the sky as a **sky wipe** (8.5); descends to the desert and flies forward with motion blur (9.8-10.5) into the station (10.5-11.5) | 60° low rail cam (lens 0.3 m above the rails) | worker CU → tycoon on a podium | start | worker saws gaps and stands up; workers on trestles and a beam; tycoon in a top hat at "FIRST LINE IN GETS IT ALL" |
+| 11.6 | 1.9 | beam over the canyon | push +9 %/s, ease-out | 55° MS, red strata streaking | none | dissolve 7 f | workers sit on a beam; the youngest grins |
+| 13.7 | 7.9 | rails by the cliff | track L 27 %W/s with roll +10°/s; CU beats | 50° MCU → 45° CU | none | dissolve 8 f | the boss in a bowler leans into the lens and points; his face turns purple with steam ("my railroad"); worker answers |
+| 21.9 | 2.6 | rival bridge construction, crane | push +49 %/s; whip R 18 f (3.6 W/s) | 60° WS | none | dissolve 9 f | the rival crew lays rails |
+| 25.1 | 1.2 | conductor on the platform | pull -38 %/s with track R 29 %W/s | 50° MCU | none | whip | conductor in uniform, "end to end" |
+| 26.3 | 2.1 | rails close-up; tycoon | push +77 %/s, ease-out | 50° → ECU | rails → sparks at the joint | dissolve 5 f | tycoon taps the rail, sparks fly |
+| 28.6 | 2.5 | parlour car interior → bridge | push +80 %/s with track L 10 %W/s (peak 2.3 W/s) | 55° MS | none | dissolve 7 f | tycoon sips tea in red velvet, "without a sound" |
+| 31.4 | 2.1 | train window | slow drift, roll +2°/s | 50° MCU through the window | none | dissolve 8 f | boss sweats and smokes a pipe |
+| 34.0 | 2.0 | station hall | pan L 48 %W/s; whip L 16 f | 55° MS | newspaper "Clickety Clack line!" | whip | crowd reads newspapers |
+| 36.3 | 7.8 | desert railside, heat | pull-out -133 %/s at the start, then a slow mixed drift; whip L 7 f | 50° low CU | calendar "MAY" → canyon wall → rails turning purple (heat colour ramp) | dissolve 8 f + whip | worker by the rail; a coin and paper slide into the gaps |
+| 44.1 | 3.8 | rails, boss | pull -12 %/s with roll +4°/s | 50° MS | none | **hard cut** (1 f) | the boss steps in; two-shot argument, boss scowls |
+| 48.2 | 6.2 | perfect railroad on a wooden trestle | push +31 %/s, ease-in-out | 60° low rail cam | none | dissolve 9 f | rails groan and glow pink-yellow in the sun; the tycoon sits under an umbrella |
+| 54.6 | 3.5 | canyon rails | orbit: track L 15 %W/s, push +21 %/s, roll +5°/s; whip up 6 f | 45° CU | none | dissolve 9 f | worker grins at the lens, eyes wide |
+| 59.6 | 3.3 | rail cam in the canyon | push +37 %/s with roll -7°/s, ease-out | 60° ground cam | none | dissolve 10 f | worker stands between the rails ("touching") |
+| 63.1 | 2.1 | trestle bridge → explosion | crane down 61 %W/s; whip down 5 f (5.5 W/s); pull -132 %/s | 60° WS | bridge → train snakes and falls → fireball | dissolve 7 f | the train derails; worker and boss watch, shocked |
+
+### ref5: Tughlaq coin (25 whips of median 12 f, 5 dissolves, 1 cut, soft clay 3D, strong DOF, 720x1280)
+| start | dur | place | camera move (measured) | lens / framing | starts → ends | in | characters |
+|---|---|---|---|---|---|---|---|
+| 0.0 | 1.0 | goldsmith anvil, glowing coin | small push (+10 %/s); whip up 12 f (8.0 W/s) following the spark | ECU 45° | coin → spark flying up | start | a hammer strikes and sparks burst |
+| 1.0 | 4.6 | durbar (red tent, courtiers) | track R 7 %W/s with crane down 6 %W/s; pull to a WS of the hall at 3.5 s | 45° MCU → 60° WS | spark lands → sultan on the platform | whip | the sultan sits cross-legged, laughs and holds up the coin ("It's 1330") |
+| 5.5 | 1.6 | treasurer's room | whip R 14 f (6.7 W/s) in, whip L 15 f (5.9 W/s) out | 50° MCU | none | whip | the treasurer stares; an empty chest |
+| 7.1 | 3.8 | durbar | pull -7 %/s, ease-out | 50° MCU | none | whip | the sultan stamps a law scroll and frowns |
+| 10.9 | 4.7 | treasurer by chests, window light | near-static orbit (roll -2°/s), ease-out | 45° MCU, bg DOF | none | whip R 11 f (5.3 W/s) | the treasurer holds a coin to his forehead; pots appear in his hands |
+| 15.6 | 2.4 | pot stack CU → durbar | whip R 7 f; small drift | ECU → MCU | none | whip | a pot stack pops up; the sultan "doesn't budge" |
+| 18.0 | 1.7 | canopy → sky over the palace dome | whip R 26 f (11.3 W/s) that tilts up to the sky; dissolves of 4 f and 7 f; whip down 6 f (12 W/s) | 60° | sultan → coins flying across the sky → workshop | whip + dissolve | none (coins fly as the linking object) |
+| 19.7 | 2.0 | goldsmith workshop | push +6 %/s | 45° MCU | none | whip | a goldsmith fakes coins, grinning |
+| 21.7 | 7.1 | street of workshops → village square → horses → fields → clerk → street | a chain of 7 whips (whip R 44 f slide along the street, L 8, R 14, L 23, L 16, R 18 f; 7-11 W/s) with 0.5-1.5 s holds between | 45-60° | worker CUs ↔ aerial over fields | whips | workshops busy; farmers pay taxes in copper; a merchant and a soldier buy horses (horse CU); a clerk at a desk sweats |
+| 28.8 | 11.6 | merchant stall (one take) | **fly-in** (+240 %/s for 10 f) from the street into the stall; then CU on the merchant; orbit to a side angle (31.7 s); a coin rain buries him (32.5-34.5); push to a CU (34.7); new framing at 38.7 s. Mean push +12 %/s, ease-out | 45° MCU | street → merchant CU | whip | the merchant weighs coins; copper coins pour and bury him; surprised eyes; he holds up a silver coin |
+| 40.4 | 4.2 | ECU face → gold star → classroom | whip L 8 f; push +437 %/s into the eye; dissolve 8 f into a star sticker; whip down 10 f | ECU → 50° MS | merchant shouting "because he said so" → teacher | whip + dissolve | the teacher announces "gold stars" (match: round eye → round star) |
+| 44.6 | 2.3 | classroom | push +52 %/s, roll +4°/s, ease-out | 60° WS | none | **hard cut** | stars pile up over the kids; the teacher is buried in stars |
+| 47.3 | 3.8 | sky with coins → durbar | whip down 13 f; dissolve 14 f; pull -19 %/s | 60° → 50° MCU | none | whip + dissolve | coins rain; the sultan is buried in copper coins; a pigeon sits on his turban |
+| 51.4 | 1.7 | fort parapet → treasury gate | pushes (+31 %/s), whips down and up (8.1 / 6.3 W/s) | 50° MCU | none | whips | the sultan with raised arms ("Bring me your copper"); the gate opens on gold |
+| 53.1 | 4.5 | desert caravan → fort with copper hills | orbits: track L 19 %W/s then R 10 %W/s, push +26 %/s, ease-in-out; long sun shadows | 60° high WS | none | whips | lines of people carrying sacks; copper piles as tall as hills |
+| 57.6 | 1.0 | copper hill → coin ECU | whip down 3 f at 11 W/s with roll +13°/s | ECU | none | whip | the treasurer is buried, coins flying |
+| 58.6 | 6.5 | modern shop | crane up 18 %W/s, pull -6 %/s, ease-out (peak 3.6 W/s) | 50° MS → 45° CU | silver coin ECU → boy and shopkeeper → shopkeeper with a 20-rupee coin | dissolve 9 f (coin to coin) | a boy with a samosa; the shopkeeper on the phone; coin CU with a dashed "fake" circle |
+| 65.0 | 5.9 | fort parapet at sunrise | whips up, right and down (9, 13, 4 f); then pull -6 %/s, ease-in-out | 50° MCU, sun burst behind | coin flies up → sultan lit from behind | whips | the sultan holds the copper coin up to the sun and smiles; merchants with coins stuck on their heads; it ends on a sweat drop |
+
+---
+
+## 8. Tools
 
 ```
 # analyse a reference (caption band at 64-78 % of the height masked by default)
