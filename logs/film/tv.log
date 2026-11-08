@@ -1,0 +1,12 @@
+[lib] model Sofa_01 1
+[lib] model CoffeeTable_01 1
+[lib] model Shelf_01 1
+[lib] built tv 84 frames 4s 66 objects
+Blender 4.2.3 LTS (hash 0e22e4fcea03 built 2024-10-14 23:31:34)
+Saved: '/home/runner/work/wanderly/wanderly/out/tv.png'
+Time: 06:19.93 (Saving: 00:00.74)
+
+[lib] rendered /home/runner/work/wanderly/wanderly/out/tv.png 380s
+[lib] saved /home/runner/work/wanderly/wanderly/out/tv.jpg
+
+Blender quit
