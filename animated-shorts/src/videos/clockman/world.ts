@@ -72,7 +72,7 @@ export class World implements WorldLike<LightName> {
   fog = new THREE.Fog(0xffffff, 60, 400);
   lamps: THREE.PointLight[] = [];
   office: THREE.Object3D[] = []; town: THREE.Object3D[] = [];
-  clockMesh: THREE.Mesh; snow: THREE.Points; moon: THREE.Sprite; bokeh: THREE.Sprite[] = [];
+  hole: THREE.Mesh; clockMesh: THREE.Mesh; snow: THREE.Points; moon: THREE.Sprite; bokeh: THREE.Sprite[] = [];
 
   constructor() {
     const R = this.root, B = new Batch(), k = new Kit(B, R);
@@ -113,7 +113,7 @@ export class World implements WorldLike<LightName> {
       k.at([0.2, 0, -2.62], 0, () => { // tall office chair behind Walter (the reference's dark swivel chair)
         const cm = M(0x2c3550); k.box(cm, [0, 0.62, 0.05], [0.5, 0.08, 0.46]); k.box(cm, [0, 1.12, -0.2], [0.5, 0.78, 0.08]); k.cyl(M(0x3a3a44), [0, 0.32, 0.05], 0.04, 0.55);
         for (let i = 0; i < 5; i++) { const a = (i / 5) * Math.PI * 2; k.box(M(0x3a3a44), [Math.sin(a) * 0.17, 0.05, 0.05 + Math.cos(a) * 0.17], [0.05, 0.04, 0.36], [0, a, 0]); } });
-      k.at([-0.55, 0, -2.62], 0.3, () => chair(k, P, M(0x2a3a6a)));
+      k.at([-0.42, 0, -2.62], 0, () => { const st = M(0xd0a060); k.box(st, [0, 0.4, 0], [0.5, 0.06, 0.4]); k.box(st, [0, 0.8, 0], [0.5, 0.06, 0.35]); for (const sx of [-0.23, 0.23]) k.beam(M(0xa07040), [sx, 0, 0.2], [sx, 0.83, -0.05], 0.05); for (const sx of [-0.23, 0.23]) k.beam(M(0xa07040), [sx, 0, -0.25], [sx, 0.83, -0.1], 0.05); });   // step ladder
       k.at([2.2, 0, 0.6], -Math.PI / 2, () => { desk(k, P, 1.5, 0.75); k.at([0, 0.76, 0], 0, () => deskClutter(k, P, 7)); });
       k.at([W / 2 - 0.18, 0, -2.0], -Math.PI / 2, () => bookshelf(k, P, 1.2, 2.0, 0.32, 4));
       k.at([-2.4, 0, -D / 2 + 0.32], 0, () => cabinet(k, P, M(0x9aa6b4, undefined, { rough: 0.5, metal: 0.3 })));
@@ -123,7 +123,7 @@ export class World implements WorldLike<LightName> {
       k.at([-2.4, 1.32, -D / 2 + 0.32], 0, () => plant(k, 0.6, 0x4a9a40, 0xe8b84a, 6));
       for (const [x, z, s] of [[-2.5, 0.6, 0.5], [-2.45, 0.95, 0.42], [-2.52, 0.8, 0.36]] as const) k.box(M(0xc89a62), [x, s / 2 + (s < 0.4 ? 0.5 : 0), z], [s * 1.2, s, s]);
       k.at([-1.2, 1.55, -D / 2 + 0.01], 0, () => picture(k, corkboard(), 1.0, 0.75, 0x8a5a3a));
-      k.at([1.4, 1.65, -D / 2 + 0.01], 0, () => picture(k, calendar(), 0.32, 0.4, 0xfbfaf6));
+      k.at([1.4, 1.65, -D / 2 + 0.01], 0, () => picture(k, calendar(), 0.48, 0.6, 0xfbfaf6));
       k.at([1.6, 0, D / 2 - 0.05], Math.PI, () => door(k, 0.95, 2.1, M(0x9cc0e8), M(0xfbfaf6)));
       k.at([1.6, 1.55, D / 2 - 0.12], Math.PI, () => k.panel(M(0xffffff, sign(["CLOCK", "KEEPER"], "#fbfaf6", "#2a3a6a")), [0, 0, 0], 0.5, 0.25));
       k.at([W / 2 - 0.01, 1.6, 1.4], -Math.PI / 2, () => picture(k, sign(["ACME", "& SONS"], "#2a3a6a", "#f2c84a"), 0.9, 0.45, 0x2a2a34));
@@ -139,6 +139,11 @@ export class World implements WorldLike<LightName> {
       for (const [dz, w] of [[-0.35, 0.7], [0.35, 0.6]] as const) { const s = new THREE.Mesh(new THREE.PlaneGeometry(w, 4.2), new THREE.MeshBasicMaterial({ map: bt, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false, side: THREE.DoubleSide }));
         s.position.set(OX - 2.0, 1.15, wz + dz); s.rotation.set(0, Math.PI / 2, 0.95); s.layers.set(NOINK); R.add(s); }
     });
+    // the hole Walter punches through the ceiling tiles (jagged dark opening, shown after "fired")
+    this.hole = new THREE.Mesh(new THREE.PlaneGeometry(0.8, 0.8), new THREE.MeshBasicMaterial({ transparent: true, depthWrite: false, map: canvasTex(128, 128, (g) => {
+      g.fillStyle = "#14121e"; g.beginPath(); for (let i = 0; i < 24; i++) { const a = (i / 24) * Math.PI * 2, r = 46 + rnd(i + 900) * 14; const x = 64 + Math.cos(a) * r * 1.0, y = 64 + Math.sin(a) * r; if (i) g.lineTo(x, y); else g.moveTo(x, y); } g.closePath(); g.fill();
+      g.strokeStyle = "#e8e8ee"; g.lineWidth = 4; g.stroke(); }) }));
+    this.hole.rotation.x = Math.PI / 2; this.hole.position.set(OX + 0.2, 2.985, -2.06); this.hole.layers.set(NOINK); this.hole.visible = false; R.add(this.hole);
     this.clockMesh = new THREE.Mesh(new THREE.CircleGeometry(0.44, 48), M(0xffffff, clockFace(9, 0)).clone() as THREE.MeshStandardMaterial);
     this.clockMesh.position.set(WALLCLOCK[0], WALLCLOCK[1], WALLCLOCK[2] + 0.07); R.add(this.clockMesh);
     const lamp = new THREE.PointLight(0xfff0d0, 0, 7, 1.4); lamp.position.set(OX, 2.6, -0.6); R.add(lamp); this.lamps.push(lamp);
@@ -243,6 +248,7 @@ export class World implements WorldLike<LightName> {
     this.fog.color.set(P.fog); this.fog.near = P.fn; this.fog.far = P.ff;
     this.lamps.forEach((l, i) => { l.intensity = i === 0 ? (L === "office" ? P.lamp : 0) : L === "night" ? P.lamp : 0; });
     for (const x of this.office) x.visible = L === "office";
+    this.hole.visible = L === "office" && o.t > 12.33 && o.t < 13.5;
     for (const x of this.town) x.visible = L === "night";
     // the wall clock face
     const m = Math.round(clockMinAt(o.t)), cm = this.clockMesh.material as THREE.MeshStandardMaterial, tex = clockFace(9 + Math.floor(m / 60), m % 60);

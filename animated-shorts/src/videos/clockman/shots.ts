@@ -1,6 +1,10 @@
-// "The Clock Man" demo shots. Every shot is ONE continuous camera move (path keys), shots join with short dissolves
-// (0.2-0.3 s) like the references, and the characters act out the key words (asleep -> boss steams -> "fired" launches
-// Walter out of frame). Times follow shorts/clockman/voice/lines.json.
+// "The Clock Man" demo shots, built on the grammar of the reference office short (ref2), studied frame by frame:
+//  - characters close to the lens (head 35-55 % of the frame width), wides are rare and short;
+//  - every shot is one continuous move with beats (object close-up -> tilt to the face -> pull back to reveal);
+//  - joins are 7-frame dissolves, MATCHED: round face -> round clock, office clock -> tower clock, at the same screen spot;
+//  - a punch-in + whip pan (with motion blur) on the beat, and the gag on the key word ("fired": shot up through the ceiling);
+//  - inserts of story objects (the calendar "MON").
+// Times follow shorts/clockman/voice/words.json.
 import { LightName, OX, TWX, TOWER, WALLCLOCK } from "./world";
 import { Outfit, FrontOpts } from "../dead/toon";
 import { ActorDef, V3, path, drift, shotList, ramp, smooth, lerp } from "../../lib3d/camera";
@@ -25,19 +29,9 @@ export const outfitOf = (who: string): Outfit => {
 
 const { S, add, at } = shotList<LightName>();
 const W_SIT: V3 = [OX + 0.2, 0.72, -2.06];          // Walter in his chair, feet on the desk
-const W_HEAD: V3 = [OX + 0.2, 1.5, -2.5];
-const talk = (t: number): FrontOpts["expr"] => (Math.floor(t * 9) % 3 === 0 ? "smile_closed" : "grin");
+const W_HEAD: V3 = [OX + 0.2, 1.5, -2.06];
+const DIS = 0.23;   // 7 frames, the reference median
 
-// ---------- 1. 0-2.2 office: punch-in from the doorway onto Walter, feet up ("This man got fired for doing almost nothing")
-add({ a: 0, b: 2.2, light: "office", dof: 9, focus: W_HEAD, shadowR: 7,
-  actors: (t) => [{ who: "walter", pos: W_SIT, scale: 0.78, opts: { mode: "sitFeetUp", expr: t < 1.2 ? "smile" : "smile_closed", prop: "phone", glow: 0.7, headTilt: 6, phase: t } }],
-  cam: drift(path([
-    { t: 0, pos: [OX + 1.7, 1.48, 2.4], look: [OX + 0.3, 1.48, -2.3], fov: 66 },
-    { t: 0.6, pos: [OX + 0.9, 1.48, -0.3], look: [OX + 0.2, 1.45, -2.3], fov: 50, ease: "out" },
-    { t: 2.2, pos: [OX + 0.35, 1.41, -0.75], look: [OX + 0.2, 1.51, -2.3], fov: 47 },
-  ])) });
-
-// ---------- 2. 2.2-3.75 town night: crane down from the frozen tower clock to the puzzled crowd ("...broke an entire town")
 const crowdMain = (t: number, look = true): ActorDef[] => ([
   ["w1", -1.6, -31.2], ["m1", 0.2, -30.6], ["m2", 1.7, -31.4], ["w2", -0.6, -33.2], ["m3", 1.0, -33.6], ["m2b", -2.6, -33.0], ["w1b", 2.8, -32.4],
 ] as [string, number, number][]).map(([who, x, z], i) => ({ who: `${who.replace(/b$/, "")}#c${i}`, pos: [TWX + x, 0, z] as V3, scale: 0.78,
@@ -47,83 +41,99 @@ const EXTRAS: [string, number, number, number][] = [["m1", -3.4, -12, 1], ["w2",
 const extras = (t: number): ActorDef[] => EXTRAS.map(([who, x, z, dir], i) => ({ who: `${who}#x${i}`, pos: [TWX + x + (dir ? dir * 0.0 : 0), 0, z + (dir ? -dir * 0.9 * ((t * 0.5 + i * 0.3) % 4) : 0)] as V3, scale: 0.76,
   opts: { mode: dir ? "stroll" : "stand", facing: dir ? (dir > 0 ? -1 : 1) : (i % 2 ? 1 : -1), phase: dir ? t * 1.5 + i : t + i, expr: dir ? "smile" : i % 2 ? "laugh" : "smile_closed", mouthOpen: dir ? 0 : Math.max(0, Math.sin(t * 9 + i)) } as FrontOpts }));
 const crowd = (t: number, look = true): ActorDef[] => [...crowdMain(t, look), ...extras(t)];
-add({ a: 2.2, b: 3.75, dis: 0.25, light: "night", dof: 5, shadowR: 14, actors: (t) => crowd(t),
+
+// ---------- A. 0-2.15 office: Walter's shoes huge in the foreground, push up past them to his face ("This man got fired for doing almost nothing,")
+add({ a: 0, b: 2.15, light: "office", dof: 11, focus: W_HEAD, shadowR: 6,
+  actors: (t) => [{ who: "walter", pos: W_SIT, scale: 0.78, opts: { mode: "sitFeetUp", expr: t < 1.0 ? "smile" : "smile_closed", prop: "phone", glow: 0.8, headTilt: 5, phase: t, blink: t > 1.4 && t < 1.5 } }],
+  cam: drift(path([
+    { t: 0, pos: [OX + 0.3, 0.98, -1.2], look: [OX + 0.2, 1.3, -2.06], fov: 56 },
+    { t: 2.15, pos: [OX + 0.25, 1.52, -0.52], look: W_HEAD, fov: 48, ease: "out" },
+  ]), 0.02) });
+
+// ---------- B. 2.15-3.75 town: MATCH his round face -> the round tower clock, then pull back and down over the puzzled crowd ("and it broke an entire town.")
+add({ a: 2.15, b: 3.75, dis: DIS, light: "night", dof: 5, shadowR: 14, actors: (t) => crowd(t),
   cam: path([
-    { t: 2.2, pos: [TWX + 0.6, 9.6, -39.5], look: [TWX, 9.0, -44.3], fov: 52 },
-    { t: 3.75, pos: [TWX + 1.6, 3.2, -36.4], look: [TWX, 1.3, -31.8], fov: 60, ease: "inout" },
+    { t: 2.15, pos: [TWX, TOWER[1], TOWER[2] + 9.4], look: [TWX, TOWER[1], TOWER[2]], fov: 48 },
+    { t: 3.75, pos: [TWX + 1.6, 2.4, -24.2], look: [TWX, 3.2, -34], fov: 56, ease: "inout" },
   ]) });
 
-// ---------- 3. 3.75-7.2 office: low orbit + crane up around Walter ("In 1904, a clerk named Walter had the easiest job in town")
-add({ a: 3.75, b: 7.2, dis: 0.25, light: "office", dof: 10, focus: W_HEAD, shadowR: 7,
-  actors: (t) => [{ who: "walter", pos: W_SIT, scale: 0.78, opts: { mode: "sitFeetUp", expr: t > 5.6 ? "grin" : "smile", prop: t < 5.4 ? "juice" : "phone", glow: 0.7, headTilt: Math.sin(t * 2) * 4 } }],
+// ---------- C. 3.75-7.2 office: the ticking wall clock -> tilt down to Walter's face on "Walter" -> pull back to reveal him, feet up
+add({ a: 3.75, b: 7.2, dis: DIS, light: "office", dof: 10, focus: W_HEAD, shadowR: 7,
+  actors: (t) => [{ who: "walter", pos: W_SIT, scale: 0.78, opts: { mode: "sitFeetUp", expr: t > 5.7 ? "grin" : "smile", prop: "phone", glow: 0.8, headTilt: Math.sin(t * 2) * 4, blink: t > 6.3 && t < 6.4 } }],
   cam: drift(path([
-    { t: 3.75, pos: [OX - 1.6, 1.15, -0.30], look: [OX + 0.1, 0.93, -2.3], fov: 64 },
-    { t: 5.4, pos: [OX - 0.9, 1.15, 0.10], look: [OX + 0.2, 1.33, -2.3], fov: 54 },
-    { t: 7.2, pos: [OX + 0.8, 1.58, -0.15], look: [OX + 0.2, 1.53, -2.3], fov: 48 },
+    { t: 3.75, pos: [OX + 0.25, 2.42, 0.25], look: WALLCLOCK, fov: 50 },
+    { t: 4.6, pos: [OX + 0.25, 2.3, -0.2], look: [WALLCLOCK[0], 2.3, WALLCLOCK[2]], fov: 50 },
+    { t: 5.4, pos: [OX + 0.25, 1.55, -0.5], look: W_HEAD, fov: 48, ease: "out" },
+    { t: 7.2, pos: [OX + 0.85, 1.95, 0.55], look: [OX + 0.2, 1.45, -2.2], fov: 54 },
   ])) });
 
-// ---------- 4. 7.2-9.95 office: from the spinning clock face, pull back + down to Walter on a chair winding it
-const W_UP: V3 = [OX - 0.45, 0.47, -2.62];
-add({ a: 7.2, b: 9.95, dis: 0.2, light: "office", dof: 12, focus: [WALLCLOCK[0] - 0.3, 2.1, -2.8], shadowR: 7,
-  actors: (t) => [{ who: "walter", pos: W_UP, scale: 0.78, yaw: 0.25, opts: { mode: "stand", facing: 1, expr: t < 9.3 ? "grin" : "smile_closed", prop: t < 9.2 ? "point" : null, phase: t } }],
-  cam: path([
-    { t: 7.2, pos: [WALLCLOCK[0] + 0.15, WALLCLOCK[1] + 0.05, -1.75], look: [WALLCLOCK[0], WALLCLOCK[1], WALLCLOCK[2]], fov: 50 },
-    { t: 8.3, pos: [WALLCLOCK[0] + 0.45, 2.1, -1.2], look: [WALLCLOCK[0] - 0.45, 2.1, -2.9], fov: 54 },
-    { t: 9.95, pos: [OX + 0.7, 1.55, -0.95], look: [OX - 0.3, 1.8, -2.65], fov: 52, ease: "out" },
-  ]) });
-
-// ---------- 5a. 9.95-10.9 office: close on Walter asleep ("Then one Monday")
-add({ a: 9.95, b: 10.9, dis: 0.2, light: "office", dof: 10, focus: W_HEAD, shadowR: 7,
-  actors: (t) => [{ who: "walter", pos: W_SIT, scale: 0.78, opts: { mode: "sitFeetUp", expr: "asleep", zzz: ((t - 9.9) * 0.9) % 1 } }],
+// ---------- D. 7.2-9.95 office: close two-shot of Walter on a chair winding the clock (hands spin), slow orbit; "That was it." he turns, shrugs
+const W_UP: V3 = [OX - 0.42, 0.83, -2.6];
+add({ a: 7.2, b: 9.95, dis: DIS, light: "office", dof: 9, focus: [OX - 0.25, 2.35, -2.7], shadowR: 6,
+  actors: (t) => [{ who: "walter", pos: W_UP, scale: 0.78, opts: t < 9.3 ? { mode: "stand", facing: 1, expr: "grin", prop: "point", phase: t } : { mode: "stand", facing: 0, expr: "smile_closed", phase: t, headTilt: -8 } }],
   cam: drift(path([
-    { t: 9.95, pos: [OX - 0.5, 1.68, -0.10], look: [OX + 0.2, 1.43, -2.3], fov: 50 },
-    { t: 10.9, pos: [OX - 0.15, 1.58, -0.50], look: [OX + 0.2, 1.45, -2.3], fov: 46 },
+    { t: 7.2, pos: [OX - 0.6, 2.35, -0.95], look: [OX - 0.1, 2.3, -2.8], fov: 52 },
+    { t: 9.3, pos: [OX + 0.4, 2.3, -0.95], look: [OX - 0.15, 2.3, -2.8], fov: 50 },
+    { t: 9.95, pos: [OX + 0.05, 2.35, -1.05], look: [OX - 0.42, 2.4, -2.6], fov: 46, ease: "out" },
   ])) });
-// ---------- 5b. 10.9-11.9 office: Walter's view: the boss strides in from the door and boils ("his boss caught him asleep")
-const bossPos = (t: number): V3 => { const u = smooth((t - 10.6) / 1.2); return [lerp(OX + 1.6, OX + 0.95, u), 0, lerp(1.9, -0.9, u)]; };
-add({ a: 10.9, b: 11.9, light: "office", dof: 8, focus: [OX + 1.1, 1.5, -0.6], shadowR: 8,
-  actors: (t) => [{ who: "boss", pos: bossPos(t), scale: 0.82, opts: { mode: t < 11.75 ? "stroll" : "stand", facing: -1, phase: t * 1.6, expr: "stern", angry: ramp(t, 11.1, 11.6), steam: t > 11.35 ? 1 : 0 } }],
+
+// ---------- E. 9.95-10.9 insert: the desk calendar "MON" pushes in ("Then one Monday,")
+add({ a: 9.95, b: 10.9, dis: DIS, light: "office", dof: 8, focus: [OX + 1.4, 1.65, -2.98], shadowR: 6,
   cam: path([
-    { t: 10.9, pos: [OX + 0.1, 1.15, -2.2], look: [OX + 1.3, 1.45, 0.6], fov: 58 },
-    { t: 11.9, pos: [OX + 0.2, 1.1, -2.0], look: [OX + 1.05, 1.6, -0.4], fov: 52, ease: "out" },
+    { t: 9.95, pos: [OX + 1.25, 1.62, -1.75], look: [OX + 1.4, 1.65, -2.98], fov: 52 },
+    { t: 10.9, pos: [OX + 1.38, 1.66, -2.2], look: [OX + 1.4, 1.65, -2.98], fov: 50, ease: "out" },
   ]) });
 
-// ---------- 6. 11.9-13.2 office: punch-in on Walter waking in shock; on "fired" (12.28) he is launched out of the window
+// ---------- F. 10.9-13.2 office, one move with beats: Walter asleep, the boss leans in from the right foreground and boils;
+//            punch-in on the boss, WHIP to Walter on "fired" (12.28), he shoots up through the ceiling, tilt up to the hole
 const LAUNCH = 12.28;
-const launch = (u: number): V3 => [W_SIT[0] - 4.8 * u, W_SIT[1] + 3.2 * u - 3.4 * u * u, W_SIT[2] + 2.3 * u];
-const office6 = (t: number): ActorDef[] => {
+const bossX = (t: number) => lerp(OX + 1.05, OX + 0.62, smooth((t - 10.9) / 0.7));
+const officeF = (t: number): ActorDef[] => {
   const u = Math.max(0, t - LAUNCH);
   return [
-    { who: "walter", pos: launch(u), scale: 0.78, roll: u * 10,
-      opts: u > 0 ? { mode: "jump", expr: "terror", sweat: 1 } : { mode: "sitFeetUp", expr: "shock", sweat: ramp(t, 11.9, 12.2), exclaim: true } },
+    { who: "walter", pos: [W_SIT[0], W_SIT[1] + 9 * u, W_SIT[2]], scale: 0.78,
+      opts: u > 0 ? { mode: "jump", expr: "terror", sweat: 1 } : t < 12.0 ? { mode: "sitFeetUp", expr: "asleep", zzz: ((t - 10.9) * 0.9) % 1 } : { mode: "sitFeetUp", expr: "shock", sweat: 1, exclaim: true } },
+    { who: "boss", pos: [bossX(t), 0, -0.8], scale: 0.82, opts: { mode: t < 11.55 ? "stroll" : "stand", facing: t < 11.55 ? -1 : 0, phase: t * 1.6, expr: "stern", angry: ramp(t, 11.1, 11.6), steam: t > 11.35 ? 1 : 0, prop: t > 11.9 ? "point" : null } },
   ];
 };
-add({ a: 11.9, b: 13.2, light: "office", dof: 9, focus: W_HEAD, shadowR: 7, actors: office6,
+add({ a: 10.9, b: 13.2, dis: DIS, light: "office", dof: 9, focus: [OX + 0.35, 1.45, -1.4], shadowR: 7, actors: officeF,
   cam: path([
-    { t: 11.9, pos: [OX + 1.3, 1.43, 0.25], look: [OX + 0.2, 1.38, -2.3], fov: 54 },
-    { t: 12.25, pos: [OX + 0.6, 1.51, -0.60], look: [OX + 0.2, 1.45, -2.3], fov: 46, ease: "out" },
-    { t: 13.2, pos: [OX + 0.9, 1.33, -0.45], look: [OX - 2.6, 1.33, -0.7], fov: 50, ease: "out" },
+    { t: 10.9, pos: [OX - 0.45, 1.42, 0.05], look: [OX + 0.3, 1.32, -1.8], fov: 56 },
+    { t: 11.75, pos: [OX - 0.3, 1.45, -0.2], look: [OX + 0.35, 1.38, -1.5], fov: 54 },
+    { t: 12.0, pos: [OX - 0.05, 1.62, 0.3], look: [OX + 0.62, 1.58, -0.8], fov: 46, ease: "out" },
+    { t: 12.3, pos: [OX - 0.15, 1.55, 0.0], look: [OX + 0.2, 1.62, -2.06], fov: 48, ease: "inout" },
+    { t: 12.85, pos: [OX - 0.1, 1.4, -0.3], look: [OX + 0.2, 3.0, -2.06], fov: 52, ease: "out" },
+    { t: 13.2, pos: [OX - 0.08, 1.36, -0.38], look: [OX + 0.2, 3.0, -2.06], fov: 52 },
   ]) });
 
-// ---------- 7. 13.2-14.75 town night: off the frozen tower clock, pull back and down over the snowy street ("That night, every clock in town stopped")
-add({ a: 13.2, b: 14.75, dis: 0.25, light: "night", dof: 4, shadowR: 16, actors: (t) => crowd(t, false),
-  cam: path([
-    { t: 13.2, pos: [TWX + 0.25, TOWER[1] + 0.1, -41.2], look: [TWX, TOWER[1], -44.3], fov: 48 },
-    { t: 14.75, pos: [TWX + 2.6, 5.2, -27.5], look: [TWX, 6.5, -44], fov: 58, ease: "inout" },
-  ]) });
+// ---------- G. 13.2-14.75 town: the dark hole dissolves into the frozen tower clock; punch-in on "stopped" (14.25)
+add({ a: 13.2, b: 14.75, dis: DIS, light: "night", dof: 4, shadowR: 14, actors: (t) => crowd(t, false),
+  cam: drift(path([
+    { t: 13.2, pos: [TWX + 0.4, TOWER[1] - 0.4, TOWER[2] + 9.5], look: [TWX, TOWER[1], TOWER[2]], fov: 52 },
+    { t: 14.25, pos: [TWX + 0.1, TOWER[1] - 0.1, TOWER[2] + 5.6], look: [TWX, TOWER[1], TOWER[2]], fov: 50, ease: "out" },
+    { t: 14.75, pos: [TWX + 0.05, TOWER[1] - 0.05, TOWER[2] + 5.3], look: [TWX, TOWER[1], TOWER[2]], fov: 50 },
+  ]), 0.03) });
 
-// ---------- 8. 14.75-18.4 town: Walter walks into the puzzled crowd, grinning; crane up to the whole town ("He was winding the whole town")
-const walterX = (t: number) => lerp(TWX - 1.4, TWX + 0.4, ramp(t, 14.6, 16.6));
-const finale = (t: number): ActorDef[] => [
-  ...crowd(t),
-  { who: "walter", pos: [walterX(t), 0, -27.6], scale: 0.78, opts: { mode: t < 16.5 ? "stroll" : "stand", facing: t < 16.5 ? 1 : 0, phase: t * 1.6, expr: t < 15.9 ? "smile" : "grin", prop: t > 16.4 ? "point" : null } },
+// ---------- H. 14.75-16.0 town: close two-shot of puzzled townsfolk staring up ("Walter wasn't winding a clock.")
+const pair = (t: number): ActorDef[] => [
+  { who: "w2#p0", pos: [TWX - 0.38, 0, -30.4], scale: 0.78, opts: { mode: "stand", facing: 1, phase: t, expr: "dazed", question: true, headTilt: -10 } },
+  { who: "m1#p1", pos: [TWX + 0.4, 0, -30.6], scale: 0.78, opts: { mode: "stand", facing: -1, phase: t + 1, expr: "nervous", question: Math.sin(t * 4) > -0.3, headTilt: 8, sweat: 0.4 } },
 ];
-add({ a: 14.75, b: 18.4, dis: 0.2, light: "night", dof: 6, focus: [TWX + 0.4, 1.4, -27.5], shadowR: 16, actors: finale,
+add({ a: 14.75, b: 16.0, dis: DIS, light: "night", dof: 8, focus: [TWX, 1.55, -30.5], shadowR: 12, actors: (t) => [...pair(t), ...crowd(t).filter((a) => a.pos[2] < -31.5)],
+  cam: drift(path([
+    { t: 14.75, pos: [TWX - 0.5, 1.25, -28.1], look: [TWX, 1.6, -30.5], fov: 50 },
+    { t: 16.0, pos: [TWX + 0.45, 1.3, -28.2], look: [TWX, 1.6, -30.5], fov: 48 },
+  ])) });
+
+// ---------- I. 16.0-18.4 town: Walter strides into the foreground, stops and grins at us; pull back and up as the snow falls ("He was winding the whole town.")
+const walterX = (t: number) => lerp(TWX - 1.4, TWX - 0.15, ramp(t, 15.9, 16.9));
+add({ a: 16.0, b: 18.4, dis: DIS, light: "night", dof: 6, focus: [TWX - 0.15, 1.45, -28.4], shadowR: 14,
+  actors: (t) => [...pair(t), ...crowd(t), { who: "walter", pos: [walterX(t), 0, -28.4], scale: 0.78, opts: { mode: t < 16.85 ? "stroll" : "stand", facing: t < 16.85 ? 1 : 0, phase: t * 1.6, expr: t < 16.7 ? "smile" : "grin", prop: t > 17.0 ? "point" : null, blink: t > 17.6 && t < 17.7 } }],
   cam: (t: number) => { const c = path([
-    { t: 14.75, pos: [TWX + 1.2, 1.25, -23.6], look: [TWX + 0.3, 1.35, -27.6], fov: 58 },
-    { t: 16.3, pos: [TWX + 0.6, 1.5, -24.8], look: [TWX + 0.4, 1.4, -28.2], fov: 50 },
-    { t: 18.4, pos: [TWX + 3.5, 13, -10], look: [TWX, 5.5, -40], fov: 62, ease: "in" },
-  ])(t), w = 1 - ramp(t, 16.2, 17.2), dx = (walterX(t) - TWX - 0.4) * w; return { ...c, pos: [c.pos[0] + dx * 0.85, c.pos[1], c.pos[2]], look: [c.look[0] + dx, c.look[1], c.look[2]] }; } });
+    { t: 16.0, pos: [TWX - 0.3, 1.4, -26.6], look: [TWX - 0.5, 1.45, -28.4], fov: 52 },
+    { t: 17.0, pos: [TWX + 0.1, 1.5, -26.5], look: [TWX - 0.15, 1.5, -28.4], fov: 50, ease: "out" },
+    { t: 18.4, pos: [TWX + 0.9, 3.2, -23.6], look: [TWX, 3.6, -33], fov: 56, ease: "in" },
+  ])(t); return c; } });
 
 export const SHOTS = S;
 export const shotAt = at;

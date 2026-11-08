@@ -18,6 +18,7 @@ import { Pen, bodyFront, Outfit } from "../videos/dead/toon";
 import { N8AOPostPass } from "n8ao";
 import { Grain } from "../videos/dead/inserts";
 import { Shot, ActorDef, V3, smooth } from "./camera";
+import { DirBlurEffect } from "./dirblur";
 
 export type WorldLike<L extends string> = { root: THREE.Group; fog: THREE.Fog; set(o: { light: L; t: number; cam: V3; look: V3; shadowR?: number }): void };
 export type ShortConfig<L extends string> = {
@@ -72,7 +73,7 @@ class Card {
 const tmp = new THREE.Vector3(), fwd = new THREE.Vector3(), fpt = new THREE.Vector3(), dbs = new THREE.Vector2();
 const MS = Number((getInputProps() as { ms?: number }).ms ?? 4);
 const ON = () => ({ ao: true, lens: true, bloom: true, shadows: true, ...((getInputProps() as { post?: Record<string, boolean> }).post ?? {}) });
-type FX = { ink: InkPass; ao: { configuration: Record<string, unknown> }; lens: LensBlur; bloom: BloomEffect; tone: ToneMappingEffect; grade: GradeEffect };
+type FX = { mb: DirBlurEffect; ink: InkPass; ao: { configuration: Record<string, unknown> }; lens: LensBlur; bloom: BloomEffect; tone: ToneMappingEffect; grade: GradeEffect };
 
 /** pose the world, the camera, the character cards and the post effects for one shot at time t */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -107,6 +108,11 @@ const pose = (C: ShortConfig<any>, W: WorldLike<any>, cam: THREE.PerspectiveCame
   fx.lens.focus = Math.max(0.3, fpt.sub(cam.position).dot(fwd));
   fx.lens.cInf = shot.dof;
   fx.grade.set(C.grades[shot.light]);
+  // motion blur from the camera's screen-space motion over half a frame (180 deg shutter)
+  const pc = shot.cam(Math.max(shot.a, t - 1 / 60), (Math.max(shot.a, t - 1 / 60) - shot.a) / (shot.b - shot.a));
+  tmp.set(...pc.look).project(cam);
+  const bx = -tmp.x * 0.5, by = -tmp.y * 0.5, bl = Math.hypot(bx, by);
+  if (bl > 0.006) fx.mb.set(bx, by); else fx.mb.set(0, 0);
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -124,6 +130,7 @@ const Inner: React.FC<{ t: number; C: ShortConfig<any>; W: WorldLike<any> }> = (
     bloom: makeBloom(C.bloom),
     tone: new ToneMappingEffect({ mode: ToneMappingMode.NEUTRAL }),
     grade: new GradeEffect(Object.values(C.grades)[0] as GradeParams, 1),
+    mb: new DirBlurEffect(),
   }), [camera, scene]);
   useEffect(() => () => { try { (fx.ink as unknown as { dispose?: () => void }).dispose?.(); } catch { /* disposed by the composer */ } }, [fx]);
   const composer = useRef<{ render: (d?: number) => void } | null>(null);
@@ -154,6 +161,7 @@ const Inner: React.FC<{ t: number; C: ShortConfig<any>; W: WorldLike<any> }> = (
       {([on.ao ? <primitive key="ao" object={fx.ao} dispose={null} /> : null, <primitive key="ink" object={fx.ink} dispose={null} />,
         on.lens ? <primitive key="pre" object={fx.lens.pre} dispose={null} /> : null,
         on.lens ? <primitive key="main" object={fx.lens.main} dispose={null} /> : null,
+        <primitive key="mb" object={fx.mb} dispose={null} />,
         on.bloom ? <primitive key="bloom" object={fx.bloom} dispose={null} /> : null,
         <primitive key="tone" object={fx.tone} dispose={null} />,
         <primitive key="grade" object={fx.grade} dispose={null} />].filter(Boolean) as unknown as JSX.Element)}

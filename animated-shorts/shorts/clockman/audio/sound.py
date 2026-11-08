@@ -92,19 +92,27 @@ def crunch(k=1.0):
 def hiss(d=0.9):
     tt = t_(d); return hp(rng.standard_normal(len(tt)), 3000) * np.sin(np.pi * tt / d) ** 0.5 * env(len(tt), 0.02, 0.2)
 
+def crash(k=1.0):   # ceiling tiles breaking: a dull thump plus brittle cracks
+    tt = t_(0.6); th = lp(rng.standard_normal(len(tt)), 300) * np.exp(-tt * 14) * 1.5; cr = np.zeros(len(tt))
+    for _ in range(40):
+        i = int(rng.uniform(0, 0.35) * SR); n = int(0.01 * SR)
+        if i + n < len(cr): cr[i:i + n] += bp(rng.standard_normal(n), 1500, 6000) * rng.uniform(0.3, 1)
+    return (th + cr) * k
+
 sfx = np.zeros(N)
-OFFICE = [(0, 2.2), (3.75, 13.2)]
+OFFICE = [(0, 2.15), (3.75, 13.2)]
 for a, b in OFFICE:
     for at in np.arange(a + 0.1, b, 0.5):
         if not (7.4 <= at <= 9.2): place(sfx, tick(0.5 if int(at * 2) % 2 else 0.35), float(at))
 for at in np.arange(7.4, 9.2, 0.045): place(sfx, tick(0.35, 2400), float(at + rng.uniform(0, 0.01)))   # winding ratchet
-place(sfx, wind(1.8), 2.1, 0.35); place(sfx, murmur(1.6), 2.2, 0.12)
+place(sfx, wind(1.8), 2.05, 0.35); place(sfx, murmur(1.6), 2.15, 0.12)
 place(sfx, wind(5.4), 13.1, 0.4); place(sfx, murmur(3.6), 14.7, 0.14)
 place(sfx, bell(196, 3.2), 13.25, 0.5); place(sfx, bell(392, 2.0), 13.25, 0.15)   # the town clock's last, dying chime
-place(sfx, steps(0.9, 3.6), 10.95, 0.4); place(sfx, hiss(0.9), 11.35, 0.12)
-for at in np.arange(14.9, 16.6, 0.32): place(sfx, crunch(rng.uniform(0.6, 1.0)), float(at), 0.35)
-for at in (2.2, 3.75, 7.2, 9.95, 13.2, 14.75): place(sfx, whoosh(0.4), at - 0.2, 0.12)
-place(sfx, whoosh(0.7), 12.2, 0.45)   # launched on "fired"
+place(sfx, steps(0.65, 3.6), 10.9, 0.4); place(sfx, hiss(0.9), 11.35, 0.12)
+for at in np.arange(16.0, 16.85, 0.3): place(sfx, crunch(rng.uniform(0.6, 1.0)), float(at), 0.35)
+for at in (2.15, 3.75, 7.2, 9.95, 10.9, 13.2, 14.75, 16.0): place(sfx, whoosh(0.4), at - 0.2, 0.1)
+place(sfx, whoosh(0.3), 12.02, 0.3)    # whip pan to Walter
+place(sfx, whoosh(0.6), 12.26, 0.45); place(sfx, crash(), 12.33, 0.5)   # launched through the ceiling on "fired"
 sfx = reverb(sfx, 1.2, 0.22)
 
 # ---------------- music: light, curious plucks over a soft bass and a ticking pulse ----------------
