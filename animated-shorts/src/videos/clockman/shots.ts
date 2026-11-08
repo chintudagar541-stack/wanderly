@@ -41,7 +41,7 @@ add({ a: 0, b: 2.2, light: "office", dof: 9, focus: W_HEAD, shadowR: 7,
 const crowd = (t: number, look = true): ActorDef[] => ([
   ["w1", -1.6, -31.2], ["m1", 0.2, -30.6], ["m2", 1.7, -31.4], ["w2", -0.6, -33.2], ["m3", 1.0, -33.6], ["m2b", -2.6, -33.0], ["w1b", 2.8, -32.4],
 ] as [string, number, number][]).map(([who, x, z], i) => ({ who: who.replace(/b$/, ""), pos: [TWX + x, 0, z] as V3, scale: 0.78,
-  opts: { mode: "stand", expr: i % 3 === 0 ? "nervous" : i % 3 === 1 ? "dazed" : "shock", question: look && Math.sin(t * 3 + i) > -0.6, headTilt: (i % 2 ? 1 : -1) * 6 } as FrontOpts }));
+  opts: { mode: "stand", facing: i % 2 ? 1 : -1, phase: t + i * 0.7, blink: Math.sin(t * 2.3 + i * 1.7) > 0.96, expr: i % 3 === 0 ? "nervous" : i % 3 === 1 ? "dazed" : "shock", question: look && Math.sin(t * 3 + i) > -0.6, headTilt: (i % 2 ? 1 : -1) * 6 } as FrontOpts }));
 add({ a: 2.2, b: 3.75, dis: 0.25, light: "night", dof: 5, shadowR: 14, actors: (t) => crowd(t),
   cam: path([
     { t: 2.2, pos: [TWX + 0.6, 9.6, -39.5], look: [TWX, 9.0, -44.3], fov: 52 },
@@ -60,7 +60,7 @@ add({ a: 3.75, b: 7.2, dis: 0.25, light: "office", dof: 10, focus: W_HEAD, shado
 // ---------- 4. 7.2-9.95 office: from the spinning clock face, pull back + down to Walter on a chair winding it
 const W_UP: V3 = [OX - 0.45, 0.47, -2.62];
 add({ a: 7.2, b: 9.95, dis: 0.2, light: "office", dof: 12, focus: [WALLCLOCK[0] - 0.3, 2.1, -2.8], shadowR: 7,
-  actors: (t) => [{ who: "walter", pos: W_UP, scale: 0.78, yaw: 0.25, opts: { mode: "stand", expr: t < 9.3 ? "grin" : "smile_closed", prop: t < 9.2 ? "point" : null, phase: t * 3 } }],
+  actors: (t) => [{ who: "walter", pos: W_UP, scale: 0.78, yaw: 0.25, opts: { mode: "stand", facing: 1, expr: t < 9.3 ? "grin" : "smile_closed", prop: t < 9.2 ? "point" : null, phase: t } }],
   cam: path([
     { t: 7.2, pos: [WALLCLOCK[0] + 0.15, WALLCLOCK[1] + 0.05, -1.75], look: [WALLCLOCK[0], WALLCLOCK[1], WALLCLOCK[2]], fov: 50 },
     { t: 8.3, pos: [WALLCLOCK[0] + 0.45, 2.1, -1.2], look: [WALLCLOCK[0] - 0.45, 2.1, -2.9], fov: 54 },
@@ -77,7 +77,7 @@ add({ a: 9.95, b: 10.9, dis: 0.2, light: "office", dof: 10, focus: W_HEAD, shado
 // ---------- 5b. 10.9-11.9 office: Walter's view: the boss strides in from the door and boils ("his boss caught him asleep")
 const bossPos = (t: number): V3 => { const u = smooth((t - 10.6) / 1.2); return [lerp(OX + 1.6, OX + 0.95, u), 0, lerp(1.9, -0.9, u)]; };
 add({ a: 10.9, b: 11.9, light: "office", dof: 8, focus: [OX + 1.1, 1.5, -0.6], shadowR: 8,
-  actors: (t) => [{ who: "boss", pos: bossPos(t), scale: 0.82, opts: { mode: t < 11.75 ? "stroll" : "stand", phase: t * 1.6, expr: "stern", angry: ramp(t, 11.1, 11.6), steam: t > 11.35 ? 1 : 0 } }],
+  actors: (t) => [{ who: "boss", pos: bossPos(t), scale: 0.82, opts: { mode: t < 11.75 ? "stroll" : "stand", facing: -1, phase: t * 1.6, expr: "stern", angry: ramp(t, 11.1, 11.6), steam: t > 11.35 ? 1 : 0 } }],
   cam: path([
     { t: 10.9, pos: [OX + 0.1, 1.15, -2.2], look: [OX + 1.3, 1.45, 0.6], fov: 58 },
     { t: 11.9, pos: [OX + 0.2, 1.1, -2.0], look: [OX + 1.05, 1.6, -0.4], fov: 52, ease: "out" },
@@ -108,16 +108,17 @@ add({ a: 13.2, b: 14.75, dis: 0.25, light: "night", dof: 4, shadowR: 16, actors:
   ]) });
 
 // ---------- 8. 14.75-18.4 town: Walter walks into the puzzled crowd, grinning; crane up to the whole town ("He was winding the whole town")
+const walterX = (t: number) => lerp(TWX - 1.4, TWX + 0.4, ramp(t, 14.6, 16.6));
 const finale = (t: number): ActorDef[] => [
   ...crowd(t),
-  { who: "walter", pos: [TWX + 0.4, 0, lerp(-26.2, -28.2, smooth((t - 14.75) / 2))], scale: 0.78, opts: { mode: t < 16.6 ? "stroll" : "stand", phase: t * 1.5, expr: t < 15.9 ? "smile" : "grin", prop: t > 16.4 ? "point" : null } },
+  { who: "walter", pos: [walterX(t), 0, -27.6], scale: 0.78, opts: { mode: t < 16.5 ? "stroll" : "stand", facing: t < 16.5 ? 1 : 0, phase: t * 1.6, expr: t < 15.9 ? "smile" : "grin", prop: t > 16.4 ? "point" : null } },
 ];
 add({ a: 14.75, b: 18.4, dis: 0.2, light: "night", dof: 6, focus: [TWX + 0.4, 1.4, -27.5], shadowR: 16, actors: finale,
-  cam: path([
+  cam: (t: number) => { const c = path([
     { t: 14.75, pos: [TWX + 1.2, 1.25, -23.6], look: [TWX + 0.3, 1.35, -27.6], fov: 58 },
     { t: 16.3, pos: [TWX + 0.6, 1.5, -24.8], look: [TWX + 0.4, 1.4, -28.2], fov: 50 },
     { t: 18.4, pos: [TWX + 3.5, 13, -10], look: [TWX, 5.5, -40], fov: 62, ease: "in" },
-  ]) });
+  ])(t), w = 1 - ramp(t, 16.2, 17.2), dx = (walterX(t) - TWX - 0.4) * w; return { ...c, pos: [c.pos[0] + dx * 0.85, c.pos[1], c.pos[2]], look: [c.look[0] + dx, c.look[1], c.look[2]] }; } });
 
 export const SHOTS = S;
 export const shotAt = at;

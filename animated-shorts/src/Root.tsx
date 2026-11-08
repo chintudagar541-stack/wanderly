@@ -9,6 +9,7 @@ import { EiffelShort, EIFFEL_FRAMES } from "./videos/eiffel/Eiffel";
 import { ShadowShort, SHADOW_FRAMES } from "./videos/shadow/Shadow";
 import { CapitalShort, CAPITAL_FRAMES } from "./videos/capital/Capital";
 import { ToonTest } from "./videos/capital/ToonTest";
+import { WalkTest } from "./videos/capital/WalkTest";
 import { Diwali2Short, DIWALI2_FRAMES } from "./videos/diwali2/Diwali2";
 import { TextureSheet } from "./lib3d/TextureSheet";
 import { LookdevShort, LOOKDEV_FRAMES } from "./videos/lookdev/Lookdev";
@@ -22,6 +23,7 @@ export const RemotionRoot: React.FC = () => (
     <Composition id="ClockmanShort" component={ClockmanShort} durationInFrames={CLOCKMAN_FRAMES} fps={30} width={1080} height={1920} />
     <Composition id="Diwali2Short" component={Diwali2Short} durationInFrames={DIWALI2_FRAMES} fps={30} width={1080} height={1920} />
     <Composition id="ToonTest" component={ToonTest} durationInFrames={1} fps={30} width={1080} height={2400} />
+    <Composition id="WalkTest" component={WalkTest} durationInFrames={1} fps={30} width={1080} height={966} />
     <Composition id="CapitalShort" component={CapitalShort} durationInFrames={CAPITAL_FRAMES} fps={30} width={1080} height={1920} />
     <Composition id="ShadowShort" component={ShadowShort} durationInFrames={SHADOW_FRAMES} fps={30} width={1080} height={1920} />
     <Composition id="EiffelShort" component={EiffelShort} durationInFrames={EIFFEL_FRAMES} fps={30} width={1080} height={1920} />

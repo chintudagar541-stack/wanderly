@@ -725,8 +725,9 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts): FrontInfo => {
   const tall = (1 + Bd.torso + Bd.legs) * HH, sole = 975;
   // body bob 5 % (march) / 3 % (stroll) of the height, lowest at contact (phase 0 and 0.5)
   const bob = mode === "march" ? 0.025 * tall * Math.cos(2 * two * phase) : mode === "stroll" ? 0.015 * tall * Math.cos(2 * two * phase)
-    : mode === "run" ? 0.02 * tall * Math.cos(2 * two * phase) : 0;
-  const torsoBot = mode === "sit" ? sole - 0.2 * HH : mode === "sitFeetUp" ? sole - 0.62 * HH : mode === "sitFloor" ? sole - 0.14 * HH
+    : mode === "run" ? 0.02 * tall * Math.cos(2 * two * phase) : mode === "stand" || mode === "sit" ? 0.004 * tall * Math.sin(two * phase * 0.35) : 0;
+  const profSit = facing !== 0 && !o.dress && mode === "sit";
+  const torsoBot = profSit ? sole - 0.62 * HH : mode === "sit" ? sole - 0.2 * HH : mode === "sitFeetUp" ? sole - 0.62 * HH : mode === "sitFloor" ? sole - 0.14 * HH
     : mode === "kneel" ? sole - 0.6 * HH : mode === "jump" ? sole - Bd.legs * HH - 0.3 * HH : mode === "run" ? sole - 0.94 * Bd.legs * HH + bob
     : sole - Bd.legs * HH + bob;
   const chin = torsoBot - Bd.torso * HH, hc = chin - H.b, crown = hc - H.b, hipY = torsoBot - 0.12 * HH;
@@ -738,7 +739,31 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts): FrontInfo => {
   const frontLegs: (() => void)[] = [];
   // ---- legs + feet (not rotated) ----
   p.rot = null;
-  if (mode === "sitFeetUp") {
+  // 3/4 profile legs (facing != 0), matched to the reference shorts: walking legs scissor forward/back with a bent knee
+  // and heel-toe feet; sitting legs show the thigh level toward the facing side and the shin straight down.
+  const prof = facing !== 0 && !dressed && (mode === "stroll" || mode === "march" || mode === "sit" || mode === "stand");
+  if (prof && mode === "sit") {
+    const d = facing;
+    for (const [k, dx] of [[0, -5], [1, 5]] as const) {
+      const h: P2 = [300 - d * 6 * u + dx * u, hipY + 0.05 * HH], kn: P2 = [300 + d * 0.78 * HH + dx * u, hipY + 0.06 * HH], an: P2 = [kn[0] - d * 2 * u, sole - 6 * u];
+      p.stroke([h, kn, an], legW, k ? legCol : mix(legCol, INK, 0.25));
+      footStroke(p, [an[0] - d * 2 * u, an[1]], [an[0] + d * 14 * u, an[1] + 1 * u], footW, footCol);
+    }
+  } else if (prof) {
+    const d = facing, Lg = sole - hipY;
+    const str = mode === "stand" ? 0 : mode === "march" ? 0.34 : 0.3;
+    const legs = ([[0, 0], [1, 0.5]] as const).map(([k, ph]) => {
+      const ang = two * (phase + ph), sw = Math.sin(ang), lift = Math.max(0, Math.cos(ang)) * (mode === "stand" ? 0 : 0.11 * Lg);
+      const fx = 300 + d * (str * Lg * sw + (mode === "stand" ? (k ? 7 : -7) * u : 0)), fy = sole - 4 * u - lift;
+      const kn: P2 = [(300 + fx) / 2 + d * (0.05 * Lg + lift * 0.95), (hipY + fy) / 2 - lift * 0.2];
+      return { k, fx, fy, kn, lift, sw };
+    }).sort((A, B) => B.sw * d - A.sw * d); // the far (back) leg first
+    for (const L of legs) {
+      p.stroke(curve([300, hipY], L.kn, [L.fx, L.fy]), legW, L.k ? legCol : mix(legCol, INK, 0.2));
+      const toeUp = L.lift > 0 ? -4 * u : L.sw * d > 0.3 ? -3 * u : 1 * u;
+      footStroke(p, [L.fx - d * 3 * u, L.fy], [L.fx + d * 14 * u, L.fy + toeUp], footW, footCol);
+    }
+  } else if (mode === "sitFeetUp") {
     frontLegs.push(() => {
       for (const side of [-1, 1]) {
         const h: P2 = [300 + side * 16 * u, torsoBot - 0.1 * HH], k: P2 = [300 + side * 30 * u, torsoBot + 0.08 * HH], a: P2 = [300 + side * 36 * u, sole - 0.36 * HH];
@@ -821,7 +846,7 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts): FrontInfo => {
   const T: Blob = { a: ((Bd.tw / 2) * W) / 1.06, b: 0.5 * (torsoBot - (chin - 0.25 * HH)), nTop: 2.2, nBot: 2.6, egg: o.build === "stout" ? 0.17 : 0.12,
     asym: 0.04 * facing, rot: 0, noise: 0.006, seed: seed + 7 };
   const tcx = 300 + 3 * u * facing, tcy = torsoBot - T.b, tp = blobPts(tcx, tcy, T);
-  const sh = (side: number): P2 => [tcx + side * 0.85 * T.a, chin + 0.12 * HH];
+  const sh = (side: number): P2 => [tcx + side * (prof ? 0.4 : 0.85) * T.a, chin + 0.12 * HH];
   const hang = (side: number, fwd: number): [P2, P2, P2] => {
     const S = sh(side), ex = tcx + side * (1.12 * T.a + 4 * u);
     const hx = ex + side * 3 * u - side * 6 * u * Math.max(0, fwd) + side * 4 * u * Math.max(0, -fwd);
@@ -842,6 +867,10 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts): FrontInfo => {
       const Hd = lerp2([tcx + side * (1.3 * T.a + 34 * u), S[1] + 0.62 * HH], [tcx + side * 0.15 * T.a, S[1] - 0.02 * HH], k);
       return { pts: [S, E, Hd], front: f > 0 };
     }
+    if (prof && (mode === "stroll" || mode === "march")) { // arms swing along the walk, opposite to the legs
+      const k = side * Math.sin(two * phase) * facing;
+      return { pts: [S, [S[0] + k * 0.14 * HH, S[1] + 0.46 * HH], [S[0] + k * 0.32 * HH, S[1] + 0.86 * HH]], front: side === facing };
+    }
     if (mode === "jump") return { pts: [S, [tcx + side * (1.12 * T.a + 16 * u), S[1] - 0.24 * HH], [tcx + side * (1.25 * T.a + 34 * u), S[1] - 0.72 * HH]], front: false };
     if (mode === "lean") return { pts: [S, [tcx + side * (1.12 * T.a + 16 * u), S[1] + 0.4 * HH], [300 + side * 22 * u, S[1] + 0.5 * HH]], front: true };
     if (mode === "sitFeetUp") return { pts: [S, [tcx + side * (1.1 * T.a + 6 * u), S[1] + 0.44 * HH], [300 + side * 12 * u, torsoBot - 0.3 * HH]], front: true };
@@ -856,7 +885,9 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts): FrontInfo => {
   const shovelG = lerp2([X(-14), Y(44)], [X(-30), Y(70)], kTool), shovelB = lerp2([X(58), sole - 36 * u], [X(86), Y(6)], kTool);
   const drumC: P2 = [300, torsoBot - 0.16 * HH], drumL = 56 * u, drumR = 21 * u;
   const broomT: P2 = [X(26), Y(26)], broomB: P2 = [X(-40), sole - 30 * u];
-  if (mode === "sit" && prop !== "newspaper" && prop !== "cash" && prop !== "letter" && !np) for (const side of [-1, 1]) arms.push({ pts: [sh(side), [tcx + side * (1.1 * T.a + 6 * u), sh(side)[1] + 0.4 * HH], [tcx + side * (1.2 * T.a + 10 * u), torsoBot + 0.04 * HH]], front: false });
+  if (prof && mode === "sit" && prop !== "newspaper" && prop !== "cash" && prop !== "letter" && !np) for (const side of [-1, 1]) { const S = sh(side);
+    arms.push({ pts: [S, [S[0] + facing * 0.1 * HH, S[1] + 0.44 * HH], [300 + facing * (0.6 + 0.06 * side) * HH, hipY - 0.02 * HH]], front: true }); }
+  else if (mode === "sit" && prop !== "newspaper" && prop !== "cash" && prop !== "letter" && !np) for (const side of [-1, 1]) arms.push({ pts: [sh(side), [tcx + side * (1.1 * T.a + 6 * u), sh(side)[1] + 0.4 * HH], [tcx + side * (1.2 * T.a + 10 * u), torsoBot + 0.04 * HH]], front: false });
   else if (mode === "fall") for (const side of [-1, 1]) arms.push({ pts: [sh(side), [tcx + side * (1.15 * T.a + 12 * u), sh(side)[1] - 0.25 * HH], [tcx + side * (1.3 * T.a + 24 * u), sh(side)[1] - 0.68 * HH]], front: false });
   else {
     arms.push(prop === "shako" ? { pts: hang(-1, 0), front: false } : defArm(-1));
