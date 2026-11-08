@@ -1,0 +1,12 @@
+[lib] model Sofa_01 1
+[lib] model CoffeeTable_01 1
+[lib] model Shelf_01 1
+[lib] built realize 75 frames 5s 65 objects
+Blender 4.2.3 LTS (hash 0e22e4fcea03 built 2024-10-14 23:31:34)
+Saved: '/home/runner/work/wanderly/wanderly/out/realize.png'
+Time: 08:37.90 (Saving: 00:00.94)
+
+[lib] rendered /home/runner/work/wanderly/wanderly/out/realize.png 518s
+[lib] saved /home/runner/work/wanderly/wanderly/out/realize.jpg
+
+Blender quit
