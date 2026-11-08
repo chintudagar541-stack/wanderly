@@ -1,0 +1,32 @@
+[lib] model modular_industrial_pipes_01 8
+[lib] model Barrel_01 1
+Blender 4.2.3 LTS (hash 0e22e4fcea03 built 2024-10-14 23:31:34)
+Error: Failed to read blend file '/tmp/ph/overhead_crane/overhead_crane_1k.blend', not a blend file
+[lib] model failed ['overhead_crane'] Error: Failed to read blend file '/tmp/ph/overhead_crane/overhead_crane_1k.blend', not a blend file
+
+Traceback (most recent call last):
+  File "/home/runner/work/wanderly/wanderly/blender/run.py", line 12, in <module>
+    scenes.SCENES[name]()
+  File "/home/runner/work/wanderly/wanderly/blender/scenes.py", line 296, in factory
+    character('worker', (-.6, -2.2, 0), face='angry', look_at=(-1.4, -8, 0), props=[{'type': 'brush', 'hand': 'R'}])
+  File "/home/runner/work/wanderly/wanderly/blender/chars.py", line 68, in character
+    body = lathe(name + '_body', prof, seg=48, m=body_mat(name), sy=.82)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/wanderly/wanderly/blender/lib.py", line 371, in lathe
+    for i in range(seg): bm.faces.new((A[0], Bq[(i + 1) % seg], Bq[i]))
+                                             ~~^^^^^^^^^^^^^^^
+IndexError: list index out of range
+Traceback (most recent call last):
+  File "/home/runner/work/wanderly/wanderly/blender/run.py", line 12, in <module>
+    scenes.SCENES[name]()
+  File "/home/runner/work/wanderly/wanderly/blender/scenes.py", line 296, in factory
+    character('worker', (-.6, -2.2, 0), face='angry', look_at=(-1.4, -8, 0), props=[{'type': 'brush', 'hand': 'R'}])
+  File "/home/runner/work/wanderly/wanderly/blender/chars.py", line 68, in character
+    body = lathe(name + '_body', prof, seg=48, m=body_mat(name), sy=.82)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/wanderly/wanderly/blender/lib.py", line 371, in lathe
+    for i in range(seg): bm.faces.new((A[0], Bq[(i + 1) % seg], Bq[i]))
+                                             ~~^^^^^^^^^^^^^^^
+IndexError: list index out of range
+
+Blender quit

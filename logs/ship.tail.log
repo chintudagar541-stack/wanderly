@@ -1,0 +1,45 @@
+Traceback (most recent call last):
+  File "/home/runner/work/wanderly/wanderly/blender/run.py", line 12, in <module>
+    scenes.SCENES[name]()
+  File "/home/runner/work/wanderly/wanderly/blender/scenes.py", line 159, in ship
+    env.steamship((25, 70, 1.0), math.radians(-12))
+  File "/home/runner/work/wanderly/wanderly/blender/env.py", line 381, in steamship
+    P(cyl('ftop', 1.52, 1.4, (fx, 0, D + 7.2 + 8.3), S('#111', .6), seg=40))
+                                                     ^^^^^^^^^^^^^
+  File "/home/runner/work/wanderly/wanderly/blender/env.py", line 45, in S
+    if k not in _T: _T[k] = mat('m' + col, col, rough=rough, **kw)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/wanderly/wanderly/blender/lib.py", line 205, in mat
+    b.inputs['Base Color'].default_value = (*lin(color), 1); b.inputs['Roughness'].default_value = rough
+                                             ^^^^^^^^^^
+  File "/home/runner/work/wanderly/wanderly/blender/lib.py", line 18, in lin
+    c = c.lstrip('#'); c = tuple(int(c[i:i + 2], 16) / 255 for i in (0, 2, 4))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/wanderly/wanderly/blender/lib.py", line 18, in <genexpr>
+    c = c.lstrip('#'); c = tuple(int(c[i:i + 2], 16) / 255 for i in (0, 2, 4))
+                                 ^^^^^^^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 16: ''
+Blender 4.2.3 LTS (hash 0e22e4fcea03 built 2024-10-14 23:31:34)
+Traceback (most recent call last):
+  File "/home/runner/work/wanderly/wanderly/blender/run.py", line 12, in <module>
+    scenes.SCENES[name]()
+  File "/home/runner/work/wanderly/wanderly/blender/scenes.py", line 159, in ship
+    env.steamship((25, 70, 1.0), math.radians(-12))
+  File "/home/runner/work/wanderly/wanderly/blender/env.py", line 381, in steamship
+    P(cyl('ftop', 1.52, 1.4, (fx, 0, D + 7.2 + 8.3), S('#111', .6), seg=40))
+                                                     ^^^^^^^^^^^^^
+  File "/home/runner/work/wanderly/wanderly/blender/env.py", line 45, in S
+    if k not in _T: _T[k] = mat('m' + col, col, rough=rough, **kw)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/wanderly/wanderly/blender/lib.py", line 205, in mat
+    b.inputs['Base Color'].default_value = (*lin(color), 1); b.inputs['Roughness'].default_value = rough
+                                             ^^^^^^^^^^
+  File "/home/runner/work/wanderly/wanderly/blender/lib.py", line 18, in lin
+    c = c.lstrip('#'); c = tuple(int(c[i:i + 2], 16) / 255 for i in (0, 2, 4))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/wanderly/wanderly/blender/lib.py", line 18, in <genexpr>
+    c = c.lstrip('#'); c = tuple(int(c[i:i + 2], 16) / 255 for i in (0, 2, 4))
+                                 ^^^^^^^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 16: ''
+
+Blender quit
