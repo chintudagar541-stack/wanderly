@@ -1,0 +1,9 @@
+{"fps": 24, "end": 83.4, "voice": "blender/audio/last_human.mp3", "shots": [
+ ["wake", 0.00, 2.10], ["drone", 2.10, 5.30], ["nopeople", 5.30, 6.55], ["notraffic", 6.55, 7.85], ["nocalls", 7.85, 9.45],
+ ["silence", 9.45, 10.90], ["dream", 10.90, 13.20], ["run", 13.20, 17.90], ["knock", 17.90, 19.60], ["emptymarket", 19.60, 21.62],
+ ["tv", 21.62, 25.12], ["call", 25.12, 27.62], ["realize", 27.62, 30.75], ["electric", 30.75, 32.45], ["internet", 32.45, 34.42],
+ ["clocks", 34.42, 38.06], ["explore", 38.06, 39.97], ["supermarket", 39.97, 42.60], ["hotel", 42.60, 45.45], ["rooftop", 45.45, 50.10],
+ ["weeks", 50.10, 53.20], ["curb", 53.20, 55.10], ["mannequin", 55.10, 58.77], ["yourname", 58.77, 61.05], ["paint", 61.05, 63.37],
+ ["buildingmsg", 63.37, 64.80], ["tvmsg", 64.80, 66.05], ["radiomic", 66.05, 67.63], ["hoping", 67.63, 70.19], ["oldradio", 70.19, 73.10],
+ ["hearvoice", 73.10, 74.41], ["humanvoice", 74.41, 75.99], ["itsays", 75.99, 77.09], ["foundyou", 77.09, 79.77], ["silent", 79.77, 83.40]
+]}

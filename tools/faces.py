@@ -96,11 +96,23 @@ FACES = {  # eyes, brow tilt (+ = inner end up), brow lift, mouth, look, extras
   'talk':    ('dot', 0.15, 0.03, 'talk', (0, 0), ''),
   'sideeye': ('half', -0.1, 0.0, 'flat', (1, 0), ''),
   'calm':    ('dot', 0.05, 0.0, 'smile', (0, 0), ''),
+  'blink':   ('closed', 0.0, 0.0, 'flat', (0, 0), ''),
+  'sleepy':  ('closed', 0.2, 0.0, 'wobble', (0, 0), ''),
+  'lonely':  ('half', 0.55, 0.02, 'flat', (0, .7), ''),
+  'hopeful': ('dot', 0.45, 0.05, 'smile', (.3, -.5), ''),
+  'scared':  ('wide', 0.55, 0.08, 'wobble', (0, 0), 'sweat'),
+  'gasp':    ('wide', 0.35, 0.07, 'o', (0, 0), ''),
+  'lookl':   ('dot', 0.05, 0.0, 'flat', (-1, 0), ''),
+  'lookr':   ('dot', 0.05, 0.0, 'flat', (1, 0), ''),
+  'laugh':   ('arc', 0.35, 0.05, 'talk', (0, 0), ''),
+  'none':    (None, 0.0, 0.0, None, (0, 0), 'blank'),
 }
+ORDER = list(FACES)
 
 def face(name, mustache_on=False):
     eyes, tilt, lift, m, look, ex = FACES[name]
     img = Image.new('RGBA', (S, S), (0, 0, 0, 0)); d = ImageDraw.Draw(img)
+    if ex == 'blank': return img.resize((1024, 1024), Image.LANCZOS)
     for s in (-1, 1):
         eye(d, s, eyes, look)
         brow(d, s, tilt, lift, 60 + s)
@@ -113,4 +125,8 @@ if __name__ == '__main__':
     os.makedirs(f'{OUT}/faces', exist_ok=True)
     for n in FACES:
         face(n).save(f'{OUT}/faces/{n}.png'); face(n, True).save(f'{OUT}/faces/{n}_mustache.png')
+    for v, mo in (('plain', False), ('mustache', True)):
+        os.makedirs(f'{OUT}/faceseq/{v}', exist_ok=True)
+        for i, n in enumerate(ORDER): face(n, mo).save(f'{OUT}/faceseq/{v}/f_{i + 1:04d}.png')
+    import json; json.dump(ORDER, open(f'{OUT}/faceseq/order.json', 'w'))
     print('faces', len(FACES))

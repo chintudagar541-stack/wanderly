@@ -5,7 +5,7 @@ name: Blender previews
 on:
   push:
     branches: [claude/blender-previews]
-    paths: ['blender/**', 'tools/**', '.github/workflows/blender-previews.yml']
+    paths: ['blender/jobs.json']
   workflow_dispatch:
 permissions:
   contents: write
