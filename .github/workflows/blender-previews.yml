@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs: { scenes: '${{ steps.p.outputs.scenes }}', draft: '${{ steps.p.outputs.draft }}' }
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - id: p
         run: |
           echo "scenes=$(jq -c .scenes blender/jobs.json)" >> $GITHUB_OUTPUT
@@ -30,7 +30,7 @@ jobs:
       fail-fast: false
       matrix: { scene: '${{ fromJson(needs.plan.outputs.scenes) }}' }
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/cache@v4
         id: bcache
         with: { path: '${{ env.BLENDER }}', key: '${{ env.BLENDER }}' }
@@ -56,7 +56,7 @@ jobs:
     if: always()
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/download-artifact@v4
         with: { path: art }
       - run: |

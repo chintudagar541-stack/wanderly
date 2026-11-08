@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs: { jobs: '${{ steps.p.outputs.jobs }}', film: '${{ steps.p.outputs.film }}', mode: '${{ steps.p.outputs.mode }}', samples: '${{ steps.p.outputs.samples }}' }
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - id: p
         run: |
           F=$(jq -r .film blender/film.json); M=$(jq -r .mode blender/film.json); C=$(jq -r .chunk blender/film.json); O=$(jq -r .only blender/film.json)
@@ -33,7 +33,7 @@ jobs:
       max-parallel: 20
       matrix: { job: '${{ fromJson(needs.plan.outputs.jobs) }}' }
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/cache@v4
         id: bcache
         with: { path: '${{ env.BLENDER }}', key: '${{ env.BLENDER }}' }
@@ -78,7 +78,7 @@ jobs:
     if: needs.plan.outputs.mode == 'video'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/download-artifact@v4
         with: { path: art, pattern: 'chunk-*', merge-multiple: true }
       - run: |
