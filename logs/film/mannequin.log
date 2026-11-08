@@ -1,0 +1,15 @@
+[lib] model WoodenTable_01 1
+[lib] model WoodenChair_01 1
+Blender 4.2.3 LTS (hash 0e22e4fcea03 built 2024-10-14 23:31:34)
+Traceback (most recent call last):
+  File "/home/runner/work/wanderly/wanderly/blender/render_film.py", line 22, in <module>
+    t = time.time(); mod.SHOTS[shot](n); lib.log('built', shot, n, 'frames', f'{time.time() - t:.0f}s', len(bpy.data.objects), 'objects')
+                     ^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/wanderly/wanderly/blender/film_last_human.py", line 563, in mannequin
+    mq = mannequin((-3.3, 6.4, .28), -90)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: mannequin() takes 1 positional argument but 2 were given
+
+Error: script failed, file: 'blender/render_film.py', exiting.
+
+Blender quit
