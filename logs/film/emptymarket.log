@@ -1,0 +1,16 @@
+[lib] model food_apple_01 1
+[lib] model lemon 1
+[lib] model yellow_onion 1
+[lib] model food_lime_01 1
+[lib] model sweet_potato 1
+[lib] model food_pomegranate_01 1
+[lib] model CoffeeCart_01 3
+[lib] built emptymarket 49 frames 14s 2900 objects
+Blender 4.2.3 LTS (hash 0e22e4fcea03 built 2024-10-14 23:31:34)
+Saved: '/home/runner/work/wanderly/wanderly/out/emptymarket.png'
+Time: 09:28.06 (Saving: 00:00.77)
+
+[lib] rendered /home/runner/work/wanderly/wanderly/out/emptymarket.png 568s
+[lib] saved /home/runner/work/wanderly/wanderly/out/emptymarket.jpg
+
+Blender quit
