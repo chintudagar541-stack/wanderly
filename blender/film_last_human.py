@@ -347,7 +347,7 @@ def set_rooftop():
         box('parapet', (sx, sy, 1.0), (-60 + dx, -60 + dy, H + .9), T('concrete', 1.5))
     wt = cyl('watertank', 1.4, 2.4, (-64, -56, H + 3.6), T('planks', 1, '#7a5a3a'), seg=24); cyl('wtroof', 1.5, .8, (-64, -56, H + 5.2), S('#3a3a3a', .6), seg=24, r2=.1)
     for dx, dy in ((-1, -1), (1, -1), (-1, 1), (1, 1)): box('wtleg', (.12, .12, 2.4), (-64 + dx, -56 + dy, H + 1.6), env.iron())
-    acu = lib.model(['exterior_aircon_unit']); lib.place(acu, (-56, -63, H + .4), 0)
+    box('acunit', (1.6, 1.0, 1.1), (-56, -63, H + .95), S('#b8bcc0', .5, metal=.4), bevel=.04)
     return Vector((-60, -60, H + .4))
 
 def make_mannequin(loc, facing=0.0, n=10):
