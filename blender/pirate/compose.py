@@ -37,7 +37,7 @@ for i, (txt, a, b) in enumerate(film['subs']):
     d.text((W / 2, Hh * .70), txt, font=font, fill='white', anchor='mm', stroke_width=max(4, int(W * .012)), stroke_fill='black')
     p = os.path.join(tmp, f's{i}.png'); im.save(p); inputs += ['-i', p]
     fc.append(f"{label}[{k}:v]overlay=enable='between(t,{a:.3f},{b:.3f})'[s{i}]"); label = f'[s{i}]'; k += 1
-fc.append(f"{label}fade=t=out:st={MAINEND - .8:.2f}:d=.8[vo]")
+fc.append(f"{label}fade=t=out:st={MAINEND - .8:.2f}:d=0.8[vo]")
 main = os.path.join(tmp, 'main.mp4')
 sh('ffmpeg', '-loglevel', 'error', '-y', *inputs, '-filter_complex', ';'.join(fc), '-map', '[vo]', '-t', f'{MAINEND:.3f}', '-c:v', 'libx264', '-crf', '15', '-preset', 'fast', '-pix_fmt', 'yuv420p', '-r', str(fps), main)
 # logo tail

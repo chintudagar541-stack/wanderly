@@ -1,0 +1,28 @@
+# Re-join already rendered chunks of a finished "Pirate render" run (blender/pirate/join.json = {"run_id": ..., "rev": n}).
+name: Pirate join
+on:
+  push:
+    branches: [claude/dagar-blender]
+    paths: ['blender/pirate/join.json']
+permissions:
+  contents: write
+  actions: read
+jobs:
+  join:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - id: r
+        run: echo "run_id=$(jq -r .run_id blender/pirate/join.json)" >> $GITHUB_OUTPUT
+      - uses: actions/download-artifact@v4
+        with: { path: art, pattern: 'chunk-*', merge-multiple: true, run-id: '${{ steps.r.outputs.run_id }}', github-token: '${{ secrets.GITHUB_TOKEN }}' }
+      - run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg fonts-dejavu-core >/dev/null; pip install pillow -q 2>/dev/null || true
+          ls art | wc -l
+          python3 blender/pirate/compose.py art final.mp4
+          mkdir -p previews/pirate; cp final.mp4 previews/pirate/final.mp4
+          git config user.name "github-actions"; git config user.email "github-actions@users.noreply.github.com"
+          git add previews/pirate/final.mp4; git commit -qm "pirate final video [skip ci]" || exit 0
+          for i in 1 2 3 4 5 6 7 8; do git pull --rebase -q && git push -q && break; sleep $((RANDOM % 9 + 3)); done
+      - uses: actions/upload-artifact@v4
+        with: { name: 'video', path: 'final.mp4', retention-days: 30 }
