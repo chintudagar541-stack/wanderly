@@ -22,7 +22,10 @@ import env, chars, anim
 mod = importlib.import_module(f'film_{film}')
 t = time.time(); mod.SHOTS[shot](n); lib.log('built', shot, n, 'frames', f'{time.time() - t:.0f}s', len(bpy.data.objects), 'objects')
 c = bpy.data.collections.get('Characters')
-if c and len(c.objects): lib.ink(c, thickness=float(os.environ.get('INK', 6.5)))
+HULL = {'rooftop'}
+if c and len(c.objects):
+    if shot in HULL: lib.hull_outline(c)
+    else: lib.ink(c, thickness=float(os.environ.get('INK', 6.5)))
 if mode == 'still':
     f = int(a[4]) if len(a) > 4 else max(1, n // 2)
     sc.frame_set(f); lib.render(os.path.abspath(a[3]))

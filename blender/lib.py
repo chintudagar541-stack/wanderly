@@ -421,3 +421,18 @@ def ink(collection, thickness=5.0, crease=False):
         g = st.geometry_modifiers.new('hand', 'PERLIN_NOISE_1D'); g.frequency = 6; g.amplitude = .6; g.octaves = 2
     except Exception as e: log('geom mod', e)
     return ls
+
+
+def hull_outline(collection, width=.014):
+    """Cheap ink outline without Freestyle: an inverted shell that is black only where we see its inside."""
+    m = bpy.data.materials.new('hullink'); m.use_nodes = True; N = m.node_tree.nodes; L = m.node_tree.links
+    N.remove(N['Principled BSDF']); out = N['Material Output']
+    geo = N.new('ShaderNodeNewGeometry'); tr = N.new('ShaderNodeBsdfTransparent'); em = N.new('ShaderNodeEmission')
+    em.inputs['Color'].default_value = (0.012, 0.009, 0.014, 1); em.inputs['Strength'].default_value = 1.0
+    mx = N.new('ShaderNodeMixShader'); L.new(geo.outputs['Backfacing'], mx.inputs['Fac'])
+    L.new(tr.outputs[0], mx.inputs[1]); L.new(em.outputs[0], mx.inputs[2]); L.new(mx.outputs[0], out.inputs['Surface'])
+    for o in collection.objects:
+        if o.type != 'MESH': continue
+        o.data.materials.append(m)
+        md = o.modifiers.new('hull', 'SOLIDIFY'); md.thickness = -width; md.offset = 1.0
+        md.use_flip_normals = True; md.use_rim = False; md.material_offset = len(o.data.materials) - 1
