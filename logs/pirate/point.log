@@ -832,9 +832,9 @@ Warning: edge 18 - 19 appears twice, correcting
 Warning: edge 19 - 2 appears twice, correcting
 Error: strokes set empty
 Saved: '/home/runner/work/wanderly/wanderly/out/point.png'
-Time: 02:11.65 (Saving: 00:00.74)
+Time: 02:44.95 (Saving: 00:00.94)
 
-[lib] rendered /home/runner/work/wanderly/wanderly/out/point.png 132s
+[lib] rendered /home/runner/work/wanderly/wanderly/out/point.png 165s
 [lib] saved /home/runner/work/wanderly/wanderly/out/point.jpg
 
 Blender quit
