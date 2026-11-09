@@ -1,14 +1,14 @@
-[lib] ph_find hdris ['overcast', 'cloudy', 'storm', 'sky'] -> kloofendal_48d_partly_cloudy_puresky
+[lib] ph_find hdris ['overcast', 'puresky', 'cloudy'] -> kloofendal_48d_partly_cloudy_puresky
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['fabric', 'canvas'] -> fabric_pattern_07
-[lib] built zoom 74 frames 4s 171 objects
+[lib] built zoom 74 frames 2s 171 objects
 Blender 4.2.3 LTS (hash 0e22e4fcea03 built 2024-10-14 23:31:34)
 Saved: '/home/runner/work/wanderly/wanderly/out/zoom.png'
-Time: 01:28.88 (Saving: 00:00.92)
+Time: 01:14.44 (Saving: 00:00.79)
 
-[lib] rendered /home/runner/work/wanderly/wanderly/out/zoom.png 89s
+[lib] rendered /home/runner/work/wanderly/wanderly/out/zoom.png 74s
 [lib] saved /home/runner/work/wanderly/wanderly/out/zoom.jpg
 
 Blender quit
