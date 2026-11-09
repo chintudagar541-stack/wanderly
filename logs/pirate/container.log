@@ -6,7 +6,7 @@
 [lib] built container 50 frames 2s 177 objects
 Blender 4.2.3 LTS (hash 0e22e4fcea03 built 2024-10-14 23:31:34)
 Saved: '/home/runner/work/wanderly/wanderly/out/container.png'
-Time: 03:12.49 (Saving: 00:00.94)
+Time: 03:12.99 (Saving: 00:01.07)
 
 [lib] rendered /home/runner/work/wanderly/wanderly/out/container.png 193s
 [lib] saved /home/runner/work/wanderly/wanderly/out/container.jpg
