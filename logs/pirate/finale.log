@@ -1,0 +1,14 @@
+[lib] ph_find hdris ['sunset', 'golden', 'dusk', 'sky'] -> qwantani_dusk_2_puresky
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['fabric', 'canvas'] -> fabric_pattern_07
+[lib] built finale 98 frames 3s 170 objects
+Blender 4.2.3 LTS (hash 0e22e4fcea03 built 2024-10-14 23:31:34)
+Saved: '/home/runner/work/wanderly/wanderly/out/finale.png'
+Time: 01:42.00 (Saving: 00:00.77)
+
+[lib] rendered /home/runner/work/wanderly/wanderly/out/finale.png 102s
+[lib] saved /home/runner/work/wanderly/wanderly/out/finale.jpg
+
+Blender quit
