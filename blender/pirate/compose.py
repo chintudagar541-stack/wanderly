@@ -48,7 +48,7 @@ d.polygon([(cx - r * .3, cy - r * 1.2), (cx - r * .3, cy - r * .4), (cx + r * .4
 d.text((cx, cy + r * .75), 'DAGAR', font=f1, fill='white', anchor='mm'); d.text((cx, cy + r * 1.95), 'C L I P S', font=f1, fill=(214, 168, 56), anchor='mm')
 d.text((cx, cy + r * 3.0), 'STORIES YOU CAN SEE', font=f2, fill=(150, 150, 150), anchor='mm')
 lp = os.path.join(tmp, 'logo.png'); lg.save(lp); logo = os.path.join(tmp, 'logo.mp4')
-sh('ffmpeg', '-loglevel', 'error', '-y', '-loop', '1', '-i', lp, '-t', f'{TOTAL - MAINEND:.3f}', '-vf', f"fps={fps},fade=t=in:st=0:d=.7,fade=t=out:st={TOTAL - MAINEND - .6:.2f}:d=.6", '-c:v', 'libx264', '-crf', '15', '-pix_fmt', 'yuv420p', logo)
+sh('ffmpeg', '-loglevel', 'error', '-y', '-loop', '1', '-i', lp, '-t', f'{TOTAL - MAINEND:.3f}', '-vf', f"fps={fps},fade=t=in:st=0:d=0.7,fade=t=out:st={TOTAL - MAINEND - 0.6:.2f}:d=0.6", '-c:v', 'libx264', '-crf', '15', '-pix_fmt', 'yuv420p', logo)
 # audio: voice + storm bed + rain + thunder + music pad
 th = [1.4, 8.6, 15.9, 24.3, 31.1, 44.1]
 ain = ['-i', os.path.join(H, film['voice'])]; af = []
@@ -62,7 +62,7 @@ for i, t in enumerate(th):
 m0 = 3 + len(th)
 af.append(f"[{m0}:a][{m0 + 1}:a][{m0 + 2}:a][{m0 + 3}:a]amix=inputs=4:normalize=0,lowpass=f=900,tremolo=f=0.18:d=0.6,volume=0.055,afade=t=in:d=3,afade=t=out:st={TOTAL - 3:.1f}:d=3[mus]")
 af.append("[0:a]aresample=48000,pan=stereo|c0=c0|c1=c0,apad,volume=1.0[v]")
-af.append(f"[v][bed][rain]{''.join(tl)}[mus]amix=inputs={5 + len(th)}:normalize=0:duration=longest,atrim=0:{TOTAL},afade=t=out:st={TOTAL - 1.2:.1f}:d=1.2,loudnorm=I=-14:TP=-1.0:LRA=11[a]")
+af.append(f"[v][bed][rain]{''.join(tl)}[mus]amix=inputs={4 + len(th)}:normalize=0:duration=longest,atrim=0:{TOTAL},afade=t=out:st={TOTAL - 1.2:.1f}:d=1.2,loudnorm=I=-14:TP=-1.0:LRA=11[a]")
 mixa = os.path.join(tmp, 'mix.m4a'); sh('ffmpeg', '-loglevel', 'error', '-y', *ain, '-filter_complex', ';'.join(af), '-map', '[a]', '-c:a', 'aac', '-b:a', '192k', mixa)
 lst2 = os.path.join(tmp, 'fin.txt'); open(lst2, 'w').write(f"file '{main}'\nfile '{logo}'\n"); vid = os.path.join(tmp, 'video.mp4')
 sh('ffmpeg', '-loglevel', 'error', '-y', '-f', 'concat', '-safe', '0', '-i', lst2, '-c', 'copy', vid)
