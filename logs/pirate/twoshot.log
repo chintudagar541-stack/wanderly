@@ -831,9 +831,9 @@ Warning: edge 2 - 3 appears twice, correcting
 Warning: edge 18 - 19 appears twice, correcting
 Warning: edge 19 - 2 appears twice, correcting
 Saved: '/home/runner/work/wanderly/wanderly/out/twoshot.png'
-Time: 02:14.58 (Saving: 00:00.76)
+Time: 02:16.11 (Saving: 00:01.29)
 
-[lib] rendered /home/runner/work/wanderly/wanderly/out/twoshot.png 135s
+[lib] rendered /home/runner/work/wanderly/wanderly/out/twoshot.png 136s
 [lib] saved /home/runner/work/wanderly/wanderly/out/twoshot.jpg
 
 Blender quit
