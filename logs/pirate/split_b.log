@@ -6,9 +6,9 @@
 [lib] built split_b 67 frames 2s 173 objects
 Blender 4.2.3 LTS (hash 0e22e4fcea03 built 2024-10-14 23:31:34)
 Saved: '/home/runner/work/wanderly/wanderly/out/split_b.png'
-Time: 02:49.63 (Saving: 00:00.95)
+Time: 02:54.37 (Saving: 00:00.96)
 
-[lib] rendered /home/runner/work/wanderly/wanderly/out/split_b.png 170s
+[lib] rendered /home/runner/work/wanderly/wanderly/out/split_b.png 175s
 [lib] saved /home/runner/work/wanderly/wanderly/out/split_b.jpg
 
 Blender quit
