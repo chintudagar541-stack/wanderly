@@ -1,0 +1,92 @@
+# Renders a three.js cartoon short in parallel chunks on GitHub machines, then joins the frames, mixes the
+# audio (music + SFX at 50% of the voice level via mix.py) and uploads the finished MP4 as an artifact.
+name: Render cartoon short
+
+on:
+  workflow_dispatch:
+    inputs:
+      video:
+        description: "Folder name under cartoon-shorts/ (e.g. pig-war)"
+        required: true
+      chunk:
+        description: "Frames per machine"
+        required: true
+        default: "60"
+      title:
+        description: "Video title"
+        required: true
+        default: "Cartoon short"
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      starts: ${{ steps.p.outputs.starts }}
+      total: ${{ steps.p.outputs.total }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: p
+        name: Count frames from the voiceover
+        working-directory: cartoon-shorts/${{ github.event.inputs.video }}
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          DUR=$(ffprobe -v error -show_entries format=duration -of csv=p=0 voice.mp3)
+          TOTAL=$(python3 -c "print(round($DUR*30))")
+          STARTS=$(python3 -c "import json;print(json.dumps(list(range(0,$TOTAL,${{ github.event.inputs.chunk }}))))")
+          echo "total=$TOTAL" >> $GITHUB_OUTPUT; echo "starts=$STARTS" >> $GITHUB_OUTPUT
+
+  render:
+    needs: plan
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        start: ${{ fromJson(needs.plan.outputs.starts) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: Install three.js and Chromium
+        working-directory: cartoon-shorts
+        run: |
+          npm install --no-audit --no-fund
+          npx playwright install --with-deps chromium
+      - name: Render frames
+        working-directory: cartoon-shorts/${{ github.event.inputs.video }}
+        run: |
+          A=${{ matrix.start }}; B=$((A + ${{ github.event.inputs.chunk }} - 1)); T=${{ needs.plan.outputs.total }}
+          [ $B -ge $T ] && B=$((T - 1))
+          ln -sfn ../node_modules node_modules
+          node render.mjs frames "$A-$B"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: frames-${{ matrix.start }}
+          path: cartoon-shorts/${{ github.event.inputs.video }}/frames/*.jpg
+          retention-days: 1
+
+  finish:
+    needs: [plan, render]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: frames-*
+          path: cartoon-shorts/${{ github.event.inputs.video }}/frames
+          merge-multiple: true
+      - name: Install ffmpeg, Python audio tools and Blender
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          pip install -q numpy scipy soundfile pillow bpy
+      - name: Build audio and encode
+        working-directory: cartoon-shorts/${{ github.event.inputs.video }}
+        run: |
+          python3 audio.py
+          python3 mix.py voice.mp3 music.wav sfx.wav
+          bash finish.sh "${{ github.event.inputs.title }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cartoon-short
+          path: cartoon-shorts/${{ github.event.inputs.video }}/out/*.mp4
+          retention-days: 14
