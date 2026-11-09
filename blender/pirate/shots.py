@@ -342,7 +342,7 @@ def s_push(n, t0=2.2):
 def s_sailor(n, t0=4.6):
     new_shot(n, t0, storm=1.2, near=(160, 300), haze=600.0); rogue_on(); setup_oil(t0, t0 + n / FPS)
     sl = sailor_pouring(t0 - 1, t0 + n / FPS)
-    C.camfn = lambda t: (SL(K([(0, (7.4, .6, 3.5)), (n / FPS, (6.4, 1.5, 3.4))])(t)), SL((3.7, 2.7, 3.3)), K([(0, 36), (n / FPS, 44)])(t), SL((3.6, 2.6, 3.3)), K([(0, 3), (n / FPS, -2)])(t))
+    C.camfn = lambda t: (SL(K([(0, (5.2, 4.8, 4.7)), (n / FPS, (4.7, 4.4, 4.4))])(t)), SL((3.6, 2.6, 3.5)), 40, SL((3.55, 2.6, 3.5)), K([(0, 3), (n / FPS, -2)])(t))
     finish()
 
 def s_oilcu(n, t0=7.4):
@@ -406,7 +406,7 @@ def s_captain_low(n, t0=20.5):
     sl = sailor_pouring(t0 - 1, t0 + n / FPS)
     cp = captain_scene([(0, 'confused'), (1.0, 'terror'), (2.2, 'terror')], (1.4, 1.2), 100, look=lambda T: (K([(t0, -10), (t0 + 1.4, 60)])(T), -5, 0), hands={'handL': None})
     hd = Vector((1.4, 1.2, shipmod.DECK + 1.0))
-    C.camfn = lambda t: (SL(Vector((.2, 2.6, shipmod.DECK + .35)) + Vector((.2 * t, 0, .15 * t))), SL(hd + Vector((0, 0, .1))), 28, SL(hd), -4)
+    C.camfn = lambda t: (SL(Vector((.2, 2.6, shipmod.DECK + .85)) + Vector((.2 * t, 0, .15 * t))), SL(hd + Vector((0, 0, .1))), 28, SL(hd), -4)
     finish()
 
 def s_pirates(n, t0=23.0):

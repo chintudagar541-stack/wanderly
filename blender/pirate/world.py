@@ -20,7 +20,11 @@ def sky(mood='storm', strength=1.0, sun_dir=(.3, 1.0, .45), sun_energy=4.0, sun_
             env = next(n for n in N2 if n.type == 'TEX_ENVIRONMENT'); bg2 = next(n for n in N2 if n.type == 'BACKGROUND')
             gr = N2.new('ShaderNodeMix'); gr.data_type = 'RGBA'; gr.blend_type = 'MULTIPLY'; gr.inputs['Factor'].default_value = 1.0
             gr.inputs['B'].default_value = ((.30, .36, .44, 1) if mood == 'storm' else (1.15, .9, .65, 1))
-            L2.new(env.outputs['Color'], gr.inputs['A']); L2.new(gr.outputs['Result'], bg2.inputs['Color'])
+            if mood == 'storm':
+                hs = N2.new('ShaderNodeHueSaturation'); hs.inputs['Saturation'].default_value = .08; hs.inputs['Value'].default_value = .85
+                L2.new(env.outputs['Color'], hs.inputs['Color']); L2.new(hs.outputs['Color'], gr.inputs['A']); gr.inputs['B'].default_value = (.36, .40, .46, 1)
+            else: L2.new(env.outputs['Color'], gr.inputs['A'])
+            L2.new(gr.outputs['Result'], bg2.inputs['Color'])
             sun = bpy.data.lights.new('Sun', 'SUN'); sun.energy = sun_energy; sun.angle = math.radians(1.2); sun.color = lin(sun_col)
             so = bpy.data.objects.new('Sun', sun); bpy.context.scene.collection.objects.link(so)
             d = Vector(sun_dir).normalized(); so.rotation_euler = (-d).to_track_quat('-Z', 'Y').to_euler(); return so
