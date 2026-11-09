@@ -3,12 +3,12 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['fabric', 'canvas'] -> fabric_pattern_07
-[lib] built orbit_oil 70 frames 3s 172 objects
+[lib] built orbit_oil 70 frames 2s 172 objects
 Blender 4.2.3 LTS (hash 0e22e4fcea03 built 2024-10-14 23:31:34)
 Saved: '/home/runner/work/wanderly/wanderly/out/orbit_oil.png'
-Time: 01:47.40 (Saving: 00:01.30)
+Time: 02:02.86 (Saving: 00:00.94)
 
-[lib] rendered /home/runner/work/wanderly/wanderly/out/orbit_oil.png 108s
+[lib] rendered /home/runner/work/wanderly/wanderly/out/orbit_oil.png 123s
 [lib] saved /home/runner/work/wanderly/wanderly/out/orbit_oil.jpg
 
 Blender quit
