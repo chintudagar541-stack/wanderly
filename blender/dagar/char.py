@@ -50,7 +50,7 @@ class Char:
     def __init__(self, cid, name, skin='#f6f3ee', body='#3b6fb6', hair=None, hat=None, glasses=False, stache=None, scale=1.0, pants='#1a1a1e', eyes=1.0, hair_col='#3a2412', head_r=.27):
         self.cid, self.name, self.s = cid, name, scale
         self.hr = hr = head_r; self.hx, self.hy, self.hz = hr * 1.04, hr * .96, hr * .98
-        self.L = .56; self.TL = .34; self.rw = .15
+        self.L = getattr(self, 'L0', .56); self.TL = getattr(self, 'TL0', .34); self.rw = getattr(self, 'RW0', .15)
         self.root = bpy.data.objects.new(f'{cid}_{name}', None); coll('Characters').objects.link(self.root)
         self.torso = bpy.data.objects.new(cid + '_torso', None); coll('Characters').objects.link(self.torso); self.torso.parent = self.root
         self.torso.location = (0, 0, self.L)

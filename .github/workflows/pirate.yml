@@ -1,0 +1,88 @@
+# DAGAR CLIPS - Blender (Cycles + Mantaflow + Bullet) on GitHub's free runners.
+# blender/pirate/job.json: mode "stills" = one check frame per shot (pushed to previews/pirate/); mode "video" = every frame,
+# chunked over many machines, joined with subtitles into previews/pirate/final.mp4 (and artifact "video").
+name: Pirate render
+on:
+  push:
+    branches: [claude/dagar-blender]
+    paths: ['blender/pirate/job.json']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency: { group: 'pirate-${{ github.sha }}', cancel-in-progress: false }
+env:
+  BLENDER: blender-4.2.3-linux-x64
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs: { jobs: '${{ steps.p.outputs.jobs }}', mode: '${{ steps.p.outputs.mode }}' }
+    steps:
+      - uses: actions/checkout@v5
+      - id: p
+        run: |
+          echo "mode=$(jq -r .mode blender/pirate/job.json)" >> $GITHUB_OUTPUT
+          echo "jobs=$(python3 blender/pirate/plan.py)" >> $GITHUB_OUTPUT
+  render:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix: { job: '${{ fromJson(needs.plan.outputs.jobs) }}' }
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/cache@v4
+        id: bcache
+        with: { path: '${{ env.BLENDER }}', key: '${{ env.BLENDER }}' }
+      - if: steps.bcache.outputs.cache-hit != 'true'
+        run: curl -sSL https://download.blender.org/release/Blender4.2/$BLENDER.tar.xz | tar xJ
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq libxi6 libxxf86vm1 libxfixes3 libxrender1 libgl1 libxkbcommon0 libsm6 libegl1 ffmpeg >/dev/null
+      - name: Render
+        run: |
+          mkdir -p out; set -o pipefail
+          export USE_PH=1 RW=$(jq -r .w blender/pirate/job.json) RH=$(jq -r .h blender/pirate/job.json) SAMPLES=$(jq -r .samples blender/pirate/job.json) NOFLUID=1
+          if [ "${{ needs.plan.outputs.mode }}" = "stills" ]; then
+            ./$BLENDER/blender -b --factory-startup -noaudio --python-exit-code 1 -P blender/pirate/runp.py -- still ${{ matrix.job.shot }} out/${{ matrix.job.shot }}.png 2>&1 | grep -v "^Fra:\|degenerated" | tee out/log.txt | tail -200
+          else
+            ./$BLENDER/blender -b --factory-startup -noaudio --python-exit-code 1 -P blender/pirate/runp.py -- frames ${{ matrix.job.shot }} ${{ matrix.job.a }} ${{ matrix.job.b }} out/frames 2>&1 | grep -v "^Fra:\|degenerated" | tee out/log.txt | tail -200
+            S=$(ls out/frames | head -1 | sed 's/f_0*//; s/.png//')
+            ffmpeg -loglevel error -y -framerate 24 -start_number $S -i out/frames/f_%05d.png -c:v libx264 -preset slow -crf 14 -pix_fmt yuv420p out/chunk_${{ matrix.job.id }}.mp4
+            rm -rf out/frames
+          fi
+      - name: Save still and log to the branch
+        if: always() && needs.plan.outputs.mode == 'stills'
+        run: |
+          mkdir -p previews/pirate logs/pirate
+          [ -f out/${{ matrix.job.shot }}.jpg ] && cp out/${{ matrix.job.shot }}.jpg previews/pirate/ || true
+          tail -c 40000 out/log.txt > logs/pirate/${{ matrix.job.shot }}.log 2>/dev/null || echo "no log" > logs/pirate/${{ matrix.job.shot }}.log
+          git config user.name "github-actions"; git config user.email "github-actions@users.noreply.github.com"
+          git add previews/pirate logs/pirate; git commit -qm "pirate still ${{ matrix.job.shot }} [skip ci]" || exit 0
+          for i in 1 2 3 4 5 6 7 8; do git pull --rebase -q && git push -q && break; sleep $((RANDOM % 9 + 3)); done
+      - name: Save log of a failed chunk to the branch
+        if: failure() && needs.plan.outputs.mode == 'video'
+        run: |
+          mkdir -p logs/pirate; tail -c 30000 out/log.txt > logs/pirate/pfail_${{ matrix.job.id }}.log 2>/dev/null || echo "no log" > logs/pirate/pfail_${{ matrix.job.id }}.log
+          git config user.name "github-actions"; git config user.email "github-actions@users.noreply.github.com"
+          git add logs/pirate; git commit -qm "pirate fail log [skip ci]" || exit 0
+          for i in 1 2 3 4 5 6 7 8; do git pull --rebase -q && git push -q && break; sleep $((RANDOM % 9 + 3)); done
+      - if: always() && needs.plan.outputs.mode == 'video'
+        uses: actions/upload-artifact@v4
+        with: { name: 'chunk-${{ matrix.job.id }}', path: 'out/', retention-days: 7 }
+  join:
+    needs: [plan, render]
+    if: always() && needs.plan.outputs.mode == 'video'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v4
+        with: { path: art, pattern: 'chunk-*', merge-multiple: true }
+      - run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg fonts-dejavu-core >/dev/null; pip install pillow -q 2>/dev/null || true
+          python3 blender/pirate/compose.py art final.mp4
+          mkdir -p previews/pirate; cp final.mp4 previews/pirate/final.mp4
+          git config user.name "github-actions"; git config user.email "github-actions@users.noreply.github.com"
+          git add previews/pirate/final.mp4; git commit -qm "pirate final video [skip ci]" || exit 0
+          for i in 1 2 3 4 5 6 7 8; do git pull --rebase -q && git push -q && break; sleep $((RANDOM % 9 + 3)); done
+      - uses: actions/upload-artifact@v4
+        with: { name: 'video', path: 'final.mp4', retention-days: 30 }
