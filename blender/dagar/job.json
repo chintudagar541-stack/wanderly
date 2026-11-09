@@ -1,1 +1,1 @@
-{"mode": "stills", "only": "", "w": 540, "h": 960, "samples": 32, "fluid_res": 64, "chunk": 30, "rev": 1}
+{"mode": "video", "only": "", "w": 1080, "h": 1920, "samples": 16, "fluid_res": 96, "chunk": 15, "rev": 2}

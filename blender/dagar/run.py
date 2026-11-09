@@ -20,7 +20,9 @@ sc.render.use_persistent_data = False; sc.render.use_motion_blur = False
 import shots
 t = time.time(); info = shots.SHOTS[shot](n); lib.log('built', shot, n, 'frames', f'{time.time() - t:.0f}s', len(bpy.data.objects), 'objects')
 if info and info.get('path'): lib.log('mug z', [round(p.z,2) for p in info['path'][::6]], 'y', [round(p.y,2) for p in info['path'][::6]])
-ink_setup(W, float(os.environ.get('OUTLINE', 1.0)))
+if os.environ.get('NOBEAM'): bpy.data.objects['beam'].hide_render = True
+if os.environ.get('NODOF'): bpy.context.scene.camera.data.dof.use_dof = False
+if not os.environ.get('NOINK'): ink_setup(W, float(os.environ.get('OUTLINE', 1.0)))
 if mode == 'still':
     f = int(a[3]) if len(a) > 3 else max(1, n // 2)
     sc.frame_set(f); sc.frame_set(f); lib.render(os.path.abspath(a[2]))

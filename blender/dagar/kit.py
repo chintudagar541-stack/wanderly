@@ -207,7 +207,7 @@ def kitchen(night=True):
     import bmesh
     bmx = bmesh.new()
     p0 = [Vector((wx0, D1 - .1, wz0)), Vector((wx1, D1 - .1, wz0)), Vector((wx1, D1 - .1, wz1)), Vector((wx0, D1 - .1, wz1))]
-    p1 = [v + Vector((-0.6, -2.8, -1.8 + .0)) for v in p0]; p1 = [Vector((v.x - .2, v.y, max(.0, v.z - .6))) for v in p1]
+    p1 = [Vector((v.x - .7, v.y - 1.3, max(.0, v.z - 1.1))) for v in p0]
     vs = [bmx.verts.new(v) for v in p0 + p1]
     for a, b, c2, d in ((0, 1, 2, 3), (4, 5, 6, 7), (0, 1, 5, 4), (1, 2, 6, 5), (2, 3, 7, 6), (3, 0, 4, 7)):
         try: bmx.faces.new((vs[a], vs[b], vs[c2], vs[d]))
@@ -215,9 +215,15 @@ def kitchen(night=True):
     bmx.normal_update(); bmx.to_mesh(beam.data); bmx.free()
     bm_ = bpy.data.materials.new('beam'); bm_.use_nodes = True; Nn = bm_.node_tree.nodes; Ln = bm_.node_tree.links
     for n in list(Nn): Nn.remove(n)
-    out = Nn.new('ShaderNodeOutputMaterial'); pv = Nn.new('ShaderNodeVolumeScatter')
-    pv.inputs['Density'].default_value = .09; pv.inputs['Color'].default_value = (.7, .8, 1.0, 1); pv.inputs['Anisotropy'].default_value = .5
-    Ln.new(pv.outputs['Volume'], out.inputs['Volume']); beam.data.materials.append(bm_)
+    out = Nn.new('ShaderNodeOutputMaterial'); mx = Nn.new('ShaderNodeMixShader'); tr = Nn.new('ShaderNodeBsdfTransparent'); em = Nn.new('ShaderNodeEmission')
+    em.inputs['Color'].default_value = (.55, .7, 1.0, 1); em.inputs['Strength'].default_value = 1.0
+    tc = Nn.new('ShaderNodeTexCoord'); sp = Nn.new('ShaderNodeSeparateXYZ'); rp = Nn.new('ShaderNodeValToRGB')
+    rp.color_ramp.elements[0].position = 0.0; rp.color_ramp.elements[0].color = (.07, .07, .07, 1); rp.color_ramp.elements[1].position = 1.0; rp.color_ramp.elements[1].color = (0, 0, 0, 1)
+    Ln.new(tc.outputs['Generated'], sp.inputs['Vector']); Ln.new(sp.outputs['Y'], rp.inputs['Fac']); Ln.new(rp.outputs['Color'], mx.inputs['Fac'])
+    Ln.new(tr.outputs[0], mx.inputs[1]); Ln.new(em.outputs[0], mx.inputs[2]); Ln.new(mx.outputs[0], out.inputs['Surface'])
+    Ln.new  # fake light shaft: cheap, no volume tracing
+    beam.data.materials.append(bm_)
+    beam.visible_diffuse = False; beam.visible_glossy = False; beam.visible_transmission = False
     beam.visible_shadow = False
     mug = make_mug((0.18, 2.97, CT + .0), '#d8412f')
     return dict(mug=mug, fx=fx, fy=fy, fz=CT + .27, sink=(sx0, sx1), W=W, D1=D1, lamp=(lamp_x, lamp_y), ar=ar, ar2=ar2, ar3=ar3)

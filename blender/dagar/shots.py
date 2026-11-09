@@ -89,12 +89,12 @@ def water(n):
         s['handL'] = Vector((SPOT[0] - .2, SPOT[1] + .0, .62)); s['handR'] = Vector((SPOT[0] + .3, SPOT[1] + .12, .66))
         s['face'] = ex(t); return s
     w.fn = fn
-    camera(lambda t: ((1.45 - .25 * ease(t / 3.0), 1.55 + .1 * ease(t / 3.0), 1.1 - .08 * t / 3.0), (k['fx'] - .02, k['fy'] - .12, 0.86), 42, (k['fx'], k['fy'] - .3, 1.0), 0, 0), fstop=2.8)
+    camera(lambda t: ((1.25 - .2 * ease(t / 3.0), 1.9, 1.5 - .05 * t / 3.0), (k['fx'] - .02, k['fy'] - .05, .72), 40, (k['fx'], k['fy'] - .3, .8), 0, 0), fstop=3.5)
     res = int(os.environ.get('FLUID_RES', 96))
     sink = [bpy.data.objects[nm] for nm in ('sink_floor', 'sink_f', 'sink_b', 'sink_l', 'sink_r')]
     nz = (k['fx'], k['fy'] - .3, env.CT + .205)
     if os.environ.get('NOFLUID') == '1': return dict(char=w)
-    dom = phys.fluid_pour(nz, (.08, 2.88, .50), (.82, 3.27, 1.12), sink, res=res, n_frames=n, start_vel=(0, 0, -.9), radius=.013, rate_frames=(6, 0))
+    dom = phys.fluid_pour(nz, (.08, 2.88, .50), (.82, 3.27, 1.12), sink, res=res, n_frames=n, start_vel=(0, 0, -.9), radius=.018, rate_frames=(6, 0))
     if os.environ.get('NOBAKE') != '1': phys.bake_fluid(dom)
     # water look
     dom.display_type = 'WIRE'

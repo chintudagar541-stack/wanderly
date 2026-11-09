@@ -121,7 +121,7 @@ def tile_mat(name, c1='#e9e2d0', c2='#d4ccb6', grout='#8c8473', scale=6.0, rough
 def wood_mat(name, c1='#8a5a34', c2='#5a361c', scale=3.0, rough=.5, stretch=(1, 14, 1), planks=False):
     m = bpy.data.materials.new(name); N, L, b = _nodes(m)
     tc = N.new('ShaderNodeTexCoord'); mp = N.new('ShaderNodeMapping'); mp.inputs['Scale'].default_value = (scale * stretch[0], scale * stretch[1], scale * stretch[2])
-    wv = N.new('ShaderNodeTexWave'); wv.wave_type = 'BANDS'; wv.inputs['Scale'].default_value = 3; wv.inputs['Distortion'].default_value = 6; wv.inputs['Detail'].default_value = 3
+    wv = N.new('ShaderNodeTexWave'); wv.wave_type = 'BANDS'; wv.inputs['Scale'].default_value = 3; wv.inputs['Distortion'].default_value = 1.2; wv.inputs['Detail'].default_value = 1
     ns = N.new('ShaderNodeTexNoise'); ns.inputs['Scale'].default_value = 5
     ramp = N.new('ShaderNodeValToRGB'); ramp.color_ramp.elements[0].color = (*lin(c2), 1); ramp.color_ramp.elements[1].color = (*lin(c1), 1)
     L.new(tc.outputs['Object'], mp.inputs['Vector']); L.new(mp.outputs['Vector'], wv.inputs['Vector']); L.new(wv.outputs['Fac'], ramp.inputs['Fac'])
