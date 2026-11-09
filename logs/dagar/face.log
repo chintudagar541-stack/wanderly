@@ -1,0 +1,13 @@
+[lib] built face 75 frames 0s 266 objects
+Blender 4.2.3 LTS (hash 0e22e4fcea03 built 2024-10-14 23:31:34)
+Warning: edge 0 - 1 appears twice, correcting
+Warning: edge 1 - 2 appears twice, correcting
+Warning: edge 2 - 3 appears twice, correcting
+Warning: edge 3 - 0 appears twice, correcting
+Saved: '/home/runner/work/wanderly/wanderly/out/face.png'
+Time: 01:40.51 (Saving: 00:00.23)
+
+[lib] rendered /home/runner/work/wanderly/wanderly/out/face.png 101s
+[lib] saved /home/runner/work/wanderly/wanderly/out/face.jpg
+
+Blender quit
