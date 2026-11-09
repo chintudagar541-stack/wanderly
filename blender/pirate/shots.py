@@ -22,7 +22,7 @@ def _integrate(speed=3.2, T1=80.0, dt=.05):
 _TS, _P = _integrate()
 def ship_xy(T): i = int(max(0, min(len(_TS) - 1, T / .05))); return _P[i]
 def pirate_xy(T):
-    x, y = ship_xy(T); return (x - 130 + 3.0 * T * .55 + 30 * math.sin(T * .1) , y + 55 - 1.3 * T)
+    x, y = ship_xy(T); return (x - 44 + .85 * T + 3 * math.sin(T * .1), y + 14 - .3 * T)
 OIL_T0 = 7.4; OIL_POINT = None
 def oil_state(T):
     """world-fixed oil slick: centre at the first pour point (port side of the ship at OIL_T0), spreading radius"""
@@ -66,20 +66,24 @@ def make_cam(fstop=4.0):
 
 def begin(n, t0, mood='storm', storm=1.0, waves=True, ship=True, pirate=False, near=(160, 320), far=True, rain=True, wind=1.0, sailamp=1.0, boost=1.15, heave_extra=0.0,
           sun=(.35, .9, .35), sun_e=3.0, haze=900.0, sea_rough=.12, tide=None, seed=0.0):
-    sc = bpy.context.scene; sc.render.fps = FPS; sc.frame_start = 1; sc.frame_end = n
+    sc = bpy.context.scene; sc.render.fps = FPS; sc.frame_start = 1; sc.frame_end = n; C.n_frames = n
     C.t0 = t0; C.patches = []; C.extra_patches = []; C.hooks = []; C.ship = None; C.pirate = None; C.camfn = None; C.rain = None; C.rainwind = (6, 3)
     C.wind = wind; C.sailamp = sailamp; C.boost = boost; C.waves = seamod.Waves(storm=storm, wind=0.0)
     C.waves.oil = oil_state
     C.shipfn = ship_xy; C.heave = (0, 0, 0)
     foglines = (haze, '#7e8a96' if mood == 'storm' else '#e6b878')
     W.sky(mood, 1.0 if mood == 'storm' else 1.4, sun_dir=sun, sun_energy=sun_e, sun_col='#e8efff' if mood == 'storm' else '#ffd28a', seed=seed)
-    sm = W.sea_mat('sea', rough=sea_rough, col='#12404a' if mood == 'storm' else '#2a5a58', foam_col='#e6eef0')
+    sm = W.sea_mat('sea', rough=sea_rough, col='#183339' if mood == 'storm' else '#2f5a58', foam_col='#e6eef0')
     C.sea_mat = sm
     if waves:
         cx, cy = ship_xy(t0 + .5 * n / FPS)
         C.near_c = (cx, cy)
-        C.patches.append(seamod.Patch(C.waves, cx, cy, near[0], near[1], 'sea_near', sm))
-        if far: C.patches.append(seamod.Patch(C.waves, cx, cy, 5000, 160, 'sea_far', sm, kmin=.1, hole=(cx, cy, near[0] / 2 - .5)))
+        C.patches.append(seamod.Patch(C.waves, cx, cy, near[0], near[1], 'sea_near', sm, fade_k=.6 if far else None))
+        if far:
+            cc = '#183339' if mood == 'storm' else '#2f5a58'
+            smm = W.sea_mat('sea_mid', rough=.2, col=cc, foam_col='#cfd9dc', fine=.6); smf = W.sea_mat('sea_far', rough=.3, col=cc, foam_col='#cfd9dc', fine=.25)
+            C.patches.append(seamod.Patch(C.waves, cx, cy, 900, 360, 'sea_mid', smm, kmax=.6, hole=(cx, cy, near[0] / 2 - .5), fade_k=.115))
+            C.patches.append(seamod.Patch(C.waves, cx, cy, 9000, 300, 'sea_far', smf, kmax=.115, hole=(cx, cy, 448)))
     if ship:
         C.ship = shipmod.Ship('hero', hull='#5b3b22', hull2='#34210f', sail='#d8ccb0', trim='#c9a23a', flag=None, detail=1.0)
     if pirate:
@@ -250,7 +254,7 @@ def setup_oil(T0, T1):
     C.waves.oil = oil_state
     if T1 > OIL_T0 + .5:
         fm = W.oil_film_mat2(); cx, cy = OIL_POINT
-        pt = seamod.Patch(C.waves, cx, cy, 70, 240, 'oilfilm', fm, zoff=.03); C.extra_patches.append(pt)
+        pt = seamod.Patch(C.waves, cx, cy, 70, 150, 'oilfilm', fm, zoff=.12); C.extra_patches.append(pt)
         nodes = fm.node_tree.nodes
         def hk(T, t):
             st = oil_state(T)
@@ -266,47 +270,79 @@ def rogue_on():
     C.waves.rogue = f
 
 def sailor_pouring(bal_t0, bal_t1, face=None, hands_extra=None):
-    sl = sailor(); b = barrel(C.ship, (4.15, 2.6, shipmod.DECK + 1.0)); st = OilStream()
+    sl = sailor(); b = barrel(C.ship, (4.15, 2.6, shipmod.DECK + .5)); st = OilStream()
     bal = make_balance((3.55, 2.6, shipmod.DECK), bal_t0, bal_t1)
     def tl(T): return math.radians(100) * pour_amt(T)
     def bhook(T, t):
-        a = tl(T); b.rotation_euler = (0, -a, 0); b.location = (4.2 - .05 * math.sin(a), 2.6, shipmod.DECK + 1.15 + .12 * math.sin(a))
+        a = tl(T); b.rotation_euler = (0, -a, 0); b.location = (4.2 - .05 * math.sin(a), 2.6, shipmod.DECK + .72 + .1 * math.sin(a))
         M = ship_matrix(); mouth = M @ (Vector(b.location) + Matrix.Rotation(-a, 3, 'Y') @ Vector((0, 0, .6)) * 1.0)
         fl = max(0.0, (a - math.radians(38)) / math.radians(60)); fl = min(1, fl) * (1 if pour_amt(T) > .05 else 0)
         # outboard velocity: world direction of ship-local +X
         out = M.to_3x3() @ Vector((1, 0, 0)); st.update(T, (mouth.x, mouth.y, mouth.z), flow=fl, vel=(out.x * 1.4, out.y * 1.4), width=.04, waves=C.waves)
     C.hooks.append(bhook); C.stream = st; C.barrel = b
-    hands = {'handL': lambda T: Vector((3.9, 2.35, shipmod.DECK + 1.15 + .1 * math.sin(tl(T)))), 'handR': lambda T: Vector((3.9, 2.85, shipmod.DECK + 1.15 + .1 * math.sin(tl(T))))}
+    hands = {'handL': lambda T: Vector((3.9, 2.35, shipmod.DECK + .72 + .08 * math.sin(tl(T)))), 'handR': lambda T: Vector((3.9, 2.85, shipmod.DECK + .72 + .08 * math.sin(tl(T))))}
     if hands_extra: hands.update(hands_extra)
-    stand(sl, (3.55, 2.6, shipmod.DECK), 90, bal, hands=hands, face=face or H.expr_track([(0, 'neutral'), (60, 'neutral')]), head=lambda T: (-14, 10, 0))
+    stand(sl, (3.55, 2.6, shipmod.DECK), 90, bal, hands=hands, face=face or H.expr_track([(0, 'neutral'), (60, 'neutral')]), head=lambda T: (-6, 10, 0))
     return sl
 
 def common_light():
     l = thunder_light(); C.hooks.append(flash_hook(l))
 
 def new_shot(n, t0, **kw):
-    sm = begin(n, t0, **kw); make_cam(kw.get('fstop', 4.0)); H.HUMANS.clear(); common_light(); return sm
+    fs = kw.pop('fstop', 4.0); sm = begin(n, t0, **kw); make_cam(fs); H.HUMANS.clear(); common_light(); return sm
 
 def finish(): finish_materials()
 
 CP = lambda: Vector(C.stream.impact) if hasattr(C, 'stream') and hasattr(C.stream, 'impact') else Vector((0, 0, 0))
 
+class Still:
+    def at(self, T): return (0.0, 0.0, 0.0)
+
+def pop_hero(barrel_sailor=True, cap=True, crew_n=3):
+    """visible people on the hero ship (for wide/aerial shots)"""
+    out = []
+    if barrel_sailor: out.append(sailor_pouring(C.t0 - 1, C.t0 + C.n_frames / FPS))
+    if cap: out.append(captain_scene([(0, 'angry'), (60, 'angry')], (1.7, 1.6), 100, look=lambda T: (-8, -4, 0), hands={'handL': None}))
+    spots = ((-2.0, 2.0, '#c9c0a8', '#3a5a8a'), (-.6, 3.4, '#bdb49c', None), (1.4, -2.0, '#d4cab0', '#7a2a2a'), (-1.5, -3.5, '#c9c0a8', None))
+    for i, (x, y, sh, bd) in enumerate(spots[:crew_n]):
+        c = crew(f'CHAR_1{i}', f'Crew{i}', sh, bd, 1.1 if i % 2 else 1.0)
+        bal = make_balance((x, y, shipmod.DECK), C.t0 - 1, C.t0 + C.n_frames / FPS)
+        stand(c, (x, y, shipmod.DECK), 180 + 30 * (i - 1), bal, hands={'handL': Vector((x - .3, y + .1, shipmod.DECK + .8)), 'handR': Vector((x + .3, y + .1, shipmod.DECK + .8))}, face=H.expr_track([(0, 'strain'), (60, 'strain')]))
+        out.append(c)
+    return out
+
+def pop_pirates(n=6):
+    spots = ((-2.0, 2.0), (0.2, 3.2), (2.0, 1.0), (-1.2, -3.0), (1.5, -4.0), (0.0, 6.0), (-2.2, 5.0), (2.2, -1.5))
+    cols = ('#2a2a30', '#4a2a2a', '#262c3a', '#3a3026', '#2a2a30', '#4a2a2a', '#262c3a', '#3a3026')
+    for i, (x, y) in enumerate(spots[:n]):
+        h = H.Human(f'PIR_{i}', f'Pirate{i}', shirt=cols[i], vest='#1c1c20' if i % 2 else None, trousers='#16141a', bandana='#1a1a1e' if i % 3 == 0 else None, hair='#1a1410', beard='#1a1410' if i % 2 == 0 else None, height=1.0 + .05 * (i % 3))
+        h.root.parent = C.pirate.root; ph = i * 1.3
+        def fn(T, x=x, y=y, ph=ph):
+            lift = .15 * max(0.0, math.sin(T * 2.6 + ph))
+            return dict(loc=(x, y, shipmod.DECK), yaw=180 + 12 * math.sin(T + ph), face=H.EXPR['shout'], handL=Vector((x - .35, y + .1, shipmod.DECK + 1.0 + lift)), handR=Vector((x + .35, y + .1, shipmod.DECK + 1.0 + .15 - lift)), head=(0, 0, 0))
+        h.fn = fn
+
+
 # ================================================================= shots
 def s_aerial(n, t0=0.0):
-    new_shot(n, t0, storm=1.25, pirate=True, near=(220, 360), haze=700.0); rogue_on(); setup_oil(t0, t0 + n / FPS)
-    C.camfn = lambda t: ((lambda s: (Vector((s[0], s[1], 0)) + K([(0, (-90, -150, 120)), (2.3, (-48, -80, 62))])(t)[0:3] if False else Vector((s[0] - K([(0, 90), (2.3, 48)])(t), s[1] - K([(0, 150), (2.3, 80)])(t), K([(0, 120), (2.3, 62)])(t)))))(ship_xy(C.t0 + t)),
-                         (lambda s: Vector((s[0], s[1], 8)))(ship_xy(C.t0 + t)), K([(0, 22), (2.3, 26)])(t), Vector(ship_xy(C.t0 + t) + (0.0,)) if False else Vector((*ship_xy(C.t0 + t), 3)), 0)
-    C.rainwind = (8, 4); finish()
+    new_shot(n, t0, storm=1.25, pirate=True, near=(220, 360), haze=1800.0, fstop=11.0); rogue_on(); setup_oil(t0, t0 + n / FPS)
+    pop_hero(); pop_pirates(6)
+    def cf(t):
+        T = C.t0 + t; s = Vector(ship_xy(T)); p = Vector(pirate_xy(T)); mid = (s + p) / 2; k = t / 2.3
+        cam = Vector((mid.x - 14 - 8 * k, mid.y - 60 - 12 * k, 38 - 8 * k)); tgt = Vector((mid.x + 1, mid.y + 1, 3.0))
+        return (cam, tgt, 15, tgt, 0)
+    C.camfn = cf; C.rainwind = (8, 4); finish()
 
 def s_push(n, t0=2.2):
-    new_shot(n, t0, storm=1.2, pirate=True, near=(200, 340), haze=800.0); rogue_on(); setup_oil(t0, t0 + n / FPS)
-    C.camfn = lambda t: (SL(K([(0, (11, -46, 17)), (2.4, (7.5, -22, 9.5))])(t)), SL((-1, 3, 5.0)), K([(0, 28), (2.4, 32)])(t), SL((0, 0, 3)), 0)
+    new_shot(n, t0, storm=1.2, pirate=True, near=(200, 340), haze=1500.0, fstop=9.0); rogue_on(); setup_oil(t0, t0 + n / FPS)
+    pop_hero(); pop_pirates(5)
+    C.camfn = lambda t: (SL(K([(0, (9, -30, 12)), (2.4, (6, -15, 8.2))])(t)), SL((.5, 2, 3.6)), K([(0, 34), (2.4, 40)])(t), SL((.5, 2, 3.4)), 0)
     finish()
 
 def s_sailor(n, t0=4.6):
     new_shot(n, t0, storm=1.2, near=(160, 300), haze=600.0); rogue_on(); setup_oil(t0, t0 + n / FPS)
     sl = sailor_pouring(t0 - 1, t0 + n / FPS)
-    C.camfn = lambda t: (SL(K([(0, (-0.5, 6.6, 4.9)), (n / FPS, (-.2, 5.4, 4.5))])(t)), SL((3.3, 2.6, 3.7)), K([(0, 34), (n / FPS, 40)])(t), SL((3.55, 2.6, 3.6)), K([(0, 4), (n / FPS, -3)])(t))
+    C.camfn = lambda t: (SL(K([(0, (7.4, .6, 3.5)), (n / FPS, (6.4, 1.5, 3.4))])(t)), SL((3.7, 2.7, 3.3)), K([(0, 36), (n / FPS, 44)])(t), SL((3.6, 2.6, 3.3)), K([(0, 3), (n / FPS, -2)])(t))
     finish()
 
 def s_oilcu(n, t0=7.4):
@@ -314,7 +350,7 @@ def s_oilcu(n, t0=7.4):
     sl = sailor_pouring(t0 - 1, t0 + n / FPS)
     def cf(t):
         P = CP(); P = P if P.length > 1 else SL((7.0, 2.6, 0.2))
-        a = math.radians(30 + 40 * t / 2.5); loc = P + Vector((math.cos(a) * 4.2, math.sin(a) * 4.2, 4.6 - .5 * t)); return (loc, P + Vector((0, 0, 1.9)), 42, P + Vector((0, 0, 1.2)), 0)
+        a = math.radians(75 + 35 * t / 2.5); loc = P + Vector((math.cos(a) * 3.2, math.sin(a) * 3.2, 5.6 - .5 * t)); return (loc, P + Vector((0, 0, 1.9)), 42, P + Vector((0, 0, 1.2)), 0)
     C.camfn = cf; finish()
 
 def captain_scene(face_seq, spot, yaw, look=None, hands=None, walk=None):
@@ -332,7 +368,7 @@ def s_captain_walk(n, t0=9.9):
     path = lambda T: (K([(t0, 1.0), (t0 + 2.2, 2.5)])(T), K([(t0, -3.0), (t0 + 2.2, 1.5)])(T))
     cp = captain(); walker(cp, path, lambda T: K([(t0, 0), (t0 + 2.2, 70)])(T), speed=.7, face=H.expr_track([(0, 'angry'), (60, 'furious')]),
                            arms=lambda T: {'handR': Vector(ship_xy(0) + (0,)) if False else None})
-    C.camfn = lambda t: (SL(K([(0, (-1.5, -1.5, 3.9)), (n / FPS, (.4, 3.6, 3.8))])(t)), SL((K([(0, 1.0), (n / FPS, 2.5)])(t + 0), K([(0, -3.0), (n / FPS, 1.5)])(t), 3.7)), 34, SL((1.5, -.5, 3.6)), 0)
+    C.camfn = lambda t: (SL(K([(0, (4.4, 4.6, 3.9)), (n / FPS, (4.0, 4.0, 3.8))])(t)), SL((K([(0, 1.0), (n / FPS, 2.5)])(t), K([(0, -3.0), (n / FPS, 1.5)])(t), 3.5)), 38, SL((2.0, 1.5, 3.5)), 0)
     finish()
 
 def s_ots(n, t0=11.9):
@@ -340,44 +376,47 @@ def s_ots(n, t0=11.9):
     sl = sailor_pouring(t0 - 1, t0 + n / FPS)
     cp = captain_scene([(0, 'furious'), (60, 'furious')], (2.0, 1.6), 100, look=lambda T: (-8, -4, 0),
                        hands={'handR': lambda T: Vector((3.7, 2.6, shipmod.DECK + 1.2)) if T > t0 + .4 else None, 'handL': None})
-    C.camfn = lambda t: (SL(K([(0, (4.0, 3.6, 4.35)), (n / FPS, (3.7, 3.4, 4.35))])(t)), SL((1.6, 1.4, 4.35)), 38, SL((2.0, 1.6, 4.4)), 0)
+    C.camfn = lambda t: (SL(K([(0, (4.2, 3.7, 3.7)), (n / FPS, (3.9, 3.5, 3.7))])(t)), SL((1.7, 1.45, 3.65)), 40, SL((2.0, 1.6, 3.65)), 0)
     finish()
 
 def s_captain_cu(n, t0=13.2):
     new_shot(n, t0, storm=1.2, near=(160, 300), haze=600.0); rogue_on(); setup_oil(t0, t0 + n / FPS)
     sl = sailor_pouring(t0 - 1, t0 + n / FPS)
     cp = captain_scene([(0, 'furious'), (1.0, 'shout'), (1.5, 'furious')], (2.0, 1.6), 100, look=lambda T: (-8, -4, 0), hands={'handL': None})
-    hd = Vector((2.0, 1.6, shipmod.DECK + 1.78))
-    C.camfn = lambda t: (SL(Vector((3.2, 2.5, 4.55)) + Vector((-.2 * t, -.1 * t, 0))), SL(hd), 70, SL(hd), 0)
+    hd = Vector((2.0, 1.6, shipmod.DECK + 1.0))
+    C.camfn = lambda t: (SL(Vector((3.9, .3, 3.75)) + Vector((-.2 * t, .1 * t, 0))), SL(hd), 52, SL(hd), 0)
     finish()
 
 def s_point(n, t0=14.8):
     new_shot(n, t0, storm=1.35, near=(200, 340), haze=1200.0); rogue_on(); setup_oil(t0, t0 + n / FPS)
-    sl = sailor_pouring(t0 - 1, t0 + n / FPS, hands_extra={'handR': lambda T: Vector((5.4, 4.0 + 1.5 * ease((T - t0 - .3) / .4), shipmod.DECK + 2.0 + .25 * ease((T - t0 - .3) / .4))) if T > t0 + .3 else Vector((3.9, 2.85, shipmod.DECK + 1.15))})
+    sl = sailor_pouring(t0 - 1, t0 + n / FPS, hands_extra={'handR': lambda T: Vector((5.4, 4.0 + 1.5 * ease((T - t0 - .3) / .4), shipmod.DECK + 2.0 + .25 * ease((T - t0 - .3) / .4))) if T > t0 + .3 else Vector((3.9, 2.85, shipmod.DECK + .72))})
     cp = captain_scene([(0, 'angry'), (1.5, 'confused')], (1.7, 1.6), 100, look=lambda T: (-8, -4, 0), hands={'handL': None})
-    C.camfn = lambda t: (SL((3.55 - .3 * t, 1.4, 4.35)), SL(K([(0, (11, 4.2, 4.6)), (n / FPS, (11, 4.2, 6.8 + 6 * 0))])(t)) if False else SL(K([(0, (30, 5, 3.5)), (n / FPS, (36, 8, 14))])(t)), 30 + 4 * t, SL((30, 5, 6)), 0)
+    C.camfn = lambda t: (SL((3.1 - .2 * t, -.7, 3.55)), SL((1.9, 1.6, 3.65)), 38, SL((1.7, 1.6, 3.65)), 0)
     finish()
 
 def s_turn_line(n, t0=17.8):
     new_shot(n, t0, storm=1.35, near=(160, 300), haze=1200.0); rogue_on(); setup_oil(t0, t0 + n / FPS)
     sl = sailor_pouring(t0 - 1, t0 + n / FPS, face=H.expr_track([(0, 'shout'), (60, 'shout')]), hands_extra={'handR': lambda T: Vector((5.4, 5.5, shipmod.DECK + 2.25))})
     cp = captain_scene([(0, 'confused'), (60, 'confused')], (1.7, 1.6), 100, look=lambda T: (-8, -4, 0), hands={'handL': None})
-    hd = Vector((3.55, 2.6, shipmod.DECK + 1.76))
-    C.camfn = lambda t: (SL(Vector((1.9, 3.3, 4.25)) + Vector((.3 * t, 0, 0))), SL(hd), 55, SL(hd), 0)
+    C.camfn = lambda t: (SL((0.2 + .2 * t, 3.3, 3.8)), SL((2.7, 2.2, 3.5)), 32, SL((2.7, 2.2, 3.5)), 0)
     finish()
 
 def s_captain_low(n, t0=20.5):
     new_shot(n, t0, storm=1.35, near=(160, 300), haze=1200.0); rogue_on(); setup_oil(t0, t0 + n / FPS)
     sl = sailor_pouring(t0 - 1, t0 + n / FPS)
     cp = captain_scene([(0, 'confused'), (1.0, 'terror'), (2.2, 'terror')], (1.4, 1.2), 100, look=lambda T: (K([(t0, -10), (t0 + 1.4, 60)])(T), -5, 0), hands={'handL': None})
-    hd = Vector((1.4, 1.2, shipmod.DECK + 1.8))
+    hd = Vector((1.4, 1.2, shipmod.DECK + 1.0))
     C.camfn = lambda t: (SL(Vector((.2, 2.6, shipmod.DECK + .35)) + Vector((.2 * t, 0, .15 * t))), SL(hd + Vector((0, 0, .1))), 28, SL(hd), -4)
     finish()
 
 def s_pirates(n, t0=23.0):
     new_shot(n, t0, storm=1.35, pirate=True, near=(220, 360), haze=1400.0); rogue_on(); setup_oil(t0, t0 + n / FPS)
     cp = captain_scene([(0, 'worry' if False else 'angry'), (60, 'angry')], (0, -11.2), 180, hands={'handL': lambda T: Vector((-.45, -11.3, shipmod.DECK + 1.9)), 'handR': lambda T: Vector((.45, -11.3, shipmod.DECK + 1.9))}, look=lambda T: (0, 0, 0))
-    C.camfn = lambda t: (SL(K([(0, (-4.5, -17.5, 5.2)), (n / FPS, (-3.5, -16.5, 4.9))])(t)), SL(K([(0, (60, -230, 6)), (n / FPS, (50, -200, 6))])(t)) if False else Vector((C.pirate.root.location.x, C.pirate.root.location.y, 6)), 32, Vector((C.pirate.root.location.x, C.pirate.root.location.y, 6)), 0)
+    def cf(t):
+        T = C.t0 + t; Hh = Vector((*ship_xy(T), 0)); P = Vector((*pirate_xy(T), 0)); d = Hh - P; d.z = 0
+        pp = Vector((-d.y, d.x, 0)); pp = pp / max(pp.length, 1e-3)
+        return (P + d * .3 + pp * 34.0 + Vector((0, 0, 9.0)), P + Vector((0, 0, 7.0)), 28, P + Vector((0, 0, 6.0)), 0)
+    C.camfn = cf
     finish()
 
 def s_turn(n, t0=26.2):
@@ -393,7 +432,7 @@ def s_deck_crash(n, t0=28.7):
         bal = make_balance((p[0], p[1], shipmod.DECK), t0 - 1, t0 + n / FPS)
         stand(c, (p[0], p[1], shipmod.DECK), 180 + 20 * i, bal, hands={'handL': Vector((p[0] - .3, p[1] - .3, shipmod.DECK + 1.3)), 'handR': Vector((p[0] + .3, p[1] - .3, shipmod.DECK + 1.3))},
               face=H.expr_track([(0, 'strain'), (60, 'strain')]))
-    C.camfn = lambda t: (SL(K([(0, (-2.6, 9.5, 3.8)), (n / FPS, (-1.8, 7.5, 3.4))])(t)), SL((0, 0, 3.0)), 24, SL((0, 3, 3)), 6 - 4 * t)
+    C.camfn = lambda t: (SL(K([(0, (-2.2, 8.0, 4.8)), (n / FPS, (-1.6, 6.8, 4.2))])(t)), SL((0, 0, 3.0)), 24, SL((0, 3, 3)), 6 - 4 * t)
     C.hooks.append(lambda T, t: None); finish()
 
 def s_crew(n, t0=30.9):
@@ -403,13 +442,13 @@ def s_crew(n, t0=30.9):
     for i, (c, p) in enumerate(zip(cs, spots)):
         bal = make_balance((p[0], p[1], shipmod.DECK), t0 - 1, t0 + n / FPS)
         stand(c, (p[0], p[1], shipmod.DECK), 180 + 30 * (i - 1), bal, hands={'handL': Vector((p[0] - .35, p[1] + .1, shipmod.DECK + 1.4)), 'handR': Vector((p[0] + .35, p[1] + .1, shipmod.DECK + 1.4))}, face=H.expr_track([(0, 'strain'), (60, 'strain')]))
-    C.camfn = lambda t: (SL(K([(0, (-.5, -3.5, 2.7)), (n / FPS, (.4, -1.5, 3.2))])(t)), SL((0, 2.8, 3.8)), 28, SL((0, 2.8, 3.8)), 8 * math.sin(t * 2.0))
+    C.camfn = lambda t: (SL(K([(0, (-1.0, -2.0, 4.4)), (n / FPS, (.2, -.6, 4.2))])(t)), SL((-.4, 2.8, 3.5)), 30, SL((0, 2.8, 3.8)), 8 * math.sin(t * 2.0))
     finish()
 
 def s_pour2(n, t0=33.1):
     new_shot(n, t0, storm=1.5, near=(160, 320), haze=1000.0, wind=1.6, sailamp=1.6, boost=1.5); rogue_on(); setup_oil(t0, t0 + n / FPS)
     sl = sailor_pouring(t0 - 1, t0 + n / FPS, face=H.expr_track([(0, 'strain'), (60, 'strain')]))
-    C.camfn = lambda t: (SL(K([(0, (6.2, 5.5, 4.5)), (n / FPS, (6.0, 4.2, 3.9))])(t)), SL((3.8, 2.6, 3.5)), 32, SL((3.55, 2.6, 3.5)), 5 * math.sin(t * 1.7))
+    C.camfn = lambda t: (SL(K([(0, (4.6, 5.6, 5.4)), (n / FPS, (4.4, 4.8, 5.0))])(t)), SL((3.3, 2.5, 3.4)), 32, SL((3.55, 2.6, 3.5)), 5 * math.sin(t * 1.7))
     finish()
 
 def s_macro_drops(n, t0=36.4):
@@ -432,7 +471,7 @@ def s_dive(n, t0=38.6):
     cx, cy = OIL_POINT
     zc = lambda T: float(C.waves.height(cx, cy, T)[0])
     C.hooks.append(lambda T, t: C.ship.root.__setattr__('location', (0, 0, -40)))
-    C.camfn = lambda t: (Vector((cx - 14 * (1 - ease(t / 2.2)) - 1.2, cy - 22 * (1 - ease(t / 2.2)) - 1.2, zc(C.t0 + t) + 11 * (1 - ease(t / 2.2)) + .7)), Vector((cx, cy, zc(C.t0 + t))), 34 + 18 * ease(t / 2.2), Vector((cx, cy, zc(C.t0 + t))), 0)
+    C.camfn = lambda t: (Vector((cx - 14 * (1 - ease(t / 2.2)) - 1.2, cy - 22 * (1 - ease(t / 2.2)) - 1.2, seaz(cx - 14 * (1 - ease(t / 2.2)) - 1.2, cy - 22 * (1 - ease(t / 2.2)) - 1.2, C.t0 + t, 11 * (1 - ease(t / 2.2)) + 1.6))), Vector((cx, cy, zc(C.t0 + t))), 34 + 18 * ease(t / 2.2), Vector((cx, cy, zc(C.t0 + t))), 0)
     finish()
 
 def s_orbit_oil(n, t0=40.8):
@@ -440,10 +479,15 @@ def s_orbit_oil(n, t0=40.8):
     cx, cy = OIL_POINT; C.hooks.append(lambda T, t: C.ship.root.__setattr__('location', (0, 0, -40)))
     def cf(t):
         a = math.radians(-60 + 80 * t / (n / FPS)); R = 8.0; z = float(C.waves.height(cx, cy, C.t0 + t)[0])
-        return (Vector((cx + math.cos(a) * R, cy + math.sin(a) * R, z + 2.4)), Vector((cx, cy, z)), 32, Vector((cx, cy, z)), 0)
+        return (Vector((cx + math.cos(a) * R, cy + math.sin(a) * R, seaz(cx + math.cos(a) * R, cy + math.sin(a) * R, C.t0 + t, 2.6))), Vector((cx, cy, z)), 32, Vector((cx, cy, z)), 0)
     C.camfn = cf; finish()
 
 # ================================================================= second half (science, comparison, storm oil, finale)
+def seaz(x, y, T, off):
+    """camera height above the sea at the camera's own xy: low-passed so it does not ride every wave, but never under the surface"""
+    hs = [float(C.waves.height(x, y, T + d)[0]) for d in (-1.2, -.6, 0.0, .6, 1.2)]
+    return max(sum(hs) / 5.0 + off, hs[2] + off * .7, max(hs) * .6 + off)
+
 def hide_ship_far(): 
     C.ship.root.location = (0, 0, -40); C.hooks.append(lambda T, t: C.ship.root.__setattr__('location', (0, 0, -40)))
 
@@ -454,7 +498,7 @@ def s_science(n, t0=43.7):
     def cf(t):
         st = oil_state(C.t0 + t) or (cx, cy, 8.0); R = st[2]; k = t / (n / FPS)
         a = math.radians(-120 + 25 * k); d = R * (1.35 - .6 * k) + 1.5
-        return (Vector((cx + math.cos(a) * d, cy + math.sin(a) * d, z(C.t0 + t) + 1.5 - .5 * k)), Vector((cx, cy, z(C.t0 + t) + .1)), 38 + 8 * k, Vector((cx, cy, z(C.t0 + t))), 0)
+        return (Vector((cx + math.cos(a) * d, cy + math.sin(a) * d, seaz(cx + math.cos(a) * d, cy + math.sin(a) * d, C.t0 + t, 1.6 - .4 * k))), Vector((cx, cy, z(C.t0 + t) + .1)), 38 + 8 * k, Vector((cx, cy, z(C.t0 + t))), 0)
     C.camfn = cf; finish()
 
 def _split(n, t0, oil):
@@ -464,7 +508,7 @@ def _split(n, t0, oil):
         for o in bpy.data.objects:
             if o.name.startswith('oilfilm'): o.hide_render = True; o.hide_viewport = True
     cx, cy = OIL_POINT; z = lambda T: float(C.waves.height(cx, cy, T)[0])
-    C.camfn = lambda t: (Vector((cx - 7.5 + .8 * t, cy - 8.5 + .5 * t, z(C.t0 + t) + 2.6)), Vector((cx + 1.5, cy + 2.0, z(C.t0 + t) + .8)), 34, Vector((cx, cy, z(C.t0 + t))), 0)
+    C.camfn = lambda t: (Vector((cx - 7.5 + .8 * t, cy - 8.5 + .5 * t, seaz(cx - 7.5 + .8 * t, cy - 8.5 + .5 * t, C.t0 + t, 2.6))), Vector((cx + 1.5, cy + 2.0, z(C.t0 + t) + .8)), 34, Vector((cx, cy, z(C.t0 + t))), 0)
     finish()
 def s_split_a(n, t0=47.9): _split(n, t0, False)
 def s_split_b(n, t0=47.9): _split(n, t0, True)
@@ -475,7 +519,7 @@ def s_zoom(n, t0=50.7):
     cx, cy = OIL_POINT; z = lambda T: float(C.waves.height(cx + 2, cy, T)[0])
     def cf(t):
         k = t / (n / FPS); e = ease(k)
-        return (Vector((cx - 4.5 + 3.4 * e, cy - 3.2 + 2.4 * e, z(C.t0 + t) + 1.6 - 1.1 * e)), Vector((cx + 2, cy + 1.5, z(C.t0 + t) + .05)), 50 + 25 * e, Vector((cx + 1.5, cy + 1.0, z(C.t0 + t))), 0)
+        return (Vector((cx - 4.5 + 3.4 * e, cy - 3.2 + 2.4 * e, seaz(cx - 4.5 + 3.4 * e, cy - 3.2 + 2.4 * e, C.t0 + t, 1.6 - 1.1 * e))), Vector((cx + 2, cy + 1.5, z(C.t0 + t) + .05)), 50 + 25 * e, Vector((cx + 1.5, cy + 1.0, z(C.t0 + t))), 0)
     C.camfn = cf; finish()
 
 def barrels_on_deck(spots, label=True):
@@ -494,7 +538,7 @@ def s_oldship(n, t0=53.8):
     barrels_on_deck([(-1.2, 2.2), (-.5, 2.2), (.2, 2.2), (.9, 2.2), (-.85, 2.85), (-.15, 2.85), (.55, 2.85)])
     sl = crew('CHAR_003', 'Crew1', '#c9c0a8', '#3a5a8a'); bal = make_balance((2.0, 2.6, shipmod.DECK), t0 - 1, t0 + n / FPS)
     stand(sl, (2.0, 2.6, shipmod.DECK), 270, bal, hands={'handL': Vector((1.5, 2.45, shipmod.DECK + 1.0)), 'handR': Vector((1.5, 2.8, shipmod.DECK + 1.0))}, face=H.expr_track([(0, 'neutral'), (60, 'neutral')]))
-    C.camfn = lambda t: (SL(K([(0, (-3.6, 0.8, 2.6)), (n / FPS, (-1.6, 1.3, 2.4))])(t)), SL((-.2, 2.5, 3.5)), 34, SL((-.2, 2.5, 3.4)), 0)
+    C.camfn = lambda t: (SL(K([(0, (-2.9, -.2, 4.3)), (n / FPS, (-1.8, .3, 4.0))])(t)), SL((-.2, 2.5, 3.1)), 32, SL((-.2, 2.5, 3.4)), 0)
     finish()
 
 def s_container(n, t0=57.4):
@@ -506,10 +550,11 @@ def s_container(n, t0=57.4):
 
 def s_wide(n, t0=59.5):
     """W - the ship rides the waves, the slick behind it"""
-    new_shot(n, t0, storm=1.2, pirate=False, near=(240, 380), haze=1100.0, wind=1.4, sailamp=1.2); setup_oil(t0, t0 + n / FPS)
+    new_shot(n, t0, storm=1.2, pirate=False, near=(240, 380), haze=1500.0, wind=1.4, sailamp=1.2, fstop=10.0); setup_oil(t0, t0 + n / FPS)
+    pop_hero(True, True, 3)
     def cf(t):
         s = ship_xy(C.t0 + t); k = t / (n / FPS); a = math.radians(200 + 55 * k)
-        return (Vector((s[0] + math.cos(a) * 55, s[1] + math.sin(a) * 55, 22 - 6 * k)), Vector((s[0], s[1], 4)), 30, Vector((s[0], s[1], 3)), 0)
+        return (Vector((s[0] + math.cos(a) * 46, s[1] + math.sin(a) * 46, 18 - 4 * k)), Vector((s[0], s[1], 3.5)), 28, Vector((s[0], s[1], 3)), 0)
     C.camfn = cf; finish()
 
 def s_twoshot(n, t0=64.3):
@@ -519,15 +564,16 @@ def s_twoshot(n, t0=64.3):
     b1 = make_balance((2.2, 2.4, shipmod.DECK), t0 - 1, t0 + n / FPS); b2 = make_balance((3.3, 2.4, shipmod.DECK), t0 - 1, t0 + n / FPS)
     stand(sl, (3.3, 2.4, shipmod.DECK), 250, b2, face=H.expr_track([(0, 'smile'), (60, 'smile')]), head=lambda T: (0, 12, 0))
     stand(cp, (2.2, 2.4, shipmod.DECK), 80, b1, face=H.expr_track([(0, 'neutral'), (1.4, 'smile'), (60, 'smile')]), head=lambda T: (0, -12, 0))
-    C.camfn = lambda t: (SL(K([(0, (2.75, 0.2, 2.9)), (n / FPS, (2.75, .7, 2.8))])(t)), SL((2.75, 2.4, 3.55)), 36, SL((2.75, 2.4, 3.5)), 0)
+    C.camfn = lambda t: (SL(K([(0, (1.6, -.6, 3.9)), (n / FPS, (1.9, -.2, 3.8))])(t)), SL((2.75, 2.4, 3.45)), 34, SL((2.75, 2.4, 3.5)), 0)
     finish()
 
 def s_finale(n, t0=67.3):
     """Y - golden light, mist, the ship sails on; slow pull-back"""
-    new_shot(n, t0, mood='gold', storm=.35, near=(240, 380), haze=700.0, wind=.7, sailamp=.7, rain=False, sun=(.9, .5, .16), sun_e=6.0, sea_rough=.08)
+    new_shot(n, t0, mood='gold', storm=.35, near=(240, 380), haze=700.0, wind=.7, sailamp=.7, rain=False, sun=(.9, .5, .16), sun_e=3.0, sea_rough=.08)
+    pop_hero(True, True, 3)
     def cf(t):
         s = ship_xy(C.t0 + t); k = t / (n / FPS)
-        return (Vector((s[0] - 22 - 70 * k, s[1] - 35 - 80 * k, 8 + 28 * k)), Vector((s[0], s[1], 6)), 28 - 4 * k, Vector((s[0], s[1], 4)), 0)
+        return (Vector((s[0] - 16 - 55 * k, s[1] - 24 - 60 * k, 7 + 22 * k)), Vector((s[0], s[1], 5)), 28 - 4 * k, Vector((s[0], s[1], 4)), 0)
     C.camfn = cf; finish()
 
 SHOTS = {k[2:]: v for k, v in list(globals().items()) if k.startswith('s_') and callable(v)}

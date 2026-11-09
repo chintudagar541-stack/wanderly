@@ -35,7 +35,7 @@ class Human(Char):
                  scale=1.0, height=1.0, build=1.0, eye=None):
         body = coat or shirt
         kind = 'cap' if (hair and not hat and not bandana) else None
-        super().__init__(cid, name, skin=skin if skin not in ('#b98a64', '#d3a784', '#a97a58') else '#f4efe6', body=body, hair=None, hat=None, scale=scale * height * 1.45, pants=trousers, hair_col=hair or '#2a1a10', head_r=.25)
+        super().__init__(cid, name, skin=skin if skin not in ('#b98a64', '#d3a784', '#a97a58') else '#f4efe6', body=body, hair=None, hat=None, scale=scale * height * .9, pants=trousers, hair_col=hair or '#2a1a10', head_r=.25)
         self.pir = []
         hz, hx, hy, cz = self.hz, self.hx, self.hy, self.cz
         self._style(cid, skin)

@@ -13,7 +13,8 @@ sc.cycles.max_bounces = 6; sc.cycles.diffuse_bounces = 3; sc.cycles.glossy_bounc
 sc.cycles.use_adaptive_sampling = True; sc.cycles.adaptive_threshold = .02
 import shots
 t = time.time(); shots.SHOTS[shot](n, row['t0']); lib.log('built', shot, n, 'frames', f'{time.time() - t:.0f}s', len(bpy.data.objects), 'objects')
-if not os.environ.get('NOINK'): ink_setup(W, float(os.environ.get('OUTLINE', 1.0)))
+ik = row.get('ink', [7.0, 3.2])
+if not os.environ.get('NOINK'): ink_setup(W, float(os.environ.get('OUTLINE', 1.0)), ik[0], ik[1])
 if mode == 'still':
     f = int(a[3]) if len(a) > 3 else max(1, n // 2); sc.frame_set(f); sc.frame_set(f); lib.render(os.path.abspath(a[2]))
 else:

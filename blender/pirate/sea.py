@@ -28,13 +28,15 @@ class Waves:
         r = np.sqrt((x - cx) ** 2 + (y - cy) ** 2)
         return np.clip(1.0 - (r - R * .6) / (R * .5 + 1e-6), 0.0, 1.0)
 
-    def eval(self, x, y, t, want_foam=False, kmin=0.0):
+    def eval(self, x, y, t, want_foam=False, kmin=0.0, kmax=1e9, fade=None):
         """x,y arrays (rest positions). returns X,Y,Z (displaced), foam."""
         X = x.copy(); Y = y.copy(); Z = np.zeros_like(x)
         m = self.mask(x, y, t); jxx = np.ones_like(x); jyy = np.ones_like(x); jxy = np.zeros_like(x)
         for i in range(len(self.k)):
-            if self.k[i] < kmin: continue
+            if self.k[i] < kmin or self.k[i] > kmax: continue
             amp = self.a[i] * (1.0 - m * self.small[i] * .93)
+            if fade is not None and self.k[i] > fade[3]:
+                cheb = np.maximum(np.abs(x - fade[0]), np.abs(y - fade[1])); amp = amp * np.clip((1 - cheb / fade[2]) / .22, 0, 1)
             ph = self.k[i] * (self.d[i, 0] * x + self.d[i, 1] * y) - self.w[i] * t + self.ph[i]
             c = np.cos(ph); s = np.sin(ph)
             qa = self.Q[i] * amp
@@ -51,11 +53,11 @@ class Waves:
         foam = None
         if want_foam:
             J = jxx * jyy - jxy ** 2
-            foam = np.clip((0.62 - J) * 2.6, 0, 1) * (1.0 - m * .96)
-            foam = np.maximum(foam, np.clip((Z - self.a.sum() * .38) * .9, 0, .55) * (1 - m))
+            foam = np.clip((0.55 - J) * 2.0, 0, 1) * (1.0 - m * .96)
+            foam = np.maximum(foam, np.clip((Z - self.a.sum() * .5) * .8, 0, .45) * (1 - m))
             if self.rogue is not None:
                 cy, A = self.rogue(t)
-                if A > .01: foam = np.maximum(foam, np.clip((Z - A * .55) / (A * .2), 0, 1) * np.clip(1 - (np.abs(y - cy - 6) / 30), 0, 1))
+                if A > .01: foam = np.maximum(foam, .6 * np.clip((Z - A * .7) / (A * .25), 0, 1) * np.clip(1 - (np.abs(y - cy - 6) / 20), 0, 1))
         return X, Y, Z, foam
 
     def height(self, x, y, t):
@@ -72,8 +74,8 @@ class Waves:
 
 class Patch:
     """A grid of the ocean around (cx, cy). Updated per frame with numpy."""
-    def __init__(self, waves, cx, cy, size, n, name='sea', mat=None, kmin=0.0, col=None, hole=None, zoff=0.0):
-        self.w = waves; self.kmin = kmin; self.n = n; self.zoff = zoff
+    def __init__(self, waves, cx, cy, size, n, name='sea', mat=None, kmin=0.0, col=None, hole=None, zoff=0.0, kmax=1e9, fade_k=None):
+        self.w = waves; self.kmin = kmin; self.kmax = kmax; self.fade = (cx, cy, size / 2, fade_k) if fade_k else None; self.n = n; self.zoff = zoff
         ax = np.linspace(-size / 2, size / 2, n); gx, gy = np.meshgrid(ax + cx, ax + cy)
         self.x = gx.ravel(); self.y = gy.ravel()
         me = bpy.data.meshes.new(name); self.me = me
@@ -93,6 +95,7 @@ class Patch:
         self.update(0.0)
 
     def update(self, t):
-        X, Y, Z, F = self.w.eval(self.x, self.y, t, want_foam=True, kmin=self.kmin)
+        X, Y, Z, F = self.w.eval(self.x, self.y, t, want_foam=True, kmin=self.kmin, kmax=self.kmax, fade=self.fade)
+        if self.kmax < .2: F = F * 0.0
         co = np.stack([X, Y, Z + self.zoff], 1).astype(np.float32).ravel()
         self.me.vertices.foreach_set('co', co); self.foam.data.foreach_set('value', F.astype(np.float32)); self.me.update()

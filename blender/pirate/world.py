@@ -14,8 +14,13 @@ def sky(mood='storm', strength=1.0, sun_dir=(.3, 1.0, .45), sun_energy=4.0, sun_
     """mood storm: dark clouds. gold>0 blends toward sunset gold. returns sun object"""
     if os.environ.get('USE_PH'):
         try:
-            kw = ('overcast', 'cloudy', 'storm', 'sky') if mood == 'storm' else ('sunset', 'golden', 'dusk', 'sky')
-            world_hdri(*kw, strength=strength * (1.0 if mood == 'storm' else 1.1), rot=seed * 40 + (150 if mood == 'storm' else 200), avoid=('night', 'interior', 'studio', 'indoor', 'room'), res='4k')
+            kw = ('overcast', 'puresky', 'cloudy') if mood == 'storm' else ('sunset', 'puresky', 'dusk')
+            world_hdri(*kw, strength=strength, rot=seed * 40 + (150 if mood == 'storm' else 200), avoid=('night', 'interior', 'studio', 'indoor', 'room', 'clear'), res='2k')
+            wn = bpy.context.scene.world.node_tree; N2, L2 = wn.nodes, wn.links
+            env = next(n for n in N2 if n.type == 'TEX_ENVIRONMENT'); bg2 = next(n for n in N2 if n.type == 'BACKGROUND')
+            gr = N2.new('ShaderNodeMix'); gr.data_type = 'RGBA'; gr.blend_type = 'MULTIPLY'; gr.inputs['Factor'].default_value = 1.0
+            gr.inputs['B'].default_value = ((.30, .36, .44, 1) if mood == 'storm' else (1.15, .9, .65, 1))
+            L2.new(env.outputs['Color'], gr.inputs['A']); L2.new(gr.outputs['Result'], bg2.inputs['Color'])
             sun = bpy.data.lights.new('Sun', 'SUN'); sun.energy = sun_energy; sun.angle = math.radians(1.2); sun.color = lin(sun_col)
             so = bpy.data.objects.new('Sun', sun); bpy.context.scene.collection.objects.link(so)
             d = Vector(sun_dir).normalized(); so.rotation_euler = (-d).to_track_quat('-Z', 'Y').to_euler(); return so
@@ -55,19 +60,22 @@ def sky(mood='storm', strength=1.0, sun_dir=(.3, 1.0, .45), sun_energy=4.0, sun_
     d = Vector(sun_dir).normalized(); so.rotation_euler = (-d).to_track_quat('-Z', 'Y').to_euler()
     return so
 
-def sea_mat(name='sea', col='#0f3a40', deep='#04161c', foam_col='#e8f0f2', rough=.12, fog=(0, '#8c98a4'), fine=1.0):
+def sea_mat(name='sea', col='#0f3a40', deep='#04161c', foam_col='#cfd9dc', rough=.12, fog=(0, '#8c98a4'), fine=1.0):
     m = bpy.data.materials.new(name); m.use_nodes = True; N, L = _n(m); b = N['Principled BSDF']
     at = N.new('ShaderNodeAttribute'); at.attribute_name = 'foam'; at.attribute_type = 'GEOMETRY'
-    nz = N.new('ShaderNodeTexNoise'); nz.inputs['Scale'].default_value = 2.5 * fine; nz.inputs['Detail'].default_value = 8; tc = N.new('ShaderNodeTexCoord')
+    nz = N.new('ShaderNodeTexNoise'); nz.inputs['Scale'].default_value = 1.1 * fine; nz.inputs['Detail'].default_value = 5; tc = N.new('ShaderNodeTexCoord')
     nz2 = N.new('ShaderNodeTexNoise'); nz2.inputs['Scale'].default_value = 22.0 * fine; nz2.inputs['Detail'].default_value = 4
     L.new(tc.outputs['Object'], nz.inputs['Vector']); L.new(tc.outputs['Object'], nz2.inputs['Vector'])
     bump = N.new('ShaderNodeBump'); bump.inputs['Strength'].default_value = .35; bump.inputs['Distance'].default_value = .3; L.new(nz2.outputs['Fac'], bump.inputs['Height']); L.new(bump.outputs['Normal'], b.inputs['Normal'])
     # foam amount with noise breakup
     mul = N.new('ShaderNodeMath'); mul.operation = 'MULTIPLY'; L.new(at.outputs['Fac'], mul.inputs[0]); 
-    nzr = N.new('ShaderNodeMapRange'); nzr.inputs['From Min'].default_value = .35; nzr.inputs['From Max'].default_value = .75; L.new(nz.outputs['Fac'], nzr.inputs['Value'])
-    L.new(nzr.outputs['Result'], mul.inputs[1])
+    nzr = N.new('ShaderNodeMapRange'); nzr.inputs['From Min'].default_value = .38; nzr.inputs['From Max'].default_value = .74; nzr.inputs['To Max'].default_value = 1.6; L.new(nz.outputs['Fac'], nzr.inputs['Value'])
+    nz3 = N.new('ShaderNodeTexNoise'); nz3.inputs['Scale'].default_value = 9.0 * fine; nz3.inputs['Detail'].default_value = 6; L.new(tc.outputs['Object'], nz3.inputs['Vector'])
+    nzr3 = N.new('ShaderNodeMapRange'); nzr3.inputs['From Min'].default_value = .36; nzr3.inputs['From Max'].default_value = .62; nzr3.inputs['To Min'].default_value = .15; nzr3.inputs['To Max'].default_value = 1.3; L.new(nz3.outputs['Fac'], nzr3.inputs['Value'])
+    m3 = N.new('ShaderNodeMath'); m3.operation = 'MULTIPLY'; L.new(nzr.outputs['Result'], m3.inputs[0]); L.new(nzr3.outputs['Result'], m3.inputs[1])
+    L.new(m3.outputs[0], mul.inputs[1])
     fa = N.new('ShaderNodeMath'); fa.operation = 'ADD'; fa.use_clamp = True; fa.inputs[1].default_value = 0.0
-    sm = N.new('ShaderNodeMath'); sm.operation = 'MULTIPLY'; sm.inputs[1].default_value = 2.2; L.new(at.outputs['Fac'], sm.inputs[0])
+    sm = N.new('ShaderNodeMath'); sm.operation = 'MULTIPLY'; sm.inputs[1].default_value = 0.0; L.new(at.outputs['Fac'], sm.inputs[0])
     L.new(mul.outputs[0], fa.inputs[0]); mx = N.new('ShaderNodeMath'); mx.operation = 'MAXIMUM'; mx.use_clamp = True
     L.new(fa.outputs[0], mx.inputs[0]); L.new(sm.outputs[0], mx.inputs[1])
     cm = N.new('ShaderNodeMix'); cm.data_type = 'RGBA'; cm.inputs['A'].default_value = (*lin(col), 1); cm.inputs['B'].default_value = (*lin(foam_col), 1)
