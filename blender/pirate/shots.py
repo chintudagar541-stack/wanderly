@@ -446,7 +446,7 @@ def s_crew(n, t0=30.9):
     finish()
 
 def s_pour2(n, t0=33.1):
-    new_shot(n, t0, storm=1.5, near=(160, 320), haze=1000.0, wind=1.6, sailamp=1.6, boost=1.5); rogue_on(); setup_oil(t0, t0 + n / FPS)
+    new_shot(n, t0, storm=1.5, near=(160, 320), haze=1000.0, wind=1.6, sailamp=1.6, boost=1.5); _fl = bpy.data.lights.new('fill', 'SUN'); _fl.energy = 3.0; _fl.color = (.8, .88, 1.0); _fo = bpy.data.objects.new('fill', _fl); bpy.context.scene.collection.objects.link(_fo); _fo.rotation_euler = (math.radians(50), 0, math.radians(200)); rogue_on(); setup_oil(t0, t0 + n / FPS)
     sl = sailor_pouring(t0 - 1, t0 + n / FPS, face=H.expr_track([(0, 'strain'), (60, 'strain')]))
     C.camfn = lambda t: (SL(K([(0, (4.6, 5.6, 5.4)), (n / FPS, (4.4, 4.8, 5.0))])(t)), SL((3.3, 2.5, 3.4)), 32, SL((3.55, 2.6, 3.5)), 5 * math.sin(t * 1.7))
     finish()
@@ -515,11 +515,11 @@ def s_split_b(n, t0=47.9): _split(n, t0, True)
 
 def s_zoom(n, t0=50.7):
     """T - macro push-in on the smoothed surface vs the choppy edge"""
-    new_shot(n, t0, storm=1.1, near=(80, 360), haze=500.0, rain=True, far=False); setup_oil(t0, t0 + n / FPS); hide_ship_far()
+    new_shot(n, t0, storm=1.1, near=(80, 360), haze=500.0, rain=True, far=False, fstop=9.0); setup_oil(t0, t0 + n / FPS); hide_ship_far()
     cx, cy = OIL_POINT; z = lambda T: float(C.waves.height(cx + 2, cy, T)[0])
     def cf(t):
         k = t / (n / FPS); e = ease(k)
-        return (Vector((cx - 4.5 + 3.4 * e, cy - 3.2 + 2.4 * e, seaz(cx - 4.5 + 3.4 * e, cy - 3.2 + 2.4 * e, C.t0 + t, 1.6 - 1.1 * e))), Vector((cx + 2, cy + 1.5, z(C.t0 + t) + .05)), 50 + 25 * e, Vector((cx + 1.5, cy + 1.0, z(C.t0 + t))), 0)
+        return (Vector((cx - 4.5 + 3.4 * e, cy - 3.2 + 2.4 * e, seaz(cx - 4.5 + 3.4 * e, cy - 3.2 + 2.4 * e, C.t0 + t, 1.6 - 1.1 * e))), Vector((cx + 2, cy + 1.5, z(C.t0 + t) + .05)), 46 + 8 * e, Vector((cx + 1.5, cy + 1.0, z(C.t0 + t))), 0)
     C.camfn = cf; finish()
 
 def barrels_on_deck(spots, label=True):
