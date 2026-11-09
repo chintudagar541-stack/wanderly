@@ -1,14 +1,14 @@
-[lib] ph_find hdris ['overcast', 'cloudy', 'storm', 'sky'] -> kloofendal_48d_partly_cloudy_puresky
+[lib] ph_find hdris ['overcast', 'puresky', 'cloudy'] -> kloofendal_48d_partly_cloudy_puresky
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['fabric', 'canvas'] -> fabric_pattern_07
-[lib] built container 50 frames 3s 176 objects
+[lib] built container 50 frames 2s 177 objects
 Blender 4.2.3 LTS (hash 0e22e4fcea03 built 2024-10-14 23:31:34)
 Saved: '/home/runner/work/wanderly/wanderly/out/container.png'
-Time: 01:37.21 (Saving: 00:00.70)
+Time: 03:12.49 (Saving: 00:00.94)
 
-[lib] rendered /home/runner/work/wanderly/wanderly/out/container.png 97s
+[lib] rendered /home/runner/work/wanderly/wanderly/out/container.png 193s
 [lib] saved /home/runner/work/wanderly/wanderly/out/container.jpg
 
 Blender quit
