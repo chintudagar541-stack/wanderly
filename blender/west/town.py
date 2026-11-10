@@ -523,21 +523,43 @@ def mesas():
         a = i / 22 * math.tau + rng.uniform(-.12, .12)
         if abs(math.cos(a)) > .9 and rng.random() < .5: continue
         w = rng.uniform(150, 600); h = rng.uniform(60, 220); d = rng.uniform(1300, 3800)
-        me = bpy.data.meshes.new('mesa%d' % i); bm = bmesh.new()
-        bmesh.ops.create_cone(bm, cap_ends=True, segments=48, radius1=1, radius2=.82, depth=1)
-        bmesh.ops.subdivide_edges(bm, edges=[e for e in bm.edges if abs(e.verts[0].co.z - e.verts[1].co.z) > .5], cuts=10)
-        bm.to_mesh(me); bm.free()
-        o = bpy.data.objects.new('mesa%d' % i, me); o.location = (math.cos(a) * d, math.sin(a) * d, h / 2 - 5)
-        o.scale = (w, w * rng.uniform(.35, .7), h); o.rotation_euler = (0, 0, a + rng.uniform(-.5, .5))
-        tx = bpy.data.textures.new('mesa%d' % i, 'CLOUDS'); tx.noise_scale = .25; tx.noise_depth = 4
-        d_ = o.modifiers.new('d', 'DISPLACE'); d_.texture = tx; d_.strength = .12; d_.direction = 'NORMAL'; d_.texture_coords = 'LOCAL'
-        me.materials.append(m); coll('Far').objects.link(o)
-        # talus slope at the foot
-        me2 = bpy.data.meshes.new('talus%d' % i); bm = bmesh.new(); bmesh.ops.create_cone(bm, cap_ends=False, segments=48, radius1=1.35, radius2=.98, depth=.35); bm.to_mesh(me2); bm.free()
-        t2 = bpy.data.objects.new('talus%d' % i, me2); t2.location = (o.location.x, o.location.y, h * .35 / 2 - 5); t2.scale = o.scale; t2.rotation_euler = o.rotation_euler
-        me2.materials.append(dirt('desert')); coll('Far').objects.link(t2)
+        o = mesa_mesh('mesa%d' % i, seed=i)
+        o.location = (math.cos(a) * d, math.sin(a) * d, -5); o.scale = (w, w * rng.uniform(.4, .75), h); o.rotation_euler = (0, 0, a + rng.uniform(-.5, .5))
+        o.data.materials.append(m); o.data.materials.append(dirt('desert')); coll('Far').objects.link(o)
     me = bpy.data.meshes.new('desert'); bm = bmesh.new(); bmesh.ops.create_grid(bm, x_segments=2, y_segments=2, size=6000); bm.to_mesh(me); bm.free()
     g = bpy.data.objects.new('desert', me); g.location = (0, 0, -.02); me.materials.append(ph_or('desertsand', ('@aerial_sand',), lambda: dirt('desert'), scale=3.0, avoid=('beach', 'wet', 'snow'))); coll('Far').objects.link(g)
+
+
+def mesa_mesh(name, seed=0, seg=128, rows=30):
+    """eroded mesa: irregular outline with gullies and spurs, stepped cliff bands, a talus apron at the foot and a
+    slightly uneven caprock.  Unit size (radius ~1, height 1); material 1 (talus) below the cliffs."""
+    from mathutils import noise
+    off = Vector((seed * 7.31, seed * 3.17, 0))
+    def outline(th):
+        p = Vector((math.cos(th), math.sin(th), 0)) * 1.3 + off
+        return 1 + .22 * noise.noise(p * 1.0) + .1 * noise.noise(p * 3.3) + .04 * noise.noise(p * 9)
+    bm = bmesh.new(); grid = []
+    for j in range(rows + 1):
+        u = j / rows; row = []
+        for i in range(seg):
+            th = i / seg * math.tau; r0 = outline(th)
+            if u < .3:                                     # talus apron
+                z = u / .3 * .32; r = r0 * (1 + .55 * (1 - u / .3) ** 1.6)
+            else:
+                v = (u - .3) / .7; z = .32 + v * .68
+                band = .035 * math.floor(v * 5) / 5 + .02 * math.sin(v * 31 + th * 3)          # strata ledges
+                r = r0 * (1 - .1 * v - band) + .05 * noise.noise(Vector((th * 4, v * 6, seed)))
+            if j == rows: z += .015 * noise.noise(Vector((math.cos(th) * 3, math.sin(th) * 3, seed)))
+            row.append(bm.verts.new((math.cos(th) * r, math.sin(th) * r, z)))
+        grid.append(row)
+    for j in range(rows):
+        for i in range(seg):
+            f = bm.faces.new((grid[j][i], grid[j][(i + 1) % seg], grid[j + 1][(i + 1) % seg], grid[j + 1][i]))
+            f.material_index = 1 if j < rows * .3 else 0
+    top = bm.faces.new(grid[rows]); top.material_index = 0
+    me = bpy.data.meshes.new(name); bm.to_mesh(me); bm.free()
+    for p in me.polygons: p.use_smooth = True
+    return bpy.data.objects.new(name, me)
 
 
 def strata_mat():
@@ -577,9 +599,6 @@ def props_street(y0, y1):
             y += rng.uniform(3.5, 7.0)
     # wagon in the street, telegraph poles, water tower
     wagon((-3.5, 34, 0), .3)
-    for i, yy in enumerate(range(-30, 90, 18)):
-        tm = wood('pole', '#5a4a3a', weather=.8, planks=False)
-        cyl(f'tpole{i}', .1, 7.5, (STREET + 3.5, yy, 3.75), tm, v=10); box(f'tcross{i}', (1.6, .1, .1), (STREET + 3.5, yy, 7.0), tm)
     water_tower((-STREET - 10, 70, 0))
 
 
@@ -660,6 +679,8 @@ def build_town(detail=True, y_range=(-30, 50)):
     mesas()
     vegetation(float(os.environ.get('VEG', 1.0)))
     if not os.environ.get('NOPHPROPS'): ph_props()
+    if detail and not os.environ.get('NODRESS'):
+        import dress; dress.dress_street(y_range[0] - 5, y_range[1] + 15)
     for i in range(14):
         rng2 = random.Random(i)
         cactus((rng2.choice((-1, 1)) * rng2.uniform(26, 60), rng2.uniform(-60, 120), 0), rng2.uniform(2, 3.8), i)

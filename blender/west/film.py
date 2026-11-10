@@ -11,12 +11,13 @@ import sys, os, math, json, random
 HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE); sys.path.insert(0, os.path.dirname(HERE)); sys.path.insert(0, os.path.join(os.path.dirname(HERE), 'real'))
 import bpy
 from mathutils import Vector, Matrix, Euler, Quaternion
-import town as T, props as PR, cast as CA, mocap as M
+import town as T, props as PR, mocap as M, toon as TO
+CA = TO
 
 FPS = 24
 CFG = json.load(open(os.path.join(HERE, 'shots.json')))
 CAST = os.environ.get('CAST', '/tmp/cast.blend')
-S = T.STREET; W_ = T.WALK
+S = T.STREET; W_ = T.WALK; STREET_X = T.STREET
 DECK = .34          # boardwalk top
 
 
@@ -29,22 +30,76 @@ class Shot:
     # ---- helpers
     def cast(self, *ids):
         need = [i for i in ids if i not in self.chars]
-        if need: self.chars.update(CA.load(CAST, need))
+        for i in need:
+            p = {'JACK': TO.JACK, 'SHER': TO.SHERIFF}.get(i) or TO.crowd_preset(int(i[1:]) if i[1:].isdigit() else hash(i) % 97)
+            self.chars[i] = TO.Toon(i, p)
         return [self.chars[i] for i in ids]
 
     def crowd(self, n, spots, base_ids=None, seed=0):
         """n townsfolk from the crowd library (cloned when more are needed)"""
         base_ids = base_ids or [f'T{i:02d}' for i in range(14)]
         r = random.Random(seed); out = []
-        loaded = self.cast(*base_ids[:min(n, len(base_ids))])
+        base_ids = [f'T{(seed * 7 + i) % 40:02d}' for i in range(14)]; loaded = self.cast(*base_ids[:min(n, len(base_ids))])
         for k in range(n):
             b = loaded[k % len(loaded)]
-            ch = b if k < len(loaded) else CA.clone(b, f'{b.cid}_c{k}')
+            ch = b if k < len(loaded) else TO.Toon(f'{b.cid}c{k}', TO.crowd_preset(40 + seed * 17 + k))
             out.append(ch)
         return out
 
     def actor(self, ch, acts, **kw):
-        a = CA.Actor(ch, acts, blink_seed=len(self.actors) * 13 + 1, **kw); self.actors.append(a); return a
+        a = TO.ToonActor(ch, acts, **kw); self.actors.append(a); return a
+
+    def populate(self, n=None, seed=None):
+        """background townsfolk inside the camera's view: walkers on the street lanes, people chatting and waiting on the
+        boardwalks.  Kept clear of the main action, the camera, wagons and the well."""
+        if not getattr(self, 'town', True) or getattr(self, 'interior', None) or getattr(self, 'no_extras', False) or self.cam is None: return []
+        mood = getattr(self, 'mood', 'day')
+        n = n if n is not None else int(os.environ.get('EXTRAS', 2 if mood == 'night' else 9))
+        if n <= 0: return []
+        r = random.Random(seed if seed is not None else hash(self.sid) % 9973)
+        self.at(self.dur / 2); bpy.context.view_layer.update()
+        co = self.cam[0]; cp = co.matrix_world.translation.copy(); fw = co.matrix_world.to_3x3() @ Vector((0, 0, -1)); fw.z = 0
+        if fw.length < 1e-3: return []
+        fw.normalize(); cd = co.data
+        half = math.atan(cd.sensor_width / 2 * (9 / 16) / cd.lens) * .95
+        busy = [Vector((a.ch.root.location.x, a.ch.root.location.y, 0)) for a in self.actors] + [Vector(p) for p in getattr(self, 'keep_clear', [])]
+        obst = [(Vector((-1.8, 44, 0)), 2.6), (Vector((3.3, 38, 0)), 3.2), (Vector((-3.3, 27.5, 0)), 3.2), (Vector((-2.6, -16, 0)), 1.8)]
+        def ok(p, rad=1.6):
+            d = p - Vector((cp.x, cp.y, 0)); dist = d.length
+            if dist < 6.0 or dist > 34: return False
+            if abs(math.atan2(d.cross(fw).z, d.dot(fw))) > half: return False
+            if any((p - b).length < 3.0 for b in busy): return False
+            if any((p - c).length < r_ for c, r_ in obst): return False
+            return all((p - q).length > rad for q in placed)
+        placed = []; people = []; k = 0; tries = 0
+        WALK_CLIPS = [('82_08', 1.0), ('82_09', 1.0), ('82_11', 1.0), ('91_18', 1.0)]
+        STAND = ['80_48', '80_44', '77_02', '40_10', '77_05', '79_70']
+        while len(people) < n and tries < 400:
+            tries += 1
+            kind = r.choice(['walk', 'walk', 'pair', 'stand', 'stand'] if mood != 'night' else ['walk', 'stand'])
+            side = r.choice((-1, 1)); y = cp.y + fw.y * r.uniform(8, 30) + r.uniform(-6, 6)
+            if kind == 'walk':
+                x = side * r.uniform(.9, 1.7); dirn = r.choice((-1, 1)); p0 = Vector((x, y, 0)); p1 = p0 + Vector((0, dirn * 1.3 * self.dur, 0))
+                if not (ok(p0) and ok(p1)): continue
+                ch = TO.Toon(f'X{len(people)}', TO.crowd_preset(200 + r.randint(0, 999)))
+                cl, _ = r.choice(WALK_CLIPS)
+                self.actor(ch, [TO.Act(0, cl, r.uniform(.5, 1.5), self.dur + 1, loc=p0, yaw=0 if dirn < 0 else 180)], face=[(0, r.choice(['idle', 'watch', 'chat']))])
+                placed += [p0, (p0 + p1) / 2, p1]; people.append(ch)
+            else:
+                x = side * (STREET_X - W_ + r.uniform(.4, .75)); p0 = Vector((x, y, DECK))
+                if not any(f['side'] == side and f['porch'] and abs(y - f['y']) < f['w'] / 2 - 1.2 for f in T.FRONTS): continue
+                if not ok(Vector((x, y, 0)), 1.8): continue
+                cnt = 2 if kind == 'pair' else 1
+                for j in range(cnt):
+                    pj = p0 + Vector((0, j * .95, 0))
+                    ch = TO.Toon(f'X{len(people)}', TO.crowd_preset(200 + r.randint(0, 999)))
+                    yaw = (90 * side + r.uniform(-30, 30)) if cnt == 1 else (0 if j == 1 else 180) + side * 25
+                    self.actor(ch, [TO.Act(0, r.choice(STAND), r.uniform(.5, 3.0), self.dur + 1, loc=pj, yaw=yaw, lock_root=True)],
+                               face=[(0, r.choice(['chat', 'idle', 'watch']) if cnt == 1 else 'chat')], talk=[(0, self.dur, .6)] if cnt == 2 and j == 0 else None)
+                    placed.append(Vector((pj.x, pj.y, 0))); people.append(ch)
+            k += 1
+        print('EXTRAS', self.sid, len(people), flush=True)
+        return people
 
     def keylight(self, energy=25.0, col=(1, .9, .8), size=1.2):
         l = bpy.data.lights.new('key', 'AREA'); l.size = size; l.color = col; l.use_shadow = True
@@ -60,7 +115,7 @@ class Shot:
     def lod(self):
         """level of detail by distance to the camera (mid-shot): memory and render time stay low for crowds"""
         self.at(self.dur / 2); cam = self.cam[0].matrix_world.translation
-        for ch in self.chars_all():
+        for ch in []:
             d = (head_of(ch) - cam).length
             for o in ch.col.all_objects:
                 for md in o.modifiers:
@@ -76,7 +131,7 @@ class Shot:
     def chars_all(self):
         seen = []
         for a in self.actors:
-            if a.ch not in seen: seen.append(a.ch)
+            if hasattr(a, 'ch') and a.ch not in seen: seen.append(a.ch)
         for c in self.chars.values():
             if c not in seen: seen.append(c)
         return seen
@@ -128,13 +183,13 @@ def K(keys, t):
 
 def head_of(ch, up=.08):
     """a point between the eyes (up=.08 default kept for callers that meant 'face centre')"""
-    pb = ch.rig.pose.bones['mixamorig:Head']; ax = (pb.tail - pb.head).normalized()
-    return ch.rig.matrix_world @ (pb.head + ax * .1) + Vector((0, 0, up - .08))
+    bpy.context.view_layer.update()
+    return ch.head.matrix_world @ Vector((0, -ch.hy * .2, ch.cz)) + Vector((0, 0, up - .08))
 
 
 def facing(ch):
     """horizontal forward direction of a character (from the pelvis)"""
-    pb = ch.rig.pose.bones['mixamorig:Hips']; f = ch.rig.matrix_world.to_3x3() @ pb.matrix.to_3x3() @ Vector((0, 0, 1)); f.z = 0
+    f = ch.root.matrix_world.to_3x3() @ Vector((0, -1, 0)); f.z = 0
     return f.normalized() if f.length > 1e-4 else Vector((0, -1, 0))
 
 
@@ -144,7 +199,7 @@ def _clear(subj, d, dist):
     for _ in range(8):
         hit, loc, nor, idx, ob, mat = sc.ray_cast(dg, o + d * .02, d, distance=max(.01, dist - tr))
         if not hit: return dist
-        if ob is not None and any(c.name.startswith('C_') or c.name == 'Props' for c in ob.users_collection) and not ob.name.startswith(('vault', 'b_', 's_')):
+        if ob is not None and any(c.name in ('Characters', 'Face', 'Props') or c.name.startswith('C_') for c in ob.users_collection) and not ob.name.startswith(('vault', 'b_', 's_')):
             tr += (loc - o).length + .02; o = loc + d * .02; continue
         return (loc - Vector(subj)).length - .15
     return dist
@@ -164,7 +219,11 @@ def framed(subj, face_dir, angle, elev, size, lens, ignore=()):
     return Vector(subj) + best[1] * max(.35, best[0])
 
 
-def bone_pos(ch, b): pb = ch.rig.pose.bones['mixamorig:' + b]; return ch.rig.matrix_world @ pb.head
+def bone_pos(ch, b):
+    bpy.context.view_layer.update()
+    if b in ('RightHand', 'LeftHand'): return ch.hands['L' if b == 'RightHand' else 'R'].matrix_world.translation.copy()
+    if b == 'Head': return head_of(ch)
+    return ch.torso.matrix_world.translation.copy()
 
 
 # ------------------------------------------------------------------ scene setup
@@ -178,6 +237,7 @@ def setup(shot, mood='day', elev=30, az=150, town=True, interior=None, veg=None,
     sc.cycles.use_adaptive_sampling = True; sc.cycles.adaptive_threshold = .02
     sc.cycles.max_bounces = 6; sc.cycles.diffuse_bounces = 3; sc.cycles.glossy_bounces = 3; sc.cycles.transmission_bounces = 4; sc.cycles.volume_bounces = 1
     sc.render.film_transparent = False
+    shot.mood, shot.interior, shot.town = mood, interior, town
     if town:
         os.environ['VEG'] = str(veg if veg is not None else os.environ.get('VEG', 1.0)); T.build_town()
     sun = T.sky(mood, sun_elev=elev, sun_az=az)
@@ -210,6 +270,7 @@ def s_hook(sh):
     people = sh.crowd(10, None, seed=1)
     sh.actor(jack, [CA.Act(0, '80_03', 2.6, 6, loc=(.3, 4.0, 0), yaw=180 - 0)], face=[(0, 'determined'), (3.2, 'smirk')])
     sh.actor(sher, [CA.Act(0, '79_73', 3.6, 6, loc=(.3, 6.6, 0), yaw=0, lock_root=True)], face=[(0, 'shock'), (2.6, 'fear')])
+    _g = PR.revolver('jgun'); _g.scale = (1.4, 1.4, 1.4); sh.updates.append(lambda t, _g=_g: hold_gun(jack, _g, sher))
     spots = [(-3.2, 6.5), (-2.5, 8.6), (3.4, 7.2), (2.6, 9.4), (-4.0, 3.6), (4.2, 4.4), (-1.5, 10.6), (1.4, 11.2), (-4.6, 9.8), (4.8, 10.0)]
     clips = ['79_74', '80_48', '77_02', '79_73', '80_44', '79_70', '77_05', '79_74', '80_48', '77_02']
     for k, (ch, (x, y)) in enumerate(zip(people, spots)):
@@ -229,6 +290,7 @@ def s_funniest(sh):
     jack, sher = sh.cast('JACK', 'SHER')
     sh.actor(jack, [CA.Act(0, '80_03', 3.0, 6, loc=(.3, 4.0, 0), yaw=180)], face=[(0, 'determined'), (.5, 'smirk')])
     sh.actor(sher, [CA.Act(0, '79_73', 4.0, 6, loc=(.3, 6.6, 0), yaw=0, lock_root=True)], face=[(0, 'fear')])
+    _g = PR.revolver('jgun'); _g.scale = (1.4, 1.4, 1.4); sh.updates.append(lambda t, _g=_g: hold_gun(jack, _g, sher))
     cu(sh, jack, angle=20, elev=2, size=(1.4, .5), lens=45, fstop=2.2)
 
 
@@ -253,11 +315,10 @@ def s_ride(sh):
     import horse as HO
     jack, = sh.cast('JACK')
     h = HO.HorseGLB('jack_horse'); v = 1.35; y0 = -34.0
+    TO.ride_fn(jack, lambda t: h.seat(), face=[(0, 'determined')])
+    sh.keep_clear = [(.6, y0 + v * k * .5, 0) for k in range(8)]
     def ride(t):
-        h.update(t, (.6, y0 + v * t, 0), math.pi, speed=v)
-        CA.ride(jack, h.seat(), t, face={'determined': .7, 'neutral': .3})
-        bl = 1.0 if 1.3 < (t % 4.0) < 1.45 else 0.0
-        jack.set_expression({'determined': .7, 'neutral': .3}, blink=bl)
+        h.update(t, (.6, y0 + v * t, 0), math.pi, speed=v); bpy.context.view_layer.update(); jack.apply(t)
     sh.updates.append(ride)
     def cam(t):
         p = Vector((.6, y0 + v * t, 0)); u = ease(t / sh.dur)
@@ -271,7 +332,7 @@ def s_walkin(sh):
     jack, = sh.cast('JACK')
     people = sh.crowd(5, None, seed=3)
     sh.actor(jack, [CA.Act(0, '82_09', 6.6, 3, loc=(.5, -6, 0), yaw=180 + 180, speed=.9), CA.Act(1.5, '91_18', 5.0, 4, loc=(.5, -3.4, 0), yaw=0, lock_root=True, blend=.6)],
-             face=[(0, 'neutral'), (1.4, 'suspicious')], look=lambda t: None if t < 1.4 else (-6.5, 12, 3.0))
+             face=[(0, 'idle'), (1.4, 'suspicious')], look=lambda t: None if t < 1.4 else (-6.5, 12, 3.0))
     for k, ch in enumerate(people):
         x = (-S + W_ * .5) if k % 2 else (S - W_ * .5); y = 2 + k * 4
         sh.actor(ch, [CA.Act(0, '77_02' if k % 2 else '40_10', 2 + k, 6, loc=(x, y, DECK), yaw=90 if k % 2 else -90, lock_root=True)], face=[(0, 'suspicious')], look=lambda t: bone_pos(jack, 'Head'))
@@ -317,7 +378,7 @@ def s_knew(sh):
     setup(sh, 'day', 28, 110, veg=.2, interior='sheriff')
     sher, = sh.cast('SHER')
     desk = Vector((-S - 4.5, -2 + .6, 1.04))
-    sh.actor(sher, [CA.Act(0, '77_05', .8, 6, loc=(desk.x - .75, desk.y - .1, .2), yaw=-90, lock_root=True)], face=[(0, 'neutral'), (1.4, 'smirk'), (3.0, 'grin')], look=lambda t: (desk.x + 1, desk.y - .4, 1.3))
+    sh.actor(sher, [CA.Act(0, '77_05', .8, 6, loc=(desk.x - .75, desk.y - .1, .2), yaw=-90, lock_root=True)], face=[(0, 'idle'), (1.4, 'smirk'), (3.0, 'grin')], look=lambda t: (desk.x + 1, desk.y - .4, 1.3))
     if PR.T.PH:
         try:
             import lib
@@ -349,7 +410,7 @@ def s_suspicious(sh):
     """18.85-20.85 'Jack became suspicious.'  Close-up, his eyes narrow; slow push."""
     setup(sh, 'day', 28, 110, veg=.4)
     jack, = sh.cast('JACK')
-    sh.actor(jack, [CA.Act(0, '77_02', 2.0, 6, loc=(S - W_ * .5, -1.0, DECK), yaw=90, lock_root=True)], face=[(0, 'neutral'), (.7, 'suspicious')], look=lambda t: (-S, -2.0, 2.0))
+    sh.actor(jack, [CA.Act(0, '77_02', 2.0, 6, loc=(S - W_ * .5, -1.0, DECK), yaw=90, lock_root=True)], face=[(0, 'idle'), (.7, 'suspicious')], look=lambda t: (-S, -2.0, 2.0))
     cu(sh, jack, angle=35, elev=2, size=(.7, .45), lens=60)
 
 
@@ -438,18 +499,21 @@ def s_draw(sh):
     jack, = sh.cast('JACK')
     jp = Vector((-S - 2.0, 11.3, .2))
     sh.actor(jack, [CA.Act(0, '79_96', 1.2, 6, loc=jp, yaw=-90, lock_root=True)], face=[(0, 'determined'), (1.4, 'angry')])
-    gun = jack.gun
+    gun = PR.revolver('jgun'); gun.scale = (1.4, 1.4, 1.4)
     def draw(t):
-        if gun is None: return
-        if t > .9:
-            hm = jack.rig.matrix_world @ jack.rig.pose.bones['mixamorig:RightHand'].matrix
-            gun.parent = None; gun.matrix_world = hm @ Matrix.Translation((0, .09, .03)) @ Matrix.Rotation(math.radians(-90), 4, 'X')
+        if t > .9: hold_gun(jack, gun, sher=None)
+        else: gun.location = bone_pos(jack, 'Hips') + facing(jack).cross(Vector((0, 0, 1))) * -.28 + Vector((0, 0, -.05))
     sh.updates.append(draw)
     def cam(t):
         hip = bone_pos(jack, 'RightHand'); h = head_of(jack)
         tgt = hip.lerp(h, ease((t - .8) / .7)); s = K([(0, .7), (.8, .7), (1.5, 1.1), (sh.dur, 1.0)], t)
         return (framed(tgt, facing(jack), 35, K([(0, -10), (1.5, 0)], t), s, 35), tgt, 35, 0, tgt, .01)
     sh.camera(cam, fstop=2.2); sh.keylight(22.0, (1, .85, .65))
+
+
+def hold_gun(ch, gun, sher=None):
+    h = bone_pos(ch, 'RightHand'); f = facing(ch) if sher is None else (head_of(sher) - h).normalized()
+    gun.location = h; gun.rotation_mode = 'QUATERNION'; gun.rotation_quaternion = f.to_track_quat('-Y', 'Z')
 
 
 def open_vault(o, a=math.radians(75)):
@@ -468,11 +532,8 @@ def _bank_pair(sh, jack_face, sher_face, sher_turn=None, jack_talk=None, sher_ta
     else: acts = [CA.Act(0, sher_clip[0], sher_clip[1], 6, loc=spos, yaw=-90, lock_root=True, speed=.15)]
     if sher_turn is not None: acts.append(CA.Act(sher_turn, '69_18', 2.2, 6, loc=spos, yaw=-90, lock_root=True, speed=1.0, blend=.5))
     sh.actor(sher, acts, face=sher_face, talk=sher_talk, look=(lambda t: head_of(jack)) if (facing or sher_turn is not None) else None)
-    if jack.gun:
-        def g(t):
-            hm = jack.rig.matrix_world @ jack.rig.pose.bones['mixamorig:RightHand'].matrix
-            jack.gun.parent = None; jack.gun.matrix_world = hm @ Matrix.Translation((0, .09, .03)) @ Matrix.Rotation(math.radians(-90), 4, 'X')
-        sh.updates.append(g)
+    gun = PR.revolver('jgun'); gun.scale = (1.4, 1.4, 1.4)
+    sh.updates.append(lambda t: hold_gun(jack, gun, sher))
     bar = PR.gold_bar('held_bar', (0, 0, 0)); sh.updates.append(lambda t: setattr(bar, 'location', bone_pos(sher, 'RightHand') + Vector((0, -.05, -.04))))
     for k in range(3): PR.sack(f'sack{k}', (c.x + 1.25 + k * .3, c.y - .75 - (k % 2) * .25, .42), fill=.6 + .2 * k)
     T.lantern('vault_lamp', (c.x + 1.4, c.y - 1.0, 1.2), c='Interior', energy=35)
@@ -497,7 +558,7 @@ def s_froze(sh):
 
 def s_turn(sh):
     """39.65-42.55 'Then he slowly turned around and said...'  the sheriff turns to face Jack; fear becomes a smirk."""
-    c, jack, sher = _bank_pair(sh, [(0, 'determined'), (2.0, 'suspicious')], [(0, 'fear'), (1.6, 'neutral'), (2.3, 'smirk')], sher_turn=.3, sher_clip=('77_02', 2.0))
+    c, jack, sher = _bank_pair(sh, [(0, 'determined'), (2.0, 'suspicious')], [(0, 'fear'), (1.6, 'idle'), (2.3, 'smirk')], sher_turn=.3, sher_clip=('77_02', 2.0))
     def cam(t):
         h = head_of(sher); j = head_of(jack); d = j - h; d.z = 0; d.normalize()
         side = Vector((-d.y, d.x, 0))
@@ -546,7 +607,7 @@ def s_neverseen(sh):
     sh.actor(sher, [CA.Act(0, '77_02', 2, 6, loc=(-S - .9, -2 + 2.3, .2), yaw=90, lock_root=True)], face=[(0, 'smirk')])
     people = sh.crowd(5, None, seed=6)
     for k, ch in enumerate(people):
-        sh.actor(ch, [CA.Act(0, '82_11' if k % 2 else '82_09', 2.2 if k % 2 else 6.8, 6, loc=(-S + W_ * .5 + (k % 2) * .5, -9 + k * 2.6, DECK if False else 0), yaw=0 if k % 2 else 180, speed=.85)], face=[(0, 'neutral')])
+        sh.actor(ch, [CA.Act(0, '82_11' if k % 2 else '82_09', 2.2 if k % 2 else 6.8, 6, loc=(-S + W_ * .5 + (k % 2) * .5, -9 + k * 2.6, DECK if False else 0), yaw=0 if k % 2 else 180, speed=.85)], face=[(0, 'idle')])
     def cam(t):
         return (Vector((-S + 4.5, -7.0, 1.7)).lerp(Vector((-S + 4.0, -2.5, 1.75)), ease(t / sh.dur)), (-S, -2 + 2.0, 1.6), 30, 0, (-S, -2 + 2.0, 1.6), .008)
     sh.camera(cam, fstop=2.8)
@@ -648,7 +709,7 @@ def rss(tag):
 
 def main():
     a = sys.argv[sys.argv.index('--') + 1:]; mode, sid = a[0], a[1]
-    sh = Shot(sid); SHOTS[sid](sh); rss('built'); sh.lod(); rss('lod')
+    sh = Shot(sid); SHOTS[sid](sh); rss('built'); sh.populate(); rss('extras'); sh.lod(); rss('lod')
     if os.environ.get('NOCHARHAIR'):
         for o in bpy.data.objects:
             for md in o.modifiers:

@@ -30,8 +30,7 @@ jobs:
       - name: Build cast + portraits
         run: |
           mkdir -p /tmp/castout; cd blender/west
-          python3 cast.py -- build /tmp/castout/cast.blend 2>&1 | grep -E "built|Error|Traceback|Saved" | tail -40
-          CAST=/tmp/castout/cast.blend python3 portraits.py -- /tmp/castout 2>&1 | grep -E "portrait|Error|Traceback"
+          python3 portraits.py -- /tmp/castout 2>&1 | grep -E "portrait|Error|Traceback"
           ls -la /tmp/castout
       - uses: actions/upload-artifact@v4
         with: { name: cast, path: /tmp/castout, retention-days: 7 }
