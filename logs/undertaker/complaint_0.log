@@ -1,4 +1,4 @@
-00:00.606  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.943  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -115,14 +115,14 @@
 [lib] model dead_tree_trunk_02 4
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
-20:05:37 | INFO: Data are loaded, start creating Blender stuff
-20:05:37 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
-20:05:37 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
-20:05:37 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
-20:05:37 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
-20:05:37 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
-20:05:38 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
-20:05:39 | INFO: glTF import finished in 1.53s
+20:20:32 | INFO: Data are loaded, start creating Blender stuff
+20:20:32 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
+20:20:32 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
+20:20:32 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
+20:20:32 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
+20:20:32 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
+20:20:33 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
+20:20:34 | INFO: glTF import finished in 2.44s
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -152,15 +152,15 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-RSS built 1833 MB
-EXTRAS complaint 9
-RSS extras 1842 MB
+RSS built 1882 MB
+EXTRAS complaint 7
+RSS extras 1887 MB
 CLEARCAM complaint 0
-RSS lod 1875 MB
-RSS posed 1887 MB
-RSS depsgraph 1887 MB
-OBJECTS 11679 MESHES 10822 IMAGES 213 225 Mpx
-03:20.865  render           | Saved: '/home/runner/work/wanderly/wanderly/out/complaint_0.png'
-RTIME 47.4
-RSS rendered 6332 MB
+RSS lod 1900 MB
+RSS posed 1909 MB
+RSS depsgraph 1909 MB
+OBJECTS 11452 MESHES 10684 IMAGES 213 225 Mpx
+04:42.137  render           | Saved: '/home/runner/work/wanderly/wanderly/out/complaint_0.png'
+RTIME 89.1
+RSS rendered 6648 MB
 RENDERED complaint 0.96
