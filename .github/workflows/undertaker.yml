@@ -18,7 +18,7 @@ jobs:
         run: |
           echo "jobs=$(python3 blender/undertaker/plan.py)" >> $GITHUB_OUTPUT
           echo "mode=$(jq -r .mode blender/undertaker/job.json)" >> $GITHUB_OUTPUT
-          echo "cast=$(jq -r '.cast // true' blender/undertaker/job.json)" >> $GITHUB_OUTPUT
+          echo "cast=false" >> $GITHUB_OUTPUT
   cast:
     needs: plan
     if: false
@@ -46,9 +46,6 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: ./.github/actions/west-setup
-      - uses: actions/download-artifact@v4
-        if: needs.plan.outputs.cast == 'true'
-        with: { name: cast, path: /tmp/cast }
       - name: Run
         run: |
           mkdir -p out; set -o pipefail; cd blender/undertaker
