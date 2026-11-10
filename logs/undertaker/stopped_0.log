@@ -1,4 +1,4 @@
-00:00.938  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.595  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -115,14 +115,14 @@
 [lib] model dead_tree_trunk_02 4
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
-19:52:22 | INFO: Data are loaded, start creating Blender stuff
-19:52:22 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
-19:52:22 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
-19:52:22 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
-19:52:22 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
-19:52:22 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
-19:52:22 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
-19:52:24 | INFO: glTF import finished in 1.86s
+20:10:34 | INFO: Data are loaded, start creating Blender stuff
+20:10:34 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
+20:10:34 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
+20:10:34 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
+20:10:34 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
+20:10:34 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
+20:10:35 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
+20:10:35 | INFO: glTF import finished in 1.59s
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -153,15 +153,15 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-RSS built 1884 MB
-EXTRAS stopped 7
-RSS extras 1904 MB
-CLEARCAM stopped 1
-RSS lod 1950 MB
-RSS posed 1950 MB
-RSS depsgraph 1950 MB
-OBJECTS 11940 MESHES 11030 IMAGES 212 224 Mpx
-03:59.290  render           | Saved: '/home/runner/work/wanderly/wanderly/out/stopped_0.png'
-RTIME 73.0
-RSS rendered 6604 MB
+RSS built 1837 MB
+EXTRAS stopped 0
+RSS extras 1848 MB
+CLEARCAM stopped 0
+RSS lod 1856 MB
+RSS posed 1858 MB
+RSS depsgraph 1858 MB
+OBJECTS 11285 MESHES 10645 IMAGES 212 224 Mpx
+03:55.056  render           | Saved: '/home/runner/work/wanderly/wanderly/out/stopped_0.png'
+RTIME 71.6
+RSS rendered 6600 MB
 RENDERED stopped 2.01
