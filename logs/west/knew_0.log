@@ -1,6 +1,7 @@
-00:00.634  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.774  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -12,11 +13,10 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
@@ -115,14 +115,14 @@
 [lib] model dead_tree_trunk_02 4
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
-10:20:48 | INFO: Data are loaded, start creating Blender stuff
-10:20:48 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
-10:20:49 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
-10:20:49 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
-10:20:49 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
-10:20:49 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
-10:20:49 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
-10:20:50 | INFO: glTF import finished in 1.68s
+11:05:38 | INFO: Data are loaded, start creating Blender stuff
+11:05:38 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
+11:05:38 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
+11:05:38 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
+11:05:38 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
+11:05:38 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
+11:05:38 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
+11:05:39 | INFO: glTF import finished in 1.61s
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -137,13 +137,13 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] model vintage_pocket_watch 4
 Info: Object has non-uniform scale, unwrap will operate on a non-scaled version of the mesh
-RSS built 1947 MB
-RSS extras 1947 MB
+RSS built 1911 MB
+RSS extras 1911 MB
 CLEARCAM knew 0
-RSS lod 1969 MB
-RSS posed 1971 MB
-RSS depsgraph 1971 MB
-OBJECTS 10425 MESHES 9940 IMAGES 194 221 Mpx
-04:51.736  render           | Saved: '/home/runner/work/wanderly/wanderly/out/knew_0.png'
-RSS rendered 7115 MB
+RSS lod 1934 MB
+RSS posed 1935 MB
+RSS depsgraph 1935 MB
+OBJECTS 10388 MESHES 9922 IMAGES 194 221 Mpx
+04:44.440  render           | Saved: '/home/runner/work/wanderly/wanderly/out/knew_0.png'
+RSS rendered 6801 MB
 RENDERED knew 2.34
