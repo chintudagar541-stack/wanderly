@@ -1,4 +1,4 @@
-00:00.688  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.789  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -115,14 +115,14 @@
 [lib] model dead_tree_trunk_02 4
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
-10:45:17 | INFO: Data are loaded, start creating Blender stuff
-10:45:17 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
-10:45:17 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
-10:45:17 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
-10:45:17 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
-10:45:17 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
-10:45:17 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
-10:45:18 | INFO: glTF import finished in 1.70s
+11:06:10 | INFO: Data are loaded, start creating Blender stuff
+11:06:10 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
+11:06:11 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
+11:06:11 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
+11:06:11 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
+11:06:11 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
+11:06:11 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
+11:06:12 | INFO: glTF import finished in 1.79s
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -131,14 +131,14 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] hdri sun 143 elev 12.0 -> az 300
-RSS built 1872 MB
+RSS built 1792 MB
 EXTRAS nights 2
-RSS extras 1872 MB
+RSS extras 1792 MB
 CLEARCAM nights 0
-RSS lod 1886 MB
-RSS posed 1886 MB
-RSS depsgraph 1886 MB
-OBJECTS 10379 MESHES 9800 IMAGES 189 217 Mpx
-05:57.094  render           | Saved: '/home/runner/work/wanderly/wanderly/out/nights_0.png'
-RSS rendered 6972 MB
+RSS lod 1806 MB
+RSS posed 1806 MB
+RSS depsgraph 1806 MB
+OBJECTS 10334 MESHES 9767 IMAGES 189 217 Mpx
+05:30.862  render           | Saved: '/home/runner/work/wanderly/wanderly/out/nights_0.png'
+RSS rendered 6572 MB
 RENDERED nights 2.04
