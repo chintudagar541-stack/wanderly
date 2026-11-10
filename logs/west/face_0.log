@@ -1,8 +1,6 @@
-00:00.675  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.604  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -15,6 +13,8 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -118,11 +118,11 @@
 [lib] model tree_stump_01 1
 [lib] hdri sun 143 elev 3.5 -> az 250
 Info: Object has non-uniform scale, unwrap will operate on a non-scaled version of the mesh
-RSS built 1939 MB
-RSS lod 1939 MB
-RSS posed 1939 MB
-RSS depsgraph 1939 MB
-OBJECTS 9217 MESHES 8856 IMAGES 188 217 Mpx
-04:39.466  render           | Saved: '/home/runner/work/wanderly/wanderly/out/face_0.png'
-RSS rendered 6530 MB
+RSS built 1861 MB
+RSS lod 1861 MB
+RSS posed 1861 MB
+RSS depsgraph 1861 MB
+OBJECTS 9504 MESHES 9143 IMAGES 188 217 Mpx
+04:10.253  render           | Saved: '/home/runner/work/wanderly/wanderly/out/face_0.png'
+RSS rendered 6516 MB
 RENDERED face 1.2
