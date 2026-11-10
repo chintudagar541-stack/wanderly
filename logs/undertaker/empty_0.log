@@ -1,4 +1,4 @@
-00:00.762  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.510  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -13,6 +13,7 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
+[lib] retry https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/brick_wall_005/brick_wall_005_disp_1k.jpg <urlopen error [Errno 104] Connection reset by peer>
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -115,14 +116,14 @@
 [lib] model dead_tree_trunk_02 4
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
-20:06:02 | INFO: Data are loaded, start creating Blender stuff
-20:06:02 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
-20:06:02 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
-20:06:02 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
-20:06:02 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
-20:06:02 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
-20:06:02 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
-20:06:03 | INFO: glTF import finished in 1.75s
+20:31:34 | INFO: Data are loaded, start creating Blender stuff
+20:31:34 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
+20:31:34 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
+20:31:34 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
+20:31:34 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
+20:31:34 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
+20:31:35 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
+20:31:35 | INFO: glTF import finished in 1.58s
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -154,15 +155,15 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-RSS built 1854 MB
+RSS built 1837 MB
 EXTRAS empty 0
-RSS extras 1881 MB
+RSS extras 1865 MB
 CLEARCAM empty 0
-RSS lod 1881 MB
-RSS posed 1882 MB
-RSS depsgraph 1882 MB
+RSS lod 1865 MB
+RSS posed 1867 MB
+RSS depsgraph 1867 MB
 OBJECTS 10881 MESHES 10349 IMAGES 212 224 Mpx
-04:08.801  render           | Saved: '/home/runner/work/wanderly/wanderly/out/empty_0.png'
-RTIME 65.6
-RSS rendered 6462 MB
+03:40.512  render           | Saved: '/home/runner/work/wanderly/wanderly/out/empty_0.png'
+RTIME 50.2
+RSS rendered 6612 MB
 RENDERED empty 1.59
