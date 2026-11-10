@@ -1,6 +1,7 @@
-00:00.836  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.807  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -11,10 +12,12 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
@@ -25,9 +28,6 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
@@ -117,11 +117,11 @@
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
 [lib] hdri sun 143 elev 3.5 -> az 250
-RSS built 2022 MB
-RSS lod 2742 MB
-RSS posed 2742 MB
-RSS depsgraph 2742 MB
-OBJECTS 9728 MESHES 9327 IMAGES 187 216 Mpx
-05:29.615  render           | Saved: '/home/runner/work/wanderly/wanderly/out/believed_0.png'
-RSS rendered 8362 MB
+RSS built 1934 MB
+RSS lod 2697 MB
+RSS posed 2700 MB
+RSS depsgraph 2700 MB
+OBJECTS 9576 MESHES 9175 IMAGES 187 216 Mpx
+04:38.817  render           | Saved: '/home/runner/work/wanderly/wanderly/out/believed_0.png'
+RSS rendered 8328 MB
 RENDERED believed 1.8
