@@ -1,7 +1,6 @@
-00:01.097  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.577  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -13,19 +12,20 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
+[lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
-[lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -115,14 +115,14 @@
 [lib] model dead_tree_trunk_02 4
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
-09:56:39 | INFO: Data are loaded, start creating Blender stuff
-09:56:39 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
-09:56:39 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
-09:56:40 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
-09:56:40 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
-09:56:40 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
-09:56:40 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
-09:56:41 | INFO: glTF import finished in 1.81s
+10:20:56 | INFO: Data are loaded, start creating Blender stuff
+10:20:56 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
+10:20:56 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
+10:20:56 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
+10:20:56 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
+10:20:57 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
+10:20:57 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
+10:20:58 | INFO: glTF import finished in 1.70s
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -132,14 +132,14 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] hdri sun 146 elev 48.5 -> az 110
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-RSS built 1949 MB
+RSS built 1943 MB
 EXTRAS robbed 0
-RSS extras 1949 MB
+RSS extras 1943 MB
 CLEARCAM robbed 3
-RSS lod 1949 MB
-RSS posed 1949 MB
-RSS depsgraph 1949 MB
-OBJECTS 10704 MESHES 10073 IMAGES 189 217 Mpx
-05:12.900  render           | Saved: '/home/runner/work/wanderly/wanderly/out/robbed_0.png'
-RSS rendered 6899 MB
+RSS lod 1943 MB
+RSS posed 1943 MB
+RSS depsgraph 1943 MB
+OBJECTS 10429 MESHES 9794 IMAGES 189 217 Mpx
+06:03.866  render           | Saved: '/home/runner/work/wanderly/wanderly/out/robbed_0.png'
+RSS rendered 7009 MB
 RENDERED robbed 1.5
