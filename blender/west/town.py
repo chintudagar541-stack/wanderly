@@ -74,8 +74,9 @@ def ph_or(name, kws, fallback, scale=1.0, tint=None, avoid=(), bump=.6):
     m = None
     if PH:
         try:
-            if kws[0].startswith('@'): m = lib.mat_ph(name, aid=kws[0][1:], scale=scale, tint=tint, bump=bump)
-            else: m = lib.mat_ph(name, *kws, scale=scale, tint=tint, avoid=avoid, bump=bump)
+            res = os.environ.get('PH_RES', '1k')
+            if kws[0].startswith('@'): m = lib.mat_ph(name, aid=kws[0][1:], scale=scale, tint=tint, bump=bump, res=res)
+            else: m = lib.mat_ph(name, *kws, scale=scale, tint=tint, avoid=avoid, bump=bump, res=res)
         except Exception as e: lib.log('PH', name, 'failed', e)
     if m is None: m = fallback()
     _M[key] = m; return m
@@ -794,8 +795,12 @@ def bank_interior(c='Interior'):
     for r in range(4):
         for k in range(10):
             box('goldbar', (.24, .1, .07), (vx - .5 - (k % 2) * .26, y0 + .3 + (k // 2) * .26, .9 + r * .38), gold, bevel=.01, c=c)
-    lamp = bpy.data.lights.new('vault_glow', 'POINT'); lamp.energy = 120; lamp.color = (1, .7, .35); lamp.shadow_soft_size = .3
+    lamp = bpy.data.lights.new('vault_glow', 'POINT'); lamp.energy = 450; lamp.color = (1, .7, .35); lamp.shadow_soft_size = .3
     lo = bpy.data.objects.new('vault_glow', lamp); lo.location = (vx - .3, y0 + .8, 2.2); coll(c).objects.link(lo)
+    for k, yy in enumerate((y0 - 2.5, y0 + 2.5)):          # moonlight through the front windows + soft bounce
+        l = bpy.data.lights.new(f'b_moon{k}', 'AREA'); l.energy = 260; l.size = 1.6; l.color = (.55, .65, 1.0)
+        lo = bpy.data.objects.new(f'b_moon{k}', l); lo.location = (x0 - .4, yy, 2.0); lo.rotation_euler = (0, math.radians(-75), 0); coll(c).objects.link(lo)
+    l = bpy.data.lights.new('b_fill', 'AREA'); l.energy = 120; l.size = 4; l.color = (1, .8, .6); lo = bpy.data.objects.new('b_fill', l); lo.location = (x0 - D / 2, y0, H); coll(c).objects.link(lo)
     return dict(vault_door=vd, vault_center=Vector((vx + .6, y0 + .8, 1.65)), hall=Vector((x0 - 4, y0, 0.2)))
 
 
@@ -815,10 +820,13 @@ def sheriff_interior(c='Interior'):
     for k in range(16): cyl('cellbar', .02, H - .2, (x0 - 7.6 + k * .14, y0 - 1.7, H / 2 + .2), iron, v=8, c=c)
     # wanted board with posters
     box('s_board', (.04, 2.0, 1.2), (x0 - .4, y0 + 2.5, 1.9), wood('cork', '#9a7a50', planks=False), c=c)
-    lamp = bpy.data.lights.new('s_lamp', 'POINT'); lamp.energy = 60; lamp.color = (1, .68, .35); lamp.shadow_soft_size = .1
+    lamp = bpy.data.lights.new('s_lamp', 'POINT'); lamp.energy = 220; lamp.color = (1, .68, .35); lamp.shadow_soft_size = .1
     lo = bpy.data.objects.new('s_lamp', lamp); lo.location = (x0 - 4.5, y0 + 1.2, 1.35); coll(c).objects.link(lo)
     glass = plain('lampglass', '#ffd8a0', .05, emit='#ffb860', strength=6)
     cyl('s_lampglass', .07, .2, (x0 - 4.5, y0 + 1.2, 1.2), glass, c=c)
+    l = bpy.data.lights.new('s_window', 'AREA'); l.energy = 900; l.size = 1.8; l.color = (1, .92, .8)
+    lo = bpy.data.objects.new('s_window', l); lo.location = (x0 - .3, y0 - 1.9, 1.7); lo.rotation_euler = (0, math.radians(-80), math.radians(20)); coll(c).objects.link(lo)
+    l = bpy.data.lights.new('s_fill', 'AREA'); l.energy = 150; l.size = 4; lo = bpy.data.objects.new('s_fill', l); lo.location = (x0 - D / 2, y0, H); coll(c).objects.link(lo)
     return dict(desk=Vector((x0 - 4.5, y0 + .6, 1.04)), chair=Vector((x0 - 5.4, y0 + .6, .2)), board=Vector((x0 - .42, y0 + 2.5, 1.9)))
 
 
@@ -828,7 +836,7 @@ def sky(mood='day', sun_elev=35.0, sun_az=140.0, strength=1.0):
     if PH:
         try:
             aid = {'day': 'kloofendal_48d_partly_cloudy_puresky', 'sunset': 'plains_sunset', 'dawn': 'kiara_1_dawn', 'night': 'qwantani_dusk_2_puresky'}[mood]
-            lib.world_hdri(aid=aid, strength=strength * (.25 if mood == 'night' else 1.0), rot=0.0, res='4k')
+            lib.world_hdri(aid=aid, strength=strength * (.25 if mood == 'night' else 1.0), rot=0.0, res='2k')
             sun_elev = _align_hdri_sun(sun_az, sun_elev)
         except Exception as e:
             lib.log('PH sky failed', e); _nishita(sun_elev, sun_az, strength, mood)

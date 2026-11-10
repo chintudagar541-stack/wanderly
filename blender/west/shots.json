@@ -615,5 +615,35 @@
 69.29,
 69.72
 ]
+],
+"trans": {
+"ride": [
+"dissolve",
+0.5
+],
+"nights": [
+"dissolve",
+0.4
+],
+"fourth": [
+"dissolve",
+0.35
+],
+"poster_jack": [
+"dissolve",
+0.4
+],
+"neverseen": [
+"dissolve",
+0.4
+],
+"believed": [
+"dissolve",
+0.3
+],
+"vault": [
+"dissolve",
+0.2
 ]
+}
 }

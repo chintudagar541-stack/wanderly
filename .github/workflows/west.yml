@@ -55,7 +55,8 @@ jobs:
           mkdir -p out; set -o pipefail; cd blender/west
           export USE_PH=1 CAST=/tmp/cast/cast.blend FACES=/tmp/cast
           export RW=$(jq -r '.w // 1440' job.json) RH=$(jq -r '.h // 2560' job.json) SAMPLES=$(jq -r '.samples // 64' job.json) VEG=$(jq -r '.veg // 1.0' job.json) HANDLE=$(jq -r '.handle // 0.25' job.json)
-          export $(echo '${{ toJson(matrix.t.env) }}' | jq -r 'if . == null then "" else to_entries|map("\(.key)=\(.value)")|join(" ") end')
+          EXTRA=$(echo '${{ toJson(matrix.t.env) }}' | jq -r 'if . == null then "" else to_entries|map("\(.key)=\(.value)")|join(" ") end'); [ -n "$EXTRA" ] && export $EXTRA
+          free -g; ( while true; do sleep 20; echo "MEM $(free -m | awk '/Mem/{print $3}')MB"; done ) &
           if [ "${{ needs.plan.outputs.mode }}" = "video" ]; then
             python3 film.py -- frames ${{ matrix.t.shot }} ${{ matrix.t.a }} ${{ matrix.t.b }} $GITHUB_WORKSPACE/out/frames 2>&1 | grep -E "frame|Error|Traceback|line" | tee $GITHUB_WORKSPACE/out/log.txt | tail -60
             S=$(ls $GITHUB_WORKSPACE/out/frames | head -1 | sed 's/f_0*//; s/.png//'); [ -z "$S" ] && S=0
