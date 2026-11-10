@@ -1,4 +1,4 @@
-00:00.806  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.891  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -115,14 +115,14 @@
 [lib] model dead_tree_trunk_02 4
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
-10:20:12 | INFO: Data are loaded, start creating Blender stuff
-10:20:12 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
-10:20:13 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
-10:20:13 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
-10:20:13 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
-10:20:13 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
-10:20:13 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
-10:20:14 | INFO: glTF import finished in 1.58s
+11:11:43 | INFO: Data are loaded, start creating Blender stuff
+11:11:43 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
+11:11:43 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
+11:11:43 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
+11:11:43 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
+11:11:43 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
+11:11:43 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
+11:11:44 | INFO: glTF import finished in 1.83s
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -131,14 +131,14 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] hdri sun 143 elev 3.5 -> az 250
-RSS built 1945 MB
-EXTRAS trick 7
-RSS extras 1978 MB
+RSS built 1796 MB
+EXTRAS trick 9
+RSS extras 1840 MB
 CLEARCAM trick 1
-RSS lod 2019 MB
-RSS posed 2022 MB
-RSS depsgraph 2022 MB
-OBJECTS 11679 MESHES 10631 IMAGES 189 217 Mpx
-04:50.676  render           | Saved: '/home/runner/work/wanderly/wanderly/out/trick_0.png'
-RSS rendered 7238 MB
+RSS lod 1955 MB
+RSS posed 1960 MB
+RSS depsgraph 1960 MB
+OBJECTS 11790 MESHES 10688 IMAGES 189 217 Mpx
+06:38.031  render           | Saved: '/home/runner/work/wanderly/wanderly/out/trick_0.png'
+RSS rendered 7045 MB
 RENDERED trick 1.56
