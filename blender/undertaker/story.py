@@ -382,9 +382,9 @@ def s_double(sh):
     out = stage(sh, 'day', 30, 110, veg=.3, grave=False, shop=True)
     o = SHOP; ctr = out['counter']
     mort = toon(sh, 'MORT', MORT); ez = toon(sh, 'EZRA', EZ)
-    bp = ctr + Vector((-.22, -.12, .012))
+    bp = ctr + Vector((-.25, .04, .012))
     bill = U.paper('bill', 'bill', bp, rot=(-math.pi / 2, 0, 0), w=.3, h=.4)
-    a = stand(sh, mort, (ctr.x - .1, ctr.y + .55), 0, '77_02', 1.0, face=[(0, 'deadpan'), (1.3, 'smirk')], z=0, look=lambda t: tuple(bp + Vector((0, 0, .3))) if t < 1.9 else tuple(head_of(ez)))
+    a = stand(sh, mort, (ctr.x - .1, ctr.y + .32), 0, '77_02', 1.0, face=[(0, 'deadpan'), (1.3, 'smirk')], z=0, look=lambda t: tuple(bp + Vector((0, 0, .3))) if t < 1.9 else tuple(head_of(ez)))
     stamp = T.cyl('stamp', .05, .1, (0, 0, 0), T.plain('stamp', '#4a2a1a', .6), v=12)
     def mod(t, s):
         k = 0.0
@@ -393,7 +393,7 @@ def s_double(sh):
     override(a, mod); hold(sh, stamp, mort, 'R', (0, 0, -.06))
     stand(sh, ez, (ctr.x - .8, ctr.y - .95), 175, '79_74', 2.0, face=[(0, 'confused'), (1.2, 'shock'), (1.8, 'furious')], z=0, look=lambda t: tuple(bp))
     sh.camera(cam_keys([(0, (ctr.x - .3, ctr.y - 2.7, ctr.z + .85), (ctr.x - .15, ctr.y + .45, ctr.z + .45), 30), (1.9, (ctr.x - .1, ctr.y - 1.85, ctr.z + .7), (ctr.x - .2, ctr.y + .1, ctr.z + .2), 34),
-                        (sh.dur, (ctr.x + .02, ctr.y - 1.05, ctr.z + .55), (ctr.x - .21, ctr.y - .1, ctr.z + .02), 38)], shake=.006), fstop=2.6)
+                        (sh.dur, (ctr.x + .02, ctr.y - .95, ctr.z + .55), (ctr.x - .24, ctr.y + .02, ctr.z + .02), 38)], shake=.006), fstop=2.6)
     T.lantern('ctrlamp', tuple(ctr + Vector((.55, .15, .2))), energy=35)
 
 
@@ -412,8 +412,8 @@ def s_complaint(sh):
     lie_in(sh, ez, c, [(0, 'determined'), (1.0, 'smirk')], sit=lambda t: 1.0, hands=None, hand_targets=hands)
     hold(sh, pencil, ez, 'R', (0, 0, .04), rot=(0, math.radians(30), math.radians(20)))
     T.lantern('glamp', tuple(c.world((.38, .55, .55))), energy=60)
-    tg0 = c.world((0, 1.2, .95)); tg1 = c.world((0, 1.32, .82))
-    sh.camera(cam_keys([(0, (.36, 97.25, HZ + .62), tg0, 27), (sh.dur, (.22, 97.08, HZ + .36), tg1, 30)], shake=.003), fstop=3.2)
+    tg0 = c.world((0, 1.28, .85)); tg1 = c.world((0, 1.4, .75))
+    sh.camera(cam_keys([(0, (.48, 97.55, HZ + 1.0), tg0, 26), (sh.dur, (.32, 97.32, HZ + .72), tg1, 28)], shake=.003), fstop=3.5)
 
 
 def s_inside(sh):
@@ -480,10 +480,10 @@ def s_decision(sh):
     for n in ('s_window_l',):
         if n in bpy.data.objects: bpy.data.objects[n].data.energy = 120; bpy.data.objects[n].data.color = (.5, .6, 1.0)
     mort = toon(sh, 'MORT', MORT)
-    a = stand(sh, mort, (ctr.x + .1, ctr.y + .45), 0, '77_02', 2.0, face=[(0, 'suspicious'), (.9, 'determined')], z=0)
+    a = stand(sh, mort, (ctr.x + .1, ctr.y + .3), 0, '77_02', 2.0, face=[(0, 'suspicious'), (.9, 'determined')], z=0)
     def mod(t, s):
         k = ease((t - .75) / .12)
-        s['handR'] = tuple((ctr + Vector((-.32, -.05, .6))).lerp(ctr + Vector((-.28, -.05, .06)), k)) if t > .4 else s['handR']; return s
+        s['handR'] = tuple((ctr + Vector((-.25, .08, .45))).lerp(ctr + Vector((-.22, .08, .06)), k)) if t > .4 else s['handR']; return s
     override(a, mod)
     T.lantern('ctrlamp', tuple(ctr + Vector((.55, -.05, .2))), energy=45)
     def cam(t):
@@ -597,7 +597,7 @@ def s_tears(sh):
     override(m, mmod)
     coin = T.cyl('coin', .03, .006, (0, 0, 0), T.plain('coin', '#d8b448', .3, 1.0), rot=(math.pi / 2, 0, 0), v=14); hold(sh, coin, mort, 'R', (0, 0, .02))
     tear_streams(sh, [(w, TT[k] + .12) for k, w in enumerate(ws)])
-    sh.camera(cam_keys([(0, (.8, 92.1, HZ + 1.55), (-1.7, 94.4, HZ + 1.4), 30), (sh.dur, (.55, 92.6, HZ + 1.5), (-1.8, 94.6, HZ + 1.4), 33)], shake=.008), fstop=2.6)
+    sh.camera(cam_keys([(0, (-.95, 91.3, HZ + 1.55), (-1.55, 94.4, HZ + 1.3), 28), (sh.dur, (-1.05, 91.75, HZ + 1.5), (-1.6, 94.5, HZ + 1.3), 31)], shake=.008), fstop=3.2)
 
 
 def tear_streams(sh, who, n=6):
@@ -625,7 +625,7 @@ def s_happy(sh):
     petals(sh, c)
     def cam(t):
         hp = head_of(ez); u = ease(t / sh.dur)
-        return (hp + Vector((.06, .42 - .2 * u, 2.0 - .6 * u)), hp + Vector((0, .38 - .2 * u, 0)), 32, 0, hp, .004)
+        return (hp + Vector((.05, 1.15 - .3 * u, 1.95 - .55 * u)), hp + Vector((0, .3 - .12 * u, 0)), 32, 0, hp, .004)
     sh.camera(cam, fstop=2.4); sh.keylight(10, (1, .85, .65))
 
 
@@ -657,7 +657,7 @@ def s_stopped(sh):
     sh.updates.append(land)
     def cam(t):
         hp = head_of(ez); d = K([(0, 1.12), (TS, 1.0), (sh.dur, .96)], t)
-        return (hp + Vector((.02, .09, .95)) * d, hp + Vector((0, .07, 0)), 40, 0, hp + Vector((0, 0, .2)), .002 if t < TS else .0005)
+        return (hp + Vector((.02, .45, .88)) * d, hp + Vector((0, .04, 0)), 40, 0, hp + Vector((0, 0, .2)), .002 if t < TS else .0005)
     sh.camera(cam, fstop=2.4); sh.keylight(10, (1, .85, .65))
 
 
@@ -682,7 +682,7 @@ def s_wept(sh):
         f, sd = side_of(mort); hc = head_of(mort, -.3)
         s['handR'] = tuple(hc + f * .3 + sd * .1 + Vector((0, 0, .03 * math.sin(t * 10)))); return s
     override(a, mod)
-    hk = T.box('hanky', (.15, .02, .15), (0, 0, 0), T.plain('hanky', '#f4f0e8', .8)); hold(sh, hk, mort, 'R', (0, 0, .07), rot=(.3, 0, .4))
+    hk = T.box('hanky', (.15, .02, .15), (0, 0, 0), T.plain('hanky', '#f4f0e8', .8)); hold(sh, hk, mort, 'R', (0, 0, 0), rot=(.3, 0, .4))
     tear_streams(sh, [(mort, .0)], n=8)
     cu(sh, mort, angle=25, elev=3, size=(.8, .62), lens=55, fstop=2.0)
 
@@ -721,7 +721,7 @@ def s_laugh(sh):
     stage(sh, 'sunset', 9, 245)
     c, ez, band = perfect_set(sh, wreaths=(3,))
     c.open(0.0)
-    crowd = town_crowd(sh, 22, face='laugh')
+    crowd = town_crowd(sh, 32, face='laugh')
     for a in sh.actors:
         if getattr(a, 'ch', None) in crowd: a.face = H.expr_track([(0, 'laugh'), (3.6, 'grin')])
     def cam(t):
