@@ -1,7 +1,6 @@
-00:00.689  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.818  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -13,7 +12,9 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -23,7 +24,6 @@
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -115,35 +115,31 @@
 [lib] model dead_tree_trunk_02 4
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
-08:15:23 | INFO: Data are loaded, start creating Blender stuff
-08:15:23 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
-08:15:23 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
-08:15:23 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
-08:15:24 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
-08:15:24 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
-08:15:24 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
-08:15:25 | INFO: glTF import finished in 1.73s
+09:59:30 | INFO: Data are loaded, start creating Blender stuff
+09:59:30 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
+09:59:30 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
+09:59:30 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
+09:59:31 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
+09:59:31 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
+09:59:31 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
+09:59:32 | INFO: glTF import finished in 1.76s
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] retry https://api.polyhaven.com/files/stone HTTP Error 404: Not Found
-[lib] retry https://api.polyhaven.com/files/stone HTTP Error 404: Not Found
-[lib] retry https://api.polyhaven.com/files/stone HTTP Error 404: Not Found
-[lib] retry https://api.polyhaven.com/files/stone HTTP Error 404: Not Found
-[lib] PH wellstone failed download failed https://api.polyhaven.com/files/stone
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] hdri sun 143 elev 3.5 -> az 250
 Info: Object has non-uniform scale, unwrap will operate on a non-scaled version of the mesh
-RSS built 1870 MB
-EXTRAS face 10
-RSS extras 1870 MB
-RSS lod 1886 MB
-RSS posed 1895 MB
-RSS depsgraph 1895 MB
-OBJECTS 11045 MESHES 10216 IMAGES 190 218 Mpx
-04:50.861  render           | Saved: '/home/runner/work/wanderly/wanderly/out/face_0.png'
-RSS rendered 7116 MB
+RSS built 1917 MB
+EXTRAS face 9
+RSS extras 1917 MB
+CLEARCAM face 0
+RSS lod 1922 MB
+RSS posed 1930 MB
+RSS depsgraph 1930 MB
+OBJECTS 11082 MESHES 10286 IMAGES 190 218 Mpx
+05:55.507  render           | Saved: '/home/runner/work/wanderly/wanderly/out/face_0.png'
+RSS rendered 7014 MB
 RENDERED face 1.2
