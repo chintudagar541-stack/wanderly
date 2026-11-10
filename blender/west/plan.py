@@ -16,6 +16,8 @@ else:
                 out.append(dict(id=f"{s['id']}_{k}", script='film.py', args=['still', s['id']], t=round(s['dur'] * f, 2), env={}))
         else:
             n = round((s['dur'] + handle) * fps); step = job.get('chunk', 12)
+            skip = set(json.load(open(os.path.join(H, job['skip_file'])))) if job.get('skip_file') else set()
             for a in range(1, n + 1, step):
+                if f"{s['id']}_{a:04d}" in skip: continue
                 out.append(dict(id=f"{s['id']}_{a:04d}", shot=s['id'], a=a, b=min(n, a + step - 1)))
 print(json.dumps(out))
