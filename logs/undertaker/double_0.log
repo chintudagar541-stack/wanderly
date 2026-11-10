@@ -1,4 +1,4 @@
-00:00.964  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.897  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -115,14 +115,14 @@
 [lib] model dead_tree_trunk_02 4
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
-20:05:35 | INFO: Data are loaded, start creating Blender stuff
-20:05:35 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
-20:05:35 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
-20:05:35 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
-20:05:35 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
-20:05:35 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
-20:05:35 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
-20:05:37 | INFO: glTF import finished in 1.81s
+20:19:21 | INFO: Data are loaded, start creating Blender stuff
+20:19:21 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
+20:19:21 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
+20:19:21 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
+20:19:22 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
+20:19:22 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
+20:19:22 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
+20:19:23 | INFO: glTF import finished in 1.63s
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -137,15 +137,15 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-RSS built 1765 MB
+RSS built 1811 MB
 EXTRAS double 0
-RSS extras 1765 MB
+RSS extras 1811 MB
 CLEARCAM double 0
-RSS lod 1771 MB
-RSS posed 1772 MB
-RSS depsgraph 1772 MB
+RSS lod 1811 MB
+RSS posed 1811 MB
+RSS depsgraph 1811 MB
 OBJECTS 10543 MESHES 10014 IMAGES 191 218 Mpx
-03:31.018  render           | Saved: '/home/runner/work/wanderly/wanderly/out/double_0.png'
-RTIME 49.7
-RSS rendered 6273 MB
+02:53.879  render           | Saved: '/home/runner/work/wanderly/wanderly/out/double_0.png'
+RTIME 39.3
+RSS rendered 6232 MB
 RENDERED double 1.65
