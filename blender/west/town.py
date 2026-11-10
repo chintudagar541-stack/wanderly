@@ -844,8 +844,8 @@ def bush_proto():
     L.new(hi.outputs['Random'], ramp.inputs['Fac']); L.new(ramp.outputs['Color'], bs.inputs['Base Color']); bs.inputs['Roughness'].default_value = .8
     b.data.materials.append(m)
     mod = b.modifiers.new('tw', 'PARTICLE_SYSTEM'); st = mod.particle_system.settings
-    st.type = 'HAIR'; st.count = 300; st.use_advanced_hair = True; st.hair_length = .5; st.normal_factor = .12; st.factor_random = .04
-    st.child_type = 'INTERPOLATED'; st.child_percent = 12; st.rendered_child_count = 12; st.clump_factor = .3; st.roughness_1 = .06; st.roughness_2 = .1; st.roughness_2_size = .3
+    st.type = 'HAIR'; st.count = 160; st.use_advanced_hair = True; st.hair_length = .5; st.normal_factor = .14; st.factor_random = .08
+    st.child_type = 'INTERPOLATED'; st.child_percent = 8; st.rendered_child_count = 8; st.clump_factor = .5; st.roughness_1 = .1; st.roughness_2 = .25; st.roughness_2_size = .25; st.roughness_endpoint = .06
     st.kink = 'CURL'; st.kink_amplitude = .02; st.kink_frequency = 3
     st.root_radius = 1; st.tip_radius = .2; st.radius_scale = .004; st.render_step = 3
     b.show_instancer_for_render = False
@@ -883,7 +883,6 @@ def vegetation(detail=1.0):
         x = rng.choice((-1, 1)) * rng.uniform(STREET + 1.0, 60); y = rng.uniform(-60, 110)
         if any(abs(x - cx) < hx and abs(y - cy) < hy for (cx, cy, hx, hy) in clear[:len(TOWN_BUILDINGS)]): continue
         pts.append((x, y, .02))
-    for i in range(14): pts.append((rng.choice((-1, 1)) * rng.uniform(STREET - WALK - .9, STREET - WALK - .3), rng.uniform(-30, 60), 0))
     scatter(bush_proto(), pts)
     for i in range(40):
         x = rng.choice((-1, 1)) * rng.uniform(STREET + 2, 70); y = rng.uniform(-60, 120)
