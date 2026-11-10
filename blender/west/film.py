@@ -440,7 +440,7 @@ def s_suspicious(sh):
     """18.85-20.85 'Jack became suspicious.'  Close-up, his eyes narrow; slow push."""
     setup(sh, 'day', 28, 110, veg=.4)
     jack, = sh.cast('JACK')
-    sh.actor(jack, [CA.Act(0, '77_02', 2.0, 6, loc=(S - W_ * .5, -1.0, DECK), yaw=90, lock_root=True)], face=[(0, 'idle'), (.7, 'suspicious')], look=lambda t: (-S, -2.0, 2.0))
+    sh.actor(jack, [CA.Act(0, '77_02', 2.0, 6, loc=(S - W_ * .5, -1.0, DECK), yaw=-90, lock_root=True)], face=[(0, 'idle'), (.7, 'suspicious')], look=lambda t: (-S, -2.0, 2.0))
     cu(sh, jack, angle=35, elev=2, size=(.7, .45), lens=60)
 
 
@@ -449,7 +449,7 @@ def s_nights(sh):
     the lamp in the sheriff's window; moon and stars move (time passing)."""
     setup(sh, 'night', 20, 300, veg=.4); night_lights()
     jack, = sh.cast('JACK')
-    sh.actor(jack, [CA.Act(0, '86_09', 9.0, 4, loc=(S - W_ * .6, -2.4, DECK), yaw=90, lock_root=True)], face=[(0, 'suspicious')], look=lambda t: (-S, -2, 1.8))
+    sh.actor(jack, [CA.Act(0, '86_09', 9.0, 4, loc=(S - W_ * .6, -2.4, DECK), yaw=-90, lock_root=True)], face=[(0, 'suspicious')], look=lambda t: (-S, -2, 1.8))
     T.lantern('sher_window', (-S - .4, -2 + 2.3, 1.5), energy=40)
     def cam(t):
         return (Vector((S - W_ - .3, -6.5, 1.4)).lerp(Vector((S - W_ - .6, -4.4, 1.5)), ease(t / sh.dur)), Vector((-S, -1.0, 1.9)), 30, 0, head_of(jack), .006)
@@ -631,7 +631,7 @@ def s_reading(sh):
 def s_neverseen(sh):
     """49.75-53.85 'And since nobody had ever seen the real sheriff outside his office...'  dusk: the office window lit, a silhouette behind
     the blind; townsfolk pass by and never look; slow truck along the boardwalk."""
-    setup(sh, 'sunset', 6, 250, veg=.4)
+    setup(sh, 'day', 28, 110, veg=.4)
     T.lantern('office_glow', (-S - .5, -2 + 2.3, 1.6), energy=140)
     sher, = sh.cast('SHER')
     sh.actor(sher, [CA.Act(0, '77_02', 2, 6, loc=(-S - .9, -2 + 2.3, .2), yaw=90, lock_root=True)], face=[(0, 'smirk')])
