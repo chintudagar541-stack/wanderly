@@ -1,4 +1,4 @@
-00:00.738  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.851  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -115,14 +115,14 @@
 [lib] model dead_tree_trunk_02 4
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
-19:00:32 | INFO: Data are loaded, start creating Blender stuff
-19:00:32 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
-19:00:32 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
-19:00:32 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
-19:00:33 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
-19:00:33 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
-19:00:33 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
-19:00:34 | INFO: glTF import finished in 1.70s
+19:47:01 | INFO: Data are loaded, start creating Blender stuff
+19:47:01 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
+19:47:01 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
+19:47:02 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
+19:47:02 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
+19:47:02 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
+19:47:02 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
+19:47:03 | INFO: glTF import finished in 1.71s
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -153,15 +153,16 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-RSS built 1835 MB
-EXTRAS card 6
-RSS extras 1848 MB
-CLEARCAM card 6
-RSS lod 1880 MB
-RSS posed 1880 MB
-RSS depsgraph 1880 MB
-OBJECTS 11377 MESHES 10636 IMAGES 213 224 Mpx
-03:48.520  render           | Saved: '/home/runner/work/wanderly/wanderly/out/card_0.png'
-RTIME 62.5
-RSS rendered 6592 MB
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+RSS built 1841 MB
+EXTRAS card 7
+RSS extras 1858 MB
+CLEARCAM card 0
+RSS lod 1893 MB
+RSS posed 1893 MB
+RSS depsgraph 1893 MB
+OBJECTS 11478 MESHES 10700 IMAGES 213 224 Mpx
+03:26.029  render           | Saved: '/home/runner/work/wanderly/wanderly/out/card_0.png'
+RTIME 70.5
+RSS rendered 6505 MB
 RENDERED card 1.84
