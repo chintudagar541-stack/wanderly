@@ -1,4 +1,4 @@
-00:00.548  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.832  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -115,14 +115,14 @@
 [lib] model dead_tree_trunk_02 4
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
-20:05:42 | INFO: Data are loaded, start creating Blender stuff
-20:05:42 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
-20:05:42 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
-20:05:42 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
-20:05:42 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
-20:05:43 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
-20:05:43 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
-20:05:43 | INFO: glTF import finished in 1.34s
+20:29:56 | INFO: Data are loaded, start creating Blender stuff
+20:29:56 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
+20:29:56 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
+20:29:56 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
+20:29:56 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
+20:29:56 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
+20:29:56 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
+20:29:57 | INFO: glTF import finished in 1.79s
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -131,15 +131,15 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] hdri sun 146 elev 48.5 -> az 120
-RSS built 1830 MB
+RSS built 1841 MB
 EXTRAS healthy 10
-RSS extras 1830 MB
+RSS extras 1852 MB
 CLEARCAM healthy 0
-RSS lod 1859 MB
-RSS posed 1870 MB
-RSS depsgraph 1870 MB
-OBJECTS 11216 MESHES 10352 IMAGES 189 217 Mpx
-03:18.391  render           | Saved: '/home/runner/work/wanderly/wanderly/out/healthy_0.png'
-RTIME 37.5
-RSS rendered 6546 MB
+RSS lod 1916 MB
+RSS posed 1928 MB
+RSS depsgraph 1928 MB
+OBJECTS 11463 MESHES 10501 IMAGES 189 217 Mpx
+03:33.242  render           | Saved: '/home/runner/work/wanderly/wanderly/out/healthy_0.png'
+RTIME 73.1
+RSS rendered 6529 MB
 RENDERED healthy 1.79
