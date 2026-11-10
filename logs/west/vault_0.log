@@ -1,14 +1,15 @@
-00:00.775  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.684  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] hdri sun 143 elev 12.0 -> az 300
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-RSS built 536 MB
-RSS extras 536 MB
-RSS lod 536 MB
-RSS posed 536 MB
-RSS depsgraph 536 MB
+RSS built 537 MB
+RSS extras 537 MB
+CLEARCAM vault 0
+RSS lod 537 MB
+RSS posed 537 MB
+RSS depsgraph 537 MB
 OBJECTS 86 MESHES 82 IMAGES 4 14 Mpx
-01:07.101  render           | Saved: '/home/runner/work/wanderly/wanderly/out/vault_0.png'
+00:52.776  render           | Saved: '/home/runner/work/wanderly/wanderly/out/vault_0.png'
 RSS rendered 1448 MB
 RENDERED vault 0.6
