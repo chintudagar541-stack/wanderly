@@ -1,4 +1,4 @@
-00:00.747  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.636  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -115,14 +115,14 @@
 [lib] model dead_tree_trunk_02 4
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
-19:02:10 | INFO: Data are loaded, start creating Blender stuff
-19:02:10 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
-19:02:10 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
-19:02:11 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
-19:02:11 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
-19:02:11 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
-19:02:11 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
-19:02:12 | INFO: glTF import finished in 1.78s
+19:47:09 | INFO: Data are loaded, start creating Blender stuff
+19:47:09 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
+19:47:09 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
+19:47:09 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
+19:47:09 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
+19:47:09 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
+19:47:10 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
+19:47:11 | INFO: glTF import finished in 1.77s
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -153,15 +153,15 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-RSS built 1825 MB
+RSS built 1898 MB
 EXTRAS velvet 0
-RSS extras 1825 MB
+RSS extras 1898 MB
 CLEARCAM velvet 1
-RSS lod 1825 MB
-RSS posed 1825 MB
-RSS depsgraph 1825 MB
-OBJECTS 10967 MESHES 10439 IMAGES 212 224 Mpx
-03:46.410  render           | Saved: '/home/runner/work/wanderly/wanderly/out/velvet_0.png'
-RTIME 66.4
-RSS rendered 6446 MB
+RSS lod 1898 MB
+RSS posed 1898 MB
+RSS depsgraph 1898 MB
+OBJECTS 10996 MESHES 10464 IMAGES 212 224 Mpx
+03:57.952  render           | Saved: '/home/runner/work/wanderly/wanderly/out/velvet_0.png'
+RTIME 70.7
+RSS rendered 6601 MB
 RENDERED velvet 0.69
