@@ -1,7 +1,6 @@
-00:00.495  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.514  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -13,8 +12,8 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -24,6 +23,7 @@
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -118,11 +118,11 @@
 [lib] model tree_stump_01 1
 [lib] hdri sun 146 elev 48.5 -> az 110
 Info: Object has non-uniform scale, unwrap will operate on a non-scaled version of the mesh
-RSS built 1902 MB
-RSS lod 1902 MB
-RSS posed 1902 MB
-RSS depsgraph 1902 MB
-OBJECTS 9471 MESHES 9096 IMAGES 188 217 Mpx
-04:12.183  render           | Saved: '/home/runner/work/wanderly/wanderly/out/poster_jack_0.png'
-RSS rendered 6546 MB
+RSS built 1933 MB
+RSS lod 1933 MB
+RSS posed 1933 MB
+RSS depsgraph 1933 MB
+OBJECTS 9566 MESHES 9191 IMAGES 188 217 Mpx
+03:10.057  render           | Saved: '/home/runner/work/wanderly/wanderly/out/poster_jack_0.png'
+RSS rendered 6778 MB
 RENDERED poster_jack 1.47
