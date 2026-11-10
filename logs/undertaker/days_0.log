@@ -1,4 +1,4 @@
-00:00.588  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.672  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -115,14 +115,14 @@
 [lib] model dead_tree_trunk_02 4
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
-19:05:51 | INFO: Data are loaded, start creating Blender stuff
-19:05:51 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
-19:05:51 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
-19:05:51 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
-19:05:51 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
-19:05:51 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
-19:05:51 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
-19:05:52 | INFO: glTF import finished in 1.60s
+19:52:23 | INFO: Data are loaded, start creating Blender stuff
+19:52:23 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
+19:52:23 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
+19:52:23 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
+19:52:23 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
+19:52:24 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
+19:52:24 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
+19:52:25 | INFO: glTF import finished in 1.66s
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -153,16 +153,16 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-/home/runner/work/wanderly/wanderly/blender/undertaker/story.py:710: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+/home/runner/work/wanderly/wanderly/blender/undertaker/story.py:750: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
   bgs = [n for n in bpy.context.scene.world.node_tree.nodes if n.type == 'BACKGROUND'] if bpy.context.scene.world and bpy.context.scene.world.use_nodes else []
-RSS built 1852 MB
-RSS extras 1852 MB
+RSS built 1822 MB
+RSS extras 1822 MB
 CLEARCAM days 0
-RSS lod 1857 MB
-RSS posed 1857 MB
-RSS depsgraph 1857 MB
-OBJECTS 10966 MESHES 10439 IMAGES 212 224 Mpx
-03:27.461  render           | Saved: '/home/runner/work/wanderly/wanderly/out/days_0.png'
-RTIME 31.0
-RSS rendered 6536 MB
+RSS lod 1824 MB
+RSS posed 1831 MB
+RSS depsgraph 1831 MB
+OBJECTS 10996 MESHES 10464 IMAGES 212 224 Mpx
+03:08.616  render           | Saved: '/home/runner/work/wanderly/wanderly/out/days_0.png'
+RTIME 39.5
+RSS rendered 6580 MB
 RENDERED days 1.84
