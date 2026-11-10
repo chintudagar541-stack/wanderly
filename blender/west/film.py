@@ -637,9 +637,9 @@ def s_neverseen(sh):
     sh.actor(sher, [CA.Act(0, '77_02', 2, 6, loc=(-S - .9, -2 + 2.3, .2), yaw=90, lock_root=True)], face=[(0, 'smirk')])
     people = sh.crowd(5, None, seed=6)
     for k, ch in enumerate(people):
-        sh.actor(ch, [CA.Act(0, '82_11' if k % 2 else '82_09', 2.2 if k % 2 else 6.8, 6, loc=(-S + W_ * .55 + (k % 2) * .45, -9 + k * 2.6, DECK), yaw=0 if k % 2 else 180, speed=.85)], face=[(0, 'idle')])
+        sh.actor(ch, [CA.Act(0, '82_11' if k % 2 else '82_09', 2.2 if k % 2 else 6.8, 6, loc=(-2.6 - (k % 2) * .9, -7 + k * 2.4 if k % 2 == 0 else 5 - k * 2.0, 0), yaw=180 if k % 2 == 0 else 0, speed=.85)], face=[(0, ['idle', 'chat', 'watch'][k % 3])])
     def cam(t):
-        return (Vector((-S + 4.5, -7.0, 1.7)).lerp(Vector((-S + 4.0, -2.5, 1.75)), ease(t / sh.dur)), (-S, -2 + 2.0, 1.6), 30, 0, (-S, -2 + 2.0, 1.6), .008)
+        return (Vector((1.2, -11.0, 1.9)).lerp(Vector((.6, -9.0, 1.85)), ease(t / sh.dur)), (-S + .3, -1.0, 1.7), 30, 0, (-S, -1.0, 1.7), .008)
     sh.camera(cam, fstop=2.8); sh.keylight(16.0, (1, .8, .6))
 
 
