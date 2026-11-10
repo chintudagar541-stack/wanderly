@@ -1,4 +1,4 @@
-00:00.781  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:01.007  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -12,13 +12,13 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
@@ -118,11 +118,11 @@
 [lib] model tree_stump_01 1
 [lib] hdri sun 146 elev 48.5 -> az 110
 Info: Object has non-uniform scale, unwrap will operate on a non-scaled version of the mesh
-RSS built 1954 MB
-RSS lod 2299 MB
-RSS posed 2299 MB
-RSS depsgraph 2299 MB
-OBJECTS 9297 MESHES 8916 IMAGES 188 217 Mpx
-05:04.166  render           | Saved: '/home/runner/work/wanderly/wanderly/out/reading_0.png'
-RSS rendered 7627 MB
+RSS built 1935 MB
+RSS lod 2287 MB
+RSS posed 2287 MB
+RSS depsgraph 2287 MB
+OBJECTS 9594 MESHES 9212 IMAGES 188 217 Mpx
+05:04.638  render           | Saved: '/home/runner/work/wanderly/wanderly/out/reading_0.png'
+RSS rendered 7928 MB
 RENDERED reading 1.47
