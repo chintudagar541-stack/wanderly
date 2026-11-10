@@ -1,4 +1,4 @@
-00:00.806  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.645  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -115,14 +115,14 @@
 [lib] model dead_tree_trunk_02 4
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
-19:46:51 | INFO: Data are loaded, start creating Blender stuff
-19:46:51 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
-19:46:52 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
-19:46:52 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
-19:46:52 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
-19:46:52 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
-19:46:52 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
-19:46:53 | INFO: glTF import finished in 1.76s
+20:06:14 | INFO: Data are loaded, start creating Blender stuff
+20:06:14 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
+20:06:14 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
+20:06:14 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
+20:06:15 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
+20:06:15 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
+20:06:15 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
+20:06:16 | INFO: glTF import finished in 1.61s
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -153,15 +153,15 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-RSS built 1849 MB
+RSS built 1806 MB
 EXTRAS kick 1
-RSS extras 1871 MB
+RSS extras 1833 MB
 CLEARCAM kick 0
-RSS lod 1893 MB
-RSS posed 1895 MB
-RSS depsgraph 1895 MB
+RSS lod 1857 MB
+RSS posed 1858 MB
+RSS depsgraph 1858 MB
 OBJECTS 11375 MESHES 10639 IMAGES 212 224 Mpx
-03:23.648  render           | Saved: '/home/runner/work/wanderly/wanderly/out/kick_0.png'
-RTIME 60.2
-RSS rendered 6699 MB
+03:24.086  render           | Saved: '/home/runner/work/wanderly/wanderly/out/kick_0.png'
+RTIME 45.7
+RSS rendered 6587 MB
 RENDERED kick 2.04
