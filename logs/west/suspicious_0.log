@@ -1,7 +1,6 @@
-00:00.712  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.610  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -12,6 +11,7 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -22,8 +22,8 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -117,11 +117,11 @@
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
 [lib] hdri sun 146 elev 48.5 -> az 110
-RSS built 1886 MB
-RSS lod 1886 MB
-RSS posed 1886 MB
-RSS depsgraph 1886 MB
-OBJECTS 9717 MESHES 9340 IMAGES 187 216 Mpx
-04:00.331  render           | Saved: '/home/runner/work/wanderly/wanderly/out/suspicious_0.png'
-RSS rendered 6774 MB
+RSS built 1928 MB
+RSS lod 1928 MB
+RSS posed 1928 MB
+RSS depsgraph 1928 MB
+OBJECTS 9489 MESHES 9112 IMAGES 187 216 Mpx
+04:49.918  render           | Saved: '/home/runner/work/wanderly/wanderly/out/suspicious_0.png'
+RSS rendered 6770 MB
 RENDERED suspicious 1.2
