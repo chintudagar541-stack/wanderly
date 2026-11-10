@@ -60,19 +60,6 @@
     "piper:en_US-joe-medium"
    ],
    "line": "Okay, so, good news, I found prints! Bad news, they're, uh, mine."
-  },
-  "narrator-hindi": {
-   "pick": "kokoro:hm_omega",
-   "speed": 1.0,
-   "candidates": [
-    "kokoro:hm_omega",
-    "kokoro:hm_psi",
-    "kokoro:hf_alpha",
-    "piper:hi_IN-rohan-medium",
-    "piper:hi_IN-pratham-medium",
-    "piper:hi_IN-priyamvada-medium"
-   ],
-   "line": "Us raat sheher mein baarish ruki nahi, aur ek aur laash mili. Is baar bhi wahi kaala mohra."
   }
  }
 }
