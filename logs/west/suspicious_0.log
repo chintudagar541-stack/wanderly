@@ -1,4 +1,4 @@
-00:00.770  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:01.131  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -115,34 +115,30 @@
 [lib] model dead_tree_trunk_02 4
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
-08:17:09 | INFO: Data are loaded, start creating Blender stuff
-08:17:09 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
-08:17:10 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
-08:17:10 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
-08:17:10 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
-08:17:10 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
-08:17:10 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
-08:17:11 | INFO: glTF import finished in 1.67s
+09:57:29 | INFO: Data are loaded, start creating Blender stuff
+09:57:29 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
+09:57:29 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
+09:57:29 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
+09:57:29 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
+09:57:29 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
+09:57:30 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
+09:57:30 | INFO: glTF import finished in 1.61s
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] retry https://api.polyhaven.com/files/stone HTTP Error 404: Not Found
-[lib] retry https://api.polyhaven.com/files/stone HTTP Error 404: Not Found
-[lib] retry https://api.polyhaven.com/files/stone HTTP Error 404: Not Found
-[lib] retry https://api.polyhaven.com/files/stone HTTP Error 404: Not Found
-[lib] PH wellstone failed download failed https://api.polyhaven.com/files/stone
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] hdri sun 146 elev 48.5 -> az 110
-RSS built 1917 MB
-EXTRAS suspicious 2
-RSS extras 1917 MB
-RSS lod 1924 MB
-RSS posed 1924 MB
-RSS depsgraph 1924 MB
-OBJECTS 10367 MESHES 9782 IMAGES 189 217 Mpx
-08:12.380  render           | Saved: '/home/runner/work/wanderly/wanderly/out/suspicious_0.png'
-RSS rendered 6937 MB
+RSS built 1884 MB
+EXTRAS suspicious 9
+RSS extras 2085 MB
+CLEARCAM suspicious 0
+RSS lod 2156 MB
+RSS posed 2156 MB
+RSS depsgraph 2156 MB
+OBJECTS 11230 MESHES 10391 IMAGES 189 217 Mpx
+04:58.847  render           | Saved: '/home/runner/work/wanderly/wanderly/out/suspicious_0.png'
+RSS rendered 7357 MB
 RENDERED suspicious 1.2
