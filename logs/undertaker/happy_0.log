@@ -1,4 +1,4 @@
-00:00.842  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.864  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -115,14 +115,14 @@
 [lib] model dead_tree_trunk_02 4
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
-19:05:53 | INFO: Data are loaded, start creating Blender stuff
-19:05:53 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
-19:05:53 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
-19:05:54 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
-19:05:54 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
-19:05:54 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
-19:05:54 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
-19:05:55 | INFO: glTF import finished in 2.00s
+19:51:57 | INFO: Data are loaded, start creating Blender stuff
+19:51:57 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
+19:51:57 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
+19:51:57 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
+19:51:58 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
+19:51:58 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
+19:51:58 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
+19:51:59 | INFO: glTF import finished in 2.02s
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -153,15 +153,15 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-RSS built 1894 MB
-EXTRAS happy 0
-RSS extras 1894 MB
+RSS built 1877 MB
+EXTRAS happy 6
+RSS extras 1898 MB
 CLEARCAM happy 1
-RSS lod 1894 MB
-RSS posed 1894 MB
-RSS depsgraph 1894 MB
-OBJECTS 11269 MESHES 10633 IMAGES 212 224 Mpx
-04:42.543  render           | Saved: '/home/runner/work/wanderly/wanderly/out/happy_0.png'
-RTIME 70.4
-RSS rendered 6511 MB
+RSS lod 1951 MB
+RSS posed 1951 MB
+RSS depsgraph 1951 MB
+OBJECTS 11784 MESHES 10947 IMAGES 212 224 Mpx
+03:34.604  render           | Saved: '/home/runner/work/wanderly/wanderly/out/happy_0.png'
+RTIME 60.0
+RSS rendered 6804 MB
 RENDERED happy 3.08
