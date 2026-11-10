@@ -1,8 +1,8 @@
-00:00.490  cycles           | WARNING CUEW initialization failed: Error opening the library
-[lib] hdri sun 142 elev 10.9 -> az 300
+00:00.795  cycles           | WARNING CUEW initialization failed: Error opening the library
+[lib] hdri sun 143 elev 12.0 -> az 300
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['fabric', 'burlap'] -> fabric_pattern_07
-00:57.087  render           | Saved: '/home/runner/work/wanderly/wanderly/out/handsup_0.png'
+01:03.471  render           | Saved: '/home/runner/work/wanderly/wanderly/out/handsup_0.png'
 RENDERED handsup 0.87
