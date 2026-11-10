@@ -1,4 +1,4 @@
-00:00.509  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.790  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -115,14 +115,14 @@
 [lib] model dead_tree_trunk_02 4
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
-20:06:01 | INFO: Data are loaded, start creating Blender stuff
-20:06:01 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
-20:06:01 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
-20:06:01 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
-20:06:01 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
-20:06:01 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
-20:06:02 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
-20:06:03 | INFO: glTF import finished in 1.63s
+20:33:13 | INFO: Data are loaded, start creating Blender stuff
+20:33:13 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
+20:33:13 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
+20:33:13 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
+20:33:13 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
+20:33:13 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
+20:33:13 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
+20:33:14 | INFO: glTF import finished in 1.88s
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -149,15 +149,15 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-RSS built 1874 MB
+RSS built 1866 MB
 EXTRAS hook 2
-RSS extras 1893 MB
+RSS extras 1866 MB
 CLEARCAM hook 0
-RSS lod 1901 MB
-RSS posed 1901 MB
-RSS depsgraph 1901 MB
+RSS lod 1866 MB
+RSS posed 1866 MB
+RSS depsgraph 1866 MB
 OBJECTS 11021 MESHES 10426 IMAGES 212 224 Mpx
-03:46.466  render           | Saved: '/home/runner/work/wanderly/wanderly/out/hook_0.png'
-RTIME 47.3
-RSS rendered 6508 MB
+03:19.363  render           | Saved: '/home/runner/work/wanderly/wanderly/out/hook_0.png'
+RTIME 59.0
+RSS rendered 6548 MB
 RENDERED hook 1.68
