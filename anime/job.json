@@ -1,28 +1,32 @@
 {
- "rev": 2,
+ "rev": 3,
  "model": "cagliostrolab/animagine-xl-4.0",
  "steps": 28,
- "cfg": 5.0,
+ "cfg": 5.5,
  "w": 1024,
  "h": 1024,
  "prompt": "4people, 2girls, 2boys, group picture, original, standing side by side, cowboy shot, winter clothes, scarf, coat, beanie, earmuffs, mittens, holding cup, waving, smile, open mouth, looking at viewer, purple sky, gradient background, sparkle, light particles, snowing, anime screencap, anime coloring, cel shading, thin lineart, official art, promotional art, masterpiece, high score, great score, absurdres",
- "negative": "lowres, bad anatomy, bad hands, extra digits, fewer digits, missing fingers, extra fingers, fused fingers, deformed, text, signature, watermark, username, logo, error, cropped, worst quality, low quality, low score, bad score, average score, jpeg artifacts, blurry, 3d, realistic, photorealistic, chibi, thick outlines, western cartoon, sketch",
+ "negative": "lowres, bad anatomy, bad hands, extra digits, fewer digits, missing fingers, extra fingers, fused fingers, deformed, text, signature, watermark, username, logo, error, cropped, worst quality, low quality, low score, bad score, average score, jpeg artifacts, blurry, 3d, realistic, photorealistic, chibi, thick outlines, western cartoon, sketch, saturated, vivid colors, neon colors, oversaturated, high contrast, moe, loli, busty, crowded, cropped head",
  "items": [
   {
-   "name": "a_s11",
-   "seed": 11
+   "name": "b_4boys_s5",
+   "seed": 5,
+   "prompt": "4boys, multiple boys, group picture, original, standing side by side, cowboy shot, one boy waving with arm up, one boy holding coffee cup, one boy hands in pockets, one boy hands together, winter clothes, scarf, beanie, ushanka, earmuffs, mittens, dark school uniform, white coat, black hair, brown hair, light hair, smile, open mouth, half-closed eyes, looking at viewer, lavender background, grey-purple gradient background, soft bokeh, sparkle, light particles, simple background, masterpiece, high score, great score, absurdres, official art, anime screencap, 2020s anime, thin lineart, soft cel shading, muted colors, soft colors, desaturated, gentle lighting"
   },
   {
-   "name": "a_s23",
-   "seed": 23
+   "name": "b_4boys_s19",
+   "seed": 19,
+   "prompt": "4boys, multiple boys, group picture, original, standing, cowboy shot, waving, arm up, holding cup, hands in pockets, winter clothes, long scarf, knit hat, ear protection, fingerless gloves, gakuran, white hoodie, different hairstyles, spiked hair, smile, looking at viewer, lavender background, grey-purple gradient background, soft bokeh, sparkle, light particles, simple background, masterpiece, high score, great score, absurdres, official art, anime screencap, 2020s anime, thin lineart, soft cel shading, muted colors, soft colors, desaturated, gentle lighting"
   },
   {
-   "name": "a_s37",
-   "seed": 37
+   "name": "b_3b1g_s44",
+   "seed": 44,
+   "prompt": "3boys, 1girl, group picture, original, standing side by side, cowboy shot, waving, holding cup, hands in pockets, winter clothes, scarf, beanie, earmuffs, mittens, coat, school uniform, smile, looking at viewer, lavender background, grey-purple gradient background, soft bokeh, sparkle, light particles, simple background, masterpiece, high score, great score, absurdres, official art, anime screencap, 2020s anime, thin lineart, soft cel shading, muted colors, soft colors, desaturated, gentle lighting"
   },
   {
-   "name": "a_s58",
-   "seed": 58
+   "name": "b_4boys_s71",
+   "seed": 71,
+   "prompt": "4boys, multiple boys, group picture, original, standing side by side, knees up, friends, arm around shoulder, waving, holding paper cup, winter clothes, scarf, beanie, fur hat, mittens, dark uniform, white jacket, calm, grin, looking at viewer, lavender background, grey-purple gradient background, soft bokeh, sparkle, light particles, simple background, masterpiece, high score, great score, absurdres, official art, anime screencap, 2020s anime, thin lineart, soft cel shading, muted colors, soft colors, desaturated, gentle lighting"
   }
  ]
 }
