@@ -36,7 +36,7 @@ jobs:
         with: { name: cast, path: /tmp/castout, retention-days: 7 }
   task:
     needs: [plan, cast]
-    if: always() && needs.plan.result == 'success' && (needs.cast.result == 'success' || needs.cast.result == 'skipped')
+    if: always() && needs.plan.result == 'success' && needs.plan.outputs.mode != 'compose' && (needs.cast.result == 'success' || needs.cast.result == 'skipped')
     runs-on: ubuntu-latest
     timeout-minutes: 340
     strategy:
@@ -80,16 +80,18 @@ jobs:
         with: { name: 'chunk-${{ matrix.t.id }}', path: 'out/chunk_*.mp4', retention-days: 5 }
   join:
     needs: [plan, task]
-    if: always() && needs.plan.outputs.mode == 'video'
+    if: always() && (needs.plan.outputs.mode == 'video' || needs.plan.outputs.mode == 'compose')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
       - name: download chunks
         env: { GH_TOKEN: '${{ github.token }}' }
         run: |
-          mkdir -p dl art; gh run download ${{ github.run_id }} -p 'chunk-*' -D dl; find dl -name '*.mp4' -exec mv -t art {} +; echo "chunks: $(ls art | wc -l)"
+          SRC=$(jq -r '.src_run // empty' blender/west/job.json); [ -z "$SRC" ] && SRC=${{ github.run_id }}
+          mkdir -p dl art; gh run download $SRC -p 'chunk-*' -D dl; find dl -name '*.mp4' -exec mv -t art {} +; echo "chunks: $(ls art | wc -l)"
       - run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg fonts-dejavu-core >/dev/null; pip install -q pillow
+          JENV=$(jq -r '.env // {} | to_entries|map("\(.key)=\(.value)")|join(" ")' blender/west/job.json); [ -n "$JENV" ] && export $JENV
           python3 blender/west/compose.py art final.mp4
           mkdir -p previews/west
           ffmpeg -loglevel error -y -i final.mp4 -c:v libx264 -preset slow -b:v 9000k -maxrate 11000k -bufsize 20000k -pix_fmt yuv420p -c:a copy -movflags +faststart previews/west/final_share.mp4

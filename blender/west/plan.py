@@ -5,6 +5,8 @@ job = json.load(open(os.path.join(H, 'job.json'))); film = json.load(open(os.pat
 mode = job.get('mode', 'tasks'); only = [s for s in job.get('only', '').split(',') if s]; out = []
 if mode == 'tasks':
     out = job['tasks']
+elif mode == 'compose':
+    out = []
 else:
     handle = job.get('handle', .25)
     for s in film['shots']:
