@@ -1,4 +1,4 @@
-00:00.837  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:01.048  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -115,14 +115,14 @@
 [lib] model dead_tree_trunk_02 4
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
-10:21:33 | INFO: Data are loaded, start creating Blender stuff
-10:21:33 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
-10:21:34 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
-10:21:34 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
-10:21:34 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
-10:21:34 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
-10:21:34 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
-10:21:35 | INFO: glTF import finished in 1.77s
+11:10:37 | INFO: Data are loaded, start creating Blender stuff
+11:10:37 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
+11:10:37 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
+11:10:37 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
+11:10:37 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
+11:10:37 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
+11:10:38 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
+11:10:39 | INFO: glTF import finished in 1.71s
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -132,14 +132,14 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] hdri sun 143 elev 3.5 -> az 250
 Info: Object has non-uniform scale, unwrap will operate on a non-scaled version of the mesh
-RSS built 1863 MB
+RSS built 1860 MB
 EXTRAS face 9
-RSS extras 1863 MB
+RSS extras 1860 MB
 CLEARCAM face 0
-RSS lod 1863 MB
-RSS posed 1875 MB
-RSS depsgraph 1875 MB
-OBJECTS 11021 MESHES 10282 IMAGES 190 218 Mpx
-05:45.936  render           | Saved: '/home/runner/work/wanderly/wanderly/out/face_0.png'
-RSS rendered 6980 MB
+RSS lod 1860 MB
+RSS posed 1860 MB
+RSS depsgraph 1860 MB
+OBJECTS 10787 MESHES 10056 IMAGES 190 218 Mpx
+05:39.108  render           | Saved: '/home/runner/work/wanderly/wanderly/out/face_0.png'
+RSS rendered 6662 MB
 RENDERED face 1.2
