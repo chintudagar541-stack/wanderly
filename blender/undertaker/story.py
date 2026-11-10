@@ -93,8 +93,8 @@ def lie_in(sh, ch, coffin, face, sit=None, hands='folded', wave=None, hand_targe
         d = dict(loc=tuple(feet), yaw=yaw, face=ftrack(t), lean=(.714 * u, 0), head=[0, -18 * (1 - u), 0], crouch=0.0)
         sc = ch.s
         if hands == 'folded' and u < .5:
-            d['handL'] = local_to_world(feet, yaw, sc, (-.06, -.2, ch.L + ch.TL * .55))
-            d['handR'] = local_to_world(feet, yaw, sc, (.06, -.22, ch.L + ch.TL * .5))
+            d['handL'] = local_to_world(feet, yaw, sc, (-.07, -.2, ch.L + ch.TL * .3))
+            d['handR'] = local_to_world(feet, yaw, sc, (.07, -.22, ch.L + ch.TL * .26))
         if hand_targets:
             for k, v in hand_targets(t, feet, yaw, sc).items(): d[k] = v
         return d
@@ -208,6 +208,11 @@ def s_healthy(sh):
     """'Ezra was the healthiest man in town, and the most dramatic.'  Leading dolly: Ezra struts up the busy street towards
     us, chest out, then throws the back of his hand to his forehead in a theatrical swoon."""
     stage(sh, 'day', 34, 120, veg=.6, grave=False)
+    for o in list(bpy.data.objects):
+        p_ = o.matrix_world.translation
+        if o.parent is None and o.type == 'MESH' and max(o.dimensions) < 2.5 and -.6 < p_.x < 3.2 and -1.0 < p_.y < 10 and p_.z < 1.0: o.hide_render = True
+    for k, (x, y, yw, sp) in enumerate(((-1.7, -3.5, 180, .8), (2.9, -2.0, 0, 1.0), (-.6, -9.0, 180, .9))):
+        walk(sh, toon(sh, f'Q{k}', TO.crowd_preset(130 + k * 9)), (x, y, 0), yw, '82_08' if k % 2 else '82_09', 1.0 + k, face=[(0, 'chat')], speed=sp)
     ez = toon(sh, 'EZRA', EZ)
     a = walk(sh, ez, (1.4, 1.0, 0), 180, '82_08', 1.0, face=[(0, 'smug'), (2.05, 'ohno')], speed=1.0)
     def mod(t, s):
@@ -297,7 +302,7 @@ def s_fun2(sh):
         return {'handR': local_to_world(feet, yaw, sc, (.3 + w, .35, ch_h(ez) + .6))}
     lie_in(sh, ez, c, [(0, 'happy'), (1.0, 'grin')], sit=lambda t: .55, hands='folded', hand_targets=hands)
     sh.keep_clear = [(0, y0 - v * k * .5, 0) for k in range(6)]
-    sh.camera(cam_keys([(0, (1.3, 8.3, 1.9), (0, 13.6, 2.15), 24), (sh.dur, (1.35, 7.8, 1.9), (0, 12.0, 2.05), 26)], roll=-2, shake=.012), fstop=3.5)
+    sh.camera(cam_keys([(0, (1.3, 8.3, 1.75), (0, 13.6, 2.2), 21), (sh.dur, (1.35, 7.8, 1.75), (0, 12.0, 2.1), 23)], roll=-2, shake=.012), fstop=3.5)
 
 
 # ------------------------------------------------------------------ 9-12  funerals one and two
@@ -322,7 +327,7 @@ def s_small(sh):
     def cam(t):
         u = ease(t / sh.dur)
         p = c.world((1.75, .15, .95)).lerp(c.world((.95, 2.75, .75)), u)
-        tg = c.world((0, .55, .42)).lerp(c.world((0, 1.7, .32)), u)
+        tg = c.world((0, .55, .42)).lerp(c.world((0, 1.88, .34)), u)
         return (p, tg, 30 + 4 * u, 0, tg, .008)
     sh.camera(cam, fstop=3.2)
 
@@ -354,7 +359,7 @@ def s_nocry(sh):
     stage(sh, 'day', 36, 200)
     c, people, jo = funeral_base(sh, lid=0.0, joe=False, n_mourn=3, mourn_face=['bored', 'deadpan', 'bored'])
     watch = T.cyl('pwatch', .04, .015, (0, 0, 0), T.plain('watchgold', '#d4b048', .3, 1.0), rot=(math.pi / 2, 0, 0), v=16); hold(sh, watch, people[1], 'R', (0, -.04, .06))
-    sh.camera(cam_keys([(0, (-1.0, 91.7, HZ + 1.5), (-3.2, 94.1, HZ + 1.25), 30), (sh.dur, (-1.15, 93.0, HZ + 1.45), (-3.4, 95.4, HZ + 1.25), 32)], shake=.006), fstop=2.8)
+    sh.camera(cam_keys([(0, (-.6, 91.25, HZ + 1.2), (-3.2, 94.1, HZ + 1.15), 28), (sh.dur, (-.75, 92.55, HZ + 1.15), (-3.4, 95.4, HZ + 1.15), 30)], shake=.006), fstop=3.2)
 
 
 def s_names(sh):
@@ -506,6 +511,7 @@ def perfect_set(sh, with_people=True, crowd=0, wreaths=(0, 1, 2, 3)):
     for k in range(6): U.flowers(f'fl{k}', (-1.0 + k * .4, 93.6, HZ), n=6, spread=.18)
     for k, (x, y) in enumerate(((-.9, 93.9), (.9, 93.9), (-.9, 98.1), (.9, 98.1))):
         T.cyl(f'candle{k}', .035, .5, (x, y, HZ + .25), T.plain('wax', '#f0e8d8', .5), v=10)
+        T.lib.sphere(f'flame{k}', .028, (x, y, HZ + .535), T.plain('cflame', '#ffd070', .5, emit='#ffaa30', strength=18))
         l = bpy.data.lights.new(f'cflame{k}', 'POINT'); l.energy = 6; l.color = (1, .7, .35); lo = bpy.data.objects.new(f'cflame{k}', l); lo.location = (x, y, HZ + .56); bpy.context.scene.collection.objects.link(lo)
     ez = toon(sh, 'EZRA', EZ)
     band = []
@@ -590,22 +596,22 @@ def s_tears(sh):
                 hc = head_of(w, -.1); s['handR'] = tuple(hc + Vector((.22, 0, 0))); s['lean'] = (s['lean'][0] + .05 * math.sin(t * 14), 0)
             return s
         override(a, mod)
-    m = stand(sh, mort, (-.8, 94.3), -90, '77_02', 2.5, face=[(0, 'deadpan')], look=lambda t: (pos[0][0], pos[0][1], HZ + 1.2) if t < 1.1 else (pos[1][0], pos[1][1], HZ + 1.2))
+    m = stand(sh, mort, (-.8, 94.3), -115, '77_02', 2.5, face=[(0, 'deadpan')], look=lambda t: (pos[0][0], pos[0][1], HZ + 1.2) if t < 1.1 else (pos[1][0], pos[1][1], HZ + 1.2))
     def mmod(t, s):
         tg = pos[0] if t < 1.1 else pos[1]; u = math.sin(min(1, ((t - .3) % .7) / .7) * math.pi)
         s['handR'] = tuple(Vector((tg[0] + .6, tg[1], HZ + 1.1)).lerp(Vector((tg[0] + .3, tg[1], HZ + 1.05)), u)); return s
     override(m, mmod)
-    coin = T.cyl('coin', .03, .006, (0, 0, 0), T.plain('coin', '#d8b448', .3, 1.0), rot=(math.pi / 2, 0, 0), v=14); hold(sh, coin, mort, 'R', (0, 0, .02))
-    tear_streams(sh, [(w, TT[k] + .12) for k, w in enumerate(ws)])
-    sh.camera(cam_keys([(0, (-.95, 91.3, HZ + 1.55), (-1.55, 94.4, HZ + 1.3), 28), (sh.dur, (-1.05, 91.75, HZ + 1.5), (-1.6, 94.5, HZ + 1.3), 31)], shake=.008), fstop=3.2)
+    coin = T.cyl('coin', .08, .012, (0, 0, 0), T.plain('coinb', '#ffd040', .2, 1.0, emit='#ffb020', strength=1.5), rot=(math.pi / 2, 0, 0), v=24); hold(sh, coin, mort, 'R', (-.1, -.04, .05), rot=(math.pi / 2, 0, math.radians(-30)))
+    tear_streams(sh, [(w, TT[k] + .12) for k, w in enumerate(ws)], n=10, r=.03)
+    sh.camera(cam_keys([(0, (-.42, 91.25, HZ + 1.55), (-1.3, 94.4, HZ + 1.3), 28), (sh.dur, (-.5, 91.7, HZ + 1.5), (-1.32, 94.5, HZ + 1.3), 31)], shake=.008), fstop=3.2)
 
 
-def tear_streams(sh, who, n=6):
+def tear_streams(sh, who, n=6, r=.024):
     """comic tear streams squirting sideways from both eyes: who = [(toon, t_start)]"""
-    tearm = T.plain('tear', '#9ad0ff', .05, transmit=.6)
+    tearm = T.plain('tearb', '#2f9cff', .05, emit='#2f8cff', strength=.6)
     drops = []
     for k, (w, t0) in enumerate(who):
-        for j in range(n): drops.append((w, t0, j, T.lib.sphere(f'tear{k}_{j}', .018, (0, 0, -50), tearm)))
+        for j in range(n): drops.append((w, t0, j, T.lib.sphere(f'tear{k}_{j}', r, (0, 0, -50), tearm)))
     def upd(t):
         for w, t0, j, d in drops:
             if t < t0: d.location = (0, 0, -50); continue
@@ -656,7 +662,7 @@ def s_stopped(sh):
         petal.location = (hp + Vector((-.2, .1, .75))).lerp(hp + Vector((0, .0, .3)), u); petal.rotation_euler = (0, u * .3, math.sin(t * 3) * (1 - u))
     sh.updates.append(land)
     def cam(t):
-        hp = head_of(ez); d = K([(0, 1.45), (TS, 1.3), (sh.dur, 1.25)], t)
+        hp = head_of(ez); d = K([(0, 2.35), (TS, 2.1), (sh.dur, 2.0)], t)
         return (hp + Vector((.02, .45, .88)) * d, hp + Vector((0, .04, 0)), 40, 0, hp + Vector((0, 0, .2)), .002 if t < TS else .0005)
     sh.camera(cam, fstop=2.4); sh.keylight(10, (1, .85, .65))
 

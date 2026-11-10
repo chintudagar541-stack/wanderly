@@ -198,7 +198,7 @@ class Coffin:
         me, pts = coffin_mesh(name + '_box', length, h=h, inner=True)
         me.materials.append(woodm); box_o = bpy.data.objects.new(name + '_box', me); put(box_o); box_o.parent = self.root
         s = box_o.modifiers.new('th', 'SOLIDIFY'); s.thickness = .045; s.offset = -1
-        lining = plain(name + '_lining', '#5a1e4a' if kind == 'velvet' else ('#e8e0d0' if kind == 'pine' else '#c8b8a0'), .95)
+        lining = plain(name + '_lining', '#8a2c78', .95, emit='#5a1650', strength=.5) if kind == 'velvet' else plain(name + '_lining', '#e8e0d0' if kind == 'pine' else '#c8b8a0', .95)
         if kind == 'velvet':
             lining.node_tree.nodes['Principled BSDF'].inputs['Sheen Weight'].default_value = 1.0
             lining.node_tree.nodes['Principled BSDF'].inputs['Sheen Tint'].default_value = (1, .6, .9, 1)
