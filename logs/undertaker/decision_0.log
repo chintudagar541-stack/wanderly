@@ -1,4 +1,4 @@
-00:00.672  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.600  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -115,14 +115,14 @@
 [lib] model dead_tree_trunk_02 4
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
-20:19:45 | INFO: Data are loaded, start creating Blender stuff
-20:19:45 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
-20:19:45 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
-20:19:45 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
-20:19:45 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
-20:19:45 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
-20:19:45 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
-20:19:46 | INFO: glTF import finished in 1.54s
+20:32:29 | INFO: Data are loaded, start creating Blender stuff
+20:32:29 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
+20:32:29 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
+20:32:29 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
+20:32:29 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
+20:32:29 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
+20:32:29 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
+20:32:30 | INFO: glTF import finished in 1.38s
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -137,15 +137,15 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-RSS built 1782 MB
+RSS built 1794 MB
 EXTRAS decision 0
-RSS extras 1782 MB
+RSS extras 1794 MB
 CLEARCAM decision 0
-RSS lod 1782 MB
-RSS posed 1782 MB
-RSS depsgraph 1782 MB
+RSS lod 1794 MB
+RSS posed 1794 MB
+RSS depsgraph 1794 MB
 OBJECTS 10445 MESHES 9954 IMAGES 190 217 Mpx
-03:10.996  render           | Saved: '/home/runner/work/wanderly/wanderly/out/decision_0.png'
-RTIME 29.8
-RSS rendered 6155 MB
+03:00.410  render           | Saved: '/home/runner/work/wanderly/wanderly/out/decision_0.png'
+RTIME 27.2
+RSS rendered 6366 MB
 RENDERED decision 1.18
