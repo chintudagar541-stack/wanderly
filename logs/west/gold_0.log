@@ -1,0 +1,14 @@
+00:00.687  cycles           | WARNING CUEW initialization failed: Error opening the library
+[lib] hdri sun 143 elev 12.0 -> az 300
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+RSS built 538 MB
+RSS extras 538 MB
+RSS lod 538 MB
+RSS posed 538 MB
+RSS depsgraph 538 MB
+OBJECTS 207 MESHES 155 IMAGES 4 14 Mpx
+01:07.781  render           | Saved: '/home/runner/work/wanderly/wanderly/out/gold_0.png'
+RSS rendered 1477 MB
+RENDERED gold 1.56
