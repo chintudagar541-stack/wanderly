@@ -385,12 +385,12 @@ def s_double(sh):
     bp = ctr + Vector((-.25, .04, .012))
     bill = U.paper('bill', 'bill', bp, rot=(-math.pi / 2, 0, 0), w=.3, h=.4)
     a = stand(sh, mort, (ctr.x - .1, ctr.y + .32), 0, '77_02', 1.0, face=[(0, 'deadpan'), (1.3, 'smirk')], z=0, look=lambda t: tuple(bp + Vector((0, 0, .3))) if t < 1.9 else tuple(head_of(ez)))
-    stamp = T.cyl('stamp', .05, .1, (0, 0, 0), T.plain('stamp', '#4a2a1a', .6), v=12)
+    stamp = T.cyl('stamp', .075, .16, (0, 0, 0), T.plain('stamp', '#8a1e1a', .5), v=16)
     def mod(t, s):
         k = 0.0
         for tt in (1.15, 1.75): k = max(k, math.exp(-((t - tt) / .09) ** 2))
         s['handR'] = tuple(bp + Vector((.04, .02, .3 - .24 * k))); return s
-    override(a, mod); hold(sh, stamp, mort, 'R', (0, 0, -.06))
+    override(a, mod); hold(sh, stamp, mort, 'R', (0, 0, -.11))
     stand(sh, ez, (ctr.x - .8, ctr.y - .95), 175, '79_74', 2.0, face=[(0, 'confused'), (1.2, 'shock'), (1.8, 'furious')], z=0, look=lambda t: tuple(bp))
     sh.camera(cam_keys([(0, (ctr.x - .3, ctr.y - 2.7, ctr.z + .85), (ctr.x - .15, ctr.y + .45, ctr.z + .45), 30), (1.9, (ctr.x - .1, ctr.y - 1.85, ctr.z + .7), (ctr.x - .2, ctr.y + .1, ctr.z + .2), 34),
                         (sh.dur, (ctr.x + .02, ctr.y - .95, ctr.z + .55), (ctr.x - .24, ctr.y + .02, ctr.z + .02), 38)], shake=.006), fstop=2.6)
@@ -656,7 +656,7 @@ def s_stopped(sh):
         petal.location = (hp + Vector((-.2, .1, .75))).lerp(hp + Vector((0, .0, .3)), u); petal.rotation_euler = (0, u * .3, math.sin(t * 3) * (1 - u))
     sh.updates.append(land)
     def cam(t):
-        hp = head_of(ez); d = K([(0, 1.12), (TS, 1.0), (sh.dur, .96)], t)
+        hp = head_of(ez); d = K([(0, 1.45), (TS, 1.3), (sh.dur, 1.25)], t)
         return (hp + Vector((.02, .45, .88)) * d, hp + Vector((0, .04, 0)), 40, 0, hp + Vector((0, 0, .2)), .002 if t < TS else .0005)
     sh.camera(cam, fstop=2.4); sh.keylight(10, (1, .85, .65))
 
