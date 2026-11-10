@@ -6,7 +6,7 @@ film = json.load(open(os.path.join(H, 'film.json'))); fps = film['fps']; W, Hh =
 def sh(*a): subprocess.run(a, check=True)
 tmp = tempfile.mkdtemp(); parts = []
 def shotfile(sid):
-    ps = sorted(glob.glob(f"{art}/chunk_{sid}_*.mp4"))
+    ps = sorted(glob.glob(f"{art}/chunk_{sid}_[0-9]*.mp4"))
     if not ps: return None
     lst = os.path.join(tmp, sid + '.txt'); open(lst, 'w').write(''.join(f"file '{os.path.abspath(p)}'\n" for p in ps))
     o = os.path.join(tmp, sid + '.mp4'); sh('ffmpeg', '-loglevel', 'error', '-y', '-f', 'concat', '-safe', '0', '-i', lst, '-c', 'copy', o); return o
