@@ -1,4 +1,4 @@
-00:00.677  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.893  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -115,14 +115,14 @@
 [lib] model dead_tree_trunk_02 4
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
-19:05:46 | INFO: Data are loaded, start creating Blender stuff
-19:05:46 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
-19:05:47 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
-19:05:47 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
-19:05:47 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
-19:05:47 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
-19:05:47 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
-19:05:48 | INFO: glTF import finished in 2.03s
+19:53:18 | INFO: Data are loaded, start creating Blender stuff
+19:53:18 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
+19:53:18 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
+19:53:18 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
+19:53:19 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
+19:53:19 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
+19:53:19 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
+19:53:20 | INFO: glTF import finished in 1.98s
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -153,15 +153,15 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-RSS built 1894 MB
-EXTRAS didnt 0
-RSS extras 2001 MB
-CLEARCAM didnt 1
-RSS lod 2011 MB
-RSS posed 2016 MB
-RSS depsgraph 2016 MB
-OBJECTS 13125 MESHES 11735 IMAGES 212 224 Mpx
-03:30.022  render           | Saved: '/home/runner/work/wanderly/wanderly/out/didnt_0.png'
-RTIME 58.6
-RSS rendered 6839 MB
+RSS built 1900 MB
+EXTRAS didnt 9
+RSS extras 2021 MB
+CLEARCAM didnt 0
+RSS lod 2105 MB
+RSS posed 2119 MB
+RSS depsgraph 2119 MB
+OBJECTS 13974 MESHES 12245 IMAGES 212 224 Mpx
+04:49.363  render           | Saved: '/home/runner/work/wanderly/wanderly/out/didnt_0.png'
+RTIME 66.3
+RSS rendered 6986 MB
 RENDERED didnt 1.29
