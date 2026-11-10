@@ -1,0 +1,21 @@
+{
+  "name": "the-perfect-alibi",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Code-driven 2D anime production engine (SVG + GSAP + Playwright + FFmpeg) for THE PERFECT ALIBI",
+  "type": "module",
+  "scripts": {
+    "validate": "node scripts/validate.js",
+    "test": "node scripts/test-engine.js",
+    "render": "node renderer/render.js",
+    "render:preview": "node renderer/render.js --scene scenes/preview-engine --out out/preview-engine.mp4",
+    "frames": "node renderer/render.js --stills"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "gsap": "^3.15.1",
+    "playwright": "^1.65.0"
+  }
+}

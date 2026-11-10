@@ -1,0 +1,51 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>character sheet</title>
+<style>
+  html,body{margin:0;background:#d9d6d0;font-family:Inter,"DejaVu Sans",sans-serif}
+  #sheet{position:relative;width:1920px;height:1080px;overflow:hidden;background:linear-gradient(#e9e6e0,#d5d1c9)}
+  .cell{position:absolute;overflow:hidden;background:#f3f1ec;border:1px solid #b9b4aa;border-radius:6px}
+  .cell .character{position:absolute;left:0;top:0;transform-origin:0 0}
+  .cell .character svg{width:100%;height:100%;display:block;overflow:visible}
+  .lbl{position:absolute;left:0;right:0;bottom:6px;text-align:center;font-size:17px;font-weight:600;color:#3a3a40;letter-spacing:.5px;z-index:5}
+  h1{position:absolute;left:40px;top:22px;margin:0;font-size:40px;letter-spacing:2px;color:#1b1c22}
+  h2{position:absolute;left:42px;top:72px;margin:0;font-size:18px;font-weight:500;color:#55575f}
+</style></head>
+<body><div id="sheet"><h1 id="title"></h1><h2 id="sub"></h2></div>
+<script type="module">
+import { Character } from './character.js';
+import { loadJSON, loadText } from './util.js';
+const q = new URLSearchParams(location.search), id = q.get('char');
+const def = await loadJSON(`/characters/${id}/character.json`);
+const svg = await loadText(`/characters/${id}/${def.rig || 'rig.svg'}`);
+document.getElementById('title').textContent = def.name.toUpperCase();
+document.getElementById('sub').textContent = `${def.age} - ${def.personality}`;
+const sheet = document.getElementById('sheet');
+const head = def.headBox || [250, 40, 200, 290];      // x, y, w, h of the head in rig units
+function cell(x, y, w, h, label, setup, box, t = 0) {
+  const c = document.createElement('div'); c.className = 'cell'; Object.assign(c.style, { left: x + 'px', top: y + 'px', width: w + 'px', height: h + 'px' });
+  sheet.appendChild(c);
+  const ch = new Character(id, def, svg, c);
+  const [bx, by, bw, bh] = box; const sc = Math.min(w / bw, (h - 26) / bh);
+  const [fx, fy] = ch.pivot('root');
+  Object.assign(ch.state, { x: (fx - bx) * sc + (w - bw * sc) / 2, y: (fy - by) * sc, scale: sc, breathe: 0, blinkEnabled: 0 });
+  setup && setup(ch);
+  ch.apply(t);
+  const l = document.createElement('div'); l.className = 'lbl'; l.textContent = label; c.appendChild(l);
+  return ch;
+}
+const W = 700, H = 1800;
+cell(40, 110, 470, 950, 'FRONT - FULL BODY', null, [0, 0, W, H]);
+const poses = Object.keys(def.poses || {}).filter(p => p !== 'rest').slice(0, 2);
+poses.forEach((p, i) => cell(530 + i * 250, 110, 240, 470, 'POSE: ' + p.toUpperCase(), (ch) => { const P = def.poses[p]; Object.assign(ch.state, P.arms); if (P.handL) ch.state.handL = P.handL; if (P.handR) ch.state.handR = P.handR; if (P.lean) ch.state.lean = P.lean; }, [0, 0, W, H]));
+const ex = Object.keys(def.expressions);
+ex.forEach((e, i) => cell(1040 + (i % 4) * 215, 110 + Math.floor(i / 4) * 235, 205, 225, e.toUpperCase(), (ch) => { ch.state.expression = e; }, head));
+const mouths = ['rest', 'a', 'e', 'o', 'm'];
+mouths.forEach((m, i) => cell(530 + i * 276, 600 + (ex.length > 4 ? 0 : 0) + 0, 0, 0, '', null, head));
+// talking mouth shapes row
+document.querySelectorAll('.cell').forEach(c => { if (c.style.width === '0px') c.remove(); });
+mouths.forEach((m, i) => cell(1040 + i * 172, 600, 162, 210, 'MOUTH ' + m.toUpperCase(), (ch) => { ch.state.mouthOverride = m; }, [290, 150, 120, 140]));
+['open', 'half', 'closed', 'wide', 'narrow'].forEach((e, i) => cell(1040 + i * 172, 830, 162, 160, 'EYES ' + e.toUpperCase(), (ch) => { ch.state.eyesOverride = e; }, [280, 135, 140, 95]));
+cell(530, 600, 490, 450, 'HEAD TURN  -1  /  0  /  +1', null, [0, 0, 1, 1]).el.remove();
+[-1, 0, 1].forEach((tv, i) => cell(530 + i * 165, 600, 158, 450, `TURN ${tv}`, (ch) => { ch.state.headTurn = tv; ch.state.headTilt = tv * 3; }, [240, 30, 220, 330]));
+window.SHEET_READY = true;
+</script></body></html>

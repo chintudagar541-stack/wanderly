@@ -1,0 +1,224 @@
+{
+ "id": "adrian-cross",
+ "name": "Adrian Cross",
+ "age": 29,
+ "rig": "rig.svg",
+ "view": "front",
+ "height_px": 1770,
+ "personality": "Charming, unpredictable, sarcastic, dangerously intelligent",
+ "palette": {
+  "skin": "#ead3c4",
+  "hair": "#1b1d24",
+  "coat": "#262a33",
+  "turtleneck": "#121318",
+  "eyes": "#6d7f96"
+ },
+ "expressions": {
+  "neutral": {
+   "eyes": "open",
+   "mouth": "rest",
+   "brows": {
+    "L": [
+     0,
+     0,
+     0
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  "happy": {
+   "eyes": "happy",
+   "mouth": "smile",
+   "brows": {
+    "L": [
+     0,
+     -4,
+     -3
+    ],
+    "R": [
+     0,
+     -4,
+     3
+    ]
+   },
+   "fx": [
+    "blush"
+   ]
+  },
+  "angry": {
+   "eyes": "narrow",
+   "mouth": "grit",
+   "brows": {
+    "L": [
+     2,
+     6,
+     14
+    ],
+    "R": [
+     -2,
+     6,
+     -14
+    ]
+   },
+   "fx": [
+    "anger"
+   ]
+  },
+  "sad": {
+   "eyes": "sad",
+   "mouth": "sad",
+   "brows": {
+    "L": [
+     0,
+     -3,
+     -14
+    ],
+    "R": [
+     0,
+     -3,
+     14
+    ]
+   },
+   "look": [
+    0,
+    2
+   ]
+  },
+  "suspicious": {
+   "eyes": "narrow",
+   "eyeR": "open",
+   "mouth": "frown",
+   "brows": {
+    "L": [
+     1,
+     4,
+     9
+    ],
+    "R": [
+     0,
+     -5,
+     4
+    ]
+   },
+   "look": [
+    3,
+    0
+   ]
+  },
+  "shocked": {
+   "eyes": "wide",
+   "mouth": "shock",
+   "brows": {
+    "L": [
+     0,
+     -9,
+     -6
+    ],
+    "R": [
+     0,
+     -9,
+     6
+    ]
+   },
+   "fx": [
+    "sweat",
+    "shade"
+   ]
+  },
+  "smirk": {
+   "eyes": "narrow",
+   "mouth": "smirk",
+   "brows": {
+    "L": [
+     0,
+     2,
+     4
+    ],
+    "R": [
+     0,
+     -4,
+     -2
+    ]
+   }
+  }
+ },
+ "poses": {
+  "rest": {
+   "arms": {
+    "armL_sh": 0,
+    "armL_el": 0,
+    "armL_wr": 0,
+    "armR_sh": 0,
+    "armR_el": 0,
+    "armR_wr": 0
+   },
+   "handL": "relaxed",
+   "handR": "relaxed"
+  },
+  "confident": {
+   "arms": {
+    "armL_sh": 6,
+    "armL_el": -4,
+    "armL_wr": 0,
+    "armR_sh": -5,
+    "armR_el": 10,
+    "armR_wr": 0
+   },
+   "handL": "pocket",
+   "handR": "relaxed",
+   "lean": -1.5
+  },
+  "coffee": {
+   "arms": {
+    "armL_sh": 8,
+    "armL_el": 0,
+    "armL_wr": 0,
+    "armR_sh": -22,
+    "armR_el": 118,
+    "armR_wr": -96
+   },
+   "handL": "relaxed",
+   "handR": "cup"
+  },
+  "coffee-sip": {
+   "arms": {
+    "armL_sh": 8,
+    "armL_el": 0,
+    "armL_wr": 0,
+    "armR_sh": -10,
+    "armR_el": 140,
+    "armR_wr": -128
+   },
+   "handL": "relaxed",
+   "handR": "cup"
+  },
+  "point": {
+   "arms": {
+    "armL_sh": 0,
+    "armL_el": 0,
+    "armL_wr": 0,
+    "armR_sh": -78,
+    "armR_el": -6,
+    "armR_wr": 0
+   },
+   "handL": "relaxed",
+   "handR": "point"
+  },
+  "think": {
+   "arms": {
+    "armL_sh": -18,
+    "armL_el": -112,
+    "armL_wr": 40,
+    "armR_sh": 0,
+    "armR_el": 0,
+    "armR_wr": 0
+   },
+   "handL": "fist",
+   "handR": "relaxed"
+  }
+ }
+}
