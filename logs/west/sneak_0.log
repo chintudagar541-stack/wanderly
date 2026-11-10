@@ -1,4 +1,4 @@
-00:00.980  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.663  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -115,14 +115,14 @@
 [lib] model dead_tree_trunk_02 4
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
-10:17:39 | INFO: Data are loaded, start creating Blender stuff
-10:17:39 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
-10:17:39 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
-10:17:39 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
-10:17:40 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
-10:17:40 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
-10:17:40 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
-10:17:41 | INFO: glTF import finished in 1.65s
+11:06:46 | INFO: Data are loaded, start creating Blender stuff
+11:06:46 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
+11:06:46 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
+11:06:46 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
+11:06:46 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
+11:06:46 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
+11:06:46 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
+11:06:47 | INFO: glTF import finished in 1.76s
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -131,14 +131,14 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] hdri sun 143 elev 12.0 -> az 300
-RSS built 1893 MB
+RSS built 1828 MB
 EXTRAS sneak 2
-RSS extras 1896 MB
+RSS extras 1835 MB
 CLEARCAM sneak 0
-RSS lod 1917 MB
-RSS posed 1918 MB
-RSS depsgraph 1918 MB
-OBJECTS 10658 MESHES 10055 IMAGES 189 217 Mpx
-04:45.052  render           | Saved: '/home/runner/work/wanderly/wanderly/out/sneak_0.png'
-RSS rendered 7108 MB
+RSS lod 1880 MB
+RSS posed 1880 MB
+RSS depsgraph 1880 MB
+OBJECTS 10459 MESHES 9877 IMAGES 189 217 Mpx
+06:33.616  render           | Saved: '/home/runner/work/wanderly/wanderly/out/sneak_0.png'
+RSS rendered 6676 MB
 RENDERED sneak 1.5
