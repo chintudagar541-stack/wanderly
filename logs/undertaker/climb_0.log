@@ -1,4 +1,4 @@
-00:01.052  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.829  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -115,14 +115,14 @@
 [lib] model dead_tree_trunk_02 4
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
-20:05:48 | INFO: Data are loaded, start creating Blender stuff
-20:05:48 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
-20:05:48 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
-20:05:49 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
-20:05:49 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
-20:05:49 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
-20:05:49 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
-20:05:50 | INFO: glTF import finished in 1.84s
+20:31:26 | INFO: Data are loaded, start creating Blender stuff
+20:31:26 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
+20:31:26 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
+20:31:26 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
+20:31:27 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
+20:31:27 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
+20:31:27 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
+20:31:28 | INFO: glTF import finished in 1.73s
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -152,15 +152,15 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-RSS built 1831 MB
+RSS built 1825 MB
 EXTRAS climb 9
-RSS extras 1856 MB
+RSS extras 1848 MB
 CLEARCAM climb 0
-RSS lod 1893 MB
-RSS posed 1902 MB
-RSS depsgraph 1902 MB
+RSS lod 1876 MB
+RSS posed 1886 MB
+RSS depsgraph 1886 MB
 OBJECTS 11786 MESHES 10880 IMAGES 213 225 Mpx
-03:40.758  render           | Saved: '/home/runner/work/wanderly/wanderly/out/climb_0.png'
-RTIME 56.1
-RSS rendered 6542 MB
+04:01.155  render           | Saved: '/home/runner/work/wanderly/wanderly/out/climb_0.png'
+RTIME 81.3
+RSS rendered 6548 MB
 RENDERED climb 2.67
