@@ -1,0 +1,608 @@
+"""Dusty Wild West town set: main street running along +Y, building fronts on both sides (x = +-STREET),
+boardwalks, porches, signs, props, distant mesas, sky. Interiors for the bank (vault) and the sheriff's office.
+
+Every builder returns objects in the scene; all sizes in metres. Materials are procedural, with Poly Haven
+PBR textures swapped in when USE_PH is set (CI)."""
+import bpy, bmesh, math, os, random
+from mathutils import Vector, Matrix
+import sys
+HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, os.path.dirname(HERE)); sys.path.insert(0, os.path.join(os.path.dirname(HERE), 'real'))
+import lib
+from realchar import hexc
+
+STREET = 7.0          # half width of the street (building fronts at x = +-STREET)
+WALK = 2.2            # boardwalk depth
+PH = bool(os.environ.get('USE_PH'))
+RNG = random.Random(7)
+_M = {}
+
+
+def coll(name):
+    c = bpy.data.collections.get(name)
+    if not c:
+        c = bpy.data.collections.new(name); bpy.context.scene.collection.children.link(c)
+    return c
+
+
+def put(o, c='Town'):
+    for cc in list(o.users_collection): cc.objects.unlink(o)
+    coll(c).objects.link(o); return o
+
+
+# ------------------------------------------------------------------ materials
+def _nt(m):
+    m.use_nodes = True; nt = m.node_tree; nt.nodes.clear(); o = nt.nodes.new('ShaderNodeOutputMaterial'); return nt.nodes, nt.links, o
+
+
+def wood(name, col='#8a6a48', weather=.5, scale=1.0, planks=True, paint=None):
+    key = (name, col, paint)
+    if key in _M: return _M[key]
+    if PH:
+        try:
+            m = lib.mat_ph(name, 'wood', 'plank', scale=1.4 * scale, tint=paint or col, avoid=('floor', 'parquet', 'tile', 'herringbone'), bump=.7)
+            _M[key] = m; return m
+        except Exception as e: lib.log('PH wood failed', e)
+    m = bpy.data.materials.new(name); N, L, out = _nt(m)
+    b = N.new('ShaderNodeBsdfPrincipled'); L.new(b.outputs[0], out.inputs[0])
+    tc = N.new('ShaderNodeTexCoord'); mp = N.new('ShaderNodeMapping'); mp.inputs['Scale'].default_value = (1 * scale, 1 * scale, 14 * scale) if False else (scale, 14 * scale, scale); L.new(tc.outputs['Object'], mp.inputs['Vector'])
+    gr = N.new('ShaderNodeTexWave'); gr.wave_type = 'RINGS'; gr.inputs['Scale'].default_value = 3.0; gr.inputs['Distortion'].default_value = 9; gr.inputs['Detail'].default_value = 6; L.new(mp.outputs[0], gr.inputs['Vector'])
+    nz = N.new('ShaderNodeTexNoise'); nz.inputs['Scale'].default_value = 6; nz.inputs['Detail'].default_value = 10; L.new(tc.outputs['Object'], nz.inputs['Vector'])
+    c1 = hexc(col); c2 = tuple(x * .45 for x in c1[:3]) + (1,)
+    ramp = N.new('ShaderNodeValToRGB'); ramp.color_ramp.elements[0].color = c2; ramp.color_ramp.elements[1].color = c1; L.new(gr.outputs['Fac'], ramp.inputs['Fac'])
+    gray = N.new('ShaderNodeMix'); gray.data_type = 'RGBA'; gray.inputs['Factor'].default_value = weather * .6; L.new(ramp.outputs['Color'], gray.inputs['A']); gray.inputs['B'].default_value = (.32, .3, .28, 1)
+    col_out = gray.outputs['Result']
+    if paint:
+        pm = N.new('ShaderNodeMix'); pm.data_type = 'RGBA'; pm.inputs['B'].default_value = hexc(paint)
+        pr = N.new('ShaderNodeMapRange'); pr.inputs['From Min'].default_value = .38; pr.inputs['From Max'].default_value = .52; L.new(nz.outputs['Fac'], pr.inputs['Value']); L.new(pr.outputs[0], pm.inputs['Factor'])
+        L.new(col_out, pm.inputs['A']); col_out = pm.outputs['Result']
+    L.new(col_out, b.inputs['Base Color'])
+    b.inputs['Roughness'].default_value = .82
+    if planks:
+        pv = N.new('ShaderNodeTexWave'); pv.wave_type = 'BANDS'; pv.bands_direction = 'Z'; pv.wave_profile = 'SAW'; pv.inputs['Scale'].default_value = 4.5; L.new(tc.outputs['Object'], pv.inputs['Vector'])
+        gap = N.new('ShaderNodeMapRange'); gap.inputs['From Min'].default_value = .0; gap.inputs['From Max'].default_value = .04; L.new(pv.outputs['Fac'], gap.inputs['Value'])
+        mul = N.new('ShaderNodeMix'); mul.data_type = 'RGBA'; mul.blend_type = 'MULTIPLY'; mul.inputs['Factor'].default_value = 1; L.new(b.inputs['Base Color'].links[0].from_socket, mul.inputs['A']); L.new(gap.outputs[0], mul.inputs['B'])
+        L.new(mul.outputs['Result'], b.inputs['Base Color'])
+    bp = N.new('ShaderNodeBump'); bp.inputs['Strength'].default_value = .5; bp.inputs['Distance'].default_value = .004; L.new(gr.outputs['Fac'], bp.inputs['Height']); L.new(bp.outputs[0], b.inputs['Normal'])
+    _M[key] = m; return m
+
+
+def ph_or(name, kws, fallback, scale=1.0, tint=None, avoid=(), bump=.6):
+    """Poly Haven texture by keywords on CI, procedural fallback locally"""
+    key = ('ph', name)
+    if key in _M: return _M[key]
+    m = None
+    if PH:
+        try: m = lib.mat_ph(name, *kws, scale=scale, tint=tint, avoid=avoid, bump=bump)
+        except Exception as e: lib.log('PH', name, 'failed', e)
+    if m is None: m = fallback()
+    _M[key] = m; return m
+
+
+def plain(name, col, rough=.8, metal=0.0, emit=None, strength=0.0, alpha=1.0, transmit=0.0):
+    key = (name, col)
+    if key in _M: return _M[key]
+    m = bpy.data.materials.new(name); N, L, out = _nt(m)
+    b = N.new('ShaderNodeBsdfPrincipled'); L.new(b.outputs[0], out.inputs[0])
+    b.inputs['Base Color'].default_value = hexc(col); b.inputs['Roughness'].default_value = rough; b.inputs['Metallic'].default_value = metal
+    if emit: b.inputs['Emission Color'].default_value = hexc(emit); b.inputs['Emission Strength'].default_value = strength
+    if transmit: b.inputs['Transmission Weight'].default_value = transmit; b.inputs['IOR'].default_value = 1.5
+    if alpha < 1: b.inputs['Alpha'].default_value = alpha
+    _M[key] = m; return m
+
+
+def dirt(name='dirt'):
+    if name in _M: return _M[name]
+    if PH:
+        try:
+            m = lib.mat_ph(name, 'dirt', 'ground', 'sand', scale=.25, avoid=('grass', 'moss', 'snow', 'forest', 'leaves', 'rock_wall'), bump=1.0); _M[name] = m; return m
+        except Exception as e: lib.log('PH dirt failed', e)
+    m = bpy.data.materials.new(name); N, L, out = _nt(m)
+    b = N.new('ShaderNodeBsdfPrincipled'); L.new(b.outputs[0], out.inputs[0])
+    tc = N.new('ShaderNodeTexCoord')
+    n1 = N.new('ShaderNodeTexNoise'); n1.inputs['Scale'].default_value = .35; n1.inputs['Detail'].default_value = 8; L.new(tc.outputs['Object'], n1.inputs['Vector'])
+    n2 = N.new('ShaderNodeTexNoise'); n2.inputs['Scale'].default_value = 9; n2.inputs['Detail'].default_value = 12; L.new(tc.outputs['Object'], n2.inputs['Vector'])
+    v = N.new('ShaderNodeTexVoronoi'); v.inputs['Scale'].default_value = 45; L.new(tc.outputs['Object'], v.inputs['Vector'])
+    ramp = N.new('ShaderNodeValToRGB'); ramp.color_ramp.elements[0].color = hexc('#8a6a4a'); ramp.color_ramp.elements[1].color = hexc('#c8a47a'); L.new(n1.outputs['Fac'], ramp.inputs['Fac'])
+    mx = N.new('ShaderNodeMix'); mx.data_type = 'RGBA'; mx.blend_type = 'MULTIPLY'; mx.inputs['Factor'].default_value = .35; L.new(ramp.outputs['Color'], mx.inputs['A']); L.new(n2.outputs['Color'], mx.inputs['B'])
+    L.new(mx.outputs['Result'], b.inputs['Base Color']); b.inputs['Roughness'].default_value = .95
+    h = N.new('ShaderNodeMath'); h.operation = 'ADD'; L.new(n2.outputs['Fac'], h.inputs[0]); L.new(v.outputs['Distance'], h.inputs[1])
+    bp = N.new('ShaderNodeBump'); bp.inputs['Strength'].default_value = .8; bp.inputs['Distance'].default_value = .02; L.new(h.outputs[0], bp.inputs['Height']); L.new(bp.outputs[0], b.inputs['Normal'])
+    _M[name] = m; return m
+
+
+# ------------------------------------------------------------------ primitives
+def box(name, size, loc, m, rot=(0, 0, 0), bevel=.0, c='Town'):
+    bpy.ops.mesh.primitive_cube_add(size=1, location=loc, rotation=rot); o = bpy.context.active_object; o.name = name; o.scale = size
+    bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
+    o.data.materials.append(m)
+    if bevel:
+        bv = o.modifiers.new('bev', 'BEVEL'); bv.width = bevel; bv.segments = 2; bv.limit_method = 'ANGLE'
+    return put(o, c)
+
+
+def cyl(name, r, h, loc, m, rot=(0, 0, 0), v=16, c='Town'):
+    bpy.ops.mesh.primitive_cylinder_add(vertices=v, radius=r, depth=h, location=loc, rotation=rot); o = bpy.context.active_object; o.name = name
+    o.data.materials.append(m)
+    for p in o.data.polygons: p.use_smooth = True
+    return put(o, c)
+
+
+def text(name, s, loc, size, m, rot=(math.pi / 2, 0, 0), extrude=.02, align='CENTER', c='Town', font='serif'):
+    cu = bpy.data.curves.new(name, 'FONT'); cu.body = s; cu.size = size; cu.extrude = extrude; cu.align_x = align; cu.align_y = 'CENTER'
+    for p in ('/usr/share/fonts/truetype/dejavu/DejaVuSerif-Bold.ttf', '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'):
+        if os.path.exists(p): cu.font = bpy.data.fonts.load(p, check_existing=True); break
+    o = bpy.data.objects.new(name, cu); o.location = loc; o.rotation_euler = rot; o.data.materials.append(m)
+    return put(o, c)
+
+
+# ------------------------------------------------------------------ building
+def building(name, x0, y0, width, depth, height, side, sign, wall_col, trim_col, sign_col='#e8dcc0', floors=2, porch=True, false_front=True, door_open=False):
+    """side=+1: building on +x side facing -x (towards the street); side=-1 faces +x"""
+    objs = []
+    fx = side * STREET                                  # front plane x
+    cx = fx + side * depth / 2
+    wm = wood(name + '_w', '#8a6a48', paint=wall_col); tm = wood(name + '_t', '#6a4a30', paint=trim_col, planks=False)
+    dark = plain('glass_dark', '#151a1e', rough=.05, transmit=.0)
+    # body (sides/back are textured boxes; the street front gets real board geometry)
+    side_m = ph_or('wall_' + wall_col, ('weathered', 'planks'), lambda: wm, scale=1.2, tint=wall_col, avoid=('floor', 'parquet', 'tile', 'herringbone', 'brick'))
+    objs.append(box(name + '_body', (depth, width, height), (cx, y0, height / 2), side_m))
+    objs += clapboard(name, fx, y0, width + (.3 if false_front else 0), (height + 1.6) if false_front else height, side, wall_col)
+    # stone foundation
+    objs.append(box(name + '_found', (depth + .1, width + .1, .35), (cx, y0, .12), ph_or('stonefound', ('stone', 'wall', 'rock'), lambda: plain('stone', '#7a7066', .9), scale=.8, avoid=('brick', 'tile', 'moss'))))
+    # false front (taller, thin) with stepped top
+    if false_front:
+        ff_h = height + 1.6
+        objs.append(box(name + '_cap', (.3, width + .5, .18), (fx + side * .09, y0, ff_h + .09), tm, bevel=.02))
+        objs.append(box(name + '_capb', (.26, width * .4, .5), (fx + side * .09, y0, ff_h + .25), wm))
+        objs.append(box(name + '_capb2', (.3, width * .44, .12), (fx + side * .09, y0, ff_h + .55), tm, bevel=.02))
+    # sign board
+    sb_z = height + .55 if false_front else height - .5
+    objs.append(box(name + '_sb', (.06, min(width * .8, 6.0), .9), (fx - side * .03, y0, sb_z), plain('signboard_' + sign_col, sign_col, .9)))
+    objs.append(text(name + '_sign', sign, (fx - side * .08, y0, sb_z), .55 if len(sign) < 9 else .42, plain('signink', '#2a1a10', .7), rot=(math.pi / 2, 0, math.pi / 2 * (-side)), extrude=.008))
+    # windows (2nd floor) and shop windows (1st)
+    for fl in range(floors):
+        z = 1.6 + fl * 3.0 if fl else 1.55
+        n = 2 if fl == 0 else 3
+        for i in range(n):
+            if fl == 0 and i == n // 2 - 0: continue
+            yy = y0 + (i - (n - 1) / 2) * width / n * (1.6 if fl == 0 else 1.0)
+            if fl == 0: yy = y0 + (-1 if i == 0 else 1) * width * .3
+            ww, wh = (1.5, 1.8) if fl == 0 else (.9, 1.4)
+            objs.append(box(f'{name}_win{fl}{i}', (.06, ww, wh), (fx - side * .02, yy, z + (0 if fl == 0 else 3.0 - 1.55)), dark))
+            for dz in (-wh / 2, wh / 2):
+                objs.append(box(f'{name}_wf{fl}{i}{dz}', (.1, ww + .16, .08), (fx - side * .04, yy, z + (0 if fl == 0 else 3.0 - 1.55) + dz), tm))
+            for dy in (-ww / 2, 0, ww / 2):
+                objs.append(box(f'{name}_wv{fl}{i}{dy}', (.1, .06 if dy == 0 else .08, wh), (fx - side * .04, yy + dy, z + (0 if fl == 0 else 3.0 - 1.55)), tm))
+            if fl == 1:   # shutters
+                for sy in (-1, 1):
+                    objs.append(box(f'{name}_sh{i}{sy}', (.05, .45, wh), (fx - side * .05, yy + sy * (ww / 2 + .25), z + 3.0 - 1.55), wood(name + '_shut', '#6a5038', paint=trim_col)))
+    # door
+    dm = wood(name + '_door', '#5a3a22', paint=trim_col)
+    objs.append(box(name + '_door', (.08, 1.3, 2.3), (fx - side * .03, y0, 1.15), dm if not door_open else dark))
+    objs.append(box(name + '_doorf', (.12, 1.5, .12), (fx - side * .05, y0, 2.36), tm))
+    # boardwalk + porch roof on posts
+    if porch:
+        bw = wood('boardwalk', '#7a5a3a', weather=.7, scale=1.0)
+        objs.append(box(name + '_walk', (WALK, width, .18), (fx - side * WALK / 2, y0, .09), bw))
+        roof_z = 3.0
+        objs.append(corrugated(name + '_proof', (WALK + .3, width + .1), (fx - side * (WALK + .3) / 2, y0, roof_z), side))
+        for py in (y0 - width / 2 + .15, y0 + width / 2 - .15, y0):
+            if py == y0 and width < 7: continue
+            objs.append(box(name + f'_post{py:.1f}', (.14, .14, roof_z), (fx - side * (WALK - .12), py, roof_z / 2), tm))
+        # hitching rail
+        for k, py in enumerate((y0 - width * .25, y0 + width * .25)):
+            objs.append(box(name + f'_hr{k}', (.08, 2.2, .08), (fx - side * (WALK + .6), py, 1.0), tm))
+            for dy in (-1.0, 1.0): objs.append(box(name + f'_hp{k}{dy}', (.1, .1, 1.05), (fx - side * (WALK + .6), py + dy, .52), tm))
+    return objs
+
+
+def clapboard(name, fx, y0, width, height, side, col):
+    """overlapping horizontal boards with random wear, gaps and the odd tilted/missing board"""
+    rng = random.Random(hash(name) & 0xffff); objs = []
+    m = ph_or('board_' + col, ('painted', 'wood', 'planks'), lambda: wood(name + '_cb', '#8a6a48', paint=col, planks=False), scale=1.0, tint=col, avoid=('floor', 'parquet', 'tile', 'herringbone'))
+    m2 = ph_or('boardraw', ('weathered', 'wood', 'planks'), lambda: wood('rawboard', '#8a6a48', weather=.8, planks=False), scale=1.0, avoid=('floor', 'parquet', 'tile', 'herringbone'))
+    bh = .2; z = .25; i = 0
+    bpy.ops.mesh.primitive_cube_add(size=1); proto = bpy.context.active_object
+    me = bpy.data.meshes.new(name + '_boards'); bm = bmesh.new()
+    while z < height:
+        segs = [(-width / 2, width / 2)]
+        if rng.random() < .35:                       # a butt joint somewhere along the row
+            c = rng.uniform(-width * .3, width * .3); segs = [(-width / 2, c - .004), (c + .004, width / 2)]
+        for a, b in segs:
+            if rng.random() < .015: continue           # missing board
+            tilt = rng.gauss(0, .006) + (rng.random() < .03) * rng.uniform(-.05, .05)
+            th = .022 + rng.uniform(0, .006)
+            mat = Matrix.Translation((fx - side * (th / 2 + .004), y0 + (a + b) / 2, z + bh / 2)) @ Matrix.Rotation(tilt, 4, 'X') @ Matrix.Rotation(side * .06, 4, 'Y') @ Matrix.Diagonal((th, b - a, bh + .02, 1))
+            r = bmesh.ops.create_cube(bm, size=1, matrix=mat)
+            mi = 1 if rng.random() < .12 else 0
+            for f in {f for v in r['verts'] for f in v.link_faces}: f.material_index = mi
+        z += bh; i += 1
+    bm.to_mesh(me); bm.free(); bpy.data.objects.remove(proto)
+    o = bpy.data.objects.new(name + '_boards', me); me.materials.append(m); me.materials.append(m2)
+    bv = o.modifiers.new('bev', 'BEVEL'); bv.width = .004; bv.segments = 1
+    put(o); objs.append(o)
+    # corner trims
+    tm = wood('trimwood', '#6a4a30', weather=.6, planks=False)
+    for sy in (-1, 1): objs.append(box(name + '_ct', (.08, .12, height), (fx - side * .04, y0 + sy * width / 2, height / 2), tm))
+    return objs
+
+
+def corrugated(name, size, loc, side):
+    m = ph_or('corrugated', ('corrugated', 'iron'), lambda: plain('tin', '#7a7470', .5, .7), scale=1.0, avoid=('rust_coarse',))
+    bpy.ops.mesh.primitive_grid_add(x_subdivisions=8, y_subdivisions=int(size[1] * 14), size=1, location=loc); o = bpy.context.active_object; o.name = name
+    o.scale = (size[0], size[1], 1); bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
+    for v in o.data.vertices: v.co.z += .018 * math.sin(v.co.y * math.tau * 7) - side * v.co.x * math.tan(math.radians(6))
+    o.data.materials.append(m); s = o.modifiers.new('s', 'SOLIDIFY'); s.thickness = .004
+    for p in o.data.polygons: p.use_smooth = True
+    return put(o)
+
+
+def barrel(name, loc, m=None, r=.32, h=.9, c='Town'):
+    m = m or wood('barrel', '#7a5032', weather=.4, planks=False)
+    bpy.ops.mesh.primitive_cylinder_add(vertices=24, radius=r, depth=h, location=(loc[0], loc[1], loc[2] + h / 2)); o = bpy.context.active_object; o.name = name
+    for v in o.data.vertices:
+        u = v.co.z / (h / 2); v.co.x *= 1 + .12 * (1 - u * u); v.co.y *= 1 + .12 * (1 - u * u)
+    o.data.materials.append(m)
+    for p in o.data.polygons: p.use_smooth = True
+    put(o, c)
+    iron = plain('iron', '#2a2826', .5, .8)
+    for z in (.12, h - .12, h * .35, h * .65):
+        u = (z - h / 2) / (h / 2); rr = r * (1 + .12 * (1 - u * u)) + .004
+        bpy.ops.mesh.primitive_torus_add(major_radius=rr, minor_radius=.012, location=(loc[0], loc[1], loc[2] + z)); t = bpy.context.active_object; t.data.materials.append(iron); put(t, c)
+    return o
+
+
+def crate(name, loc, s=.6, rot=0.0, c='Town'):
+    return box(name, (s, s, s), (loc[0], loc[1], loc[2] + s / 2), wood('crate', '#a07a50', weather=.3, scale=2.0), rot=(0, 0, rot), bevel=.01, c=c)
+
+
+def mesas():
+    """distant mesas / buttes ring + desert floor"""
+    m = plain('mesa', '#b0623a', .95)
+    if PH:
+        try: m = lib.mat_ph('mesa', 'rock', 'cliff', 'red', scale=.02, avoid=('moss', 'snow', 'grass'), bump=1.0)
+        except Exception as e: lib.log('PH rock failed', e)
+    rng = random.Random(3)
+    for i in range(16):
+        a = i / 16 * math.tau + rng.uniform(-.1, .1)
+        w = rng.uniform(80, 220); h = rng.uniform(40, 120); d = w + rng.uniform(300, 600)
+        bpy.ops.mesh.primitive_cylinder_add(vertices=12, radius=1, depth=1, location=(math.cos(a) * d, math.sin(a) * d, h / 2)); o = bpy.context.active_object
+        o.scale = (w, w * rng.uniform(.4, .8), h); o.rotation_euler = (0, 0, a)
+        for v in o.data.vertices:
+            if v.co.z > 0: v.co.x *= rng.uniform(.6, .85); v.co.y *= rng.uniform(.6, .85)
+        d_ = o.modifiers.new('d', 'DISPLACE'); tx = bpy.data.textures.new('mesa%d' % i, 'CLOUDS'); tx.noise_scale = .3; d_.texture = tx; d_.strength = .08
+        sd = o.modifiers.new('s', 'SUBSURF'); sd.levels = 2; sd.render_levels = 3
+        o.modifiers.move(1, 0)
+        o.data.materials.append(m); put(o, 'Far')
+    bpy.ops.mesh.primitive_plane_add(size=3000, location=(0, 0, -.02)); g = bpy.context.active_object; g.name = 'desert'; g.data.materials.append(dirt('desert')); put(g, 'Far')
+
+
+def street(length=120):
+    bpy.ops.mesh.primitive_grid_add(x_subdivisions=60, y_subdivisions=200, size=1, location=(0, 20, 0)); g = bpy.context.active_object; g.name = 'street'
+    g.scale = (STREET * 2 + 30, length, 1); bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
+    rng = random.Random(1)
+    for v in g.data.vertices:   # ruts and mild bumps
+        x = v.co.x
+        v.co.z = .03 * math.sin(v.co.y * .7 + x) * .3 + (-.035 if abs(abs(x) - .8) < .25 else 0) + rng.uniform(0, .012)
+    g.data.materials.append(ph_or('streetdirt', ('dirt', 'road'), lambda: dirt('street'), scale=.6, avoid=('grass', 'moss', 'snow', 'asphalt', 'leaves'), bump=1.0)); put(g)
+    for p in g.data.polygons: p.use_smooth = True
+    return g
+
+
+def props_street(y0, y1):
+    rng = random.Random(11)
+    for side in (-1, 1):
+        y = y0
+        while y < y1:
+            fx = side * (STREET - WALK)
+            k = rng.random()
+            if k < .35: barrel(f'bar{side}{y:.0f}', (fx - side * .5, y, .18))
+            elif k < .55:
+                crate(f'cr{side}{y:.0f}', (fx - side * .5, y, .18), rot=rng.uniform(0, .4))
+                if rng.random() < .5: crate(f'cr2{side}{y:.0f}', (fx - side * .5, y, .78), .45, rot=rng.uniform(0, .6))
+            elif k < .65: water_trough((fx - side * .9, y, 0))
+            y += rng.uniform(3.5, 7.0)
+    # wagon in the street, telegraph poles, water tower
+    wagon((-3.5, 34, 0), .3)
+    for i, yy in enumerate(range(-30, 90, 18)):
+        tm = wood('pole', '#5a4a3a', weather=.8, planks=False)
+        cyl(f'tpole{i}', .1, 7.5, (STREET + 3.5, yy, 3.75), tm, v=10); box(f'tcross{i}', (1.6, .1, .1), (STREET + 3.5, yy, 7.0), tm)
+    water_tower((-STREET - 10, 70, 0))
+
+
+def water_trough(loc):
+    m = wood('trough', '#6a5038', weather=.6)
+    box('trough', (.6, 1.8, .45), (loc[0], loc[1], .4), m)
+    box('trough_w', (.5, 1.7, .02), (loc[0], loc[1], .58), plain('water', '#30485a', .05, transmit=.3))
+    for dy in (-.75, .75): box('trough_l', (.6, .08, .4), (loc[0], loc[1] + dy, .2), m)
+
+
+def wagon(loc, rot=0.0):
+    m = wood('wagon', '#7a5a3a', weather=.5)
+    g = []
+    g.append(box('wag_bed', (1.5, 3.2, .5), (loc[0], loc[1], 1.0), m))
+    for sx in (-1, 1):
+        for sy in (-1, 1):
+            bpy.ops.mesh.primitive_torus_add(major_radius=.5, minor_radius=.04, location=(loc[0] + sx * .85, loc[1] + sy * 1.1, .55), rotation=(0, math.pi / 2, 0)); w = bpy.context.active_object; w.data.materials.append(plain('iron', '#2a2826', .5, .8)); put(w); g.append(w)
+            for k in range(8):
+                a = k / 8 * math.pi
+                box('spoke', (.03, .95, .04), (loc[0] + sx * .85, loc[1] + sy * 1.1, .55), m, rot=(a, 0, 0))
+    # canvas cover hoops
+    cv = plain('canvas', '#d8ccb0', .9)
+    bpy.ops.mesh.primitive_cylinder_add(vertices=32, radius=.9, depth=2.8, location=(loc[0], loc[1], 1.25), rotation=(math.pi / 2, 0, 0)); c = bpy.context.active_object
+    me = c.data; bm = bmesh.new(); bm.from_mesh(me); bmesh.ops.delete(bm, geom=[v for v in bm.verts if v.co.x < -.05 if False] + [v for v in bm.verts if (c.rotation_euler and v.co.y < -.1)], context='VERTS'); bm.to_mesh(me); bm.free()
+    c.scale = (.85, 1, 1); c.data.materials.append(cv); s = c.modifiers.new('s', 'SOLIDIFY'); s.thickness = .01; put(c)
+
+
+def water_tower(loc):
+    m = wood('tower', '#6a5038', weather=.7)
+    for sx in (-1, 1):
+        for sy in (-1, 1): box('tw_leg', (.25, .25, 9), (loc[0] + sx * 1.6, loc[1] + sy * 1.6, 4.5), m)
+    barrel('tw_tank', (loc[0], loc[1], 9), m, r=2.4, h=3.2)
+    bpy.ops.mesh.primitive_cone_add(vertices=24, radius1=2.8, depth=1.2, location=(loc[0], loc[1], 12.8)); c = bpy.context.active_object; c.data.materials.append(wood('towerroof', '#4a3a2a', weather=.8)); put(c)
+
+
+def cactus(loc, h=3.0, seed=0):
+    rng = random.Random(seed); m = plain('cactus', '#4a6a3a', .7)
+    cyl('cac', .22, h, (loc[0], loc[1], h / 2), m, v=12)
+    for k in range(rng.randint(1, 3)):
+        sd = rng.choice((-1, 1)); z = rng.uniform(h * .35, h * .6); L = rng.uniform(.6, 1.1)
+        cyl('cac_a', .15, .7, (loc[0] + sd * .45, loc[1], z), m, rot=(0, math.pi / 2, 0), v=10)
+        cyl('cac_b', .15, L, (loc[0] + sd * .8, loc[1], z + L / 2), m, v=10)
+
+
+TOWN_BUILDINGS = [
+    # (name, side, y, width, depth, height, sign, wall, trim, floors)
+    ('saloon', 1, 10.0, 9.0, 12, 6.2, 'SALOON', '#8a4a32', '#e8d8b0', 2),
+    ('bank', -1, 12.0, 8.0, 12, 5.6, 'BANK', '#c8b48a', '#3a4a3a', 2),
+    ('sheriff', -1, -2.0, 7.0, 10, 4.2, 'SHERIFF', '#7a6a58', '#2a2a2a', 1),
+    ('store', 1, 0.0, 8.0, 12, 5.4, 'GENERAL STORE', '#5a7a8a', '#e0d4b8', 2),
+    ('hotel', 1, 22.0, 9.0, 12, 7.4, 'HOTEL', '#b88a5a', '#4a2a1a', 2),
+    ('barber', -1, 22.5, 6.0, 9, 4.0, 'BARBER', '#d8d0c0', '#8a2a2a', 1),
+    ('livery', -1, -12.5, 9.0, 12, 5.0, 'LIVERY', '#6a4a32', '#d8c8a8', 1),
+    ('assay', 1, -10.5, 7.0, 10, 4.4, 'ASSAY OFFICE', '#9a8a6a', '#3a3a3a', 1),
+    ('telegraph', 1, 31.5, 5.5, 9, 4.2, 'TELEGRAPH', '#a89070', '#2a3a4a', 1),
+    ('church', -1, 34.0, 8.0, 14, 5.0, '', '#e8e0d0', '#5a4a3a', 1),
+    ('hardware', -1, 1.0 + 0, 0.0, 0, 0, '', '', '', 0),
+]
+
+
+def build_town(detail=True, y_range=(-30, 50)):
+    for (n, side, y, w, d, h, sign, wall, trim, fl) in TOWN_BUILDINGS:
+        if w <= 0 or not (y_range[0] - 10 < y < y_range[1] + 10): continue
+        building(n, 0, y, w, d, h, side, sign, wall, trim, floors=fl, door_open=(n == 'bank'))
+    # filler buildings so the street never has gaps
+    rng = random.Random(5)
+    for side in (-1, 1):
+        y = -40
+        while y < 70:
+            free = all(not (s == side and abs(y - yy) < ww / 2 + 2.6) for (_, s, yy, ww, *_r) in TOWN_BUILDINGS if ww > 0)
+            if free and not (y_range[0] - 15 < y < y_range[1] + 15 and False):
+                w = rng.uniform(4.5, 6.5); h = rng.uniform(3.6, 5.2)
+                building(f'fill{side}_{y:.0f}', 0, y, w, rng.uniform(8, 11), h, side, '', rng.choice(['#8a6a48', '#a08060', '#6a5a4a', '#9a7a5a']), rng.choice(['#3a2a1a', '#e0d0b0', '#5a3a2a']), floors=1, false_front=rng.random() < .6)
+            y += 5.2
+    street()
+    if detail: props_street(-30, 60)
+    mesas()
+    vegetation(float(os.environ.get('VEG', 1.0)))
+    for i in range(14):
+        rng2 = random.Random(i)
+        cactus((rng2.choice((-1, 1)) * rng2.uniform(26, 60), rng2.uniform(-60, 120), 0), rng2.uniform(2, 3.8), i)
+
+
+# ------------------------------------------------------------------ vegetation
+def grass_mat():
+    if 'grass' in _M: return _M['grass']
+    m = bpy.data.materials.new('grass'); N, L, out = _nt(m)
+    b = N.new('ShaderNodeBsdfPrincipled'); L.new(b.outputs[0], out.inputs[0])
+    hi = N.new('ShaderNodeHairInfo'); ob = N.new('ShaderNodeObjectInfo')
+    ramp = N.new('ShaderNodeValToRGB'); cr = ramp.color_ramp
+    cols = [(0, '#5a5a2a'), (.3, '#8a7a3a'), (.55, '#b8a060'), (.8, '#7a8a40'), (1, '#c8b480')]
+    cr.elements[0].position, cr.elements[0].color = cols[0][0], hexc(cols[0][1]); cr.elements[1].position, cr.elements[1].color = cols[-1][0], hexc(cols[-1][1])
+    for p, c in cols[1:-1]: e = cr.elements.new(p); e.color = hexc(c)
+    L.new(hi.outputs['Random'], ramp.inputs['Fac'])
+    tip = N.new('ShaderNodeMix'); tip.data_type = 'RGBA'; L.new(hi.outputs['Intercept'], tip.inputs['Factor']); L.new(ramp.outputs['Color'], tip.inputs['A']); tip.inputs['B'].default_value = hexc('#d8c890')
+    L.new(tip.outputs['Result'], b.inputs['Base Color']); b.inputs['Roughness'].default_value = .65
+    b.inputs['Subsurface Weight'].default_value = .2; b.inputs['Subsurface Radius'].default_value = (.4, .4, .1)
+    _M['grass'] = m; return m
+
+
+def grass_field(area=(-70, 70, -70, 120), count=45000, children=18, length=.45, clear=None, name='grass'):
+    """hair-particle grass over a ground grid, kept off the street, boardwalks and building footprints"""
+    clear = clear or []
+    x0, x1, y0, y1 = area
+    bpy.ops.mesh.primitive_grid_add(x_subdivisions=140, y_subdivisions=190, size=1, location=((x0 + x1) / 2, (y0 + y1) / 2, .0)); g = bpy.context.active_object; g.name = name + '_ground'
+    g.scale = (x1 - x0, y1 - y0, 1); bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
+    rng = random.Random(4)
+    for v in g.data.vertices: v.co.z = .02 + rng.uniform(0, .03)
+    g.data.materials.append(ph_or('meadow_ground', ('aerial', 'grass', 'rock'), lambda: dirt('meadowdirt'), scale=.4, avoid=('snow', 'moss', 'leaves')))
+    g.data.materials.append(grass_mat())
+    put(g, 'Far')
+    vg = g.vertex_groups.new(name='dens'); nz = random.Random(9)
+    for v in g.data.vertices:
+        x, y = v.co.x + (x0 + x1) / 2, v.co.y + (y0 + y1) / 2
+        w = 1.0
+        if abs(x) < STREET - WALK + .2: w = max(0.0, (abs(x) - (STREET - WALK - 2.5)) / 2.5) * .35          # sparse tufts at the street edges only
+        for (cx, cy, hx, hy) in clear:
+            if abs(x - cx) < hx and abs(y - cy) < hy: w = 0.0
+        w *= .55 + .45 * (math.sin(x * .21 + nz.random()) * math.sin(y * .17) * .5 + .5)                 # patchy
+        if w > 0: vg.add([v.index], min(1.0, w), 'REPLACE')
+    mod = g.modifiers.new('grass', 'PARTICLE_SYSTEM'); ps = mod.particle_system; st = ps.settings
+    st.type = 'HAIR'; st.count = count; st.use_advanced_hair = True; st.hair_length = length
+    st.normal_factor = length / 4; st.factor_random = length / 10
+    st.emit_from = 'FACE'; st.use_emit_random = True; st.use_even_distribution = True
+    st.child_type = 'INTERPOLATED'; st.child_percent = children; st.rendered_child_count = children; st.child_length = .8; st.child_length_threshold = .4
+    st.clump_factor = .55; st.clump_shape = -.3; st.child_radius = .07; st.roughness_1 = .05; st.roughness_1_size = .4; st.roughness_endpoint = .08; st.roughness_end_shape = 1.5
+    st.root_radius = 1.0; st.tip_radius = .0; st.radius_scale = .0016; st.use_close_tip = True
+    st.material_slot = 'grass'; st.render_step = 3; st.display_step = 2
+    st.use_rotations = True; st.rotation_mode = 'NOR'; st.phase_factor_random = 2.0
+    ps.vertex_group_density = 'dens'; ps.vertex_group_length = 'dens'
+    return g
+
+
+def bush_proto():
+    """sagebrush: a hair ball of grey-green twigs on a small hidden emitter"""
+    if 'bush' in _M: return _M['bush']
+    bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=2, radius=.18, location=(0, 0, -100)); b = bpy.context.active_object; b.name = 'bush_proto'
+    m = bpy.data.materials.new('sage'); N, L, out = _nt(m); bs = N.new('ShaderNodeBsdfPrincipled'); L.new(bs.outputs[0], out.inputs[0])
+    hi = N.new('ShaderNodeHairInfo'); ramp = N.new('ShaderNodeValToRGB'); ramp.color_ramp.elements[0].color = hexc('#5a6a50'); ramp.color_ramp.elements[1].color = hexc('#9aa088')
+    L.new(hi.outputs['Random'], ramp.inputs['Fac']); L.new(ramp.outputs['Color'], bs.inputs['Base Color']); bs.inputs['Roughness'].default_value = .8
+    b.data.materials.append(m)
+    mod = b.modifiers.new('tw', 'PARTICLE_SYSTEM'); st = mod.particle_system.settings
+    st.type = 'HAIR'; st.count = 300; st.use_advanced_hair = True; st.hair_length = .5; st.normal_factor = .12; st.factor_random = .04
+    st.child_type = 'INTERPOLATED'; st.child_percent = 12; st.rendered_child_count = 12; st.clump_factor = .3; st.roughness_1 = .06; st.roughness_2 = .1; st.roughness_2_size = .3
+    st.kink = 'CURL'; st.kink_amplitude = .02; st.kink_frequency = 3
+    st.root_radius = 1; st.tip_radius = .2; st.radius_scale = .004; st.render_step = 3
+    b.show_instancer_for_render = False
+    put(b, 'Far'); _M['bush'] = b; return b
+
+
+def scatter(proto, points, scale=(.7, 1.6), coll_='Far'):
+    rng = random.Random(len(points))
+    for i, p in enumerate(points):
+        o = proto.copy(); o.data = proto.data
+        for md in o.modifiers: pass
+        o.location = p; o.rotation_euler = (0, 0, rng.uniform(0, math.tau)); s = rng.uniform(*scale); o.scale = (s, s, s * rng.uniform(.6, 1.0))
+        coll(coll_).objects.link(o)
+
+
+def rock(name, loc, r, seed):
+    bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=3, radius=r, location=loc); o = bpy.context.active_object; o.name = name
+    rng = random.Random(seed)
+    for v in o.data.vertices: v.co *= 1 + rng.uniform(-.18, .18); v.co.z *= .6
+    d = o.modifiers.new('d', 'DISPLACE'); tx = bpy.data.textures.new(name, 'VORONOI'); tx.noise_scale = r * .8; d.texture = tx; d.strength = r * .25
+    o.data.materials.append(ph_or('rockmat', ('rock', 'boulder'), lambda: plain('rockp', '#8a7a6a', .9), scale=.5, avoid=('moss', 'snow', 'cliff_side')))
+    for p in o.data.polygons: p.use_smooth = True
+    return put(o, 'Far')
+
+
+def vegetation(detail=1.0):
+    clear = []
+    for (n, side, y, w, d, h, *_r) in TOWN_BUILDINGS:
+        if w > 0: clear.append((side * (STREET + d / 2), y, d / 2 + .6, w / 2 + .6))
+    for side in (-1, 1): clear.append((side * (STREET + 6), 15, 6.5, 55))          # behind the fronts (fillers) keep tidy-ish
+    clear.append((side * 0, 0, 0, 0))
+    grass_field(count=int(45000 * detail), clear=clear[:-1])
+    rng = random.Random(21); pts = []
+    for i in range(int(160 * detail)):
+        x = rng.choice((-1, 1)) * rng.uniform(STREET + 1.0, 60); y = rng.uniform(-60, 110)
+        if any(abs(x - cx) < hx and abs(y - cy) < hy for (cx, cy, hx, hy) in clear[:len(TOWN_BUILDINGS)]): continue
+        pts.append((x, y, .02))
+    for i in range(14): pts.append((rng.choice((-1, 1)) * rng.uniform(STREET - WALK - .9, STREET - WALK - .3), rng.uniform(-30, 60), 0))
+    scatter(bush_proto(), pts)
+    for i in range(40):
+        x = rng.choice((-1, 1)) * rng.uniform(STREET + 2, 70); y = rng.uniform(-60, 120)
+        rock(f'rock{i}', (x, y, 0), rng.uniform(.15, .9), i)
+
+
+# ------------------------------------------------------------------ interiors
+def bank_interior(c='Interior'):
+    """bank hall behind the bank front: x in [-STREET-12, -STREET], y around 12. vault on the back wall."""
+    x0 = -STREET; y0 = 12.0; D = 11.5; W = 7.8; H = 3.6
+    floor = wood('bankfloor', '#7a5a3a', weather=.2, scale=1.5)
+    box('b_floor', (D, W, .05), (x0 - D / 2, y0, .2), floor, c=c)
+    wallm = wood('bankwall', '#c8b48a', weather=.3, paint='#8a6a4a')
+    box('b_ceiling', (D, W, .1), (x0 - D / 2, y0, H + .2), plain('ceil', '#5a4a3a', .9), c=c)
+    for sy in (-1, 1): box('b_side', (D, .12, H), (x0 - D / 2, y0 + sy * W / 2, H / 2 + .2), wallm, c=c)
+    box('b_back', (.15, W, H), (x0 - D + .08, y0, H / 2 + .2), plain('bankback', '#3a3a3c', .4, .6), c=c)
+    # counter with teller bars
+    cm = wood('counter', '#5a3a22', weather=.1)
+    box('b_counter', (.7, W - 2.2, 1.1), (x0 - 5.2, y0 - 1.0, .75), cm, bevel=.02, c=c)
+    brass = plain('brass', '#b8963a', .3, 1.0)
+    for k in range(18): cyl('b_bar', .012, 1.0, (x0 - 5.2, y0 - 3.7 + k * .3, 1.8), brass, v=8, c=c)
+    # vault: round steel door, open
+    steel = plain('steel', '#6a6c70', .35, 1.0)
+    vx = x0 - D + .2
+    cyl('vault_frame', 1.35, .35, (vx + .1, y0 + .8, 1.65), steel, rot=(0, math.pi / 2, 0), v=48, c=c)
+    vd = cyl('vault_door', 1.25, .45, (vx + .6, y0 + .8, 1.65), steel, rot=(0, math.pi / 2, 0), v=48, c=c)
+    hub = cyl('vault_hub', .18, .2, (vx + .9, y0 + .8, 1.65), brass, rot=(0, math.pi / 2, 0), c=c); hub.parent = vd; hub.matrix_parent_inverse = vd.matrix_world.inverted()
+    for k in range(3):
+        a = k / 3 * math.pi
+        sp = box('vault_spoke', (.06, .9, .06), (vx + .95, y0 + .8, 1.65), brass, rot=(a, 0, 0), c=c); sp.parent = vd; sp.matrix_parent_inverse = vd.matrix_world.inverted()
+    for k in range(6):
+        a = k / 6 * math.tau
+        bt = cyl('vault_bolt', .06, .3, (vx + .85, y0 + .8 + math.cos(a) * 1.0, 1.65 + math.sin(a) * 1.0), steel, rot=(0, math.pi / 2, 0), c=c); bt.parent = vd; bt.matrix_parent_inverse = vd.matrix_world.inverted()
+    # inside the vault: gold bars on shelves + warm glow
+    gold = plain('gold', '#e8b040', .22, 1.0)
+    for r in range(4):
+        for k in range(10):
+            box('goldbar', (.24, .1, .07), (vx - .5 - (k % 2) * .26, y0 + .3 + (k // 2) * .26, .9 + r * .38), gold, bevel=.01, c=c)
+    lamp = bpy.data.lights.new('vault_glow', 'POINT'); lamp.energy = 120; lamp.color = (1, .7, .35); lamp.shadow_soft_size = .3
+    lo = bpy.data.objects.new('vault_glow', lamp); lo.location = (vx - .3, y0 + .8, 2.2); coll(c).objects.link(lo)
+    return dict(vault_door=vd, vault_center=Vector((vx + .6, y0 + .8, 1.65)), hall=Vector((x0 - 4, y0, 0.2)))
+
+
+def sheriff_interior(c='Interior'):
+    x0 = -STREET; y0 = -2.0; D = 9.5; W = 6.8; H = 3.4
+    box('s_floor', (D, W, .05), (x0 - D / 2, y0, .2), wood('sfloor', '#6a4a30', weather=.4, scale=1.5), c=c)
+    wm = wood('swall', '#7a6a58', weather=.6)
+    for sy in (-1, 1): box('s_side', (D, .12, H), (x0 - D / 2, y0 + sy * W / 2, H / 2 + .2), wm, c=c)
+    box('s_back', (.15, W, H), (x0 - D + .08, y0, H / 2 + .2), wm, c=c)
+    box('s_ceiling', (D, W, .1), (x0 - D / 2, y0, H + .2), plain('sceil', '#4a3a2a', .9), c=c)
+    dm = wood('desk', '#5a3a22', weather=.2)
+    box('s_desk', (1.0, 1.9, .08), (x0 - 4.5, y0 + .6, 1.0), dm, bevel=.01, c=c)
+    for sx in (-1, 1):
+        for sy in (-1, 1): box('s_dleg', (.08, .08, .8), (x0 - 4.5 + sx * .42, y0 + .6 + sy * .85, .6), dm, c=c)
+    # jail cell bars on the left wall
+    iron = plain('iron', '#2a2826', .5, .8)
+    for k in range(16): cyl('cellbar', .02, H - .2, (x0 - 7.6 + k * .14, y0 - 1.7, H / 2 + .2), iron, v=8, c=c)
+    # wanted board with posters
+    box('s_board', (.04, 2.0, 1.2), (x0 - .4, y0 + 2.5, 1.9), wood('cork', '#9a7a50', planks=False), c=c)
+    lamp = bpy.data.lights.new('s_lamp', 'POINT'); lamp.energy = 60; lamp.color = (1, .68, .35); lamp.shadow_soft_size = .1
+    lo = bpy.data.objects.new('s_lamp', lamp); lo.location = (x0 - 4.5, y0 + 1.2, 1.35); coll(c).objects.link(lo)
+    glass = plain('lampglass', '#ffd8a0', .05, emit='#ffb860', strength=6)
+    cyl('s_lampglass', .07, .2, (x0 - 4.5, y0 + 1.2, 1.2), glass, c=c)
+    return dict(desk=Vector((x0 - 4.5, y0 + .6, 1.04)), chair=Vector((x0 - 5.4, y0 + .6, .2)), board=Vector((x0 - .42, y0 + 2.5, 1.9)))
+
+
+# ------------------------------------------------------------------ sky + light
+def sky(mood='day', sun_elev=35.0, sun_az=140.0, strength=1.0):
+    sc = bpy.context.scene
+    if PH:
+        try:
+            kw = {'day': ('puresky', 'clear', 'sunny'), 'sunset': ('sunset', 'puresky'), 'dawn': ('sunrise', 'puresky', 'dawn'), 'night': ('night', 'moon', 'puresky')}[mood]
+            lib.world_hdri(*kw, strength=strength * (.25 if mood == 'night' else 1.0), rot=sun_az, avoid=('interior', 'studio', 'indoor', 'room', 'forest', 'city', 'snow', 'urban'), res='2k')
+        except Exception as e:
+            lib.log('PH sky failed', e); _nishita(sun_elev, sun_az, strength, mood)
+    else: _nishita(sun_elev, sun_az, strength, mood)
+    l = bpy.data.lights.new('sun', 'SUN'); l.angle = math.radians(.6)
+    l.energy = {'day': 5.0, 'sunset': 3.2, 'dawn': 2.6, 'night': .25}[mood] * strength
+    l.color = {'day': (1, .95, .88), 'sunset': (1, .7, .45), 'dawn': (1, .78, .6), 'night': (.55, .65, 1.0)}[mood]
+    o = bpy.data.objects.new('sun', l); sc.collection.objects.link(o)
+    o.rotation_euler = (math.radians(90 - sun_elev), 0, math.radians(sun_az))
+    sc.view_settings.view_transform = 'AgX'; sc.view_settings.look = 'AgX - Medium High Contrast'
+    return o
+
+
+def _nishita(elev, az, strength, mood):
+    sc = bpy.context.scene; w = bpy.data.worlds.new('sky'); sc.world = w; w.use_nodes = True
+    N, L = w.node_tree.nodes, w.node_tree.links; bg = N['Background']
+    sk = N.new('ShaderNodeTexSky')
+    for t in ('NISHITA', 'MULTIPLE_SCATTERING', 'SINGLE_SCATTERING'):
+        try: sk.sky_type = t; break
+        except Exception: pass
+    try:
+        sk.sun_elevation = math.radians(max(1.5, elev if mood != 'night' else 10)); sk.sun_rotation = math.radians(az); sk.altitude = 1200; sk.air_density = 1.4; sk.dust_density = 3.0 if mood != 'night' else 1.0
+        sk.sun_disc = mood != 'night'
+    except Exception: pass
+    L.new(sk.outputs[0], bg.inputs[0]); bg.inputs[1].default_value = strength * (.02 if mood == 'night' else .35)
+    if mood == 'night':
+        tint = N.new('ShaderNodeMix'); tint.data_type = 'RGBA'; tint.blend_type = 'MULTIPLY'; tint.inputs['Factor'].default_value = 1; tint.inputs['B'].default_value = (.25, .35, .8, 1)
+        L.new(sk.outputs[0], tint.inputs['A']); L.new(tint.outputs['Result'], bg.inputs[0])
+
+
+def haze(density=.0012, col=(1, .85, .65)):
+    """thin volumetric dust over the street"""
+    bpy.ops.mesh.primitive_cube_add(size=1, location=(0, 20, 6)); v = bpy.context.active_object; v.name = 'dust'; v.scale = (60, 160, 12)
+    m = bpy.data.materials.new('dust'); N, L, out = _nt(m)
+    vs = N.new('ShaderNodeVolumePrincipled'); vs.inputs['Density'].default_value = density; vs.inputs['Color'].default_value = (*col, 1); vs.inputs['Anisotropy'].default_value = .5
+    L.new(vs.outputs[0], out.inputs['Volume']); v.data.materials.append(m); put(v, 'Far')
+    return v
+
+
+def lantern(name, loc, c='Town', energy=40):
+    glass = plain('lanternglass', '#ffd8a0', .05, emit='#ffb050', strength=8)
+    iron = plain('iron', '#2a2826', .5, .8)
+    cyl(name + '_g', .07, .2, (loc[0], loc[1], loc[2]), glass, c=c); cyl(name + '_t', .09, .03, (loc[0], loc[1], loc[2] + .12), iron, c=c)
+    l = bpy.data.lights.new(name, 'POINT'); l.energy = energy; l.color = (1, .68, .35); l.shadow_soft_size = .08
+    o = bpy.data.objects.new(name, l); o.location = loc; coll(c).objects.link(o); return o

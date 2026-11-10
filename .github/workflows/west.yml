@@ -1,0 +1,53 @@
+# DAGAR CLIPS - Wild West short. blender/west/job.json lists test tasks (stills) or the full film (later).
+# Runs the same Blender as local development (pip bpy 5.2.3, Python 3.13) so results match.
+name: West render
+on:
+  push:
+    branches: [claude/dagar-blender]
+    paths: ['blender/west/job.json']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs: { tasks: '${{ steps.p.outputs.tasks }}' }
+    steps:
+      - uses: actions/checkout@v5
+      - id: p
+        run: echo "tasks=$(jq -c .tasks blender/west/job.json)" >> $GITHUB_OUTPUT
+  task:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix: { t: '${{ fromJson(needs.plan.outputs.tasks) }}' }
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.13', cache: 'pip', cache-dependency-path: 'blender/west/requirements.txt' }
+      - name: Install Blender (bpy) + MakeHuman MPFB + CMU mocap
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq libxi6 libxxf86vm1 libxfixes3 libxrender1 libgl1 libxkbcommon0 libsm6 libegl1 ffmpeg fonts-dejavu-core >/dev/null
+          pip install -q -r blender/west/requirements.txt
+          git clone -q --depth 1 https://github.com/makehumancommunity/mpfb2.git /tmp/mpfb2
+          D=$HOME/.config/blender/5.2/extensions/user_default; mkdir -p $D; cp -r /tmp/mpfb2/src/mpfb $D/mpfb
+          mkdir -p /tmp/mocap && cd /tmp/mocap && git clone -q --depth 1 --filter=blob:none --no-checkout https://github.com/una-dinosauria/cmu-mocap.git && cd cmu-mocap
+          git checkout HEAD -- $(cat $GITHUB_WORKSPACE/blender/west/clips.txt | sed 's#^\(\([0-9]*\)_.*\)#data/\2/\1.bvh#' | awk -F/ '{printf "data/%03d/%s\n", $2, $3}')
+      - name: Run task
+        run: |
+          mkdir -p out; set -o pipefail
+          cd blender/west
+          export USE_PH=1 $(echo '${{ toJson(matrix.t.env) }}' | jq -r 'to_entries|map("\(.key)=\(.value)")|join(" ")')
+          python3 ${{ matrix.t.script }} -- $GITHUB_WORKSPACE/out/${{ matrix.t.id }}.png ${{ join(matrix.t.args, ' ') }} 2>&1 | grep -v "^Fra:\|degenerated\|strokes" | tee $GITHUB_WORKSPACE/out/log.txt | tail -150
+      - name: Save to the branch
+        if: always()
+        run: |
+          mkdir -p previews/west logs/west
+          [ -f out/${{ matrix.t.id }}.png ] && ffmpeg -loglevel error -y -i out/${{ matrix.t.id }}.png -q:v 2 previews/west/${{ matrix.t.id }}.jpg || true
+          tail -c 30000 out/log.txt > logs/west/${{ matrix.t.id }}.log 2>/dev/null || true
+          git config user.name "github-actions"; git config user.email "github-actions@users.noreply.github.com"
+          git add previews/west logs/west; git commit -qm "west ${{ matrix.t.id }} [skip ci]" || exit 0
+          for i in 1 2 3 4 5 6 7 8; do git pull --rebase -q && git push -q && break; sleep $((RANDOM % 9 + 3)); done

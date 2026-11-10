@@ -1,0 +1,6 @@
+{"rev": 1, "tasks": [
+ {"id": "town_street", "script": "towntest.py", "args": ["street"], "env": {"MOOD": "sunset", "ELEV": "14", "AZ": "200", "RW": "720", "RH": "1280", "S": "48"}},
+ {"id": "town_edge", "script": "towntest.py", "args": ["edge"], "env": {"MOOD": "day", "ELEV": "30", "AZ": "150", "RW": "720", "RH": "1280", "S": "48"}},
+ {"id": "town_field", "script": "towntest.py", "args": ["field"], "env": {"MOOD": "sunset", "ELEV": "10", "AZ": "230", "RW": "720", "RH": "1280", "S": "48"}},
+ {"id": "town_bank", "script": "towntest.py", "args": ["bank"], "env": {"MOOD": "day", "ELEV": "35", "AZ": "120", "RW": "720", "RH": "1280", "S": "48"}}
+]}
