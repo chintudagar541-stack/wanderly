@@ -1,4 +1,4 @@
-00:00.485  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.763  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -13,10 +13,10 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
@@ -115,42 +115,38 @@
 [lib] model dead_tree_trunk_02 4
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
-08:13:29 | INFO: Data are loaded, start creating Blender stuff
-08:13:29 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
-08:13:29 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
-08:13:29 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
-08:13:29 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
-08:13:30 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
-08:13:30 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
-08:13:31 | INFO: glTF import finished in 1.64s
+09:59:21 | INFO: Data are loaded, start creating Blender stuff
+09:59:21 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
+09:59:21 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
+09:59:22 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
+09:59:22 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
+09:59:22 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
+09:59:22 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
+09:59:23 | INFO: glTF import finished in 1.77s
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] retry https://api.polyhaven.com/files/stone HTTP Error 404: Not Found
-[lib] retry https://api.polyhaven.com/files/stone HTTP Error 404: Not Found
-[lib] retry https://api.polyhaven.com/files/stone HTTP Error 404: Not Found
-[lib] retry https://api.polyhaven.com/files/stone HTTP Error 404: Not Found
-[lib] PH wellstone failed download failed https://api.polyhaven.com/files/stone
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] hdri sun 136 elev 4.9 -> az 0
-08:14:26 | INFO: Data are loaded, start creating Blender stuff
-08:14:26 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
-08:14:26 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
-08:14:26 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
-08:14:26 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
-08:14:26 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
-08:14:27 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
-08:14:28 | INFO: glTF import finished in 1.78s
-RSS built 2022 MB
+09:59:53 | INFO: Data are loaded, start creating Blender stuff
+09:59:53 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
+09:59:53 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
+09:59:53 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
+09:59:54 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
+09:59:54 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
+09:59:54 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
+09:59:55 | INFO: glTF import finished in 1.96s
+RSS built 2021 MB
 EXTRAS ride 9
-RSS extras 2033 MB
-RSS lod 2106 MB
+RSS extras 2028 MB
+CLEARCAM ride 0
+RSS lod 2103 MB
 RSS posed 2120 MB
 RSS depsgraph 2120 MB
-OBJECTS 11135 MESHES 10240 IMAGES 189 217 Mpx
-04:41.625  render           | Saved: '/home/runner/work/wanderly/wanderly/out/ride_0.png'
-RSS rendered 7677 MB
+OBJECTS 11250 MESHES 10335 IMAGES 189 217 Mpx
+04:47.363  render           | Saved: '/home/runner/work/wanderly/wanderly/out/ride_0.png'
+RSS rendered 7734 MB
 RENDERED ride 1.47
