@@ -126,7 +126,7 @@ def mourners(sh, n, seed=0, face='sad', clip=None, x=-3.0, y0=93.8, dy=1.05, bla
 
 def hold(sh, obj, ch, side='R', off=(0, 0, 0), rot=None):
     def u(t):
-        p = bone_pos(ch, 'RightHand' if side == 'R' else 'LeftHand'); obj.location = p + Vector(off)
+        bpy.context.view_layer.update(); p = ch.hands[side].matrix_world.translation.copy(); obj.location = p + Vector(off)   # pose key handR drives hands['R']
         if rot is not None: obj.rotation_euler = rot(t) if callable(rot) else rot
     sh.updates.append(u)
 
@@ -326,8 +326,8 @@ def s_small(sh):
     lie_in(sh, ez, c, [(0, 'grit')], head_y=.52, z=.24)
     def cam(t):
         u = ease(t / sh.dur)
-        p = c.world((1.75, .15, .95)).lerp(c.world((.95, 2.75, .75)), u)
-        tg = c.world((0, .55, .42)).lerp(c.world((0, 1.88, .34)), u)
+        p = c.world((1.75, .15, .95)).lerp(c.world((.95, 2.7, .95)), u)
+        tg = c.world((0, .55, .42)).lerp(c.world((0, 1.85, .5)), u)
         return (p, tg, 30 + 4 * u, 0, tg, .008)
     sh.camera(cam, fstop=3.2)
 
@@ -539,7 +539,7 @@ def play_band(sh, band, t_on=0.0, t_off=99.0):
             return s
         override(a, mod)
         def u(t, ch=ch, ins=ins, kind=kind):
-            p = bone_pos(ch, 'RightHand')
+            p = ch.hands['R'].matrix_world.translation.copy()
             if kind == 'trumpet': ins.location = p + Vector((-.05, 0, 0)); ins.rotation_euler = (0, 0, math.radians(-90))
             elif kind == 'tuba': ins.location = tuba_at(ch); ins.rotation_euler = (0, math.radians(-12), math.radians(90)); ins.scale = (.85, .85, .85)
             else: ins.location = head_of(ch, -.85) + Vector((-.32, 0, 0)); ins.rotation_euler = (0, 0, 0)
