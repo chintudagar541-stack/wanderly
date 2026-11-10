@@ -1,4 +1,4 @@
-00:00.713  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.785  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -115,14 +115,14 @@
 [lib] model dead_tree_trunk_02 4
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
-20:05:30 | INFO: Data are loaded, start creating Blender stuff
-20:05:30 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
-20:05:31 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
-20:05:31 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
-20:05:31 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
-20:05:31 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
-20:05:31 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
-20:05:32 | INFO: glTF import finished in 1.69s
+20:30:16 | INFO: Data are loaded, start creating Blender stuff
+20:30:16 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
+20:30:16 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
+20:30:16 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
+20:30:17 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
+20:30:17 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
+20:30:17 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
+20:30:18 | INFO: glTF import finished in 1.67s
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -131,15 +131,15 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] hdri sun 146 elev 48.5 -> az 120
-RSS built 1802 MB
+RSS built 1846 MB
 EXTRAS splinter 3
-RSS extras 1802 MB
+RSS extras 1846 MB
 CLEARCAM splinter 3
-RSS lod 1809 MB
-RSS posed 1810 MB
-RSS depsgraph 1810 MB
+RSS lod 1858 MB
+RSS posed 1858 MB
+RSS depsgraph 1858 MB
 OBJECTS 10578 MESHES 9980 IMAGES 189 217 Mpx
-03:49.232  render           | Saved: '/home/runner/work/wanderly/wanderly/out/splinter_0.png'
-RTIME 79.9
-RSS rendered 6407 MB
+03:34.088  render           | Saved: '/home/runner/work/wanderly/wanderly/out/splinter_0.png'
+RTIME 81.6
+RSS rendered 6466 MB
 RENDERED splinter 0.47
