@@ -1,6 +1,28 @@
-{"rev": 1,
+{
+ "rev": 2,
  "model": "cagliostrolab/animagine-xl-4.0",
- "steps": 28, "cfg": 5.0, "w": 1024, "h": 1024,
+ "steps": 28,
+ "cfg": 5.0,
+ "w": 1024,
+ "h": 1024,
  "prompt": "4people, 2girls, 2boys, group picture, original, standing side by side, cowboy shot, winter clothes, scarf, coat, beanie, earmuffs, mittens, holding cup, waving, smile, open mouth, looking at viewer, purple sky, gradient background, sparkle, light particles, snowing, anime screencap, anime coloring, cel shading, thin lineart, official art, promotional art, masterpiece, high score, great score, absurdres",
  "negative": "lowres, bad anatomy, bad hands, extra digits, fewer digits, missing fingers, extra fingers, fused fingers, deformed, text, signature, watermark, username, logo, error, cropped, worst quality, low quality, low score, bad score, average score, jpeg artifacts, blurry, 3d, realistic, photorealistic, chibi, thick outlines, western cartoon, sketch",
- "items": [{"name": "a_s11", "seed": 11}, {"name": "a_s23", "seed": 23}, {"name": "a_s37", "seed": 37}, {"name": "a_s58", "seed": 58}]}
+ "items": [
+  {
+   "name": "a_s11",
+   "seed": 11
+  },
+  {
+   "name": "a_s23",
+   "seed": 23
+  },
+  {
+   "name": "a_s37",
+   "seed": 37
+  },
+  {
+   "name": "a_s58",
+   "seed": 58
+  }
+ ]
+}

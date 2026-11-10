@@ -11,7 +11,7 @@ try:
 except Exception as e:
     print('variant load failed, retry plain:', e); pipe = StableDiffusionXLPipeline.from_pretrained(model, torch_dtype=torch.float32, use_safetensors=True)
 pipe.scheduler = EulerAncestralDiscreteScheduler.from_config(pipe.scheduler.config)
-pipe.enable_attention_slicing(); pipe.enable_vae_tiling()
+pipe.enable_attention_slicing(); pipe.vae.enable_tiling()
 print('loaded', round(time.time() - t0), 's', flush=True)
 g = torch.Generator('cpu').manual_seed(it['seed'])
 def cb(p, step, ts, kw):
