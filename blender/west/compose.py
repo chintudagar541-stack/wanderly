@@ -8,7 +8,8 @@ from PIL import Image, ImageDraw, ImageFont
 H = os.path.dirname(os.path.abspath(__file__)); art, outp = sys.argv[1], sys.argv[2]
 film = json.load(open(os.path.join(H, 'shots.json'))); fps = film['fps']
 W, Hh = 1440, 2560
-MAINEND = film['shots'][-1]['t0'] + film['shots'][-1]['dur']; TOTAL = MAINEND + 3.0
+NOSUBS = bool(os.environ.get('NOSUBS')); NOLOGO = bool(os.environ.get('NOLOGO'))
+MAINEND = film['shots'][-1]['t0'] + film['shots'][-1]['dur']; TOTAL = MAINEND + (0.0 if NOLOGO else 3.0)
 HANDLE = float(os.environ.get('HANDLE', .25))
 TRANS = film.get('trans', {})            # shot id -> ('dissolve', seconds) for the transition INTO that shot
 def sh(*a): subprocess.run(a, check=True)
@@ -47,7 +48,7 @@ for i in range(1, len(shots)):
     fc.append(f"{acc}[c{i}]xfade=transition={'fade' if tr[0] == 'dissolve' else 'fade'}:duration={d:.4f}:offset={shots[i]['t0']:.4f}[x{i}]"); acc = f'[x{i}]'
 # subtitles: bold white, black outline, ~70% height, 1-3 words
 font = ImageFont.truetype(FB, int(W * .095)); k = len(shots); lab = acc
-for j, (txt, a, b) in enumerate(film['subs']):
+for j, (txt, a, b) in enumerate([] if NOSUBS else film['subs']):
     im = Image.new('RGBA', (W, Hh), (0, 0, 0, 0)); d = ImageDraw.Draw(im)
     d.text((W / 2, Hh * .70), txt, font=font, fill='white', anchor='mm', stroke_width=max(5, int(W * .011)), stroke_fill='black')
     p = os.path.join(tmp, f's{j}.png'); im.save(p); inputs += ['-i', p]
@@ -63,7 +64,7 @@ d.polygon([(cx - r * .3, cy - r * 1.2), (cx - r * .3, cy - r * .4), (cx + r * .4
 d.text((cx, cy + r * .75), 'DAGAR', font=f1, fill='white', anchor='mm'); d.text((cx, cy + r * 1.95), 'C L I P S', font=f1, fill=(214, 168, 56), anchor='mm')
 d.text((cx, cy + r * 3.0), 'STORIES YOU CAN SEE', font=f2, fill=(150, 150, 150), anchor='mm')
 lp = os.path.join(tmp, 'logo.png'); lg.save(lp); logo = os.path.join(tmp, 'logo.mp4')
-sh('ffmpeg', '-loglevel', 'error', '-y', '-loop', '1', '-i', lp, '-t', f'{TOTAL - MAINEND:.3f}', '-vf', f"fps={fps},fade=t=in:st=0:d=0.7,fade=t=out:st={TOTAL - MAINEND - 0.6:.2f}:d=0.6", '-c:v', 'libx264', '-crf', '15', '-pix_fmt', 'yuv420p', logo)
+if not NOLOGO: sh('ffmpeg', '-loglevel', 'error', '-y', '-loop', '1', '-i', lp, '-t', f'{TOTAL - MAINEND:.3f}', '-vf', f"fps={fps},fade=t=in:st=0:d=0.7,fade=t=out:st={TOTAL - MAINEND - 0.6:.2f}:d=0.6", '-c:v', 'libx264', '-crf', '15', '-pix_fmt', 'yuv420p', logo)
 
 # ---------------------------------------------------------------- sound
 SR = 48000; N = int(TOTAL * SR); rng = np.random.default_rng(3)
@@ -138,7 +139,7 @@ mixa = os.path.join(tmp, 'mix.m4a')
 sh('ffmpeg', '-loglevel', 'error', '-y', '-i', vw, '-i', os.path.join(tmp, 'bed.wav'), '-filter_complex',
    f"[0:a]apad,atrim=0:{TOTAL}[v];[1:a]atrim=0:{TOTAL}[b];[v][b]amix=inputs=2:normalize=0:duration=longest,pan=stereo|c0=c0|c1=c0,loudnorm=I=-14:TP=-1.0:LRA=11[a]",
    '-map', '[a]', '-c:a', 'aac', '-b:a', '192k', mixa)
-lst2 = os.path.join(tmp, 'fin.txt'); open(lst2, 'w').write(f"file '{main}'\nfile '{logo}'\n"); vid = os.path.join(tmp, 'video.mp4')
+lst2 = os.path.join(tmp, 'fin.txt'); open(lst2, 'w').write(f"file '{main}'\n" + ('' if NOLOGO else f"file '{logo}'\n")); vid = os.path.join(tmp, 'video.mp4')
 sh('ffmpeg', '-loglevel', 'error', '-y', '-f', 'concat', '-safe', '0', '-i', lst2, '-c', 'copy', vid)
 sh('ffmpeg', '-loglevel', 'error', '-y', '-i', vid, '-i', mixa, '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-shortest', '-movflags', '+faststart', outp)
 print('wrote', outp)
