@@ -168,3 +168,52 @@ def hold(obj, bone='RightHand', offset=Matrix.Identity(4)):
 if __name__ == '__main__':
     a = sys.argv[sys.argv.index('--') + 1:]
     if a[0] == 'build': build(a[1])
+
+
+# ------------------------------------------------------------------ riding
+def _aim(rest3, rest_dir, new_dir):
+    return rest_dir.normalized().rotation_difference(new_dir.normalized()).to_matrix() @ rest3
+
+
+def _ik(a, tgt, l1, l2, pole):
+    d = tgt - a; dist = max(1e-4, min(d.length, l1 + l2 - 1e-4)); dn = d.normalized()
+    ca = (l1 * l1 + dist * dist - l2 * l2) / (2 * l1 * dist); ang = math.acos(max(-1, min(1, ca)))
+    ax = dn.cross(pole); ax = ax.normalized() if ax.length > 1e-6 else Vector((1, 0, 0))
+    return a + (Matrix.Rotation(ang, 3, ax) @ dn) * l1
+
+
+def ride(ch, seatM, t, clip='77_02', bounce=Vector(), rein=True, face=None, sway=0.0):
+    """seat the character on a saddle: upper body from a calm standing clip, thighs around the barrel, feet in the
+    stirrups, hands forward on the reins. seatM: world matrix of the saddle seat (forward -Y)."""
+    rt = ch.rt; src = M.BVH.load(clip)
+    rots, hips = rt.pose(src, 1.0 + (t * .5) % (src.dur - 2.0), place=(0, 0, 0), yaw=0, t0=1.0, lock_root=True)
+    B = rt.bones; hipz = B['Hips'].head_local.z
+    ch.rig.matrix_world = seatM @ Matrix.Translation(Vector((0, .02, .08 - hipz)) + bounce) @ Matrix.Rotation(sway, 4, 'Y')
+    hips = Vector((0, 0, hipz))
+    rots['Hips'] = Matrix.Rotation(math.radians(3), 3, 'X') @ B['Hips'].matrix_local.to_3x3()
+    for b_, a_ in (('Spine', 2), ('Spine1', 2), ('Spine2', 1)):
+        if b_ in rots: rots[b_] = Matrix.Rotation(math.radians(a_), 3, 'X') @ rots[b_]
+    for b_, a_ in (('Neck', -10), ('Head', -14)):
+        if b_ in rots: rots[b_] = Matrix.Rotation(math.radians(a_), 3, 'X') @ rots[b_]        # pelvis tucked under
+    pose = rt.apply(rots, hips)
+    S = (ch.rig.matrix_world).inverted() @ seatM                                                     # seat frame in rig space
+    for sd, s in (('Left', 1), ('Right', -1)):
+        up, lo, ft = sd + 'UpLeg', sd + 'Leg', sd + 'Foot'
+        a = pose[up].translation; l1 = (B[lo].head_local - B[up].head_local).length; l2 = (B[ft].head_local - B[lo].head_local).length
+        foot = S @ Vector((s * .36, -.12, -.8))
+        knee = _ik(a, foot, l1, l2, Vector((s * .7, -1.0, 0)))
+        rots[up] = _aim(B[up].matrix_local.to_3x3(), B[lo].head_local - B[up].head_local, knee - a)
+        rots[lo] = _aim(B[lo].matrix_local.to_3x3(), B[ft].head_local - B[lo].head_local, foot - knee)
+        if (sd + 'ToeBase') in B: rots[ft] = _aim(B[ft].matrix_local.to_3x3(), B[sd + 'ToeBase'].head_local - B[ft].head_local, Vector((s * .15, -1, -.35)))
+        if rein:
+            sh, el, hd = sd + 'Arm', sd + 'ForeArm', sd + 'Hand'
+            pose = rt.apply(rots, hips)
+            a = pose[sh].translation; l1 = (B[el].head_local - B[sh].head_local).length; l2 = (B[hd].head_local - B[el].head_local).length
+            hand = S @ Vector((s * .11, -.3, .1))
+            elb = _ik(a, hand, l1, l2, Vector((s * .5, .8, -1)))
+            rots[sh] = _aim(B[sh].matrix_local.to_3x3(), B[el].head_local - B[sh].head_local, elb - a)
+            rots[el] = _aim(B[el].matrix_local.to_3x3(), B[hd].head_local - B[el].head_local, hand - elb)
+            rots[hd] = rots[el] @ (B[el].matrix_local.to_3x3().inverted() @ B[hd].matrix_local.to_3x3())
+    rt.apply(rots, hips); M.relax_fingers(ch.rig, 1.8 if rein else 1.0)
+    if face: ch.set_expression(face)
+    return ch.rig.matrix_world @ (rt.rig.pose.bones['mixamorig:RightHand'].head if False else Vector())

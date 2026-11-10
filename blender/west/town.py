@@ -194,7 +194,9 @@ def gable_roof(name, cx, y0, depth, width, z0, pitch, m, side):
     for xx in (cx - depth / 2, cx + depth / 2):
         me2 = bpy.data.meshes.new(name + 'g'); bm = bmesh.new()
         a_ = bm.verts.new((xx, y0 - width / 2, z0)); b_ = bm.verts.new((xx, y0 + width / 2, z0)); c_ = bm.verts.new((xx, y0, z0 + rise - .05)); bm.faces.new((a_, b_, c_))
-        bm.to_mesh(me2); bm.free(); g = bpy.data.objects.new(name + 'g', me2); me2.materials.append(m if False else wm); put(g)
+        bm.to_mesh(me2); bm.free(); g = bpy.data.objects.new(name + 'g', me2); me2.materials.append(ph_or('boardraw', ('@weathered_brown_planks',), lambda: wood('rawboard', '#8a6a48', weather=.8, planks=False), scale=1.0)); put(g)
+    fm = plain('fascia', '#3a2a1c', .8)
+    for sy in (-1, 1): box(name + '_fascia', (x1 - x0, .04, .18), ((x0 + x1) / 2, y0 + sy * hw, z0 - .02), fm)
     return o, rise
 
 
@@ -214,22 +216,32 @@ def building(name, x0, y0, width, depth, height, side, sign, wall_col, trim_col,
         side_m = ph_or('adobe', ('@clay_plaster',), lambda: plain('adobep', '#c8a47a', .95), scale=1.0, tint=wall_col, avoid=('brick', 'tile', 'floor'))
     else:
         side_m = ph_or('wall_' + wall_col, ('@wood_plank_wall',), lambda: wm, scale=1.2, tint=wall_col, avoid=('floor', 'parquet', 'tile', 'herringbone', 'brick'))
-    objs.append(box(name + '_body', (depth - .3, width, height), (cx + side * .15, y0, height / 2), side_m))
+    objs.append(box(name + '_body', (depth - 1.1, width - .7, height - .05), (cx, y0, height / 2), plain('core_dark', '#2a2018', .95)))
     objs.append(box(name + '_found', (depth + .1, width + .1, .4), (cx, y0, .1), ph_or('stonefound', ('@rustic_stone_wall_02',), lambda: plain('stone', '#7a7066', .9), scale=.8)))
-    # back and side windows/doors so the building reads from every side
-    bx = fx + side * depth
-    dglass = plain('glass_dark', '#151a1e', .05)
-    for k in range(max(1, int(width / 3.5))):
-        yy = y0 + (k - (max(1, int(width / 3.5)) - 1) / 2) * 3.0
-        objs.append(box(name + f'_bw{k}', (.04, .8, 1.1), (bx + side * .02, yy, 1.7), dglass))
-        objs.append(box(name + f'_bwf{k}', (.06, .95, 1.25), (bx + side * .01, yy, 1.7), tm))
-    objs.append(box(name + '_bdoor2', (.05, 1.0, 2.1), (bx + side * .03, y0 + width / 2 - 1.0, 1.05), dm_back := wood('backdoor', '#5a3a22', weather=.6)))
-    for k in range(max(1, int(depth / 4))):
-        xx = fx + side * (2.5 + k * 3.5)
-        if abs(xx - fx) > depth - 1: break
-        for sy in (-1, 1):
-            objs.append(box(name + f'_sw{k}{sy}', (.8, .04, 1.1), (xx, y0 + sy * (width / 2 + .02), 1.7), dglass))
-            objs.append(box(name + f'_swf{k}{sy}', (.95, .06, 1.25), (xx, y0 + sy * (width / 2 + .01), 1.7), tm))
+    # side and back walls: real boards with cut-out windows/doors, frames, sills, curtains and lit rooms
+    lit = rng.random() < .5
+    wst = {} if kind == 'wood' else dict(style='panel', mat=side_m)
+    for sy in (-1, 1):                                   # side walls (outward +-Y), running from the front back
+        n_ = Vector((0, sy, 0)); L = depth; cxw = fx + side * depth / 2
+        M = wall_frame(n_, Vector((cxw, y0 + sy * width / 2, 0)))
+        spec = []
+        nwin = max(1, int((L - 2.0) / 3.2))
+        for k in range(nwin):
+            u = -L / 2 + 1.6 + (k + .5) * (L - 2.4) / nwin
+            uu = u * (-side * sy)                        # local Y runs along n x z
+            spec.append(('win', uu, 1.6, .85, 1.25))
+            if floors > 1: spec.append(('win', uu, 4.4, .8, 1.2))
+        if rng.random() < .35 and nwin > 1: spec[0] = ('door', spec[0][1], 0, 1.0, 2.15)
+        objs += dress_wall(f'{name}_s{sy}', M, L, height, wall_col, tm, spec, lit, rng, **wst)
+    nb = Vector((side, 0, 0)); M = wall_frame(nb, Vector((fx + side * depth, y0, 0)))
+    spec = [('door', -width * .25 if rng.random() < .5 else width * .25, 0, 1.0, 2.15)]
+    for k in range(max(1, int(width / 3.0))):
+        u = (k - (max(1, int(width / 3.0)) - 1) / 2) * 2.8
+        if abs(u - spec[0][1]) < 1.3: continue
+        spec.append(('win', u, 1.6, .85, 1.25))
+        if floors > 1: spec.append(('win', u, 4.4, .8, 1.2))
+    objs += dress_wall(f'{name}_b', M, width, height, wall_col, tm, spec, lit, rng, **wst)
+    backyard(name, fx + side * depth, y0, width, side, floors, height, rng)
     # roof behind (visible from any angle above eye level)
     roof_m = ph_or('roofshingle', ('@roof_planks',), lambda: plain('shingle', '#4a3a30', .9), scale=.8, avoid=('tile_', 'clay', 'red'))
     if rng.random() < .4: roof_m = ph_or('corrugated', ('@corrugated_iron_02',), lambda: plain('tin', '#7a7470', .5, .7), scale=1.0)
@@ -323,6 +335,84 @@ def building(name, x0, y0, width, depth, height, side, sign, wall_col, trim_col,
             hs = box(name + '_hsign', (.04, .9, .45), (fx - side * (WALK - .3), y0 + width / 2 - .8, roof_z - .7), ph_or('signboard', ('painted', 'wood', 'planks'), lambda: plain('signboard_p', sign_col, .9), tint=sign_col, scale=.5, avoid=('floor',)))
             objs.append(hs)
     return objs
+
+
+def wall_frame(n, c):
+    """matrix taking the local wall frame (outward -X, along +Y, up Z, origin at the wall base centre) to the world"""
+    n = Vector(n).normalized(); a = n.cross(Vector((0, 0, 1)))
+    return Matrix(((-n.x, a.x, 0, c.x), (-n.y, a.y, 0, c.y), (0, 0, 1, c.z), (0, 0, 0, 1)))
+
+
+def dress_wall(name, M, width, height, col, tm, spec, lit, rng, style='boards', mat=None):
+    """spec: [(kind, u, z, w, h)] in wall coordinates (u along the wall, centred)"""
+    ops = []; o = []
+    for kind, u, z, w, h in spec:
+        if kind == 'win': ops.append((u - w / 2 - .06, u + w / 2 + .06, z - h / 2 - .06, z + h / 2 + .06))
+        else: ops.append((u - w / 2 - .06, u + w / 2 + .06, 0, h + .06))
+    o += clapboard(name, 0, 0, width, height, 1, col, ops, style=style, mat=mat)
+    dm = wood('backdoor', '#5a3a22', weather=.6)
+    for kind, u, z, w, h in spec:
+        if kind == 'win':
+            o += window(f'{name}_w{u:.1f}_{z:.0f}', 0, u, z, w, h, 1, tm, lit and rng.random() < .6, rng.choice(['#c8b89a', '#e8e0d0', '#8a2a2a', '#5a6a4a']))
+            if rng.random() < .3:
+                for sy in (-1, 1): o.append(box(f'{name}_sh{u:.1f}{sy}', (.05, w * .52, h + .05), (-.06, u + sy * (w * .5 + w * .27), z), wood('shutter', '#6a5038', weather=.5)))
+        else:
+            o.append(box(f'{name}_d{u:.1f}', (.06, w, h), (.12, u, h / 2 + .03), dm))
+            for dz in (.6, 1.45): o.append(box(f'{name}_dp{u:.1f}{dz}', (.03, w * .7, .55), (.08, u, dz), dm, bevel=.01))
+            for dy in (-w / 2 - .05, w / 2 + .05): o.append(box(f'{name}_dj{u:.1f}{dy}', (.12, .1, h + .1), (-.02, u + dy, h / 2 + .03), tm))
+            o.append(box(f'{name}_dh{u:.1f}', (.14, w + .3, .12), (-.03, u, h + .12), tm))
+            o.append(box(f'{name}_step{u:.1f}', (.5, w + .4, .18), (-.25, u, .09), wood('step', '#6a5038', weather=.8)))
+    jm = plain('jamb', '#3a2a1e', .9)
+    for (a_, b_, z0_, z1_) in ops:
+        for yy in (a_, b_): o.append(box(name + '_jb', (.36, .03, z1_ - z0_), (.18, yy, (z0_ + z1_) / 2), jm))
+        for zz in (z0_, z1_): o.append(box(name + '_jh', (.36, b_ - a_, .03), (.18, (a_ + b_) / 2, zz), jm))
+    for ob in o: ob.matrix_basis = M @ ob.matrix_basis
+    return o
+
+
+def backyard(name, bx, y0, width, side, floors, height, rng):
+    """the lived-in back of a building: stairs, lean-to shed, woodpile, rain barrel, outhouse, fence, clothesline"""
+    wd = wood('yardwood', '#7a5a3a', weather=.85); wd2 = wood('yardwood2', '#5a4a3a', weather=.9)
+    out = lambda d: bx + side * d
+    if floors > 1 and rng.random() < .8:                 # exterior stairs to the upper floor along the back wall
+        n = 16; ys = y0 - width / 2 + .6
+        for k in range(n):
+            box(f'{name}_st{k}', (.9, .28, .05), (out(.55), ys + k * .26, .2 + k * .19), wd)
+        for dx in (.12, .98): box(f'{name}_str{dx}', (.06, 4.3, .25), (out(dx), ys + 2.0, 1.7), wd, rot=(math.atan2(3.0, 4.1), 0, 0))
+        box(f'{name}_land', (1.0, 1.3, .08), (out(.55), ys + 4.6, 3.25), wd)
+        for k in range(6): box(f'{name}_rp{k}', (.05, .05, 1.0), (out(1.0), ys + k * .8, .7 + k * .55), wd)
+    if rng.random() < .55:                               # lean-to shed
+        sw, sd, sh = rng.uniform(2.0, 3.0), rng.uniform(1.6, 2.2), rng.uniform(2.0, 2.4)
+        sy = y0 + rng.choice((-1, 1)) * (width / 2 - sw / 2 - .2)
+        M = wall_frame(Vector((side, 0, 0)), Vector((out(sd), sy, 0)))
+        dress_wall(f'{name}_shed', M, sw, sh, '#6a5038', wd2, [('door', 0, 0, .9, 1.9)], False, rng)
+        for s2 in (-1, 1): box(f'{name}_shs{s2}', (sd, .05, sh), (out(sd / 2), sy + s2 * sw / 2, sh / 2), wd2)
+        corrugated(f'{name}_shroof', (sd + .3, sw + .3), (out(sd / 2), sy, sh + .25), -side)
+    if rng.random() < .7:                                # woodpile
+        for k in range(rng.randint(12, 26)):
+            r_ = rng.uniform(.06, .1); row = k // 7
+            cyl(f'{name}_log{k}', r_, .7, (out(.4 + row * .02), y0 + width / 2 - 1.6 + (k % 7) * .2 + row * .1, .1 + row * .17), wood('logend', '#8a6a48', weather=.5, planks=False), rot=(0, math.pi / 2, 0), v=10)
+    if rng.random() < .6: barrel(f'{name}_rb', (out(.45), y0 - width / 2 + .45, 0))
+    if rng.random() < .35:                               # outhouse further back
+        ox = out(rng.uniform(5, 8)); oy = y0 + rng.uniform(-width / 3, width / 3)
+        M = wall_frame(Vector((-side, 0, 0)), Vector((ox, oy, 0)))
+        dress_wall(f'{name}_oh', M, 1.2, 2.2, '#7a6048', wd2, [('door', 0, 0, .75, 1.9)], False, rng)
+        for s2 in (-1, 1): box(f'{name}_ohs{s2}', (1.2, .04, 2.2), (ox + side * .6, oy + s2 * .6, 1.1), wd2)
+        box(f'{name}_ohb', (.04, 1.2, 2.1), (ox + side * 1.2, oy, 1.05), wd2)
+        box(f'{name}_ohr', (1.5, 1.5, .06), (ox + side * .6, oy, 2.3), wd2, rot=(0, side * math.radians(-10), 0))
+    if rng.random() < .6:                                # picket / rail fence closing the yard
+        fl = rng.uniform(6, 10); fy0 = y0 - width / 2
+        for k in range(int(width / .35)):
+            if rng.random() < .05: continue
+            box(f'{name}_pk{k}', (.03, .09, 1.0 + rng.uniform(-.06, .03)), (out(fl), fy0 + k * .35, .5), wd, rot=(rng.gauss(0, .03), rng.gauss(0, .04), 0))
+        for zz in (.3, .8): box(f'{name}_fr{zz}', (.04, width, .07), (out(fl - .04), y0, zz), wd)
+    if rng.random() < .4:                                # clothesline with laundry
+        a_ = Vector((out(3.0), y0 - width / 3, 0)); b_ = Vector((out(3.0), y0 + width / 3, 0))
+        for p in (a_, b_): cyl(f'{name}_clp', .04, 2.2, (p.x, p.y, 1.1), wd, v=8)
+        box(f'{name}_line', (.01, (b_ - a_).length, .01), ((a_.x + b_.x) / 2, (a_.y + b_.y) / 2, 2.05), plain('rope', '#c8b890', .9))
+        for k in range(4):
+            c = rng.choice(['#e8e0d0', '#8a2a2a', '#4a5a7a', '#d8c8a0'])
+            box(f'{name}_cloth{k}', (.01, rng.uniform(.4, .7), rng.uniform(.5, .8)), (a_.x, a_.y + .5 + k * (b_ - a_).length / 5, 1.7), plain('cloth_' + c, c, .9))
 
 
 def boardwalk(name, fx, y0, width, side):

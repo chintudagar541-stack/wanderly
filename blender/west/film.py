@@ -197,27 +197,22 @@ def s_nobody(sh):
 
 
 def s_ride(sh):
-    """7.55-10.0 'One morning, Jack rode into a dusty little town' - dawn, a rider silhouetted against the sun, dust."""
-    setup(sh, 'dawn', 4, 0, veg=1.0)
+    """7.55-10.0 'One morning, Jack rode into a dusty little town' - dawn, low tracking shot in front of the horse as Jack rides
+    down the main street, sun behind him, dust in the air."""
+    setup(sh, 'dawn', 6, 0, veg=.8)
+    import horse as HO
     jack, = sh.cast('JACK')
-    h, upd = PR.horse()
+    h = HO.HorseGLB('jack_horse'); v = 1.35; y0 = -34.0
     def ride(t):
-        y = -70 + 2.1 * t; upd(t, 1.0, (0, y, 0), 0.0)
-        rig = jack.rig; rig.location = (0, y + .1, .55); rig.rotation_euler = (0, 0, math.pi)
+        h.update(t, (.6, y0 + v * t, 0), math.pi, speed=v)
+        CA.ride(jack, h.seat(), t, face={'determined': .7, 'neutral': .3})
+        bl = 1.0 if 1.3 < (t % 4.0) < 1.45 else 0.0
+        jack.set_expression({'determined': .7, 'neutral': .3}, blink=bl)
     sh.updates.append(ride)
-    # Jack sits on the horse: fixed riding pose
-    sh.actor(jack, [CA.Act(0, '77_02', 1.0, 6, loc=(0, 0, 0), yaw=180, lock_root=True)], face=[(0, 'determined')])
-    def seat(t):
-        rig = jack.rig; y = -70 + 2.1 * t
-        rig.location = (0, y + .15, .62)
-        for sd, s in (('Left', 1), ('Right', -1)):
-            for b, rot in ((sd + 'UpLeg', (-70, 0, s * -18)), (sd + 'Leg', (85, 0, 0))):
-                pb = rig.pose.bones['mixamorig:' + b]; pb.rotation_mode = 'XYZ'; pb.rotation_euler = tuple(math.radians(a) for a in rot)
-        pb = rig.pose.bones['mixamorig:Hips']; pb.location = (0, 0, 0)
-    sh.updates.append(seat)
     def cam(t):
-        return ((1.5 + .3 * t, -48 + .8 * t, .55), (0, -70 + 2.1 * t, 1.6), 85, 0, (0, -70 + 2.1 * t, 1.6), .02)
-    sh.camera(cam, fstop=5.6)
+        p = Vector((.6, y0 + v * t, 0)); u = ease(t / sh.dur)
+        return (p + Vector((1.1 - .4 * u, 6.2 - 2.2 * u, .55 + .25 * u)), p + Vector((0, -.2, 1.75)), K([(0, 30), (sh.dur, 35)], t), 2.0, p + Vector((0, 0, 1.8)), .015)
+    sh.camera(cam, fstop=2.8)
 
 
 def s_walkin(sh):
