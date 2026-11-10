@@ -1,7 +1,6 @@
-00:00.622  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.779  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -12,11 +11,12 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
@@ -120,11 +120,11 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-RSS built 1892 MB
-RSS lod 1892 MB
-RSS posed 1892 MB
-RSS depsgraph 1892 MB
-OBJECTS 9509 MESHES 9152 IMAGES 187 216 Mpx
-03:58.075  render           | Saved: '/home/runner/work/wanderly/wanderly/out/draw_0.png'
-RSS rendered 6663 MB
+RSS built 1883 MB
+RSS lod 1883 MB
+RSS posed 1883 MB
+RSS depsgraph 1883 MB
+OBJECTS 9521 MESHES 9163 IMAGES 187 216 Mpx
+05:11.590  render           | Saved: '/home/runner/work/wanderly/wanderly/out/draw_0.png'
+RSS rendered 6665 MB
 RENDERED draw 1.5
