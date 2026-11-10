@@ -44,6 +44,9 @@ SHOP = Vector((-95.0, -60.0, 0.0))
 
 
 def toon(sh, cid, preset):
+    if cid in ('EZRA', 'MORT', 'JOE') or cid[0] in 'WBP':           # the story's own characters are never auto-hidden
+        if not hasattr(sh, 'protect'): sh.protect = set()
+        sh.protect.add(cid)
     if cid not in sh.chars: sh.chars[cid] = TO.Toon(cid, preset)
     return sh.chars[cid]
 
@@ -386,7 +389,7 @@ def s_double(sh):
     def mod(t, s):
         k = 0.0
         for tt in (1.15, 1.75): k = max(k, math.exp(-((t - tt) / .09) ** 2))
-        s['handR'] = tuple(bp + Vector((.04, .02, .5 - .42 * k))); return s
+        s['handR'] = tuple(bp + Vector((.04, .02, .3 - .24 * k))); return s
     override(a, mod); hold(sh, stamp, mort, 'R', (0, 0, -.06))
     stand(sh, ez, (ctr.x - .8, ctr.y - .95), 175, '79_74', 2.0, face=[(0, 'confused'), (1.2, 'shock'), (1.8, 'furious')], z=0, look=lambda t: tuple(bp))
     sh.camera(cam_keys([(0, (ctr.x - .3, ctr.y - 2.7, ctr.z + .85), (ctr.x - .15, ctr.y + .45, ctr.z + .45), 30), (1.9, (ctr.x - .1, ctr.y - 1.85, ctr.z + .7), (ctr.x - .2, ctr.y + .1, ctr.z + .2), 34),
@@ -620,7 +623,7 @@ def s_happy(sh):
     petals(sh, c)
     def cam(t):
         hp = head_of(ez); u = ease(t / sh.dur)
-        return (hp + Vector((.3 - .1 * u, 1.15 - .4 * u, 1.25 - .4 * u)), hp + Vector((0, .25 - .2 * u, 0)), 40, 0, hp, .004)
+        return (hp + Vector((.06, .42 - .2 * u, 2.0 - .6 * u)), hp + Vector((0, .38 - .2 * u, 0)), 32, 0, hp, .004)
     sh.camera(cam, fstop=2.4); sh.keylight(10, (1, .85, .65))
 
 
@@ -651,8 +654,8 @@ def s_stopped(sh):
         petal.location = (hp + Vector((-.2, .1, .75))).lerp(hp + Vector((0, .0, .3)), u); petal.rotation_euler = (0, u * .3, math.sin(t * 3) * (1 - u))
     sh.updates.append(land)
     def cam(t):
-        hp = head_of(ez); d = K([(0, 1.0), (TS, .86), (sh.dur, .82)], t)
-        return (hp + Vector((.06, .42, .82)) * d, hp + Vector((0, .02, 0)), 45, 0, hp + Vector((0, 0, .2)), .002 if t < TS else .0005)
+        hp = head_of(ez); d = K([(0, 1.12), (TS, 1.0), (sh.dur, .96)], t)
+        return (hp + Vector((.02, .09, .95)) * d, hp + Vector((0, .07, 0)), 40, 0, hp + Vector((0, 0, .2)), .002 if t < TS else .0005)
     sh.camera(cam, fstop=2.4); sh.keylight(10, (1, .85, .65))
 
 

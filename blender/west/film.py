@@ -114,7 +114,7 @@ class Shot:
         hidden = 0
         for a in self.actors:
             ch = a.ch
-            if ch.cid in ('JACK', 'SHER'): continue
+            if ch.cid in ('JACK', 'SHER') or ch.cid in getattr(self, 'protect', ()): continue
             for t in (0, self.dur * .5, self.dur):
                 a.apply(t); p = ch.root.matrix_world.translation.copy() + Vector((0, 0, 1.2))
                 bad = False
