@@ -1,4 +1,4 @@
-00:00.475  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.757  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -115,14 +115,14 @@
 [lib] model dead_tree_trunk_02 4
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
-20:05:53 | INFO: Data are loaded, start creating Blender stuff
-20:05:53 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
-20:05:53 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
-20:05:53 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
-20:05:54 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
-20:05:54 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
-20:05:54 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
-20:05:55 | INFO: glTF import finished in 1.37s
+20:30:05 | INFO: Data are loaded, start creating Blender stuff
+20:30:05 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
+20:30:06 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
+20:30:06 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
+20:30:06 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
+20:30:06 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
+20:30:06 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
+20:30:07 | INFO: glTF import finished in 2.07s
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -134,15 +134,15 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-RSS built 1829 MB
+RSS built 1797 MB
 EXTRAS fun2 9
-RSS extras 1853 MB
+RSS extras 1817 MB
 CLEARCAM fun2 0
-RSS lod 1901 MB
-RSS posed 1913 MB
-RSS depsgraph 1913 MB
+RSS lod 1872 MB
+RSS posed 1883 MB
+RSS depsgraph 1883 MB
 OBJECTS 11455 MESHES 10497 IMAGES 189 217 Mpx
-03:23.963  render           | Saved: '/home/runner/work/wanderly/wanderly/out/fun2_0.png'
-RTIME 38.1
-RSS rendered 6585 MB
+03:25.224  render           | Saved: '/home/runner/work/wanderly/wanderly/out/fun2_0.png'
+RTIME 63.9
+RSS rendered 6615 MB
 RENDERED fun2 1.1
