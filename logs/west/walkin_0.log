@@ -1,4 +1,4 @@
-00:00.408  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.670  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -117,11 +117,11 @@
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
 [lib] hdri sun 136 elev 4.9 -> az 20
-RSS built 1986 MB
-RSS lod 2326 MB
-RSS posed 2326 MB
-RSS depsgraph 2326 MB
-OBJECTS 9616 MESHES 9210 IMAGES 187 216 Mpx
-03:18.629  render           | Saved: '/home/runner/work/wanderly/wanderly/out/walkin_0.png'
-RSS rendered 7636 MB
+RSS built 1975 MB
+RSS lod 2319 MB
+RSS posed 2319 MB
+RSS depsgraph 2319 MB
+OBJECTS 9571 MESHES 9165 IMAGES 187 216 Mpx
+03:05.542  render           | Saved: '/home/runner/work/wanderly/wanderly/out/walkin_0.png'
+RSS rendered 7388 MB
 RENDERED walkin 1.47
