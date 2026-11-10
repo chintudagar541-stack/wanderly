@@ -1,4 +1,4 @@
-00:00.788  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.446  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -103,6 +103,7 @@
 [lib] model grass_medium_02 11
 [lib] model shrub_01 36
 [lib] model shrub_02 12
+[lib] retry https://dl.polyhaven.org/file/ph-assets/Models/exr/1k/shrub_03/shrub_03_rough_1k.exr [Errno 104] Connection reset by peer
 [lib] model shrub_03 12
 [lib] model wild_rooibos_bush 20
 [lib] model searsia_burchellii 9
@@ -115,14 +116,14 @@
 [lib] model dead_tree_trunk_02 4
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
-20:19:21 | INFO: Data are loaded, start creating Blender stuff
-20:19:21 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
-20:19:21 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
-20:19:21 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
-20:19:21 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
-20:19:22 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
-20:19:22 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
-20:19:23 | INFO: glTF import finished in 1.77s
+20:27:46 | INFO: Data are loaded, start creating Blender stuff
+20:27:46 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
+20:27:46 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
+20:27:47 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
+20:27:47 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
+20:27:47 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
+20:27:47 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
+20:27:48 | INFO: glTF import finished in 1.41s
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -153,15 +154,15 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-RSS built 1865 MB
+RSS built 1880 MB
 EXTRAS stopped 9
-RSS extras 1884 MB
+RSS extras 1902 MB
 CLEARCAM stopped 0
-RSS lod 1938 MB
-RSS posed 1938 MB
-RSS depsgraph 1938 MB
+RSS lod 1944 MB
+RSS posed 1945 MB
+RSS depsgraph 1945 MB
 OBJECTS 12083 MESHES 11119 IMAGES 212 224 Mpx
-04:12.595  render           | Saved: '/home/runner/work/wanderly/wanderly/out/stopped_0.png'
-RTIME 99.5
-RSS rendered 6655 MB
+03:46.711  render           | Saved: '/home/runner/work/wanderly/wanderly/out/stopped_0.png'
+RTIME 46.9
+RSS rendered 6645 MB
 RENDERED stopped 2.01
