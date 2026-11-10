@@ -659,7 +659,7 @@ def build_town(detail=True, y_range=(-30, 50)):
     if detail: props_street(-30, 60)
     mesas()
     vegetation(float(os.environ.get('VEG', 1.0)))
-    ph_props()
+    if not os.environ.get('NOPHPROPS'): ph_props()
     for i in range(14):
         rng2 = random.Random(i)
         cactus((rng2.choice((-1, 1)) * rng2.uniform(26, 60), rng2.uniform(-60, 120), 0), rng2.uniform(2, 3.8), i)
@@ -668,7 +668,7 @@ def build_town(detail=True, y_range=(-30, 50)):
 # ------------------------------------------------------------------ Poly Haven props (CI)
 def ph_props(y0=-35, y1=60):
     if not PH: return
-    M = lambda *ids: lib.model(list(ids))
+    M = lambda *ids: lib.model(list(ids), res=os.environ.get('PH_MODEL_RES', '1k'))
     barrels = [m for m in (M('Barrel_01'), M('Barrel_02'), M('barrel_03'), M('wine_barrel_01')) if m]
     crates = [m for m in (M('wooden_crate_01'), M('wooden_crate_02'), M('wooden_military_crate')) if m]
     seats = [m for m in (M('Rockingchair_01'), M('WoodenChair_01'), M('painted_wooden_bench'), M('folding_wooden_stool'), M('wooden_stool_01')) if m]

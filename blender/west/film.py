@@ -599,13 +599,27 @@ def s_allalong(sh):
 SHOTS = {k[2:]: v for k, v in list(globals().items()) if k.startswith('s_') and callable(v)}
 
 
+def rss(tag):
+    import resource; print('RSS', tag, resource.getrusage(resource.RUSAGE_SELF).ru_maxrss // 1024, 'MB', flush=True)
+
+
 def main():
     a = sys.argv[sys.argv.index('--') + 1:]; mode, sid = a[0], a[1]
-    sh = Shot(sid); SHOTS[sid](sh); sh.lod()
+    sh = Shot(sid); SHOTS[sid](sh); rss('built'); sh.lod(); rss('lod')
+    if os.environ.get('NOCHARHAIR'):
+        for o in bpy.data.objects:
+            for md in o.modifiers:
+                if md.type == 'PARTICLE_SYSTEM' and any(o.name.startswith(p) for p in ('JACK', 'SHER', 'T0', 'T1')): md.show_render = False
+    if os.environ.get('NOGRASS'):
+        for o in bpy.data.objects:
+            if o.name.startswith('grass_ground'):
+                for md in o.modifiers: md.show_render = False
     sc = bpy.context.scene
     if mode == 'still':
         t = float(a[3]) if len(a) > 3 else sh.dur / 2
-        sh.at(t); sc.render.filepath = os.path.abspath(a[2]); bpy.ops.render.render(write_still=True); print('RENDERED', sid, t)
+        sh.at(t); rss('posed'); dg = bpy.context.evaluated_depsgraph_get(); dg.update(); rss('depsgraph')
+        print('OBJECTS', len(bpy.data.objects), 'MESHES', len(bpy.data.meshes), 'IMAGES', len(bpy.data.images), sum(i.size[0] * i.size[1] for i in bpy.data.images) // 1000000, 'Mpx', flush=True)
+        sc.render.filepath = os.path.abspath(a[2]); bpy.ops.render.render(write_still=True); rss('rendered'); print('RENDERED', sid, t)
     else:
         f0, f1, out = int(a[2]), int(a[3]), a[4]; os.makedirs(out, exist_ok=True); g0 = round(sh.t0 * FPS)
         for f in range(f0, f1 + 1):

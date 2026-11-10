@@ -63,7 +63,7 @@ jobs:
             ffmpeg -loglevel error -y -framerate 24 -start_number $S -i $GITHUB_WORKSPACE/out/frames/f_%05d.png -c:v libx264 -preset slow -crf 14 -pix_fmt yuv420p $GITHUB_WORKSPACE/out/chunk_${{ matrix.t.id }}.mp4
             rm -rf $GITHUB_WORKSPACE/out/frames
           else
-            python3 ${{ matrix.t.script }} -- ${{ join(matrix.t.args, ' ') }} $GITHUB_WORKSPACE/out/${{ matrix.t.id }}.png ${{ matrix.t.t }} 2>&1 | grep -v "^Fra:\|degenerated\|strokes" | tee $GITHUB_WORKSPACE/out/log.txt | tail -120
+            python3 ${{ matrix.t.script }} -- ${{ join(matrix.t.args, ' ') }} $GITHUB_WORKSPACE/out/${{ matrix.t.id }}.png ${{ matrix.t.t }} 2>&1 | grep -v "^Fra:\|degenerated\|strokes\|Synchroniz\|Updating\|Loading render" | tee $GITHUB_WORKSPACE/out/log.txt | tail -120
           fi
       - name: Save still + log to the branch
         if: always() && needs.plan.outputs.mode != 'video'

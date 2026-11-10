@@ -1,1 +1,7 @@
-{"rev": 6, "mode": "stills", "w": 720, "h": 1280, "samples": 32, "veg": 0.7, "at": [0.6], "only": ""}
+{"rev": 7, "mode": "tasks", "w": 720, "h": 1280, "samples": 32, "veg": 0.7, "cast": true, "tasks": [
+ {"id": "m_full", "script": "film.py", "args": ["still", "hook"], "t": 2.6, "env": {}},
+ {"id": "m_noprops", "script": "film.py", "args": ["still", "hook"], "t": 2.6, "env": {"NOPHPROPS": "1"}},
+ {"id": "m_nograss", "script": "film.py", "args": ["still", "hook"], "t": 2.6, "env": {"NOGRASS": "1"}},
+ {"id": "m_nohair", "script": "film.py", "args": ["still", "hook"], "t": 2.6, "env": {"NOCHARHAIR": "1"}},
+ {"id": "m_veg0", "script": "film.py", "args": ["still", "hook"], "t": 2.6, "env": {"VEG": "0.0", "NOPHPROPS": "1"}}
+]}
