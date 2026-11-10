@@ -899,17 +899,38 @@ def bank_interior(c='Interior'):
     wallm = wood('bankwall', '#c8b48a', weather=.3, paint='#8a6a4a')
     box('b_ceiling', (D, W, .1), (x0 - D / 2, y0, H + .2), plain('ceil', '#5a4a3a', .9), c=c)
     for sy in (-1, 1): box('b_side', (D, .12, H), (x0 - D / 2, y0 + sy * W / 2, H / 2 + .2), wallm, c=c)
-    box('b_back', (.15, W, H), (x0 - D + .08, y0, H / 2 + .2), plain('bankback', '#3a3a3c', .4, .6), c=c)
+    bw = box('b_back', (.15, W, H), (x0 - D + .08, y0, H / 2 + .2), plain('bankback', '#3a3a3c', .4, .6), c=c)
+    hole = cyl('b_hole', 1.22, 1.0, (x0 - D + .08, y0 + .8, 1.65), None, rot=(0, math.pi / 2, 0), v=48, c=c); hole.hide_render = True; hole.hide_viewport = True
+    bo = bw.modifiers.new('hole', 'BOOLEAN'); bo.operation = 'DIFFERENCE'; bo.object = hole
+    # the strong room behind the door: stone-dark walls, shelves (the gold bars below sit on them)
+    vr = plain('vaultroom', '#4a4440', .7)
+    box('v_floor', (2.6, 3.0, .05), (x0 - D - 1.3, y0 + .8, .2), vr, c=c); box('v_ceil', (2.6, 3.0, .05), (x0 - D - 1.3, y0 + .8, 3.0), vr, c=c)
+    box('v_back', (.1, 3.0, 2.9), (x0 - D - 2.6, y0 + .8, 1.6), vr, c=c)
+    for sy in (-1, 1): box('v_side', (2.6, .1, 2.9), (x0 - D - 1.3, y0 + .8 + sy * 1.5, 1.6), vr, c=c)
+    shelf = wood('vshelf', '#5a3a22', weather=.2)
+    for r in range(4): box('v_shelf', (.62, 1.4, .04), (x0 - D - .55 + .25, y0 + .9, .84 + r * .38), shelf, c=c)
     # counter with teller bars
     cm = wood('counter', '#5a3a22', weather=.1)
     box('b_counter', (.7, W - 2.2, 1.1), (x0 - 5.2, y0 - 1.0, .75), cm, bevel=.02, c=c)
     brass = plain('brass', '#b8963a', .3, 1.0)
     for k in range(18): cyl('b_bar', .012, 1.0, (x0 - 5.2, y0 - 3.7 + k * .3, 1.8), brass, v=8, c=c)
     # vault: round steel door, open
-    steel = plain('steel', '#6a6c70', .35, 1.0)
+    steel = plain('steel', '#a4a6ac', .42, .75)
     vx = x0 - D + .2
-    cyl('vault_frame', 1.35, .35, (vx + .1, y0 + .8, 1.65), steel, rot=(0, math.pi / 2, 0), v=48, c=c)
+    bpy.ops.mesh.primitive_torus_add(major_radius=1.33, minor_radius=.13, major_segments=64, minor_segments=12, location=(vx + .02, y0 + .8, 1.65), rotation=(0, math.pi / 2, 0))
+    fr = bpy.context.active_object; fr.name = 'vault_frame'; fr.data.materials.append(steel); fr.scale = (1, 1, 1.6)
+    for cc in list(fr.users_collection): cc.objects.unlink(fr)
+    coll(c).objects.link(fr)
+    for p in fr.data.polygons: p.use_smooth = True
     vd = cyl('vault_door', 1.25, .45, (vx + .6, y0 + .8, 1.65), steel, rot=(0, math.pi / 2, 0), v=48, c=c)
+    for p in vd.data.polygons: p.use_smooth = abs(p.normal.z) < .5
+    bv = vd.modifiers.new('bev', 'BEVEL'); bv.width = .04; bv.segments = 3; bv.limit_method = 'ANGLE'
+    for k in range(3):                                           # machined rings on the door face
+        rg = torus_ring = None
+        bpy.ops.mesh.primitive_torus_add(major_radius=.45 + k * .3, minor_radius=.018, major_segments=48, minor_segments=6, location=(vx + .835, y0 + .8, 1.65), rotation=(0, math.pi / 2, 0))
+        rg = bpy.context.active_object; rg.data.materials.append(steel)
+        for cc in list(rg.users_collection): cc.objects.unlink(rg)
+        coll(c).objects.link(rg); rg.parent = vd; rg.matrix_parent_inverse = vd.matrix_world.inverted()
     hub = cyl('vault_hub', .18, .2, (vx + .9, y0 + .8, 1.65), brass, rot=(0, math.pi / 2, 0), c=c); hub.parent = vd; hub.matrix_parent_inverse = vd.matrix_world.inverted()
     for k in range(3):
         a = k / 3 * math.pi
@@ -921,13 +942,13 @@ def bank_interior(c='Interior'):
     gold = plain('gold', '#e8b040', .22, 1.0)
     for r in range(4):
         for k in range(10):
-            box('goldbar', (.24, .1, .07), (vx - .5 - (k % 2) * .26, y0 + .3 + (k // 2) * .26, .9 + r * .38), gold, bevel=.01, c=c)
+            box('goldbar', (.24, .1, .07), (vx - .62 - (k % 2) * .26, y0 + .35 + (k // 2) * .26, .9 + r * .38), gold, bevel=.01, c=c)
     lamp = bpy.data.lights.new('vault_glow', 'POINT'); lamp.energy = 900; lamp.color = (1, .7, .35); lamp.shadow_soft_size = .3
-    lo = bpy.data.objects.new('vault_glow', lamp); lo.location = (vx - .3, y0 + .8, 2.2); coll(c).objects.link(lo)
+    lo = bpy.data.objects.new('vault_glow', lamp); lo.location = (vx - 1.2, y0 + .8, 2.4); coll(c).objects.link(lo)
     for k, yy in enumerate((y0 - 2.5, y0 + 2.5)):          # moonlight through the front windows + soft bounce
         l = bpy.data.lights.new(f'b_moon{k}', 'AREA'); l.energy = 260; l.size = 1.6; l.color = (.55, .65, 1.0)
         lo = bpy.data.objects.new(f'b_moon{k}', l); lo.location = (x0 - .4, yy, 2.0); lo.rotation_euler = (0, math.radians(-75), 0); coll(c).objects.link(lo)
-    l = bpy.data.lights.new('b_fill', 'AREA'); l.energy = 350; l.size = 4; l.color = (1, .8, .6); lo = bpy.data.objects.new('b_fill', l); lo.location = (x0 - D / 2, y0, H); coll(c).objects.link(lo)
+    l = bpy.data.lights.new('b_fill', 'AREA'); l.energy = 650; l.size = 4; l.color = (1, .8, .6); lo = bpy.data.objects.new('b_fill', l); lo.location = (x0 - D / 2, y0, H); coll(c).objects.link(lo)
     return dict(vault_door=vd, vault_center=Vector((vx + .6, y0 + .8, 1.65)), hall=Vector((x0 - 4, y0, 0.2)))
 
 

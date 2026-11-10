@@ -58,7 +58,7 @@ class Toon(H.Human):
             sl_ = ve.modifiers.new('th', 'SOLIDIFY'); sl_.thickness = .006
             vs_ = bpy.data.objects.get(cid + '_vs')
             if vs_: vs_.hide_render = True; vs_.hide_viewport = True
-        if o.get('hat') in ('cowboy', 'bowler', 'straw', 'slouch'):          # hair showing under the hat at the back and sides
+        if False:                                                            # (hair under hats: off - reads as a patch on the round head)
             import bmesh as _bm
             hb = sphere(cid + '_bhair', 1.0, (0, .006, cz), solid(p.get('haircol', '#2a1a10'), .85), seg=40, rings=20)
             bm_ = _bm.new(); bm_.from_mesh(hb.data)
@@ -427,6 +427,7 @@ class ToonActor:
         crouch = max(0.0, (sl * .97 - hip_h) * k)
         sp = body(P[I['Neck1']]); l0 = math.atan2(-sp.y, sp.z) / 2.2; l1 = math.atan2(sp.x, sp.z) / 2.2
         hd = body(P[I['Head']]) - sp; hp = math.degrees(math.atan2(-hd.y, hd.z)) - math.degrees(l0 * 2.2)
+        l0 = max(-.07, min(.16, l0)); l1 = max(-.08, min(.08, l1))
         if self.ch.p['outfit'].get('dress'): l0, l1 = l0 * .35, l1 * .35
         out = dict(loc=(loc.x, loc.y, a.loc.z), yaw=math.degrees(cy), crouch=crouch, lean=(l0, l1), head=[0.0, max(-6, min(10, hp * .35)), 0.0])
         ch = self.ch; sc = ch.s

@@ -498,13 +498,13 @@ def s_vault(sh):
     vd.rotation_mode = 'XYZ'; base = vd.rotation_euler.copy()
     pivot = Vector((c.x + .2, c.y - 1.25, c.z))
     def swing(t):
-        a = ease((t - .25) / .7) * math.radians(75)
+        a = ease((t - .2) / .75) * math.radians(115)
         vd.rotation_euler = (base.x + t * 2.4, base.y, base.z)                    # wheel+door turn (spoke children follow)
         vd.location = pivot + Matrix.Rotation(-a, 3, 'Z') @ (Vector((c.x + .6 - .4, c.y, c.z)) - pivot)
     sh.updates.append(swing)
     T.lantern('vault_lamp', (c.x + 1.6, c.y - 1.2, 1.3), c='Interior', energy=35)
     def cam(t):
-        return (Vector((c.x + 2.6, c.y + .9, 1.75)).lerp(Vector((c.x + 2.0, c.y + .6, 1.7)), ease(t / sh.dur)), c + Vector((-.3, -.3, -.1)), 24, 0, c, .008)
+        return (Vector((c.x + 3.4, c.y + 2.2, 1.9)).lerp(Vector((c.x + 2.9, c.y + 1.7, 1.8)), ease(t / sh.dur)), c + Vector((-.2, -.5, -.15)), 24, 0, c, .008)
     sh.camera(cam, fstop=4.0); sh.keylight(30.0, (1, .85, .65))
 
 
@@ -519,7 +519,7 @@ def s_gold(sh):
     T.lantern('vault_lamp', (c.x + 1.4, c.y - 1.0, 1.2), c='Interior', energy=35)
     def cam(t):
         h = head_of(sher, -.1); f = facing(sher)
-        return (framed(h, f, K([(0, -30), (sh.dur, -5)], t), -22, 1.4, 28), h + Vector((0, 0, -.2)), 28, 0, h, .008)
+        return (framed(h, f, K([(0, -70), (sh.dur, -40)], t), 4, 2.7, 28, ch=sher), h + Vector((0, 0, -.15)), 28, 0, h, .008)
     sh.camera(cam, fstop=2.4)
 
 
@@ -546,7 +546,7 @@ def hold_gun(ch, gun, sher=None):
     gun.location = h; gun.rotation_mode = 'QUATERNION'; gun.rotation_quaternion = f.to_track_quat('-Y', 'Z')
 
 
-def open_vault(o, a=math.radians(75)):
+def open_vault(o, a=math.radians(165)):
     vd = bpy.data.objects['vault_door']; c = o['vault_center']; pivot = Vector((c.x + .2, c.y - 1.25, c.z))
     vd.location = pivot + Matrix.Rotation(-a, 3, 'Z') @ (Vector((c.x + .2, c.y, c.z)) - pivot); vd.rotation_euler.z += -a
 
@@ -624,23 +624,23 @@ def s_reading(sh):
         x = -S + .9 + (k % 3) * .7; y = -2 + .2 + (k // 3) * 1.2 + (k % 3) * .35
         sh.actor(ch, [CA.Act(0, ['80_48', '77_02', '79_74', '77_05', '80_44', '80_48'][k], 1.2 + k * .6, 6, loc=(x, y, DECK), yaw=-90 + (k - 2.5) * 10, lock_root=True)], face=[(0, ['angry', 'shock', 'shout', 'suspicious', 'worry', 'angry'][k])], look=lambda t: (-S, -.8, 1.85))
     def cam(t):
-        return (Vector((-S + 4.2, -5.0, 1.65)).lerp(Vector((-S + 3.6, -3.6, 1.7)), ease(t / sh.dur)), (-S + .8, -1.0, 1.55), 28, 0, None, .01)
-    sh.camera(cam, fstop=4.0); sh.keylight(14.0)
+        return (Vector((-S + 5.6, -6.6, 2.1)).lerp(Vector((-S + 4.8, -5.2, 2.0)), ease(t / sh.dur)), (-S + .9, -1.0, 1.5), 26, 0, None, .01)
+    sh.camera(cam, fstop=4.0); sh.keylight(30.0)
 
 
 def s_neverseen(sh):
     """49.75-53.85 'And since nobody had ever seen the real sheriff outside his office...'  dusk: the office window lit, a silhouette behind
     the blind; townsfolk pass by and never look; slow truck along the boardwalk."""
     setup(sh, 'sunset', 6, 250, veg=.4)
-    T.lantern('office_glow', (-S - .5, -2 + 2.3, 1.6), energy=60)
+    T.lantern('office_glow', (-S - .5, -2 + 2.3, 1.6), energy=140)
     sher, = sh.cast('SHER')
     sh.actor(sher, [CA.Act(0, '77_02', 2, 6, loc=(-S - .9, -2 + 2.3, .2), yaw=90, lock_root=True)], face=[(0, 'smirk')])
     people = sh.crowd(5, None, seed=6)
     for k, ch in enumerate(people):
-        sh.actor(ch, [CA.Act(0, '82_11' if k % 2 else '82_09', 2.2 if k % 2 else 6.8, 6, loc=(-S + W_ * .5 + (k % 2) * .5, -9 + k * 2.6, DECK if False else 0), yaw=0 if k % 2 else 180, speed=.85)], face=[(0, 'idle')])
+        sh.actor(ch, [CA.Act(0, '82_11' if k % 2 else '82_09', 2.2 if k % 2 else 6.8, 6, loc=(-S + W_ * .55 + (k % 2) * .45, -9 + k * 2.6, DECK), yaw=0 if k % 2 else 180, speed=.85)], face=[(0, 'idle')])
     def cam(t):
         return (Vector((-S + 4.5, -7.0, 1.7)).lerp(Vector((-S + 4.0, -2.5, 1.75)), ease(t / sh.dur)), (-S, -2 + 2.0, 1.6), 30, 0, (-S, -2 + 2.0, 1.6), .008)
-    sh.camera(cam, fstop=2.8)
+    sh.camera(cam, fstop=2.8); sh.keylight(16.0, (1, .8, .6))
 
 
 def _surround(sh, mood='sunset', jack_face=None, sher_present=False, crowd_face='angry', n=12, jack_clip=('77_02', 2.0), seed=7):
