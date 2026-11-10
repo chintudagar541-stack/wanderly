@@ -1,8 +1,6 @@
-00:00.965  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:01.171  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -16,16 +14,18 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
-[lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
+[lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -115,34 +115,30 @@
 [lib] model dead_tree_trunk_02 4
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
-08:17:14 | INFO: Data are loaded, start creating Blender stuff
-08:17:14 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
-08:17:14 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
-08:17:14 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
-08:17:14 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
-08:17:15 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
-08:17:15 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
-08:17:16 | INFO: glTF import finished in 1.69s
+10:01:00 | INFO: Data are loaded, start creating Blender stuff
+10:01:00 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
+10:01:00 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
+10:01:00 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
+10:01:01 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
+10:01:01 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
+10:01:01 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
+10:01:02 | INFO: glTF import finished in 1.81s
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] retry https://api.polyhaven.com/files/stone HTTP Error 404: Not Found
-[lib] retry https://api.polyhaven.com/files/stone HTTP Error 404: Not Found
-[lib] retry https://api.polyhaven.com/files/stone HTTP Error 404: Not Found
-[lib] retry https://api.polyhaven.com/files/stone HTTP Error 404: Not Found
-[lib] PH wellstone failed download failed https://api.polyhaven.com/files/stone
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] hdri sun 143 elev 3.5 -> az 250
-RSS built 1885 MB
+RSS built 1879 MB
 EXTRAS neverseen 0
-RSS extras 1885 MB
-RSS lod 1885 MB
-RSS posed 1885 MB
-RSS depsgraph 1885 MB
-OBJECTS 10897 MESHES 10196 IMAGES 189 217 Mpx
-05:39.066  render           | Saved: '/home/runner/work/wanderly/wanderly/out/neverseen_0.png'
-RSS rendered 7057 MB
+RSS extras 1879 MB
+CLEARCAM neverseen 2
+RSS lod 1879 MB
+RSS posed 1879 MB
+RSS depsgraph 1879 MB
+OBJECTS 10671 MESHES 9975 IMAGES 189 217 Mpx
+04:28.367  render           | Saved: '/home/runner/work/wanderly/wanderly/out/neverseen_0.png'
+RSS rendered 6960 MB
 RENDERED neverseen 2.46
