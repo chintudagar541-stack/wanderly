@@ -1,4 +1,4 @@
-00:00.677  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.728  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -115,14 +115,14 @@
 [lib] model dead_tree_trunk_02 4
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
-20:19:17 | INFO: Data are loaded, start creating Blender stuff
-20:19:17 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
-20:19:17 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
-20:19:17 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
-20:19:17 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
-20:19:17 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
-20:19:17 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
-20:19:18 | INFO: glTF import finished in 1.76s
+20:34:40 | INFO: Data are loaded, start creating Blender stuff
+20:34:40 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
+20:34:40 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
+20:34:40 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
+20:34:40 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
+20:34:40 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
+20:34:41 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
+20:34:42 | INFO: glTF import finished in 1.69s
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -153,15 +153,15 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-RSS built 1855 MB
-EXTRAS tears 6
-RSS extras 1899 MB
+RSS built 1843 MB
+EXTRAS tears 4
+RSS extras 1887 MB
 CLEARCAM tears 0
-RSS lod 1911 MB
-RSS posed 1914 MB
-RSS depsgraph 1914 MB
-OBJECTS 12076 MESHES 11115 IMAGES 212 224 Mpx
-03:34.531  render           | Saved: '/home/runner/work/wanderly/wanderly/out/tears_0.png'
-RTIME 67.7
-RSS rendered 6379 MB
+RSS lod 1889 MB
+RSS posed 1889 MB
+RSS depsgraph 1889 MB
+OBJECTS 11914 MESHES 11024 IMAGES 212 224 Mpx
+03:36.867  render           | Saved: '/home/runner/work/wanderly/wanderly/out/tears_0.png'
+RTIME 65.4
+RSS rendered 6617 MB
 RENDERED tears 1.38
