@@ -1,32 +1,72 @@
 {
- "rev": 3,
+ "rev": 4,
  "model": "cagliostrolab/animagine-xl-4.0",
  "steps": 28,
- "cfg": 5.5,
- "w": 1024,
- "h": 1024,
+ "cfg": 5.0,
+ "w": 832,
+ "h": 1216,
  "prompt": "4people, 2girls, 2boys, group picture, original, standing side by side, cowboy shot, winter clothes, scarf, coat, beanie, earmuffs, mittens, holding cup, waving, smile, open mouth, looking at viewer, purple sky, gradient background, sparkle, light particles, snowing, anime screencap, anime coloring, cel shading, thin lineart, official art, promotional art, masterpiece, high score, great score, absurdres",
- "negative": "lowres, bad anatomy, bad hands, extra digits, fewer digits, missing fingers, extra fingers, fused fingers, deformed, text, signature, watermark, username, logo, error, cropped, worst quality, low quality, low score, bad score, average score, jpeg artifacts, blurry, 3d, realistic, photorealistic, chibi, thick outlines, western cartoon, sketch, saturated, vivid colors, neon colors, oversaturated, high contrast, moe, loli, busty, crowded, cropped head",
+ "negative": "lowres, bad anatomy, bad hands, extra digits, fewer digits, missing fingers, extra fingers, fused fingers, deformed, text, signature, watermark, username, logo, error, cropped, cropped feet, out of frame, multiple views, worst quality, low quality, low score, bad score, average score, jpeg artifacts, blurry, 3d, realistic, photorealistic, chibi, child, thick outlines, western cartoon, sketch, saturated, neon colors",
  "items": [
   {
-   "name": "b_4boys_s5",
-   "seed": 5,
-   "prompt": "4boys, multiple boys, group picture, original, standing side by side, cowboy shot, one boy waving with arm up, one boy holding coffee cup, one boy hands in pockets, one boy hands together, winter clothes, scarf, beanie, ushanka, earmuffs, mittens, dark school uniform, white coat, black hair, brown hair, light hair, smile, open mouth, half-closed eyes, looking at viewer, lavender background, grey-purple gradient background, soft bokeh, sparkle, light particles, simple background, masterpiece, high score, great score, absurdres, official art, anime screencap, 2020s anime, thin lineart, soft cel shading, muted colors, soft colors, desaturated, gentle lighting"
+   "name": "cast_adrian_s7",
+   "seed": 7,
+   "prompt": "1boy, solo, adult, mature male, messy black hair, sharp eyes, grey eyes, slim, black turtleneck, long charcoal coat, open coat, black pants, black boots, hands in pockets, confident, smirk, full body, standing, looking at viewer, simple background, white background, anime screencap, official art, anime coloring, thin lineart, soft cel shading, muted colors, seinen, mature, masterpiece, high score, great score, absurdres"
   },
   {
-   "name": "b_4boys_s19",
-   "seed": 19,
-   "prompt": "4boys, multiple boys, group picture, original, standing, cowboy shot, waving, arm up, holding cup, hands in pockets, winter clothes, long scarf, knit hat, ear protection, fingerless gloves, gakuran, white hoodie, different hairstyles, spiked hair, smile, looking at viewer, lavender background, grey-purple gradient background, soft bokeh, sparkle, light particles, simple background, masterpiece, high score, great score, absurdres, official art, anime screencap, 2020s anime, thin lineart, soft cel shading, muted colors, soft colors, desaturated, gentle lighting"
+   "name": "cast_adrian_s29",
+   "seed": 29,
+   "prompt": "1boy, solo, adult, mature male, messy black hair, sharp eyes, grey eyes, slim, black turtleneck, long charcoal coat, open coat, black pants, black boots, hands in pockets, confident, smirk, full body, standing, looking at viewer, simple background, white background, anime screencap, official art, anime coloring, thin lineart, soft cel shading, muted colors, seinen, mature, masterpiece, high score, great score, absurdres"
   },
   {
-   "name": "b_3b1g_s44",
-   "seed": 44,
-   "prompt": "3boys, 1girl, group picture, original, standing side by side, cowboy shot, waving, holding cup, hands in pockets, winter clothes, scarf, beanie, earmuffs, mittens, coat, school uniform, smile, looking at viewer, lavender background, grey-purple gradient background, soft bokeh, sparkle, light particles, simple background, masterpiece, high score, great score, absurdres, official art, anime screencap, 2020s anime, thin lineart, soft cel shading, muted colors, soft colors, desaturated, gentle lighting"
+   "name": "cast_maya_s7",
+   "seed": 7,
+   "prompt": "1girl, solo, adult woman, detective, black hair, low ponytail, sharp eyes, brown eyes, serious, white collared shirt, dark navy blazer, black slacks, police badge on belt, ankle boots, arms crossed, expressionless, full body, standing, looking at viewer, simple background, white background, anime screencap, official art, anime coloring, thin lineart, soft cel shading, muted colors, seinen, mature, masterpiece, high score, great score, absurdres"
   },
   {
-   "name": "b_4boys_s71",
-   "seed": 71,
-   "prompt": "4boys, multiple boys, group picture, original, standing side by side, knees up, friends, arm around shoulder, waving, holding paper cup, winter clothes, scarf, beanie, fur hat, mittens, dark uniform, white jacket, calm, grin, looking at viewer, lavender background, grey-purple gradient background, soft bokeh, sparkle, light particles, simple background, masterpiece, high score, great score, absurdres, official art, anime screencap, 2020s anime, thin lineart, soft cel shading, muted colors, soft colors, desaturated, gentle lighting"
+   "name": "cast_maya_s29",
+   "seed": 29,
+   "prompt": "1girl, solo, adult woman, detective, black hair, low ponytail, sharp eyes, brown eyes, serious, white collared shirt, dark navy blazer, black slacks, police badge on belt, ankle boots, arms crossed, expressionless, full body, standing, looking at viewer, simple background, white background, anime screencap, official art, anime coloring, thin lineart, soft cel shading, muted colors, seinen, mature, masterpiece, high score, great score, absurdres"
+  },
+  {
+   "name": "cast_thomas_s7",
+   "seed": 7,
+   "prompt": "1boy, solo, old man, mature male, tired eyes, grey hair, short hair, stubble, wrinkles, police captain, white shirt, loosened necktie, brown suit, beige trench coat, weary, standing, full body, standing, looking at viewer, simple background, white background, anime screencap, official art, anime coloring, thin lineart, soft cel shading, muted colors, seinen, mature, masterpiece, high score, great score, absurdres"
+  },
+  {
+   "name": "cast_thomas_s29",
+   "seed": 29,
+   "prompt": "1boy, solo, old man, mature male, tired eyes, grey hair, short hair, stubble, wrinkles, police captain, white shirt, loosened necktie, brown suit, beige trench coat, weary, standing, full body, standing, looking at viewer, simple background, white background, anime screencap, official art, anime coloring, thin lineart, soft cel shading, muted colors, seinen, mature, masterpiece, high score, great score, absurdres"
+  },
+  {
+   "name": "cast_elias_s7",
+   "seed": 7,
+   "prompt": "1boy, solo, mature male, slicked back hair, dark brown hair, calm smile, half-closed eyes, black three-piece suit, waistcoat, white shirt, dark red necktie, black gloves, elegant, hands behind back, full body, standing, looking at viewer, simple background, white background, anime screencap, official art, anime coloring, thin lineart, soft cel shading, muted colors, seinen, mature, masterpiece, high score, great score, absurdres"
+  },
+  {
+   "name": "cast_elias_s29",
+   "seed": 29,
+   "prompt": "1boy, solo, mature male, slicked back hair, dark brown hair, calm smile, half-closed eyes, black three-piece suit, waistcoat, white shirt, dark red necktie, black gloves, elegant, hands behind back, full body, standing, looking at viewer, simple background, white background, anime screencap, official art, anime coloring, thin lineart, soft cel shading, muted colors, seinen, mature, masterpiece, high score, great score, absurdres"
+  },
+  {
+   "name": "cast_nora_s7",
+   "seed": 7,
+   "prompt": "1girl, solo, adult woman, journalist, short bob hair, auburn hair, green eyes, confident grin, olive field jacket, white t-shirt, blue jeans, sneakers, camera around neck, holding notebook, full body, standing, looking at viewer, simple background, white background, anime screencap, official art, anime coloring, thin lineart, soft cel shading, muted colors, seinen, mature, masterpiece, high score, great score, absurdres"
+  },
+  {
+   "name": "cast_nora_s29",
+   "seed": 29,
+   "prompt": "1girl, solo, adult woman, journalist, short bob hair, auburn hair, green eyes, confident grin, olive field jacket, white t-shirt, blue jeans, sneakers, camera around neck, holding notebook, full body, standing, looking at viewer, simple background, white background, anime screencap, official art, anime coloring, thin lineart, soft cel shading, muted colors, seinen, mature, masterpiece, high score, great score, absurdres"
+  },
+  {
+   "name": "cast_leo_s7",
+   "seed": 7,
+   "prompt": "1boy, solo, young man, messy brown hair, round eyeglasses, awkward smile, blue latex gloves, white lab coat over grey hoodie, khaki pants, sneakers, holding evidence bag, full body, standing, looking at viewer, simple background, white background, anime screencap, official art, anime coloring, thin lineart, soft cel shading, muted colors, seinen, mature, masterpiece, high score, great score, absurdres"
+  },
+  {
+   "name": "cast_leo_s29",
+   "seed": 29,
+   "prompt": "1boy, solo, young man, messy brown hair, round eyeglasses, awkward smile, blue latex gloves, white lab coat over grey hoodie, khaki pants, sneakers, holding evidence bag, full body, standing, looking at viewer, simple background, white background, anime screencap, official art, anime coloring, thin lineart, soft cel shading, muted colors, seinen, mature, masterpiece, high score, great score, absurdres"
   }
  ]
 }
