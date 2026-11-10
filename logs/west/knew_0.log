@@ -1,6 +1,7 @@
-00:00.404  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.584  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -14,7 +15,6 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -123,11 +123,11 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] model vintage_pocket_watch 4
 Info: Object has non-uniform scale, unwrap will operate on a non-scaled version of the mesh
-RSS built 1889 MB
-RSS lod 1889 MB
-RSS posed 1889 MB
-RSS depsgraph 1889 MB
-OBJECTS 9525 MESHES 9169 IMAGES 192 220 Mpx
-03:24.854  render           | Saved: '/home/runner/work/wanderly/wanderly/out/knew_0.png'
-RSS rendered 6829 MB
+RSS built 1892 MB
+RSS lod 1892 MB
+RSS posed 1892 MB
+RSS depsgraph 1892 MB
+OBJECTS 9381 MESHES 9025 IMAGES 192 220 Mpx
+03:40.199  render           | Saved: '/home/runner/work/wanderly/wanderly/out/knew_0.png'
+RSS rendered 6872 MB
 RENDERED knew 2.34
