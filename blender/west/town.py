@@ -210,6 +210,20 @@ def building(name, x0, y0, width, depth, height, side, sign, wall_col, trim_col,
     else:
         side_m = ph_or('wall_' + wall_col, ('weathered', 'planks'), lambda: wm, scale=1.2, tint=wall_col, avoid=('floor', 'parquet', 'tile', 'herringbone', 'brick'))
     objs.append(box(name + '_body', (depth - .3, width, height), (cx + side * .15, y0, height / 2), side_m))
+    # back and side windows/doors so the building reads from every side
+    bx = fx + side * depth
+    dglass = plain('glass_dark', '#151a1e', .05)
+    for k in range(max(1, int(width / 3.5))):
+        yy = y0 + (k - (max(1, int(width / 3.5)) - 1) / 2) * 3.0
+        objs.append(box(name + f'_bw{k}', (.04, .8, 1.1), (bx + side * .02, yy, 1.7), dglass))
+        objs.append(box(name + f'_bwf{k}', (.06, .95, 1.25), (bx + side * .01, yy, 1.7), tm))
+    objs.append(box(name + '_bdoor2', (.05, 1.0, 2.1), (bx + side * .03, y0 + width / 2 - 1.0, 1.05), dm_back := wood('backdoor', '#5a3a22', weather=.6)))
+    for k in range(max(1, int(depth / 4))):
+        xx = fx + side * (2.5 + k * 3.5)
+        if abs(xx - fx) > depth - 1: break
+        for sy in (-1, 1):
+            objs.append(box(name + f'_sw{k}{sy}', (.8, .04, 1.1), (xx, y0 + sy * (width / 2 + .02), 1.7), dglass))
+            objs.append(box(name + f'_swf{k}{sy}', (.95, .06, 1.25), (xx, y0 + sy * (width / 2 + .01), 1.7), tm))
     # roof behind (visible from any angle above eye level)
     roof_m = ph_or('roofshingle', ('roof', 'shingle'), lambda: plain('shingle', '#4a3a30', .9), scale=.8, avoid=('tile_', 'clay', 'red'))
     if rng.random() < .4: roof_m = ph_or('corrugated', ('corrugated', 'iron'), lambda: plain('tin', '#7a7470', .5, .7), scale=1.0)
@@ -571,7 +585,7 @@ def grass_mat():
     _M['grass'] = m; return m
 
 
-def grass_field(area=(-70, 70, -70, 120), count=45000, children=18, length=.45, clear=None, name='grass'):
+def grass_field(area=(-70, 70, -70, 120), count=120000, children=0, length=.45, clear=None, name='grass'):
     """hair-particle grass over a ground grid, kept off the street, boardwalks and building footprints"""
     clear = clear or []
     x0, x1, y0, y1 = area
@@ -591,17 +605,66 @@ def grass_field(area=(-70, 70, -70, 120), count=45000, children=18, length=.45, 
             if abs(x - cx) < hx and abs(y - cy) < hy: w = 0.0
         w *= .55 + .45 * (math.sin(x * .21 + nz.random()) * math.sin(y * .17) * .5 + .5)                 # patchy
         if w > 0: vg.add([v.index], min(1.0, w), 'REPLACE')
+    tufts = [grass_tuft(k) for k in range(4)]
+    tc = coll('GrassTufts'); tc.hide_render = False; tc.instance_offset = (0, 0, -500)
+    for tu in tufts:
+        for cc in list(tu.users_collection): cc.objects.unlink(tu)
+        tc.objects.link(tu); tu.location = (0, 0, -500)
     mod = g.modifiers.new('grass', 'PARTICLE_SYSTEM'); ps = mod.particle_system; st = ps.settings
-    st.type = 'HAIR'; st.count = count; st.use_advanced_hair = True; st.hair_length = length
-    st.normal_factor = length / 4; st.factor_random = length / 10
+    st.type = 'EMITTER'; st.count = count; st.frame_start = st.frame_end = -100; st.lifetime = 100000; st.physics_type = 'NO'; st.render_type = 'COLLECTION'; st.instance_collection = tc; st.normal_factor = 0
+    st.use_collection_pick_random = True; st.particle_size = 1.0; st.size_random = .5
     st.emit_from = 'FACE'; st.use_emit_random = True; st.use_even_distribution = True
-    st.child_type = 'INTERPOLATED'; st.child_percent = children; st.rendered_child_count = children; st.child_length = .8; st.child_length_threshold = .4
-    st.clump_factor = .55; st.clump_shape = -.3; st.child_radius = .07; st.roughness_1 = .05; st.roughness_1_size = .4; st.roughness_endpoint = .08; st.roughness_end_shape = 1.5
-    st.root_radius = 1.0; st.tip_radius = .15; st.radius_scale = .0035; st.use_close_tip = True
-    st.material_slot = 'grass'; st.render_step = 3; st.display_step = 2
-    st.use_rotations = True; st.rotation_mode = 'NOR'; st.phase_factor_random = 2.0
-    ps.vertex_group_density = 'dens'; ps.vertex_group_length = 'dens'
+    st.use_rotations = True; st.rotation_mode = 'NOR'; st.phase_factor_random = 2.0; st.rotation_factor_random = .04
+    st.use_rotation_instance = True; st.use_scale_instance = True; st.use_global_instance = False
+    ps.vertex_group_density = 'dens'
     return g
+
+
+def grass_tuft(seed, blades=60):
+    """one clump of grass blades: curved tapered ribbons with per-blade colour variation"""
+    rng = random.Random(seed); me = bpy.data.meshes.new(f'tuft{seed}'); bm = bmesh.new()
+    col = bm.loops.layers.color.new('col') if hasattr(bm.loops.layers, 'color') else None
+    for b in range(blades):
+        a = rng.uniform(0, math.tau); r0 = rng.uniform(0, .07); h = rng.uniform(.18, .6) * (1 if rng.random() > .15 else .5)
+        lean = rng.uniform(.1, .6); w = rng.uniform(.004, .009); twist = rng.uniform(0, math.pi)
+        bx, by = math.cos(a) * r0, math.sin(a) * r0; dx, dy = math.cos(a), math.sin(a)
+        shade = rng.random(); seg = 4; prev = None
+        for k in range(seg + 1):
+            u = k / seg; z = h * u; off = lean * h * u * u * .6
+            px, py = bx + dx * off, by + dy * off; ww = w * (1 - u * .9)
+            nx, ny = -math.sin(a + twist) * ww, math.cos(a + twist) * ww
+            v1 = bm.verts.new((px + nx, py + ny, z)); v2 = bm.verts.new((px - nx, py - ny, z))
+            if prev:
+                f = bm.faces.new((prev[0], prev[1], v2, v1))
+                if col:
+                    for lp in f.loops: lp[col] = (shade, lp.vert.co.z / max(h, 1e-3), 0, 1)
+            prev = (v1, v2)
+    bm.to_mesh(me); bm.free(); me.transform(Matrix.Rotation(math.pi / 2, 4, 'Y'))   # particles align the instance X axis to the ground normal
+    o = bpy.data.objects.new(f'tuft{seed}', me); bpy.context.scene.collection.objects.link(o)
+    me.materials.append(tuft_mat())
+    for p in me.polygons: p.use_smooth = True
+    return o
+
+
+def tuft_mat():
+    if 'tuft' in _M: return _M['tuft']
+    m = bpy.data.materials.new('tuft'); N, L, out = _nt(m)
+    b = N.new('ShaderNodeBsdfPrincipled'); L.new(b.outputs[0], out.inputs[0])
+    at = N.new('ShaderNodeVertexColor'); at.layer_name = 'col'; sp = N.new('ShaderNodeSeparateColor'); L.new(at.outputs['Color'], sp.inputs[0])
+    oi = N.new('ShaderNodeObjectInfo'); mx = N.new('ShaderNodeMath'); mx.operation = 'ADD'; L.new(sp.outputs[0], mx.inputs[0]); L.new(oi.outputs['Random'], mx.inputs[1])
+    fr = N.new('ShaderNodeMath'); fr.operation = 'FRACT'; L.new(mx.outputs[0], fr.inputs[0])
+    ramp = N.new('ShaderNodeValToRGB'); cr = ramp.color_ramp
+    cols = [(0, '#2e4214'), (.2, '#4a5e1e'), (.4, '#6e7a2e'), (.6, '#9a8a48'), (.8, '#b49a62'), (1, '#5a6a24')]
+    cr.elements[0].position, cr.elements[0].color = cols[0][0], hexc(cols[0][1]); cr.elements[1].position, cr.elements[1].color = cols[-1][0], hexc(cols[-1][1])
+    for p, c in cols[1:-1]: e = cr.elements.new(p); e.color = hexc(c)
+    L.new(fr.outputs[0], ramp.inputs['Fac'])
+    tip = N.new('ShaderNodeMix'); tip.data_type = 'RGBA'; L.new(sp.outputs[1], tip.inputs['Factor']); L.new(ramp.outputs['Color'], tip.inputs['A']); tip.inputs['B'].default_value = hexc('#c0a870')
+    dk = N.new('ShaderNodeMix'); dk.data_type = 'RGBA'; dk.blend_type = 'MULTIPLY'; L.new(sp.outputs[1], dk.inputs['Factor']); dk.inputs['Factor'].default_value = 1.0
+    root = N.new('ShaderNodeMapRange'); L.new(sp.outputs[1], root.inputs['Value']); root.inputs['To Min'].default_value = .35; root.inputs['From Max'].default_value = .35
+    L.new(tip.outputs['Result'], dk.inputs['A']); cmb = N.new('ShaderNodeCombineColor'); L.new(root.outputs[0], cmb.inputs[0]); L.new(root.outputs[0], cmb.inputs[1]); L.new(root.outputs[0], cmb.inputs[2]); L.new(cmb.outputs[0], dk.inputs['B'])
+    L.new(dk.outputs['Result'], b.inputs['Base Color']); b.inputs['Roughness'].default_value = .6
+    b.inputs['Transmission Weight'].default_value = .0; b.inputs['Subsurface Weight'].default_value = .25; b.inputs['Subsurface Radius'].default_value = (.3, .4, .1); b.inputs['Subsurface Scale'].default_value = .01
+    _M['tuft'] = m; return m
 
 
 def bush_proto():

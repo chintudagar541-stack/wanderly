@@ -46,6 +46,7 @@ jobs:
         if: always()
         run: |
           mkdir -p previews/west logs/west
+          cp out/*.json previews/west/ 2>/dev/null || true
           [ -f out/${{ matrix.t.id }}.png ] && ffmpeg -loglevel error -y -i out/${{ matrix.t.id }}.png -q:v 2 previews/west/${{ matrix.t.id }}.jpg || true
           tail -c 30000 out/log.txt > logs/west/${{ matrix.t.id }}.log 2>/dev/null || true
           git config user.name "github-actions"; git config user.email "github-actions@users.noreply.github.com"
