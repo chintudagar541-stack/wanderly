@@ -1,6 +1,7 @@
-00:00.917  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.589  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -11,12 +12,11 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
@@ -115,14 +115,14 @@
 [lib] model dead_tree_trunk_02 4
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
-10:17:31 | INFO: Data are loaded, start creating Blender stuff
-10:17:31 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
-10:17:31 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
-10:17:31 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
-10:17:31 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
-10:17:31 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
-10:17:31 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
-10:17:33 | INFO: glTF import finished in 1.76s
+11:05:27 | INFO: Data are loaded, start creating Blender stuff
+11:05:27 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
+11:05:27 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
+11:05:27 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
+11:05:27 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
+11:05:27 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
+11:05:27 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
+11:05:28 | INFO: glTF import finished in 1.37s
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -135,13 +135,13 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-RSS built 1874 MB
-RSS extras 1874 MB
+RSS built 1784 MB
+RSS extras 1784 MB
 CLEARCAM draw 0
-RSS lod 2133 MB
-RSS posed 2135 MB
-RSS depsgraph 2135 MB
-OBJECTS 10318 MESHES 9835 IMAGES 189 217 Mpx
-05:39.657  render           | Saved: '/home/runner/work/wanderly/wanderly/out/draw_0.png'
-RSS rendered 7071 MB
+RSS lod 2041 MB
+RSS posed 2045 MB
+RSS depsgraph 2045 MB
+OBJECTS 10331 MESHES 9863 IMAGES 189 217 Mpx
+03:55.131  render           | Saved: '/home/runner/work/wanderly/wanderly/out/draw_0.png'
+RSS rendered 6880 MB
 RENDERED draw 1.5
