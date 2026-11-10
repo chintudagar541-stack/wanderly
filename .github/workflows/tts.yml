@@ -6,6 +6,8 @@ on:
     branches: [claude/perfect-alibi]
     paths: ['audio/voices/voices.json', 'scripts/tts.py']
   workflow_dispatch:
+    inputs:
+      lines: { description: 'lines.json to voice (empty = audition all candidates)', required: false, default: '' }
 permissions:
   contents: write
 jobs:
@@ -25,20 +27,30 @@ jobs:
           python -m pip install -q torch --index-url https://download.pytorch.org/whl/cpu
           python -m pip install -q "kokoro>=0.9" soundfile piper-tts "misaki[en]"
           python -c "import kokoro, piper; print('kokoro + piper installed')"
+      - name: voice lines
+        if: inputs.lines != ''
+        run: |
+          python scripts/tts.py lines "${{ inputs.lines }}"
+          OUTS=$(python -c "import json,sys; print(' '.join(l['out'] for l in json.load(open('${{ inputs.lines }}'))))")
+          for f in $OUTS; do ffmpeg -loglevel error -y -i "$f" -codec:a libmp3lame -b:a 160k "${f%.wav}.mp3"; done
+          git config user.name "github-actions"; git config user.email "github-actions@users.noreply.github.com"
+          for f in $OUTS; do git add "$f" "${f%.wav}.mp3"; done
+          git commit -qm "voiceover ${{ inputs.lines }} [skip ci]" && for i in $(seq 1 10); do git pull --rebase --autostash -q && git push -q && break; sleep 5; done
       - name: audition voices
+        if: inputs.lines == ''
         run: python scripts/tts.py audition || echo "some voices failed (see report)"
       - name: mp3 previews
-        if: always()
+        if: always() && inputs.lines == ''
         run: |
           cd audio/voices/samples 2>/dev/null || exit 0
           ls *.wav >/dev/null 2>&1 || exit 0
           for f in *.wav; do ffmpeg -loglevel error -y -i "$f" -codec:a libmp3lame -b:a 96k "${f%.wav}.mp3"; done
           rm -f *.wav; ls -la
       - uses: actions/upload-artifact@v4
-        if: always()
+        if: always() && inputs.lines == ''
         with: { name: voice-samples, path: audio/voices/samples }
       - name: commit previews
-        if: always()
+        if: always() && inputs.lines == ''
         run: |
           git config user.name "github-actions"; git config user.email "github-actions@users.noreply.github.com"
           git add audio/voices/samples audio/voices/tts_report.txt 2>/dev/null; git commit -qm "voice auditions [skip ci]" || exit 0

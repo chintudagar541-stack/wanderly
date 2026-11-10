@@ -38,10 +38,23 @@ def piper(voice, text, out, speed=1.0):
     if r.returncode != 0: raise RuntimeError(r.stderr.decode()[-800:])
 
 
-def say(spec, text, out, speed=1.0):
+def say(spec, text, out, speed=1.0, gap=None):
     eng, voice = spec.split(':', 1)
     os.makedirs(os.path.dirname(out) or '.', exist_ok=True)
-    (kokoro if eng == 'kokoro' else piper)(voice, text, out, speed)
+    paras = [p.strip() for p in text.split('\n\n') if p.strip()]
+    if gap is None or len(paras) < 2:
+        (kokoro if eng == 'kokoro' else piper)(voice, text, out, speed)
+    else:
+        # one paragraph at a time with a real pause between them (better timing for the edit)
+        import numpy as np, soundfile as sf
+        parts, sr = [], None
+        for i, p in enumerate(paras):
+            tmp = out + f'.part{i}.wav'
+            (kokoro if eng == 'kokoro' else piper)(voice, p, tmp, speed)
+            a, sr = sf.read(tmp); os.remove(tmp)
+            if a.ndim > 1: a = a.mean(axis=1)
+            parts += [a, np.zeros(int(sr * (gap * 1.6 if len(p.split()) <= 3 else gap)))]
+        sf.write(out, np.concatenate(parts[:-1]), sr, subtype='PCM_16')
     with wave.open(out) as w: return w.getnframes() / w.getframerate()
 
 
@@ -57,8 +70,8 @@ def main():
                 except Exception as e: report.append(f'FAIL {who:15s} {spec:32s} {str(e)[:200]}'); print(report[-1], flush=True)
     else:
         for L in json.load(open(sys.argv[2])):
-            c = CFG['characters'][L['who']]
-            d = say(L.get('voice', c['pick']), L['text'], os.path.join(ROOT, L['out']), L.get('speed', c.get('speed', 1.0)))
+            c = CFG['characters'].get(L['who'], {})
+            d = say(L.get('voice') or c['pick'], L['text'], os.path.join(ROOT, L['out']), L.get('speed', c.get('speed', 1.0)), L.get('gap'))
             print(f'{L["out"]}  {d:.2f}s', flush=True)
     open(os.path.join(ROOT, 'audio/voices/tts_report.txt'), 'w').write('\n'.join(report) + '\n')
     if any(r.startswith('FAIL') for r in report): sys.exit(1)
