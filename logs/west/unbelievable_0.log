@@ -1,7 +1,6 @@
-00:00.803  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.606  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -15,6 +14,7 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -117,11 +117,11 @@
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
 [lib] hdri sun 143 elev 12.0 -> az 300
-RSS built 1871 MB
-RSS lod 1916 MB
-RSS posed 1985 MB
-RSS depsgraph 1985 MB
-OBJECTS 9447 MESHES 9078 IMAGES 187 216 Mpx
-05:14.985  render           | Saved: '/home/runner/work/wanderly/wanderly/out/unbelievable_0.png'
-RSS rendered 6865 MB
+RSS built 1843 MB
+RSS lod 1967 MB
+RSS posed 1969 MB
+RSS depsgraph 1969 MB
+OBJECTS 9356 MESHES 8987 IMAGES 187 216 Mpx
+05:51.206  render           | Saved: '/home/runner/work/wanderly/wanderly/out/unbelievable_0.png'
+RSS rendered 6916 MB
 RENDERED unbelievable 1.5
