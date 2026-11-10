@@ -746,9 +746,9 @@ def rss(tag):
     import resource; print('RSS', tag, resource.getrusage(resource.RUSAGE_SELF).ru_maxrss // 1024, 'MB', flush=True)
 
 
-def main():
+def main(shots=None):
     a = sys.argv[sys.argv.index('--') + 1:]; mode, sid = a[0], a[1]
-    sh = Shot(sid); SHOTS[sid](sh); rss('built'); sh.populate(); rss('extras'); sh.clear_camera(); sh.lod(); rss('lod')
+    sh = Shot(sid); (shots or SHOTS)[sid](sh); rss('built'); sh.populate(); rss('extras'); sh.clear_camera(); sh.lod(); rss('lod')
     if sh.key is None and sh.cam is not None:            # soft camera-side fill for faces in the shade of porches
         sh.at(sh.dur / 2); r = sh.cam[1](sh.dur / 2)
         if (Vector(r[1]) - Vector(r[0])).length < 10: sh.keylight(10.0 if getattr(sh, 'mood', 'day') != 'night' else 6.0)

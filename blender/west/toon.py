@@ -68,7 +68,7 @@ class Toon(H.Human):
         if p.get('bun'):
             b = sphere(cid + '_bun', 1.0, (0, hy * .82, cz + hz * .38), solid(p.get('haircol', '#2a1a10'), .8), seg=24, rings=14, scale=(hx * .42, hy * .36, hz * .36))
             smooth(b); self._on(b, self.head)
-        if o.get('hat') in ('cowboy', 'bowler', 'straw', 'slouch'): self._hat(o['hat'], o.get('hatcol', '#6a4a30'))
+        if o.get('hat') in ('cowboy', 'bowler', 'straw', 'slouch', 'tophat'): self._hat(o['hat'], o.get('hatcol', '#6a4a30'))
         if o.get('hat') == 'bonnet': self._bonnet(o.get('hatcol', '#e8e0d0'))
         if p.get('stache'): self._stache(p.get('beardcol', '#2a1a10'))
         if o.get('neckerchief'): self._kerchief(o['neckerchief'])
@@ -132,6 +132,17 @@ class Toon(H.Human):
                 if r > .5: v.co.z += (r - .5) ** 2 * abs(v.co.x) * .32 - (r - .5) ** 2 * max(0.0, -v.co.y) * .1
             bd = torus(self.cid + '_hband', 1.0, .016, (0, 0, top + .035), band, seg=40, mseg=8); bd.scale = (hx * .735, hy * .835, 1)
             parts = [cr, br, bd]
+        elif kind == 'tophat':
+            cr = cyl(self.cid + '_crown', 1.0, 1.0, (0, 0, top + hz * .62), m, seg=40)
+            for v in cr.data.vertices:
+                if v.co.z > 0: v.co.x *= 1.06; v.co.y *= 1.06
+            cr.scale = (hx * .7, hy * .78, hz * 1.25)
+            br = cyl(self.cid + '_brim', 1.0, .02, (0, 0, top + .01), m, seg=48); br.scale = (hx * 1.28, hy * 1.34, 1)
+            for v in br.data.vertices:
+                if abs(v.co.x) > .6: v.co.z += (abs(v.co.x) - .6) * .25
+            bd = torus(self.cid + '_hband', 1.0, .02, (0, 0, top + .05), solid('#3a3a42', .5), seg=40, mseg=8); bd.scale = (hx * .72, hy * .8, 1)
+            for o_ in (cr, br, bd): smooth(o_); self._on(o_, self.head)
+            return
         elif kind in ('straw', 'slouch'):
             straw = kind == 'straw'
             if straw: m = straw_mat(col)
