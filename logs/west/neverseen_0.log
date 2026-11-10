@@ -1,6 +1,8 @@
-00:00.588  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.523  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -14,14 +16,12 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -117,11 +117,11 @@
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
 [lib] hdri sun 143 elev 3.5 -> az 250
-RSS built 1958 MB
-RSS lod 2273 MB
-RSS posed 2273 MB
-RSS depsgraph 2273 MB
-OBJECTS 9598 MESHES 9217 IMAGES 187 216 Mpx
-05:00.606  render           | Saved: '/home/runner/work/wanderly/wanderly/out/neverseen_0.png'
-RSS rendered 7349 MB
+RSS built 1930 MB
+RSS lod 2280 MB
+RSS posed 2280 MB
+RSS depsgraph 2280 MB
+OBJECTS 9551 MESHES 9170 IMAGES 187 216 Mpx
+03:25.746  render           | Saved: '/home/runner/work/wanderly/wanderly/out/neverseen_0.png'
+RSS rendered 7519 MB
 RENDERED neverseen 2.46
