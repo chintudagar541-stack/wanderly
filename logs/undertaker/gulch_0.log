@@ -1,4 +1,4 @@
-00:00.688  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:01.187  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -115,14 +115,14 @@
 [lib] model dead_tree_trunk_02 4
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
-19:47:26 | INFO: Data are loaded, start creating Blender stuff
-19:47:26 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
-19:47:27 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
-19:47:27 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
-19:47:27 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
-19:47:27 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
-19:47:27 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
-19:47:28 | INFO: glTF import finished in 1.61s
+20:06:06 | INFO: Data are loaded, start creating Blender stuff
+20:06:06 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
+20:06:06 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
+20:06:06 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
+20:06:06 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
+20:06:07 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
+20:06:07 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
+20:06:08 | INFO: glTF import finished in 1.73s
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -131,15 +131,15 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] hdri sun 146 elev 48.5 -> az 120
-RSS built 1908 MB
+RSS built 1841 MB
 EXTRAS gulch 9
-RSS extras 1908 MB
+RSS extras 1841 MB
 CLEARCAM gulch 0
-RSS lod 1908 MB
-RSS posed 1908 MB
-RSS depsgraph 1908 MB
+RSS lod 1841 MB
+RSS posed 1841 MB
+RSS depsgraph 1841 MB
 OBJECTS 11053 MESHES 10256 IMAGES 189 217 Mpx
-03:39.067  render           | Saved: '/home/runner/work/wanderly/wanderly/out/gulch_0.png'
-RTIME 47.3
-RSS rendered 6532 MB
+03:26.388  render           | Saved: '/home/runner/work/wanderly/wanderly/out/gulch_0.png'
+RTIME 48.6
+RSS rendered 6193 MB
 RENDERED gulch 1.26
