@@ -62,7 +62,7 @@ class Toon(H.Human):
             import bmesh as _bm
             hb = sphere(cid + '_bhair', 1.0, (0, .006, cz), solid(p.get('haircol', '#2a1a10'), .85), seg=40, rings=20)
             bm_ = _bm.new(); bm_.from_mesh(hb.data)
-            _bm.ops.delete(bm_, geom=[f for f in bm_.faces if not (f.calc_center_median().z > -.3 and f.calc_center_median().z < .62 and f.calc_center_median().y > -.25 + .45 * max(0.0, .1 - f.calc_center_median().z))], context='FACES')
+            _bm.ops.delete(bm_, geom=[f for f in bm_.faces if not (-.42 < f.calc_center_median().z < .5 and f.calc_center_median().y > .12 + .35 * max(0.0, f.calc_center_median().z - .1) + .25 * max(0.0, -.15 - f.calc_center_median().z))], context='FACES')
             for v in bm_.verts: v.co.x *= hx * 1.035; v.co.y *= hy * 1.035; v.co.z *= hz * 1.035
             bm_.to_mesh(hb.data); bm_.free(); smooth(hb); self._on(hb, self.head)
         if p.get('bun'):

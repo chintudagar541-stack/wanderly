@@ -101,6 +101,27 @@ class Shot:
         print('EXTRAS', self.sid, len(people), flush=True)
         return people
 
+    def clear_camera(self, rad=1.7):
+        """hide extras that would sit right in front of the lens (toon heads are big: one near the camera fills the frame)"""
+        if self.cam is None: return
+        cps = []
+        for t in (0, self.dur * .25, self.dur * .5, self.dur * .75, self.dur):
+            r_ = self.cam[1](t); cps.append((Vector(r_[0]), Vector(r_[1])))
+        hidden = 0
+        for a in self.actors:
+            ch = a.ch
+            if ch.cid in ('JACK', 'SHER'): continue
+            for t in (0, self.dur * .5, self.dur):
+                a.apply(t); p = ch.root.matrix_world.translation.copy() + Vector((0, 0, 1.2))
+                bad = False
+                for c, tg in cps:
+                    d = p - c; dist = d.length; fw = (tg - c).normalized()
+                    if dist < rad or (dist < 3.2 and d.normalized().dot(fw) > .8 and dist < (tg - c).length - .6): bad = True
+                if bad:
+                    for o in [ch.root] + list(ch.root.children_recursive): o.hide_render = True; o.hide_viewport = True
+                    hidden += 1; break
+        print('CLEARCAM', self.sid, hidden, flush=True)
+
     def keylight(self, energy=25.0, col=(1, .9, .8), size=1.2):
         l = bpy.data.lights.new('key', 'AREA'); l.size = size; l.color = col; l.use_shadow = True
         self.key = bpy.data.objects.new('key', l); bpy.context.scene.collection.objects.link(self.key); self.key_e = energy
@@ -153,12 +174,15 @@ class Shot:
             self.key.data.energy = self.key_e * max(.6, dist) ** 2
 
 
+CU_K = 2.3          # toon heads are ~2.3x a real head: close-up sizes were tuned for real proportions
+
+
 def cu(sh, ch, angle=15, elev=4, size=(.75, .45), lens=50, up=.0, shake=.006, fstop=2.0, target='Head', key=18.0):
     """close-up camera on a character: push-in from size[0] to size[1] metres of frame height"""
     def fn(t):
         p = head_of(ch, -.02 + up) if target == 'Head' else bone_pos(ch, target) + Vector((0, 0, up))
-        s = K([(0, size[0]), (sh.dur, size[1])], t)
-        return (framed(p, facing(ch), angle, elev, s, lens), p, lens, 0, p, shake)
+        s = K([(0, size[0]), (sh.dur, size[1])], t) * CU_K
+        return (framed(p, facing(ch), angle, elev, s, lens, ch=ch), p, lens, 0, p, shake)
     sh.camera(fn, lens=lens, fstop=fstop)
     if sh.key is None: sh.keylight(key)
 
@@ -193,19 +217,25 @@ def facing(ch):
     return f.normalized() if f.length > 1e-4 else Vector((0, -1, 0))
 
 
-def _clear(subj, d, dist):
-    """free distance from subj along d (character geometry ignored)"""
+def _owner(ob):
+    while ob is not None and ob.parent is not None: ob = ob.parent
+    return ob
+
+
+def _clear(subj, d, dist, ch=None):
+    """free distance from subj along d (the subject's own geometry ignored; other characters block when ch is given)"""
     sc = bpy.context.scene; dg = bpy.context.evaluated_depsgraph_get(); o = Vector(subj); tr = 0.0
     for _ in range(8):
         hit, loc, nor, idx, ob, mat = sc.ray_cast(dg, o + d * .02, d, distance=max(.01, dist - tr))
         if not hit: return dist
         if ob is not None and any(c.name in ('Characters', 'Face', 'Props') or c.name.startswith('C_') for c in ob.users_collection) and not ob.name.startswith(('vault', 'b_', 's_')):
-            tr += (loc - o).length + .02; o = loc + d * .02; continue
+            if ch is None or _owner(ob) is ch.root or ob.name.endswith('_ink'):
+                tr += (loc - o).length + .02; o = loc + d * .02; continue
         return (loc - Vector(subj)).length - .15
     return dist
 
 
-def framed(subj, face_dir, angle, elev, size, lens, ignore=()):
+def framed(subj, face_dir, angle, elev, size, lens, ignore=(), ch=None):
     """camera position framing `subj` at `size` metres of frame height, from `angle` degrees around the subject's facing
     (0 = straight on the face) and `elev` degrees up. If a wall/prop blocks that view, nearby angles are tried first,
     then the camera is pulled in front of the obstacle."""
@@ -213,7 +243,7 @@ def framed(subj, face_dir, angle, elev, size, lens, ignore=()):
     for da in (0, 12, -12, 25, -25, 40, -40, 60, -60):
         d = Matrix.Rotation(math.radians(angle + da), 3, 'Z') @ Vector(face_dir); d.z = 0; d.normalize()
         d = (d * math.cos(math.radians(elev)) + Vector((0, 0, math.sin(math.radians(elev))))).normalized()
-        free = _clear(subj, d, dist)
+        free = _clear(subj, d, dist, ch)
         if free >= dist * .9: return Vector(subj) + d * dist
         if best is None or free > best[0]: best = (free, d)
     return Vector(subj) + best[1] * max(.35, best[0])
@@ -402,7 +432,7 @@ def s_knew(sh):
     def cam(t):
         w = bone_pos(sher, 'RightHand'); h = head_of(sher)
         tgt = h.lerp(w, ease((t - 1.6) / 1.8)); s = K([(0, 1.4), (sh.dur, .5)], t)
-        return (framed(tgt, facing(sher), 25, 10, s, 40), tgt, 40, 0, tgt, .008)
+        return (framed(tgt, facing(sher), 25, 10, s * 1.8, 40, ch=sher), tgt, 40, 0, tgt, .008)
     sh.camera(cam, fstop=2.0)
 
 
@@ -507,7 +537,7 @@ def s_draw(sh):
     def cam(t):
         hip = bone_pos(jack, 'RightHand'); h = head_of(jack)
         tgt = hip.lerp(h, ease((t - .8) / .7)); s = K([(0, .7), (.8, .7), (1.5, 1.1), (sh.dur, 1.0)], t)
-        return (framed(tgt, facing(jack), 35, K([(0, -10), (1.5, 0)], t), s, 35), tgt, 35, 0, tgt, .01)
+        return (framed(tgt, facing(jack), 35, K([(0, -10), (1.5, 0)], t), s * 1.6, 35, ch=jack), tgt, 35, 0, tgt, .01)
     sh.camera(cam, fstop=2.2); sh.keylight(22.0, (1, .85, .65))
 
 
@@ -525,7 +555,7 @@ def _bank_pair(sh, jack_face, sher_face, sher_turn=None, jack_talk=None, sher_ta
     """Jack in the bank doorway side (+X) aiming at the sheriff, who works at the vault (-X)."""
     o = setup(sh, 'night', 20, 300, town=False, interior='bank', haze=False)
     c = o['vault_center']; open_vault(o); jack, sher = sh.cast('JACK', 'SHER')
-    sh.keylight(20.0, (1, .85, .65))
+    sh.keylight(30.0, (1, .85, .65))
     jp = Vector((c.x + 3.7, c.y - .4, .2)); spos = Vector((c.x + 1.6, c.y - .1, .2))
     sh.actor(jack, [CA.Act(0, '79_96', 2.4, 6, loc=jp, yaw=-90, lock_root=True, speed=.3)], face=jack_face, talk=jack_talk, look=lambda t: head_of(sher))
     if facing: acts = [CA.Act(0, '77_02', 2.0, 6, loc=spos, yaw=90, lock_root=True)]
@@ -545,8 +575,8 @@ def s_handsup(sh):
     c, jack, sher = _bank_pair(sh, [(0, 'shout')], [(0, 'grin')], jack_talk=[(0.05, 1.1, 1.0)])
     def cam(t):
         s_ = head_of(sher); j = bone_pos(jack, 'RightHand'); d = (j - s_); d.z = 0; d.normalize()
-        p = j + d * .95 + Vector((0, 0, .28)) + Vector((-d.y, d.x, 0)) * .38
-        return (p, s_ + Vector((0, 0, -.25)), K([(0, 28), (sh.dur, 34)], t), -3, s_, .012)
+        p = j + d * 1.75 + Vector((0, 0, .5)) + Vector((-d.y, d.x, 0)) * .8
+        return (p, s_ + Vector((0, 0, -.35)), K([(0, 26), (sh.dur, 32)], t), -3, s_, .012)
     sh.camera(cam, fstop=2.2)
 
 
@@ -562,8 +592,8 @@ def s_turn(sh):
     def cam(t):
         h = head_of(sher); j = head_of(jack); d = j - h; d.z = 0; d.normalize()
         side = Vector((-d.y, d.x, 0))
-        p = h + d * 1.7 + side * 1.0 + Vector((0, 0, .05))
-        return (p, h.lerp(j, .15), 32, 0, h, .006)
+        p = h + d * .9 + side * 1.9 + Vector((0, 0, .1))
+        return (p, h.lerp(j, .3), 28, 0, h, .006)
     sh.camera(cam, fstop=2.4)
 
 
@@ -709,7 +739,10 @@ def rss(tag):
 
 def main():
     a = sys.argv[sys.argv.index('--') + 1:]; mode, sid = a[0], a[1]
-    sh = Shot(sid); SHOTS[sid](sh); rss('built'); sh.populate(); rss('extras'); sh.lod(); rss('lod')
+    sh = Shot(sid); SHOTS[sid](sh); rss('built'); sh.populate(); rss('extras'); sh.clear_camera(); sh.lod(); rss('lod')
+    if sh.key is None and sh.cam is not None:            # soft camera-side fill for faces in the shade of porches
+        sh.at(sh.dur / 2); r = sh.cam[1](sh.dur / 2)
+        if (Vector(r[1]) - Vector(r[0])).length < 10: sh.keylight(10.0 if getattr(sh, 'mood', 'day') != 'night' else 6.0)
     if os.environ.get('NOCHARHAIR'):
         for o in bpy.data.objects:
             for md in o.modifiers:

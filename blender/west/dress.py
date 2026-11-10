@@ -264,7 +264,7 @@ def buckboard(loc, rot=0.0, load='barrels'):
 
 
 def well(loc):
-    st = T.ph_or('wellstone', ('@stone',), lambda: plain('wellstone_p', '#8a8070', .9), scale=.5) if hasattr(T, 'ph_or') else plain('wellstone_p', '#8a8070', .9)
+    st = plain('wellstone_p', '#8a8070', .9)
     bpy.ops.mesh.primitive_cylinder_add(vertices=24, radius=.85, depth=.8, location=(loc[0], loc[1], .4)); w = bpy.context.active_object; w.name = 'well'
     w.data.materials.append(st); s = w.modifiers.new('th', 'SOLIDIFY'); s.thickness = .18; put(w)
     bm = bmesh.new(); bm.from_mesh(w.data); bmesh.ops.delete(bm, geom=[f for f in bm.faces if f.normal.z > .9], context='FACES'); bm.to_mesh(w.data); bm.free()

@@ -73,7 +73,7 @@ jobs:
           tail -c 30000 out/log.txt > logs/west/${{ matrix.t.id }}.log 2>/dev/null || true
           git config user.name "github-actions"; git config user.email "github-actions@users.noreply.github.com"
           git add previews/west logs/west; git commit -qm "west ${{ matrix.t.id }} [skip ci]" || exit 0
-          for i in 1 2 3 4 5 6 7 8 9 10; do git pull --rebase --autostash -q && git push -q && break; sleep $((RANDOM % 9 + 3)); done
+          for i in $(seq 1 30); do git pull --rebase --autostash -q && git push -q && break; sleep $((RANDOM % 15 + 3)); done
       - uses: actions/upload-artifact@v4
         if: needs.plan.outputs.mode == 'video'
         with: { name: 'chunk-${{ matrix.t.id }}', path: 'out/chunk_*.mp4', retention-days: 5 }
