@@ -1,1 +1,1 @@
-{"rev": 17, "mode": "video", "w": 1080, "h": 1920, "samples": 12, "veg": 0.7, "chunk": 10, "handle": 0.25, "only": "", "cast": true, "env": {"FAST": "1", "ADAPT": ".04"}}
+{"rev": 18, "mode": "video", "w": 1080, "h": 1920, "samples": 12, "veg": 0.7, "chunk": 10, "handle": 0.25, "only": "", "cast": true, "env": {"FAST": "1", "ADAPT": ".04", "NOSUBS": "1", "NOLOGO": "1"}, "skip_file": "done_run1.json", "also_runs": [42807563924]}
