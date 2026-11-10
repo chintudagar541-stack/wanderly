@@ -1,4 +1,4 @@
-00:00.802  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.765  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -115,14 +115,14 @@
 [lib] model dead_tree_trunk_02 4
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
-19:46:57 | INFO: Data are loaded, start creating Blender stuff
-19:46:57 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
-19:46:57 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
-19:46:57 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
-19:46:57 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
-19:46:58 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
-19:46:58 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
-19:46:59 | INFO: glTF import finished in 1.70s
+20:05:43 | INFO: Data are loaded, start creating Blender stuff
+20:05:43 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
+20:05:43 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
+20:05:44 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
+20:05:44 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
+20:05:44 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
+20:05:44 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
+20:05:45 | INFO: glTF import finished in 1.74s
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -131,15 +131,15 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] hdri sun 146 elev 48.5 -> az 120
-RSS built 1869 MB
+RSS built 1843 MB
 EXTRAS cough 9
-RSS extras 1869 MB
+RSS extras 1843 MB
 CLEARCAM cough 0
-RSS lod 1877 MB
-RSS posed 1881 MB
-RSS depsgraph 1881 MB
+RSS lod 1881 MB
+RSS posed 1887 MB
+RSS depsgraph 1887 MB
 OBJECTS 11097 MESHES 10286 IMAGES 189 217 Mpx
-03:45.181  render           | Saved: '/home/runner/work/wanderly/wanderly/out/cough_0.png'
-RTIME 90.0
-RSS rendered 6582 MB
+04:09.004  render           | Saved: '/home/runner/work/wanderly/wanderly/out/cough_0.png'
+RTIME 90.9
+RSS rendered 6566 MB
 RENDERED cough 0.41
