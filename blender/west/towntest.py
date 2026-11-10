@@ -8,6 +8,6 @@ sc = bpy.context.scene; sc.render.engine = 'CYCLES'; sc.cycles.samples = int(os.
 sc.render.resolution_x, sc.render.resolution_y = int(os.environ.get('RW', 360)), int(os.environ.get('RH', 640))
 T.build_town(); T.sky(os.environ.get('MOOD', 'sunset'), sun_elev=float(os.environ.get('ELEV', 12)), sun_az=float(os.environ.get('AZ', 200))); T.haze()
 cam = bpy.data.cameras.new('c'); co = bpy.data.objects.new('c', cam); sc.collection.objects.link(co); sc.camera = co; cam.clip_end = 5000
-V = {'street': ((1.5, -22, 1.7), (0, 15, 2.5), 24), 'edge': ((14, -8, 1.3), (5, 8, 2.6), 22), 'field': ((-30, -40, 1.6), (-8, 5, 3.0), 26), 'bank': ((3.5, 4, 1.6), (-7, 13, 2.8), 22), 'aerial': ((25, -45, 30), (0, 10, 0), 22)}[view]
+V = {'street': ((1.5, -22, 1.7), (0, 15, 2.5), 24), 'edge': ((26, -34, 1.6), (6, 2, 3.0), 26), 'field': ((-30, -40, 1.6), (-8, 5, 3.0), 26), 'bank': ((3.5, 4, 1.6), (-7, 13, 2.8), 22), 'aerial': ((25, -45, 30), (0, 10, 0), 22)}[view]
 co.location = V[0]; co.rotation_euler = (Vector(V[1]) - Vector(V[0])).to_track_quat('-Z', 'Y').to_euler(); cam.lens = V[2]
 sc.render.filepath = os.path.abspath(out); bpy.ops.render.render(write_still=True); print('RENDERED')

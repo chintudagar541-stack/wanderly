@@ -49,5 +49,8 @@ jobs:
           [ -f out/${{ matrix.t.id }}.png ] && ffmpeg -loglevel error -y -i out/${{ matrix.t.id }}.png -q:v 2 previews/west/${{ matrix.t.id }}.jpg || true
           tail -c 30000 out/log.txt > logs/west/${{ matrix.t.id }}.log 2>/dev/null || true
           git config user.name "github-actions"; git config user.email "github-actions@users.noreply.github.com"
-          git add previews/west logs/west; git commit -qm "west ${{ matrix.t.id }} [skip ci]" || exit 0
-          for i in 1 2 3 4 5 6 7 8; do git pull --rebase -q && git push -q && break; sleep $((RANDOM % 9 + 3)); done
+          git add previews/west logs/west; git stash -u -q -- blender || true; git commit -qm "west ${{ matrix.t.id }} [skip ci]" || exit 0
+          for i in 1 2 3 4 5 6 7 8; do git pull --rebase --autostash -q && git push -q && break; sleep $((RANDOM % 9 + 3)); done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: 'out-${{ matrix.t.id }}', path: 'out/*.png', retention-days: 5 }

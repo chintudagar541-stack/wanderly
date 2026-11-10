@@ -102,7 +102,7 @@ def dirt(name='dirt'):
     n1 = N.new('ShaderNodeTexNoise'); n1.inputs['Scale'].default_value = .35; n1.inputs['Detail'].default_value = 8; L.new(tc.outputs['Object'], n1.inputs['Vector'])
     n2 = N.new('ShaderNodeTexNoise'); n2.inputs['Scale'].default_value = 9; n2.inputs['Detail'].default_value = 12; L.new(tc.outputs['Object'], n2.inputs['Vector'])
     v = N.new('ShaderNodeTexVoronoi'); v.inputs['Scale'].default_value = 45; L.new(tc.outputs['Object'], v.inputs['Vector'])
-    ramp = N.new('ShaderNodeValToRGB'); ramp.color_ramp.elements[0].color = hexc('#8a6a4a'); ramp.color_ramp.elements[1].color = hexc('#c8a47a'); L.new(n1.outputs['Fac'], ramp.inputs['Fac'])
+    ramp = N.new('ShaderNodeValToRGB'); ramp.color_ramp.elements[0].color = hexc('#6a5038'); ramp.color_ramp.elements[1].color = hexc('#a48460'); L.new(n1.outputs['Fac'], ramp.inputs['Fac'])
     mx = N.new('ShaderNodeMix'); mx.data_type = 'RGBA'; mx.blend_type = 'MULTIPLY'; mx.inputs['Factor'].default_value = .35; L.new(ramp.outputs['Color'], mx.inputs['A']); L.new(n2.outputs['Color'], mx.inputs['B'])
     L.new(mx.outputs['Result'], b.inputs['Base Color']); b.inputs['Roughness'].default_value = .95
     h = N.new('ShaderNodeMath'); h.operation = 'ADD'; L.new(n2.outputs['Fac'], h.inputs[0]); L.new(v.outputs['Distance'], h.inputs[1])
@@ -111,20 +111,36 @@ def dirt(name='dirt'):
 
 
 # ------------------------------------------------------------------ primitives
+_UNIT = {}
+
+
+def _mesh_from(kind, segs=16):
+    """shared unit meshes (cube / cylinder) built without bpy.ops: much faster for thousands of parts"""
+    key = (kind, segs)
+    if key in _UNIT: return _UNIT[key]
+    me = bpy.data.meshes.new(f'unit_{kind}{segs}'); bm = bmesh.new()
+    if kind == 'cube': bmesh.ops.create_cube(bm, size=1)
+    else: bmesh.ops.create_cone(bm, cap_ends=True, segments=segs, radius1=1, radius2=1, depth=1)
+    bm.to_mesh(me); bm.free(); _UNIT[key] = me; return me
+
+
 def box(name, size, loc, m, rot=(0, 0, 0), bevel=.0, c='Town'):
-    bpy.ops.mesh.primitive_cube_add(size=1, location=loc, rotation=rot); o = bpy.context.active_object; o.name = name; o.scale = size
-    bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
-    o.data.materials.append(m)
+    me = _mesh_from('cube').copy(); me.name = name
+    me.transform(Matrix.Diagonal((*size, 1)))
+    me.materials.append(m)
+    o = bpy.data.objects.new(name, me); o.location = loc; o.rotation_euler = rot
     if bevel:
         bv = o.modifiers.new('bev', 'BEVEL'); bv.width = bevel; bv.segments = 2; bv.limit_method = 'ANGLE'
-    return put(o, c)
+    coll(c).objects.link(o); return o
 
 
 def cyl(name, r, h, loc, m, rot=(0, 0, 0), v=16, c='Town'):
-    bpy.ops.mesh.primitive_cylinder_add(vertices=v, radius=r, depth=h, location=loc, rotation=rot); o = bpy.context.active_object; o.name = name
-    o.data.materials.append(m)
-    for p in o.data.polygons: p.use_smooth = True
-    return put(o, c)
+    me = _mesh_from('cyl', v).copy(); me.name = name
+    me.transform(Matrix.Diagonal((r, r, h, 1)))
+    me.materials.append(m)
+    for p in me.polygons: p.use_smooth = True
+    o = bpy.data.objects.new(name, me); o.location = loc; o.rotation_euler = rot
+    coll(c).objects.link(o); return o
 
 
 def text(name, s, loc, size, m, rot=(math.pi / 2, 0, 0), extrude=.02, align='CENTER', c='Town', font='serif'):
@@ -136,88 +152,218 @@ def text(name, s, loc, size, m, rot=(math.pi / 2, 0, 0), extrude=.02, align='CEN
 
 
 # ------------------------------------------------------------------ building
-def building(name, x0, y0, width, depth, height, side, sign, wall_col, trim_col, sign_col='#e8dcc0', floors=2, porch=True, false_front=True, door_open=False):
+def window(name, fx, y, z, w, h, side, tm, lit=False, curtain='#c8b89a'):
+    """recessed sash window: frame, sill, lintel, glazing bars, glass with reflections, curtains + room glow behind"""
+    o = []
+    glass = plain('glass', '#a8b8c0', .02, transmit=.0)
+    gb = glass.node_tree.nodes.get('Principled BSDF')
+    if gb: gb.inputs['Specular IOR Level'].default_value = 1.0; gb.inputs['Base Color'].default_value = (.02, .025, .03, 1)
+    inset = .1
+    o.append(box(name + '_gl', (.01, w, h), (fx + side * inset, y, z), glass))
+    room = plain('room_lit' if lit else 'room', '#3a2a1e', .9, emit='#ffb060' if lit else None, strength=1.5 if lit else 0)
+    o.append(box(name + '_room', (.02, w + .2, h + .2), (fx + side * .28, y, z), room))
+    cm = plain('curtain_' + curtain, curtain, .9)
+    for sy in (-1, 1): o.append(box(name + '_cur', (.02, w * .28, h * .95), (fx + side * (inset + .06), y + sy * w * .36, z), cm))
+    for dz in (-h / 2, h / 2):
+        o.append(box(name + '_hf', (inset + .04, w + .1, .07), (fx + side * inset / 2, y, z + dz), tm))
+    for dy in (-w / 2, w / 2):
+        o.append(box(name + '_vf', (inset + .04, .07, h + .1), (fx + side * inset / 2, y + dy, z), tm))
+    o.append(box(name + '_mull', (.03, .035, h), (fx + side * (inset - .01), y, z), tm))
+    o.append(box(name + '_tr', (.03, w, .035), (fx + side * (inset - .01), y, z + h * .1), tm))
+    o.append(box(name + '_sill', (.16, w + .25, .06), (fx - side * .05, y, z - h / 2 - .05), tm, bevel=.01))
+    o.append(box(name + '_lint', (.1, w + .3, .14), (fx - side * .03, y, z + h / 2 + .1), tm, bevel=.01))
+    return o
+
+
+def gable_roof(name, cx, y0, depth, width, z0, pitch, m, side):
+    """pitched roof running away from the street (ridge along x) with overhang"""
+    rise = width / 2 * math.tan(math.radians(pitch))
+    me = bpy.data.meshes.new(name); bm = bmesh.new()
+    x0, x1 = cx - depth / 2 - .3, cx + depth / 2 + .3; hw = width / 2 + .35
+    vs = [bm.verts.new(p) for p in ((x0, y0 - hw, z0), (x1, y0 - hw, z0), (x1, y0, z0 + rise), (x0, y0, z0 + rise), (x0, y0 + hw, z0), (x1, y0 + hw, z0))]
+    bm.faces.new((vs[0], vs[1], vs[2], vs[3])); bm.faces.new((vs[3], vs[2], vs[5], vs[4]))
+    bm.to_mesh(me); bm.free(); o = bpy.data.objects.new(name, me); me.materials.append(m)
+    s = o.modifiers.new('s', 'SOLIDIFY'); s.thickness = .05
+    put(o)
+    # gable triangles to close the ends
+    wm = plain('gable', '#5a4a3a', .9)
+    for xx in (cx - depth / 2, cx + depth / 2):
+        me2 = bpy.data.meshes.new(name + 'g'); bm = bmesh.new()
+        a_ = bm.verts.new((xx, y0 - width / 2, z0)); b_ = bm.verts.new((xx, y0 + width / 2, z0)); c_ = bm.verts.new((xx, y0, z0 + rise - .05)); bm.faces.new((a_, b_, c_))
+        bm.to_mesh(me2); bm.free(); g = bpy.data.objects.new(name + 'g', me2); me2.materials.append(m if False else wm); put(g)
+    return o, rise
+
+
+def building(name, x0, y0, width, depth, height, side, sign, wall_col, trim_col, sign_col='#e8dcc0', floors=2, porch=True, false_front=True, door_open=False, kind='wood', balcony=None):
     """side=+1: building on +x side facing -x (towards the street); side=-1 faces +x"""
     objs = []
+    rng = random.Random(hash(name) & 0xffff)
     fx = side * STREET                                  # front plane x
     cx = fx + side * depth / 2
-    wm = wood(name + '_w', '#8a6a48', paint=wall_col); tm = wood(name + '_t', '#6a4a30', paint=trim_col, planks=False)
-    dark = plain('glass_dark', '#151a1e', rough=.05, transmit=.0)
-    # body (sides/back are textured boxes; the street front gets real board geometry)
-    side_m = ph_or('wall_' + wall_col, ('weathered', 'planks'), lambda: wm, scale=1.2, tint=wall_col, avoid=('floor', 'parquet', 'tile', 'herringbone', 'brick'))
-    objs.append(box(name + '_body', (depth, width, height), (cx, y0, height / 2), side_m))
-    objs += clapboard(name, fx, y0, width + (.3 if false_front else 0), (height + 1.6) if false_front else height, side, wall_col)
-    # stone foundation
-    objs.append(box(name + '_found', (depth + .1, width + .1, .35), (cx, y0, .12), ph_or('stonefound', ('stone', 'wall', 'rock'), lambda: plain('stone', '#7a7066', .9), scale=.8, avoid=('brick', 'tile', 'moss'))))
-    # false front (taller, thin) with stepped top
-    if false_front:
-        ff_h = height + 1.6
-        objs.append(box(name + '_cap', (.3, width + .5, .18), (fx + side * .09, y0, ff_h + .09), tm, bevel=.02))
-        objs.append(box(name + '_capb', (.26, width * .4, .5), (fx + side * .09, y0, ff_h + .25), wm))
-        objs.append(box(name + '_capb2', (.3, width * .44, .12), (fx + side * .09, y0, ff_h + .55), tm, bevel=.02))
-    # sign board
-    sb_z = height + .55 if false_front else height - .5
-    objs.append(box(name + '_sb', (.06, min(width * .8, 6.0), .9), (fx - side * .03, y0, sb_z), plain('signboard_' + sign_col, sign_col, .9)))
-    objs.append(text(name + '_sign', sign, (fx - side * .08, y0, sb_z), .55 if len(sign) < 9 else .42, plain('signink', '#2a1a10', .7), rot=(math.pi / 2, 0, math.pi / 2 * (-side)), extrude=.008))
-    # windows (2nd floor) and shop windows (1st)
-    for fl in range(floors):
-        z = 1.6 + fl * 3.0 if fl else 1.55
-        n = 2 if fl == 0 else 3
+    wm = wood(name + '_w', '#8a6a48', paint=wall_col); tm = ph_or('trim_' + trim_col, ('painted', 'wood'), lambda: wood(name + '_t', '#6a4a30', paint=trim_col, planks=False), tint=trim_col, scale=.6, avoid=('floor', 'parquet', 'tile'))
+    if balcony is None: balcony = floors > 1 and rng.random() < .6
+    # body: sides/back
+    if kind == 'brick':
+        side_m = ph_or('brick', ('brick', 'wall'), lambda: plain('brickp', '#8a4a32', .9), scale=1.0, avoid=('white', 'painted', 'floor'))
+    elif kind == 'adobe':
+        side_m = ph_or('adobe', ('plaster', 'wall'), lambda: plain('adobep', '#c8a47a', .95), scale=1.0, tint=wall_col, avoid=('brick', 'tile', 'floor'))
+    else:
+        side_m = ph_or('wall_' + wall_col, ('weathered', 'planks'), lambda: wm, scale=1.2, tint=wall_col, avoid=('floor', 'parquet', 'tile', 'herringbone', 'brick'))
+    objs.append(box(name + '_body', (depth - .3, width, height), (cx + side * .15, y0, height / 2), side_m))
+    # roof behind (visible from any angle above eye level)
+    roof_m = ph_or('roofshingle', ('roof', 'shingle'), lambda: plain('shingle', '#4a3a30', .9), scale=.8, avoid=('tile_', 'clay', 'red'))
+    if rng.random() < .4: roof_m = ph_or('corrugated', ('corrugated', 'iron'), lambda: plain('tin', '#7a7470', .5, .7), scale=1.0)
+    gable_roof(name + '_roof', cx + side * .2, y0, depth - .4, width, height, rng.uniform(22, 32), roof_m, side)
+    # chimney / stovepipe
+    if rng.random() < .6:
+        cxx = cx + side * rng.uniform(1, depth / 2 - 1); cyy = y0 + rng.uniform(-width / 3, width / 3)
+        if rng.random() < .5:
+            box(name + '_chim', (.6, .6, 2.6), (cxx, cyy, height + 1.0), ph_or('brick', ('brick', 'wall'), lambda: plain('brickp', '#8a4a32', .9), avoid=('white', 'painted', 'floor')))
+        else:
+            cyl(name + '_pipe', .09, 1.8, (cxx, cyy, height + 1.2), plain('iron', '#2a2826', .5, .8), v=12)
+    # openings (doors/windows) cut through the facade
+    ops_ = [(y0 - .66, y0 + .66, 0, 2.95)]
+    for sy in (-1, 1): ops_.append((y0 + sy * width * .3 - .8, y0 + sy * width * .3 + .8, .55, 2.55))
+    up = []
+    if floors > 1:
+        n = max(2, int(width / 2.6))
         for i in range(n):
-            if fl == 0 and i == n // 2 - 0: continue
-            yy = y0 + (i - (n - 1) / 2) * width / n * (1.6 if fl == 0 else 1.0)
-            if fl == 0: yy = y0 + (-1 if i == 0 else 1) * width * .3
-            ww, wh = (1.5, 1.8) if fl == 0 else (.9, 1.4)
-            objs.append(box(f'{name}_win{fl}{i}', (.06, ww, wh), (fx - side * .02, yy, z + (0 if fl == 0 else 3.0 - 1.55)), dark))
-            for dz in (-wh / 2, wh / 2):
-                objs.append(box(f'{name}_wf{fl}{i}{dz}', (.1, ww + .16, .08), (fx - side * .04, yy, z + (0 if fl == 0 else 3.0 - 1.55) + dz), tm))
-            for dy in (-ww / 2, 0, ww / 2):
-                objs.append(box(f'{name}_wv{fl}{i}{dy}', (.1, .06 if dy == 0 else .08, wh), (fx - side * .04, yy + dy, z + (0 if fl == 0 else 3.0 - 1.55)), tm))
-            if fl == 1:   # shutters
-                for sy in (-1, 1):
-                    objs.append(box(f'{name}_sh{i}{sy}', (.05, .45, wh), (fx - side * .05, yy + sy * (ww / 2 + .25), z + 3.0 - 1.55), wood(name + '_shut', '#6a5038', paint=trim_col)))
-    # door
-    dm = wood(name + '_door', '#5a3a22', paint=trim_col)
-    objs.append(box(name + '_door', (.08, 1.3, 2.3), (fx - side * .03, y0, 1.15), dm if not door_open else dark))
-    objs.append(box(name + '_doorf', (.12, 1.5, .12), (fx - side * .05, y0, 2.36), tm))
-    # boardwalk + porch roof on posts
+            yy = y0 + (i - (n - 1) / 2) * width / n
+            if balcony and i == n // 2: ops_.append((yy - .55, yy + .55, 3.2, 5.35)); continue
+            up.append(yy); ops_.append((yy - .47, yy + .47, 3.68, 5.12))
+    ff_h = height + (1.6 if false_front else 0)
+    if kind == 'wood':
+        objs += clapboard(name, fx, y0, width + (.3 if false_front else 0), ff_h, side, wall_col, ops_)
+    else:
+        objs += clapboard(name, fx, y0, width + .2, ff_h, side, wall_col, ops_, style='panel', mat=side_m)
+        for sy in (-1, 1): objs.append(box(name + '_pil', (.18, .4, ff_h), (fx - side * .09, y0 + sy * (width / 2 - .1), ff_h / 2), ph_or('stonetrim', ('stone', 'wall'), lambda: plain('stonet', '#b0a690', .8), scale=.6, avoid=('brick', 'moss'))))
+    # the gap between facade and body (reveals) is closed by thin jamb boxes per opening
+    jm = plain('jamb', '#3a2a1e', .9)
+    for (a_, b_, z0_, z1_) in ops_:
+        for yy in (a_, b_): objs.append(box(name + '_jb', (.3, .03, z1_ - z0_), (fx + side * .15, yy, (z0_ + z1_) / 2), jm))
+        for zz in (z0_, z1_): objs.append(box(name + '_jh', (.3, b_ - a_, .03), (fx + side * .15, (a_ + b_) / 2, zz), jm))
+    if false_front:
+        objs.append(box(name + '_cap', (.4, width + .6, .2), (fx - side * .02, y0, ff_h + .1), tm, bevel=.02))
+        objs.append(box(name + '_cornice', (.25, width + .4, .12), (fx - side * .05, y0, ff_h - .25), tm, bevel=.02))
+        for k in range(int(width / .7)):                      # cornice brackets
+            objs.append(box(name + f'_brk{k}', (.18, .08, .22), (fx - side * .08, y0 - width / 2 + .35 + k * .7, ff_h - .42), tm))
+        objs.append(box(name + '_pedi', (.25, width * .35, .6), (fx + side * .02, y0, ff_h + .45), tm if kind != 'wood' else wm))
+        objs.append(box(name + '_pedic', (.32, width * .4, .1), (fx - side * .02, y0, ff_h + .8), tm, bevel=.02))
+    # sign: framed painted board, letters painted on (no mirroring: text faces the street)
+    if sign:
+        sw = min(width * .82, 1.0 + .42 * len(sign)); sz = height + (.65 if false_front else -.55)
+        board = ph_or('signboard', ('painted', 'wood', 'planks'), lambda: plain('signboard_p', sign_col, .9), tint=sign_col, scale=.5, avoid=('floor', 'parquet', 'tile'))
+        objs.append(box(name + '_sb', (.08, sw, 1.0), (fx - side * .06, y0, sz), board))
+        for dz in (-.5, .5): objs.append(box(name + '_sbf', (.1, sw + .12, .07), (fx - side * .08, y0, sz + dz), tm))
+        for dy in (-sw / 2, sw / 2): objs.append(box(name + '_sbv', (.1, .07, 1.07), (fx - side * .08, y0 + dy, sz), tm))
+        ink = plain('signpaint', '#2a1a10', .6)
+        rotz = -math.pi / 2 if side > 0 else math.pi / 2
+        objs.append(text(name + '_sign', sign, (fx - side * .105, y0, sz - .02), .62 if len(sign) < 9 else .5, ink, rot=(math.pi / 2, 0, rotz), extrude=.004))
+    # windows
+    lit = rng.random() < .5
+    for sy in (-1, 1): objs += window(f'{name}_w0{sy}', fx, y0 + sy * width * .3, 1.55, 1.5, 1.9, side, tm, lit, rng.choice(['#c8b89a', '#8a2a2a', '#5a6a4a']))
+    for i, yy in enumerate(up):
+        objs += window(f'{name}_w1{i}', fx, yy, 4.4, .85, 1.35, side, tm, rng.random() < .4, rng.choice(['#c8b89a', '#e8e0d0', '#8a2a2a']))
+        for sy in (-1, 1): objs.append(box(f'{name}_sh{i}{sy}', (.05, .42, 1.4), (fx - side * .06, yy + sy * .66, 4.4), wood(name + '_shut', '#6a5038', paint=trim_col, planks=True)))
+    # door (recessed, panelled, with transom); open doors show the dark interior
+    dm = ph_or('door_' + trim_col, ('wood', 'door'), lambda: wood(name + '_door', '#5a3a22', paint=trim_col), tint=trim_col, scale=.5, avoid=('floor', 'parquet', 'tile'))
+    if not door_open:
+        objs.append(box(name + '_door', (.06, 1.25, 2.3), (fx + side * .14, y0, 1.33), dm))
+        for dz in (.7, 1.6): objs.append(box(name + '_dpan', (.03, .9, .6), (fx + side * .1, y0, dz + .18), dm, bevel=.01))
+        cyl(name + '_knob', .03, .06, (fx + side * .09, y0 + .45, 1.2), plain('brass', '#b8963a', .3, 1.0), rot=(0, math.pi / 2, 0), v=12)
+    else:
+        objs.append(box(name + '_dark', (.02, 1.4, 2.9), (fx + side * .28, y0, 1.45), plain('interior_dark', '#0a0806', .9)))
+    objs.append(box(name + '_trans', (.02, 1.25, .35), (fx + side * .12, y0, 2.68), plain('glass_dark', '#151a1e', .05)))
+    for dy in (-.68, .68): objs.append(box(name + '_dj', (.18, .12, 2.95), (fx + side * .05, y0 + dy, 1.62), tm))
+    objs.append(box(name + '_dh', (.2, 1.5, .14), (fx + side * .04, y0, 3.12), tm, bevel=.01))
+    # boardwalk (individual planks), steps, porch roof on posts with brackets, hitching rail
     if porch:
-        bw = wood('boardwalk', '#7a5a3a', weather=.7, scale=1.0)
-        objs.append(box(name + '_walk', (WALK, width, .18), (fx - side * WALK / 2, y0, .09), bw))
-        roof_z = 3.0
-        objs.append(corrugated(name + '_proof', (WALK + .3, width + .1), (fx - side * (WALK + .3) / 2, y0, roof_z), side))
-        for py in (y0 - width / 2 + .15, y0 + width / 2 - .15, y0):
-            if py == y0 and width < 7: continue
-            objs.append(box(name + f'_post{py:.1f}', (.14, .14, roof_z), (fx - side * (WALK - .12), py, roof_z / 2), tm))
-        # hitching rail
+        objs += boardwalk(name, fx, y0, width + .02, side)
+        roof_z = 3.05
+        objs.append(corrugated(name + '_proof', (WALK + .35, width + .1), (fx - side * (WALK + .35) / 2, y0, roof_z + .05), side) if rng.random() < .55
+                    else box(name + '_proof', (WALK + .35, width + .1, .08), (fx - side * (WALK + .35) / 2, y0, roof_z + .05), roof_m, rot=(0, side * math.radians(-6), 0)))
+        objs.append(box(name + '_beam', (.14, width + .1, .2), (fx - side * (WALK - .12), y0, roof_z - .1), tm))
+        npost = max(2, int(width / 3.2) + 1)
+        for k in range(npost):
+            py = y0 - width / 2 + .15 + k * (width - .3) / (npost - 1)
+            objs.append(box(name + f'_post{k}', (.15, .15, roof_z), (fx - side * (WALK - .12), py, roof_z / 2 + .1), tm, bevel=.008))
+            for sy in (-1, 1):
+                if (k == 0 and sy < 0) or (k == npost - 1 and sy > 0): continue
+                objs.append(box(name + f'_pb{k}{sy}', (.08, .5, .08), (fx - side * (WALK - .12), py + sy * .2, roof_z - .32), tm, rot=(sy * math.radians(40), 0, 0)))
+        if balcony:
+            objs.append(box(name + '_bdeck', (WALK + .1, width + .1, .1), (fx - side * (WALK + .1) / 2, y0, roof_z + .15), wood('balc', '#7a5a3a', weather=.6)))
+            objs += railing(name + '_brail', fx - side * (WALK - .05), y0, width, roof_z + .2, tm)
+            objs.append(box(name + '_bdoor', (.06, 1.1, 2.15), (fx + side * .12, y0, roof_z + 1.25), dm))
         for k, py in enumerate((y0 - width * .25, y0 + width * .25)):
-            objs.append(box(name + f'_hr{k}', (.08, 2.2, .08), (fx - side * (WALK + .6), py, 1.0), tm))
-            for dy in (-1.0, 1.0): objs.append(box(name + f'_hp{k}{dy}', (.1, .1, 1.05), (fx - side * (WALK + .6), py + dy, .52), tm))
+            if rng.random() < .3: continue
+            objs.append(box(name + f'_hr{k}', (.09, 2.2, .09), (fx - side * (WALK + .65), py, 1.0), tm, bevel=.01))
+            for dy in (-1.0, 1.0): objs.append(box(name + f'_hp{k}{dy}', (.12, .12, 1.05), (fx - side * (WALK + .65), py + dy, .52), tm, bevel=.01))
+        # hanging shingle sign under the porch for some shops
+        if sign and rng.random() < .5:
+            hs = box(name + '_hsign', (.04, .9, .45), (fx - side * (WALK - .3), y0 + width / 2 - .8, roof_z - .7), ph_or('signboard', ('painted', 'wood', 'planks'), lambda: plain('signboard_p', sign_col, .9), tint=sign_col, scale=.5, avoid=('floor',)))
+            objs.append(hs)
     return objs
 
 
-def clapboard(name, fx, y0, width, height, side, col):
+def boardwalk(name, fx, y0, width, side):
+    """individual planks laid across the walk on joists, with a step down to the street"""
+    o = []
+    bw = ph_or('boardwalk', ('wood', 'planks'), lambda: wood('boardwalk', '#7a5a3a', weather=.7, scale=1.0), scale=.8, avoid=('painted', 'parquet', 'tile', 'herringbone'))
+    rng = random.Random(hash(name + 'bw') & 0xffff)
+    me = bpy.data.meshes.new(name + '_planks'); bm = bmesh.new()
+    y = y0 - width / 2; pw = .15
+    while y < y0 + width / 2 - .01:
+        dz = rng.uniform(-.006, .006); tl = rng.gauss(0, .004)
+        mat = Matrix.Translation((fx - side * WALK / 2, y + pw / 2, .3 + dz)) @ Matrix.Rotation(tl, 4, 'Y') @ Matrix.Diagonal((WALK, pw - .012, .035, 1))
+        bmesh.ops.create_cube(bm, size=1, matrix=mat); y += pw
+    bm.to_mesh(me); bm.free(); p = bpy.data.objects.new(name + '_planks', me); me.materials.append(bw); put(p); o.append(p)
+    o.append(box(name + '_joist', (WALK, width, .26), (fx - side * WALK / 2, y0, .14), plain('underwalk', '#2a2018', .95)))
+    o.append(box(name + '_step', (.4, width * .4, .14), (fx - side * (WALK + .2), y0, .07), bw))
+    return o
+
+
+def railing(name, x, y0, width, z, tm):
+    o = [box(name + '_top', (.08, width, .08), (x, y0, z + .95), tm, bevel=.01), box(name + '_bot', (.06, width, .06), (x, y0, z + .1), tm)]
+    n = int(width / .16)
+    me = bpy.data.meshes.new(name + '_bal'); bm = bmesh.new()
+    for k in range(n):
+        bmesh.ops.create_cube(bm, size=1, matrix=Matrix.Translation((x, y0 - width / 2 + .08 + k * width / n, z + .52)) @ Matrix.Diagonal((.035, .035, .82, 1)))
+    bm.to_mesh(me); bm.free(); b = bpy.data.objects.new(name + '_bal', me); me.materials.append(tm); put(b); o.append(b)
+    return o
+
+
+def clapboard(name, fx, y0, width, height, side, col, openings=(), style='boards', mat=None):
     """overlapping horizontal boards with random wear, gaps and the odd tilted/missing board"""
     rng = random.Random(hash(name) & 0xffff); objs = []
-    m = ph_or('board_' + col, ('painted', 'wood', 'planks'), lambda: wood(name + '_cb', '#8a6a48', paint=col, planks=False), scale=1.0, tint=col, avoid=('floor', 'parquet', 'tile', 'herringbone'))
+    m = mat or ph_or('board_' + col, ('painted', 'wood', 'planks'), lambda: wood(name + '_cb', '#8a6a48', paint=col, planks=False), scale=1.0, tint=col, avoid=('floor', 'parquet', 'tile', 'herringbone', 'blue', 'green', 'red', 'yellow'))
     m2 = ph_or('boardraw', ('weathered', 'wood', 'planks'), lambda: wood('rawboard', '#8a6a48', weather=.8, planks=False), scale=1.0, avoid=('floor', 'parquet', 'tile', 'herringbone'))
-    bh = .2; z = .25; i = 0
-    bpy.ops.mesh.primitive_cube_add(size=1); proto = bpy.context.active_object
+    boards = style == 'boards'
+    bh = .2 if boards else .1; z = .25; i = 0
     me = bpy.data.meshes.new(name + '_boards'); bm = bmesh.new()
     while z < height:
         segs = [(-width / 2, width / 2)]
-        if rng.random() < .35:                       # a butt joint somewhere along the row
+        if boards and rng.random() < .35:            # a butt joint somewhere along the row
             c = rng.uniform(-width * .3, width * .3); segs = [(-width / 2, c - .004), (c + .004, width / 2)]
+        for (oy0, oy1, oz0, oz1) in openings:        # cut doors and windows out of the row
+            if z + bh <= oz0 or z >= oz1: continue
+            ns = []
+            for a, b in segs:
+                a2, b2 = oy0 - y0, oy1 - y0
+                if b <= a2 or a >= b2: ns.append((a, b)); continue
+                if a < a2: ns.append((a, a2))
+                if b > b2: ns.append((b2, b))
+            segs = ns
         for a, b in segs:
-            if rng.random() < .015: continue           # missing board
-            tilt = rng.gauss(0, .006) + (rng.random() < .03) * rng.uniform(-.05, .05)
-            th = .022 + rng.uniform(0, .006)
-            mat = Matrix.Translation((fx - side * (th / 2 + .004), y0 + (a + b) / 2, z + bh / 2)) @ Matrix.Rotation(tilt, 4, 'X') @ Matrix.Rotation(side * .06, 4, 'Y') @ Matrix.Diagonal((th, b - a, bh + .02, 1))
+            if b - a < .02: continue
+            if boards and rng.random() < .015: continue           # missing board
+            tilt = (rng.gauss(0, .006) + (rng.random() < .03) * rng.uniform(-.05, .05)) if boards else 0.0
+            th = .022 + rng.uniform(0, .006) if boards else .06
+            mat = Matrix.Translation((fx - side * (th / 2 + .004), y0 + (a + b) / 2, z + bh / 2)) @ Matrix.Rotation(tilt, 4, 'X') @ Matrix.Rotation(side * (.06 if boards else 0), 4, 'Y') @ Matrix.Diagonal((th, b - a, bh + (.02 if boards else .0), 1))
             r = bmesh.ops.create_cube(bm, size=1, matrix=mat)
-            mi = 1 if rng.random() < .12 else 0
+            mi = 1 if boards and rng.random() < .12 else 0
             for f in {f for v in r['verts'] for f in v.link_faces}: f.material_index = mi
         z += bh; i += 1
-    bm.to_mesh(me); bm.free(); bpy.data.objects.remove(proto)
+    bm.to_mesh(me); bm.free()
     o = bpy.data.objects.new(name + '_boards', me); me.materials.append(m); me.materials.append(m2)
     bv = o.modifiers.new('bev', 'BEVEL'); bv.width = .004; bv.segments = 1
     put(o); objs.append(o)
@@ -229,8 +375,9 @@ def clapboard(name, fx, y0, width, height, side, col):
 
 def corrugated(name, size, loc, side):
     m = ph_or('corrugated', ('corrugated', 'iron'), lambda: plain('tin', '#7a7470', .5, .7), scale=1.0, avoid=('rust_coarse',))
-    bpy.ops.mesh.primitive_grid_add(x_subdivisions=8, y_subdivisions=int(size[1] * 14), size=1, location=loc); o = bpy.context.active_object; o.name = name
-    o.scale = (size[0], size[1], 1); bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
+    me = bpy.data.meshes.new(name); bm = bmesh.new(); bmesh.ops.create_grid(bm, x_segments=8, y_segments=int(size[1] * 14), size=.5); bm.to_mesh(me); bm.free()
+    me.transform(Matrix.Diagonal((size[0], size[1], 1, 1)))
+    o = bpy.data.objects.new(name, me); o.location = loc; coll('Town').objects.link(o)
     for v in o.data.vertices: v.co.z += .018 * math.sin(v.co.y * math.tau * 7) - side * v.co.x * math.tan(math.radians(6))
     o.data.materials.append(m); s = o.modifiers.new('s', 'SOLIDIFY'); s.thickness = .004
     for p in o.data.polygons: p.use_smooth = True
@@ -239,16 +386,18 @@ def corrugated(name, size, loc, side):
 
 def barrel(name, loc, m=None, r=.32, h=.9, c='Town'):
     m = m or wood('barrel', '#7a5032', weather=.4, planks=False)
-    bpy.ops.mesh.primitive_cylinder_add(vertices=24, radius=r, depth=h, location=(loc[0], loc[1], loc[2] + h / 2)); o = bpy.context.active_object; o.name = name
-    for v in o.data.vertices:
+    me = bpy.data.meshes.new(name); bm = bmesh.new(); bmesh.ops.create_cone(bm, cap_ends=True, segments=24, radius1=r, radius2=r, depth=h)
+    bmesh.ops.subdivide_edges(bm, edges=[e for e in bm.edges if abs(e.verts[0].co.z - e.verts[1].co.z) > h * .5], cuts=6)
+    for v in bm.verts:
         u = v.co.z / (h / 2); v.co.x *= 1 + .12 * (1 - u * u); v.co.y *= 1 + .12 * (1 - u * u)
-    o.data.materials.append(m)
-    for p in o.data.polygons: p.use_smooth = True
-    put(o, c)
     iron = plain('iron', '#2a2826', .5, .8)
     for z in (.12, h - .12, h * .35, h * .65):
         u = (z - h / 2) / (h / 2); rr = r * (1 + .12 * (1 - u * u)) + .004
-        bpy.ops.mesh.primitive_torus_add(major_radius=rr, minor_radius=.012, location=(loc[0], loc[1], loc[2] + z)); t = bpy.context.active_object; t.data.materials.append(iron); put(t, c)
+        res = bmesh.ops.create_cone(bm, cap_ends=False, segments=24, radius1=rr, radius2=rr, depth=.035, matrix=Matrix.Translation((0, 0, z - h / 2)))
+        for f in {f for v in res['verts'] for f in v.link_faces}: f.material_index = 1
+    bm.to_mesh(me); bm.free(); me.materials.append(m); me.materials.append(iron)
+    for p in me.polygons: p.use_smooth = True
+    o = bpy.data.objects.new(name, me); o.location = (loc[0], loc[1], loc[2] + h / 2); coll(c).objects.link(o)
     return o
 
 
@@ -257,24 +406,38 @@ def crate(name, loc, s=.6, rot=0.0, c='Town'):
 
 
 def mesas():
-    """distant mesas / buttes ring + desert floor"""
-    m = plain('mesa', '#b0623a', .95)
-    if PH:
-        try: m = lib.mat_ph('mesa', 'rock', 'cliff', 'red', scale=.02, avoid=('moss', 'snow', 'grass'), bump=1.0)
-        except Exception as e: lib.log('PH rock failed', e)
+    """distant flat-topped mesas and buttes with layered cliffs, 1-4 km away, plus the desert floor"""
+    m = ph_or('mesa', ('rock', 'cliff'), lambda: strata_mat(), scale=8.0, avoid=('moss', 'snow', 'grass', 'ice'), bump=1.0)
     rng = random.Random(3)
-    for i in range(16):
-        a = i / 16 * math.tau + rng.uniform(-.1, .1)
-        w = rng.uniform(80, 220); h = rng.uniform(40, 120); d = w + rng.uniform(300, 600)
-        bpy.ops.mesh.primitive_cylinder_add(vertices=12, radius=1, depth=1, location=(math.cos(a) * d, math.sin(a) * d, h / 2)); o = bpy.context.active_object
-        o.scale = (w, w * rng.uniform(.4, .8), h); o.rotation_euler = (0, 0, a)
-        for v in o.data.vertices:
-            if v.co.z > 0: v.co.x *= rng.uniform(.6, .85); v.co.y *= rng.uniform(.6, .85)
-        d_ = o.modifiers.new('d', 'DISPLACE'); tx = bpy.data.textures.new('mesa%d' % i, 'CLOUDS'); tx.noise_scale = .3; d_.texture = tx; d_.strength = .08
-        sd = o.modifiers.new('s', 'SUBSURF'); sd.levels = 2; sd.render_levels = 3
-        o.modifiers.move(1, 0)
-        o.data.materials.append(m); put(o, 'Far')
-    bpy.ops.mesh.primitive_plane_add(size=3000, location=(0, 0, -.02)); g = bpy.context.active_object; g.name = 'desert'; g.data.materials.append(dirt('desert')); put(g, 'Far')
+    for i in range(22):
+        a = i / 22 * math.tau + rng.uniform(-.12, .12)
+        if abs(math.cos(a)) > .9 and rng.random() < .5: continue
+        w = rng.uniform(150, 600); h = rng.uniform(60, 220); d = rng.uniform(1300, 3800)
+        me = bpy.data.meshes.new('mesa%d' % i); bm = bmesh.new()
+        bmesh.ops.create_cone(bm, cap_ends=True, segments=48, radius1=1, radius2=.82, depth=1)
+        bmesh.ops.subdivide_edges(bm, edges=[e for e in bm.edges if abs(e.verts[0].co.z - e.verts[1].co.z) > .5], cuts=10)
+        bm.to_mesh(me); bm.free()
+        o = bpy.data.objects.new('mesa%d' % i, me); o.location = (math.cos(a) * d, math.sin(a) * d, h / 2 - 5)
+        o.scale = (w, w * rng.uniform(.35, .7), h); o.rotation_euler = (0, 0, a + rng.uniform(-.5, .5))
+        tx = bpy.data.textures.new('mesa%d' % i, 'CLOUDS'); tx.noise_scale = .25; tx.noise_depth = 4
+        d_ = o.modifiers.new('d', 'DISPLACE'); d_.texture = tx; d_.strength = .12; d_.direction = 'NORMAL'; d_.texture_coords = 'LOCAL'
+        me.materials.append(m); coll('Far').objects.link(o)
+        # talus slope at the foot
+        me2 = bpy.data.meshes.new('talus%d' % i); bm = bmesh.new(); bmesh.ops.create_cone(bm, cap_ends=False, segments=48, radius1=1.35, radius2=.98, depth=.35); bm.to_mesh(me2); bm.free()
+        t2 = bpy.data.objects.new('talus%d' % i, me2); t2.location = (o.location.x, o.location.y, h * .35 / 2 - 5); t2.scale = o.scale; t2.rotation_euler = o.rotation_euler
+        me2.materials.append(dirt('desert')); coll('Far').objects.link(t2)
+    me = bpy.data.meshes.new('desert'); bm = bmesh.new(); bmesh.ops.create_grid(bm, x_segments=2, y_segments=2, size=6000); bm.to_mesh(me); bm.free()
+    g = bpy.data.objects.new('desert', me); g.location = (0, 0, -.02); me.materials.append(ph_or('desertsand', ('sand', 'desert'), lambda: dirt('desert'), scale=3.0, avoid=('beach', 'wet', 'snow'))); coll('Far').objects.link(g)
+
+
+def strata_mat():
+    m = bpy.data.materials.new('strata'); N, L, out = _nt(m)
+    b = N.new('ShaderNodeBsdfPrincipled'); L.new(b.outputs[0], out.inputs[0])
+    tc = N.new('ShaderNodeTexCoord'); w = N.new('ShaderNodeTexWave'); w.bands_direction = 'Z'; w.inputs['Scale'].default_value = 6; w.inputs['Distortion'].default_value = 3; w.inputs['Detail'].default_value = 6
+    L.new(tc.outputs['Object'], w.inputs['Vector'])
+    r = N.new('ShaderNodeValToRGB'); r.color_ramp.elements[0].color = hexc('#9a4a2a'); r.color_ramp.elements[1].color = hexc('#d89a6a'); L.new(w.outputs['Fac'], r.inputs['Fac'])
+    L.new(r.outputs['Color'], b.inputs['Base Color']); b.inputs['Roughness'].default_value = .95
+    return m
 
 
 def street(length=120):
@@ -368,9 +531,10 @@ TOWN_BUILDINGS = [
 
 
 def build_town(detail=True, y_range=(-30, 50)):
+    kinds = {'bank': 'brick', 'assay': 'adobe', 'church': 'adobe', 'telegraph': 'wood'}
     for (n, side, y, w, d, h, sign, wall, trim, fl) in TOWN_BUILDINGS:
         if w <= 0 or not (y_range[0] - 10 < y < y_range[1] + 10): continue
-        building(n, 0, y, w, d, h, side, sign, wall, trim, floors=fl, door_open=(n == 'bank'))
+        building(n, 0, y, w, d, h, side, sign, wall, trim, floors=fl, door_open=(n == 'bank'), kind=kinds.get(n, 'wood'), false_front=(n != 'church'))
     # filler buildings so the street never has gaps
     rng = random.Random(5)
     for side in (-1, 1):
@@ -378,8 +542,8 @@ def build_town(detail=True, y_range=(-30, 50)):
         while y < 70:
             free = all(not (s == side and abs(y - yy) < ww / 2 + 2.6) for (_, s, yy, ww, *_r) in TOWN_BUILDINGS if ww > 0)
             if free and not (y_range[0] - 15 < y < y_range[1] + 15 and False):
-                w = rng.uniform(4.5, 6.5); h = rng.uniform(3.6, 5.2)
-                building(f'fill{side}_{y:.0f}', 0, y, w, rng.uniform(8, 11), h, side, '', rng.choice(['#8a6a48', '#a08060', '#6a5a4a', '#9a7a5a']), rng.choice(['#3a2a1a', '#e0d0b0', '#5a3a2a']), floors=1, false_front=rng.random() < .6)
+                w = rng.uniform(4.5, 6.5); h = rng.uniform(3.8, 6.8)
+                building(f'fill{side}_{y:.0f}', 0, y, w, rng.uniform(8, 11), h, side, rng.choice(['', '', 'FEED & SEED', 'DRY GOODS', 'BOOTS', 'LAUNDRY', 'BAKERY']), rng.choice(['#8a6a48', '#a08060', '#6a5a4a', '#9a7a5a']), rng.choice(['#3a2a1a', '#e0d0b0', '#5a3a2a']), floors=2 if h > 6.0 else 1, false_front=rng.random() < .7, kind=rng.choice(['wood', 'wood', 'wood', 'adobe']))
             y += 5.2
     street()
     if detail: props_street(-30, 60)
@@ -397,11 +561,11 @@ def grass_mat():
     b = N.new('ShaderNodeBsdfPrincipled'); L.new(b.outputs[0], out.inputs[0])
     hi = N.new('ShaderNodeHairInfo'); ob = N.new('ShaderNodeObjectInfo')
     ramp = N.new('ShaderNodeValToRGB'); cr = ramp.color_ramp
-    cols = [(0, '#5a5a2a'), (.3, '#8a7a3a'), (.55, '#b8a060'), (.8, '#7a8a40'), (1, '#c8b480')]
+    cols = [(0, '#3e4a1e'), (.3, '#6a6a2a'), (.55, '#9a8440'), (.8, '#5a6a2a'), (1, '#a89050')]
     cr.elements[0].position, cr.elements[0].color = cols[0][0], hexc(cols[0][1]); cr.elements[1].position, cr.elements[1].color = cols[-1][0], hexc(cols[-1][1])
     for p, c in cols[1:-1]: e = cr.elements.new(p); e.color = hexc(c)
     L.new(hi.outputs['Random'], ramp.inputs['Fac'])
-    tip = N.new('ShaderNodeMix'); tip.data_type = 'RGBA'; L.new(hi.outputs['Intercept'], tip.inputs['Factor']); L.new(ramp.outputs['Color'], tip.inputs['A']); tip.inputs['B'].default_value = hexc('#d8c890')
+    tip = N.new('ShaderNodeMix'); tip.data_type = 'RGBA'; L.new(hi.outputs['Intercept'], tip.inputs['Factor']); L.new(ramp.outputs['Color'], tip.inputs['A']); tip.inputs['B'].default_value = hexc('#b8a468')
     L.new(tip.outputs['Result'], b.inputs['Base Color']); b.inputs['Roughness'].default_value = .65
     b.inputs['Subsurface Weight'].default_value = .2; b.inputs['Subsurface Radius'].default_value = (.4, .4, .1)
     _M['grass'] = m; return m
@@ -433,7 +597,7 @@ def grass_field(area=(-70, 70, -70, 120), count=45000, children=18, length=.45, 
     st.emit_from = 'FACE'; st.use_emit_random = True; st.use_even_distribution = True
     st.child_type = 'INTERPOLATED'; st.child_percent = children; st.rendered_child_count = children; st.child_length = .8; st.child_length_threshold = .4
     st.clump_factor = .55; st.clump_shape = -.3; st.child_radius = .07; st.roughness_1 = .05; st.roughness_1_size = .4; st.roughness_endpoint = .08; st.roughness_end_shape = 1.5
-    st.root_radius = 1.0; st.tip_radius = .0; st.radius_scale = .0016; st.use_close_tip = True
+    st.root_radius = 1.0; st.tip_radius = .15; st.radius_scale = .0035; st.use_close_tip = True
     st.material_slot = 'grass'; st.render_step = 3; st.display_step = 2
     st.use_rotations = True; st.rotation_mode = 'NOR'; st.phase_factor_random = 2.0
     ps.vertex_group_density = 'dens'; ps.vertex_group_length = 'dens'
@@ -560,17 +724,17 @@ def sky(mood='day', sun_elev=35.0, sun_az=140.0, strength=1.0):
     sc = bpy.context.scene
     if PH:
         try:
-            kw = {'day': ('puresky', 'clear', 'sunny'), 'sunset': ('sunset', 'puresky'), 'dawn': ('sunrise', 'puresky', 'dawn'), 'night': ('night', 'moon', 'puresky')}[mood]
-            lib.world_hdri(*kw, strength=strength * (.25 if mood == 'night' else 1.0), rot=sun_az, avoid=('interior', 'studio', 'indoor', 'room', 'forest', 'city', 'snow', 'urban'), res='2k')
+            kw = {'day': ('partly', 'cloudy'), 'sunset': ('sunset', 'cloud'), 'dawn': ('sunrise', 'cloud'), 'night': ('night', 'moon')}[mood]
+            lib.world_hdri(*kw, strength=strength * (.25 if mood == 'night' else 1.0), rot=sun_az, avoid=('interior', 'studio', 'indoor', 'room', 'forest', 'city', 'snow', 'urban', 'puresky', 'overcast', 'street', 'park', 'garden', 'tree'), res='4k')
         except Exception as e:
             lib.log('PH sky failed', e); _nishita(sun_elev, sun_az, strength, mood)
     else: _nishita(sun_elev, sun_az, strength, mood)
     l = bpy.data.lights.new('sun', 'SUN'); l.angle = math.radians(.6)
-    l.energy = {'day': 5.0, 'sunset': 3.2, 'dawn': 2.6, 'night': .25}[mood] * strength
+    l.energy = {'day': 3.6, 'sunset': 2.6, 'dawn': 2.2, 'night': .25}[mood] * strength
     l.color = {'day': (1, .95, .88), 'sunset': (1, .7, .45), 'dawn': (1, .78, .6), 'night': (.55, .65, 1.0)}[mood]
     o = bpy.data.objects.new('sun', l); sc.collection.objects.link(o)
     o.rotation_euler = (math.radians(90 - sun_elev), 0, math.radians(sun_az))
-    sc.view_settings.view_transform = 'AgX'; sc.view_settings.look = 'AgX - Medium High Contrast'
+    sc.view_settings.view_transform = 'AgX'; sc.view_settings.look = 'AgX - Medium High Contrast'; sc.view_settings.exposure = {'day': -.7, 'sunset': -.3, 'dawn': -.3, 'night': 0.0}[mood]
     return o
 
 
@@ -583,12 +747,24 @@ def _nishita(elev, az, strength, mood):
         except Exception: pass
     try:
         sk.sun_elevation = math.radians(max(1.5, elev if mood != 'night' else 10)); sk.sun_rotation = math.radians(az); sk.altitude = 1200; sk.air_density = 1.4; sk.dust_density = 3.0 if mood != 'night' else 1.0
-        sk.sun_disc = mood != 'night'
+        sk.sun_disc = False
     except Exception: pass
-    L.new(sk.outputs[0], bg.inputs[0]); bg.inputs[1].default_value = strength * (.02 if mood == 'night' else .35)
+    # cumulus layer: noise on the view direction projected onto a cloud plane
+    tc = N.new('ShaderNodeTexCoord'); sep = N.new('ShaderNodeSeparateXYZ'); L.new(tc.outputs['Generated'], sep.inputs[0])
+    dv = N.new('ShaderNodeVectorMath'); dv.operation = 'DIVIDE'; L.new(tc.outputs['Generated'], dv.inputs[0])
+    zc = N.new('ShaderNodeMath'); zc.operation = 'MAXIMUM'; L.new(sep.outputs['Z'], zc.inputs[0]); zc.inputs[1].default_value = .04
+    cz = N.new('ShaderNodeCombineXYZ'); L.new(zc.outputs[0], cz.inputs['X']); L.new(zc.outputs[0], cz.inputs['Y']); L.new(zc.outputs[0], cz.inputs['Z']); L.new(cz.outputs[0], dv.inputs[1])
+    nz = N.new('ShaderNodeTexNoise'); nz.inputs['Scale'].default_value = 1.6; nz.inputs['Detail'].default_value = 12; nz.inputs['Roughness'].default_value = .62; L.new(dv.outputs[0], nz.inputs['Vector'])
+    cov = N.new('ShaderNodeMapRange'); cov.inputs['From Min'].default_value = .5; cov.inputs['From Max'].default_value = .68; L.new(nz.outputs['Fac'], cov.inputs['Value'])
+    hz = N.new('ShaderNodeMapRange'); hz.inputs['From Min'].default_value = .02; hz.inputs['From Max'].default_value = .12; L.new(sep.outputs['Z'], hz.inputs['Value'])
+    cm = N.new('ShaderNodeMath'); cm.operation = 'MULTIPLY'; L.new(cov.outputs[0], cm.inputs[0]); L.new(hz.outputs[0], cm.inputs[1])
+    ccol = {'day': (1, 1, 1, 1), 'sunset': (1.0, .86, .74, 1), 'dawn': (1, .9, .82, 1), 'night': (.05, .06, .1, 1)}[mood]
+    shade = N.new('ShaderNodeMix'); shade.data_type = 'RGBA'; L.new(nz.outputs['Fac'], shade.inputs['Factor']); shade.inputs['A'].default_value = ccol; shade.inputs['B'].default_value = tuple(c * .55 for c in ccol[:3]) + (1,)
+    mixc = N.new('ShaderNodeMix'); mixc.data_type = 'RGBA'; L.new(cm.outputs[0], mixc.inputs['Factor']); L.new(sk.outputs[0], mixc.inputs['A']); L.new(shade.outputs['Result'], mixc.inputs['B'])
+    L.new(mixc.outputs['Result'], bg.inputs[0]); bg.inputs[1].default_value = strength * (.03 if mood == 'night' else .22)
     if mood == 'night':
         tint = N.new('ShaderNodeMix'); tint.data_type = 'RGBA'; tint.blend_type = 'MULTIPLY'; tint.inputs['Factor'].default_value = 1; tint.inputs['B'].default_value = (.25, .35, .8, 1)
-        L.new(sk.outputs[0], tint.inputs['A']); L.new(tint.outputs['Result'], bg.inputs[0])
+        L.new(mixc.outputs['Result'], tint.inputs['A']); L.new(tint.outputs['Result'], bg.inputs[0])
 
 
 def haze(density=.0012, col=(1, .85, .65)):

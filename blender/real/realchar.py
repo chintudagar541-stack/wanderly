@@ -325,6 +325,11 @@ class Person:
             v_idx = [i for i in self.body_vs if ((has(i, 'Spine') and V(i).z < neck - .06) or (has(i, 'Hips') and V(i).z > hip - .02) or (has(i, 'Shoulder') and V(i).z < neck - .03) or (has(i, 'Arm') and not has(i, 'Fore') and V(i).z < neck - .1 and abs(V(i).x) < .17 and V(i).z > hip + .15))
                      and not (V(i).y < 0 and abs(V(i).x) < .018 + .035 * max(0.0, (V(i).z - (hip + .2)) / (neck - hip - .2)))]
             self.vest = self._shell('vest', v_idx, .013, cloth_mat(self.cid + '_vest', P['vest'], rough=.55, leather=True, wear=.35), thick=.005, noise=.002)
+        if P.get('dress') or P.get('duster'):
+            self._skirt(hip, knee, ank, P)
+        if P.get('coat'):
+            c_idx = [i for i in self.body_vs if ((has(i, 'Spine', 'Shoulder') or (has(i, 'Arm') and not has(i, 'Hand'))) and V(i).z < neck - .02) or (has(i, 'Hips') and V(i).z > hip - .08)]
+            self.coat = self._shell('coat', c_idx, .022, cloth_mat(self.cid + '_coat', P['coat'], rough=.75, weave=300, sheen=.4, wear=.3), thick=.006, noise=.004)
         self.hip_z, self.neck_z = hip, neck
         cm = cloth_mat(self.cid + '_collar', P['shirt'], weave=520, wear=.1)
         c, rx, ry = self._ring_at(neck - .035, .006)
@@ -348,6 +353,42 @@ class Person:
         mk = h.modifiers.new('hide_covered', 'MASK'); mk.vertex_group = 'covered'; mk.invert_vertex_group = True
         # keep the armature first
         while h.modifiers.find('hide_covered') > 1: bpy.context.view_layer.objects.active = h; bpy.ops.object.modifier_move_up(modifier='hide_covered')
+
+    def _skirt(self, hip, knee, ank, P):
+        """long skirt (dress) or duster coat tails: a flared tube from the waist, rigid on the hips"""
+        dress = bool(P.get('dress'))
+        col = P.get('dresscol', P['shirt']) if dress else P['duster']
+        c, rx, ry = self._ring_at(hip + (.06 if dress else .02), .025)
+        bot = ank + (.03 if dress else .2)
+        bpy.ops.mesh.primitive_cylinder_add(vertices=64, radius=1, depth=1, end_fill_type='NOTHING', location=(0, c.y, 0)); s = bpy.context.active_object
+        top_z = c.z
+        for v in s.data.vertices:
+            u = v.co.z + .5          # 0 bottom .. 1 top
+            z = bot + (top_z - bot) * u; fl = (1 - u) ** 1.3
+            sx = rx + fl * (.22 if dress else .16); sy = ry + fl * (.2 if dress else .12)
+            a = math.atan2(v.co.y, v.co.x)
+            wav = 1 + .035 * math.sin(a * 9) * (1 - u)
+            v.co.x, v.co.y, v.co.z = math.cos(a) * sx * wav, math.sin(a) * sy * wav, z
+        if not dress:   # open front
+            me = s.data; bm = bmesh.new(); bm.from_mesh(me)
+            bmesh.ops.delete(bm, geom=[f for f in bm.faces if all(v.co.y < -ry * .6 and abs(v.co.x) < rx * .45 for v in f.verts) and f.calc_center_median().z < hip - .05], context='FACES'); bm.to_mesh(me); bm.free()
+        s.data.materials.append(cloth_mat(self.cid + '_skirt', col, rough=.85, weave=400 if dress else 300, sheen=.4, wear=.25))
+        for p_ in s.data.polygons: p_.use_smooth = True
+        so = s.modifiers.new('sol', 'SOLIDIFY'); so.thickness = .005; sd = s.modifiers.new('sd', 'SUBSURF'); sd.render_levels = 1
+        self._own(s, 'Hips'); self.skirt = s
+
+    def _bonnet(self, hc, col):
+        m = cloth_mat(self.cid + '_bonnet', col, weave=700, wear=.1)
+        bpy.ops.mesh.primitive_uv_sphere_add(segments=40, ring_count=20, radius=1, location=(0, hc.y + .015, self.head_top - .07)); b = bpy.context.active_object
+        b.scale = (.108, .125, .12)
+        me = b.data; bm = bmesh.new(); bm.from_mesh(me)
+        bmesh.ops.delete(bm, geom=[v for v in bm.verts if v.co.y < -.15 and v.co.z < .55 or v.co.z < -.25], context='VERTS'); bm.to_mesh(me); bm.free()
+        for v in me.vertices:
+            if v.co.y < -.3: v.co.y -= .25 * (v.co.z + .3)       # brim pokes forward
+        b.data.materials.append(m)
+        for p_ in me.polygons: p_.use_smooth = True
+        so = b.modifiers.new('sol', 'SOLIDIFY'); so.thickness = .005
+        self.hat = [self._own(b, 'Head')]
 
     def _own(self, o, bone):
         for c_ in list(o.users_collection): c_.objects.unlink(o)
@@ -462,6 +503,8 @@ class Person:
         if P['outfit'].get('bandana'):
             band = [i for i in head if h.data.vertices[i].co.z > ec.z + .04 and (h.data.vertices[i].co.y > ec.y + .02 or h.data.vertices[i].co.z > ec.z + .045)]
             self.bandana = self._shell('bandana', band, .012, cloth_mat(self.cid + '_band', P['outfit']['bandana'], weave=700, wear=.2), thick=.003, noise=.002)
+        if P['outfit'].get('hat') == 'bonnet':
+            self._bonnet(hc, P['outfit'].get('hatcol', '#d8ccb0'))
         if P['outfit'].get('hat') in ('cowboy', 'bowler'):
             self._hat(hc, P['outfit']['hat'], P['outfit'].get('hatcol', '#5a4030'))
 
@@ -533,3 +576,33 @@ class Person:
 
     def pose_bone(self, name, rot_xyz_deg):
         pb = self.rig.pose.bones['mixamorig:' + name]; pb.rotation_mode = 'XYZ'; pb.rotation_euler = tuple(math.radians(a) for a in rot_xyz_deg)
+
+
+# ------------------------------------------------------------------ crowd
+SKIN = ['#e0b49a', '#d49a7c', '#c08a66', '#a8714f', '#8a5a3c', '#6a4430', '#f0c8b0']
+CLOTH_M = ['#d8d0bc', '#b8b0a0', '#8a7a68', '#5a6a7a', '#7a4a3a', '#a89a7a', '#4a4a50', '#e8e0cc', '#6a7a5a']
+TROU = ['#3a3d42', '#4a4036', '#2e2a26', '#5a4a3a', '#3a3a30', '#2a2e36']
+VEST = ['#2a2420', '#4a3626', '#3a3a40', '#5a4030', '#2e3d4c', None, None]
+DRESS = ['#6a3a4a', '#3a4a6a', '#5a6a4a', '#8a6a4a', '#4a3a5a', '#7a5a5a', '#a89880']
+
+
+def crowd_preset(i):
+    """deterministic random townsperson i"""
+    r = random.Random(1000 + i * 7)
+    woman = r.random() < .35
+    race = dict(caucasian=r.uniform(.3, 1), african=r.uniform(0, .5), asian=r.uniform(0, .4))
+    p = dict(gender=0.0 if woman else 1.0, age=r.uniform(.3, .95), muscle=r.uniform(.35, .75), weight=r.uniform(.35, .8), height=r.uniform(.35, .65), race=race,
+             skin=r.choice(SKIN), weather=r.uniform(0, .12) if not woman else 0.0, iris=r.choice(['#3a2a1a', '#4a6a78', '#4a5a3a', '#2a1a10']),
+             hair=dict(melanin=r.uniform(.3, .98), red=r.uniform(0, .5), grey=max(0.0, r.uniform(-.3, 1.0))),
+             scalp=r.uniform(.07, .14) if woman else r.uniform(.008, .04), beard=0.0 if woman else r.choice([0, 0, .004, .012, .02, .03]), brows=.007 if woman else .01,
+             moustache=0.0 if woman else r.choice([0, 0, 0, .02]))
+    o = dict(shirt=r.choice(CLOTH_M), trousers=r.choice(TROU), boots=r.choice(['#2a1c12', '#1e140c', '#3a2414']), belt=None if woman else r.choice([None, '#3a2414']))
+    if woman:
+        o.update(dress=True, dresscol=r.choice(DRESS), hat=r.choice(['bonnet', None, None]), hatcol=r.choice(['#d8ccb0', '#e8e0d0', '#5a4a3a']))
+        o['shirt'] = o['dresscol']
+    else:
+        o.update(vest=r.choice(VEST), hat=r.choice(['cowboy', 'cowboy', 'bowler', None]), hatcol=r.choice(['#5a4030', '#2a2622', '#8a6a48', '#3a3028', '#a08a6a']))
+        if r.random() < .25: o['duster'] = r.choice(['#6a5a48', '#3a3028', '#7a6a50'])
+        if r.random() < .3: o['neckerchief'] = r.choice(['#8a2a20', '#2a4a6a', '#d8c8a0'])
+    p['outfit'] = o
+    return p
