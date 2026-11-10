@@ -106,6 +106,7 @@ def boot_hill():
                                                             d.text((600, 132), 'BOOT HILL', font=_font(170), fill=(52, 30, 22), anchor='mm')))
     box('gatebeam', (3.6, .14, .2), (G.x, y0, gz + 3.3), fw)
     plane_tex('gatesign', 3.0, .65, (G.x, y0 - .08, gz + 2.8), sign)
+    plane_tex('gatesign_in', 3.0, .65, (G.x, y0 + .08, gz + 2.8), sign, rot=(0, 0, math.pi))
     # headstones in loose rows (names painted, readable), the four EZRA PIKE graves near the front
     rng = random.Random(11)
     names = ['J. MORGAN', 'ED "LUCKY" HART', 'OLD TOM', 'SALLY RAE', 'B. COLLINS', 'DOC WEBB', 'HANK DUBOIS', 'MAE LOWELL', 'ONE-EYED PETE', 'C. BRENNAN',
@@ -223,8 +224,9 @@ class Coffin:
     def open(self, a):            # 0 closed .. 1 fully open (lid swung over to the left side)
         self.hinge.rotation_euler = (0, -math.radians(115) * a, 0)
 
-    def world(self, p):
-        return self.root.matrix_world @ Vector(p)
+    def world(self, p):           # from loc/rot/scale directly: matrix_world is stale until the next depsgraph update
+        r = self.root
+        return Matrix.LocRotScale(r.location, r.rotation_euler, r.scale) @ Vector(p)
 
 
 # ------------------------------------------------------------------ the undertaker's shop (interior set)

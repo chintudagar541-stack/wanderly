@@ -409,8 +409,8 @@ def s_complaint(sh):
     lie_in(sh, ez, c, [(0, 'determined'), (1.0, 'smirk')], sit=lambda t: 1.0, hands=None, hand_targets=hands)
     hold(sh, pencil, ez, 'R', (0, 0, .04), rot=(0, math.radians(30), math.radians(20)))
     T.lantern('glamp', tuple(c.world((.38, .55, .55))), energy=60)
-    tg0 = c.world((0, 1.25, .78)); tg1 = c.world((0, 1.42, .68))
-    sh.camera(cam_keys([(0, (.32, 97.1, HZ + .42), tg0, 28), (sh.dur, (.18, 96.9, HZ + .12), tg1, 32)], shake=.003), fstop=3.2)
+    tg0 = c.world((0, 1.2, .95)); tg1 = c.world((0, 1.32, .82))
+    sh.camera(cam_keys([(0, (.36, 97.25, HZ + .62), tg0, 27), (sh.dur, (.22, 97.08, HZ + .36), tg1, 30)], shake=.003), fstop=3.2)
 
 
 def s_inside(sh):
