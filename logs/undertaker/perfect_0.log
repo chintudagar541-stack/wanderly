@@ -1,4 +1,4 @@
-00:00.700  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.751  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -115,14 +115,14 @@
 [lib] model dead_tree_trunk_02 4
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
-20:05:45 | INFO: Data are loaded, start creating Blender stuff
-20:05:45 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
-20:05:45 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
-20:05:45 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
-20:05:45 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
-20:05:45 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
-20:05:45 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
-20:05:46 | INFO: glTF import finished in 1.66s
+20:30:41 | INFO: Data are loaded, start creating Blender stuff
+20:30:41 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
+20:30:41 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
+20:30:41 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
+20:30:41 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
+20:30:42 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
+20:30:42 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
+20:30:43 | INFO: glTF import finished in 1.72s
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -153,15 +153,15 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-RSS built 1880 MB
+RSS built 1860 MB
 EXTRAS perfect 5
-RSS extras 1957 MB
+RSS extras 1947 MB
 CLEARCAM perfect 0
-RSS lod 1973 MB
-RSS posed 1974 MB
-RSS depsgraph 1974 MB
-OBJECTS 12399 MESHES 11315 IMAGES 212 224 Mpx
-04:01.893  render           | Saved: '/home/runner/work/wanderly/wanderly/out/perfect_0.png'
-RTIME 54.9
-RSS rendered 6694 MB
+RSS lod 1968 MB
+RSS posed 1970 MB
+RSS depsgraph 1970 MB
+OBJECTS 12403 MESHES 11319 IMAGES 212 224 Mpx
+03:40.141  render           | Saved: '/home/runner/work/wanderly/wanderly/out/perfect_0.png'
+RTIME 55.4
+RSS rendered 6800 MB
 RENDERED perfect 0.94
