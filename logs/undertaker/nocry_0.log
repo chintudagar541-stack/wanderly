@@ -1,4 +1,4 @@
-00:00.657  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.651  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -115,14 +115,14 @@
 [lib] model dead_tree_trunk_02 4
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
-19:00:32 | INFO: Data are loaded, start creating Blender stuff
-19:00:32 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
-19:00:32 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
-19:00:32 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
-19:00:33 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
-19:00:33 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
-19:00:33 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
-19:00:34 | INFO: glTF import finished in 2.08s
+19:47:05 | INFO: Data are loaded, start creating Blender stuff
+19:47:05 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
+19:47:05 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
+19:47:05 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
+19:47:05 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
+19:47:05 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
+19:47:05 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
+19:47:06 | INFO: glTF import finished in 1.34s
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -153,15 +153,15 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-RSS built 1799 MB
+RSS built 1827 MB
 EXTRAS nocry 0
-RSS extras 1818 MB
-CLEARCAM nocry 0
-RSS lod 1818 MB
-RSS posed 1818 MB
-RSS depsgraph 1818 MB
-OBJECTS 10989 MESHES 10403 IMAGES 212 224 Mpx
-03:35.957  render           | Saved: '/home/runner/work/wanderly/wanderly/out/nocry_0.png'
-RTIME 50.5
-RSS rendered 6528 MB
+RSS extras 1843 MB
+CLEARCAM nocry 1
+RSS lod 1843 MB
+RSS posed 1843 MB
+RSS depsgraph 1843 MB
+OBJECTS 11018 MESHES 10428 IMAGES 212 224 Mpx
+02:54.201  render           | Saved: '/home/runner/work/wanderly/wanderly/out/nocry_0.png'
+RTIME 31.8
+RSS rendered 6558 MB
 RENDERED nocry 1.18
