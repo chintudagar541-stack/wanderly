@@ -1,14 +1,15 @@
-00:00.841  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.625  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] hdri sun 143 elev 12.0 -> az 300
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-RSS built 536 MB
-RSS extras 536 MB
+RSS built 537 MB
+RSS extras 537 MB
+CLEARCAM arrest 0
 RSS lod 542 MB
-RSS posed 542 MB
-RSS depsgraph 542 MB
+RSS posed 543 MB
+RSS depsgraph 543 MB
 OBJECTS 314 MESHES 218 IMAGES 4 14 Mpx
-01:48.659  render           | Saved: '/home/runner/work/wanderly/wanderly/out/arrest_0.png'
-RSS rendered 1503 MB
+00:44.640  render           | Saved: '/home/runner/work/wanderly/wanderly/out/arrest_0.png'
+RSS rendered 1505 MB
 RENDERED arrest 1.38
