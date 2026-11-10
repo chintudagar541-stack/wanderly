@@ -1,1 +1,1 @@
-{"rev": 10, "mode": "stills", "w": 540, "h": 960, "samples": 24, "veg": 0.7, "at": [0.55], "cast": false, "only": "climb,inside,complaint,names,small,kick,nocry,double,tears,wept,band,played"}
+{"rev": 11, "mode": "video", "w": 1080, "h": 1920, "samples": 12, "veg": 0.7, "chunk": 10, "handle": 0.25, "only": "", "cast": false, "env": {"FAST": "1", "ADAPT": ".04", "NOSUBS": "1", "NOLOGO": "1"}}
