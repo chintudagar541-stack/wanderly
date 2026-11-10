@@ -1,4 +1,4 @@
-00:00.755  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.784  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -115,14 +115,14 @@
 [lib] model dead_tree_trunk_02 4
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
-20:11:22 | INFO: Data are loaded, start creating Blender stuff
-20:11:22 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
-20:11:22 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
-20:11:22 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
-20:11:22 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
-20:11:23 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
-20:11:23 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
-20:11:24 | INFO: glTF import finished in 2.05s
+20:35:16 | INFO: Data are loaded, start creating Blender stuff
+20:35:16 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
+20:35:16 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
+20:35:16 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
+20:35:16 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
+20:35:16 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
+20:35:16 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
+20:35:17 | INFO: glTF import finished in 1.79s
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -153,15 +153,15 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-RSS built 1896 MB
+RSS built 1884 MB
 EXTRAS town 5
-RSS extras 2013 MB
+RSS extras 2014 MB
 CLEARCAM town 0
-RSS lod 2077 MB
-RSS posed 2084 MB
-RSS depsgraph 2084 MB
-OBJECTS 13551 MESHES 11997 IMAGES 212 224 Mpx
-04:02.234  render           | Saved: '/home/runner/work/wanderly/wanderly/out/town_0.png'
-RTIME 55.4
-RSS rendered 6941 MB
+RSS lod 2073 MB
+RSS posed 2078 MB
+RSS depsgraph 2078 MB
+OBJECTS 13555 MESHES 12001 IMAGES 212 224 Mpx
+04:17.573  render           | Saved: '/home/runner/work/wanderly/wanderly/out/town_0.png'
+RTIME 70.5
+RSS rendered 6921 MB
 RENDERED town 1.79
