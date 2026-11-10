@@ -54,6 +54,7 @@ jobs:
           mkdir -p out; set -o pipefail; cd blender/west
           export USE_PH=1 CAST=/tmp/cast/cast.blend FACES=/tmp/cast
           export RW=$(jq -r '.w // 1440' job.json) RH=$(jq -r '.h // 2560' job.json) SAMPLES=$(jq -r '.samples // 64' job.json) VEG=$(jq -r '.veg // 1.0' job.json) HANDLE=$(jq -r '.handle // 0.25' job.json)
+          JENV=$(jq -r '.env // {} | to_entries|map("\(.key)=\(.value)")|join(" ")' job.json); [ -n "$JENV" ] && export $JENV
           EXTRA=$(echo '${{ toJson(matrix.t.env) }}' | jq -r 'if . == null then "" else to_entries|map("\(.key)=\(.value)")|join(" ") end'); [ -n "$EXTRA" ] && export $EXTRA
           free -g; ( while true; do sleep 20; echo "MEM $(free -m | awk '/Mem/{print $3}')MB"; done ) &
           if [ "${{ needs.plan.outputs.mode }}" = "video" ]; then

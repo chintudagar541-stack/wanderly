@@ -7,6 +7,10 @@ Env: CAST (cast.blend), RW RH SAMPLES, USE_PH, VEG (grass density), HANDLE (extr
 
 Every shot: a camera that keeps moving (push-ins, orbits, cranes, whips), real mocap actors with expressions on the
 narrated words, a fully dressed set. Shot timing comes from shots.json (aligned to the voiceover)."""
+import time
+import os as _os, sys as _sys
+if _os.environ.get('PYTHONHASHSEED') != '0':        # hash() seeds building/crowd randomness: must be identical in every chunk process
+    _os.environ['PYTHONHASHSEED'] = '0'; _os.execv(_sys.executable, [_sys.executable] + _sys.argv)
 import sys, os, math, json, random
 HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE); sys.path.insert(0, os.path.dirname(HERE)); sys.path.insert(0, os.path.join(os.path.dirname(HERE), 'real'))
 import bpy
@@ -130,7 +134,7 @@ class Shot:
         cam = bpy.data.cameras.new('cam'); co = bpy.data.objects.new('cam', cam); bpy.context.scene.collection.objects.link(co)
         bpy.context.scene.camera = co; cam.clip_start = .05; cam.clip_end = 6000; cam.sensor_width = 36
         cam.dof.use_dof = True; cam.dof.aperture_fstop = fstop
-        self.cam = (co, fn); bpy.context.scene.render.use_motion_blur = blur; bpy.context.scene.render.motion_blur_shutter = .5
+        self.cam = (co, fn); bpy.context.scene.render.use_motion_blur = blur and not os.environ.get('NOMB'); bpy.context.scene.render.motion_blur_shutter = .5
         return co
 
     def lod(self):
@@ -258,14 +262,19 @@ def bone_pos(ch, b):
 
 # ------------------------------------------------------------------ scene setup
 def setup(shot, mood='day', elev=30, az=150, town=True, interior=None, veg=None, haze=True):
+    haze = haze and not os.environ.get('NOHAZE')
     bpy.ops.wm.read_factory_settings(use_empty=True)
     sc = bpy.context.scene; W, H = int(os.environ.get('RW', 1440)), int(os.environ.get('RH', 2560))
     sc.render.engine = 'CYCLES'; sc.render.resolution_x, sc.render.resolution_y = W, H; sc.render.fps = FPS
     sc.cycles.samples = int(os.environ.get('SAMPLES', 64)); sc.cycles.use_denoising = True
     try: sc.cycles.denoiser = 'OPENIMAGEDENOISE'
     except Exception: pass
-    sc.cycles.use_adaptive_sampling = True; sc.cycles.adaptive_threshold = .02
-    sc.cycles.max_bounces = 6; sc.cycles.diffuse_bounces = 3; sc.cycles.glossy_bounces = 3; sc.cycles.transmission_bounces = 4; sc.cycles.volume_bounces = 1
+    sc.cycles.use_adaptive_sampling = True; sc.cycles.adaptive_threshold = float(os.environ.get('ADAPT', .02))
+    if os.environ.get('FAST'):        # final video: fewer bounces (toon look barely changes), persistent data across frames
+        sc.cycles.max_bounces = 4; sc.cycles.diffuse_bounces = 2; sc.cycles.glossy_bounces = 1; sc.cycles.transmission_bounces = 2; sc.cycles.volume_bounces = 0
+        sc.cycles.transparent_max_bounces = 12; sc.render.use_persistent_data = True
+    else:
+        sc.cycles.max_bounces = 6; sc.cycles.diffuse_bounces = 3; sc.cycles.glossy_bounces = 3; sc.cycles.transmission_bounces = 4; sc.cycles.volume_bounces = 1
     sc.render.film_transparent = False
     shot.mood, shot.interior, shot.town = mood, interior, town
     if town:
@@ -756,7 +765,7 @@ def main():
         t = float(a[3]) if len(a) > 3 else sh.dur / 2
         sh.at(t); rss('posed'); dg = bpy.context.evaluated_depsgraph_get(); dg.update(); rss('depsgraph')
         print('OBJECTS', len(bpy.data.objects), 'MESHES', len(bpy.data.meshes), 'IMAGES', len(bpy.data.images), sum(i.size[0] * i.size[1] for i in bpy.data.images) // 1000000, 'Mpx', flush=True)
-        sc.render.filepath = os.path.abspath(a[2]); bpy.ops.render.render(write_still=True); rss('rendered'); print('RENDERED', sid, t)
+        sc.render.filepath = os.path.abspath(a[2]); _t0 = time.time(); bpy.ops.render.render(write_still=True); print('RTIME', round(time.time() - _t0, 1), flush=True); rss('rendered'); print('RENDERED', sid, t)
     else:
         f0, f1, out = int(a[2]), int(a[3]), a[4]; os.makedirs(out, exist_ok=True); g0 = round(sh.t0 * FPS)
         for f in range(f0, f1 + 1):

@@ -118,7 +118,8 @@ def poster(name, img_path, loc, rot, size=(.6, .84), curl=.0):
     b.inputs['Subsurface Weight'].default_value = .1
     bpy.ops.mesh.primitive_grid_add(x_subdivisions=8, y_subdivisions=10, size=1, location=loc, rotation=rot); o = bpy.context.active_object; o.name = name
     o.scale = (size[0], size[1], 1)
-    for v in o.data.vertices: v.co.z += curl * (v.co.y + .5) ** 2 * .1 + random.uniform(0, .002)
+    _r = random.Random(len(o.data.vertices))
+    for v in o.data.vertices: v.co.z += curl * (v.co.y + .5) ** 2 * .1 + _r.uniform(0, .002)
     bpy.ops.object.mode_set(mode='EDIT'); bpy.ops.uv.unwrap(); bpy.ops.object.mode_set(mode='OBJECT')
     me = o.data; uv = me.uv_layers.active
     for poly in me.polygons:
