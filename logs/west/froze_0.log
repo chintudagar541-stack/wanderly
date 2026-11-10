@@ -1,8 +1,14 @@
-00:00.460  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.814  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] hdri sun 143 elev 12.0 -> az 300
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['fabric', 'burlap'] -> fabric_pattern_07
-00:55.712  render           | Saved: '/home/runner/work/wanderly/wanderly/out/froze_0.png'
+RSS built 757 MB
+RSS lod 793 MB
+RSS posed 795 MB
+RSS depsgraph 795 MB
+OBJECTS 128 MESHES 119 IMAGES 5 15 Mpx
+01:14.850  render           | Saved: '/home/runner/work/wanderly/wanderly/out/froze_0.png'
+RSS rendered 1759 MB
 RENDERED froze 0.93
