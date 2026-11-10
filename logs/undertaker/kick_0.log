@@ -1,15 +1,12 @@
-00:00.955  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.806  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
-[lib] retry https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/wood_peeling_paint_weathered/wood_peeling_paint_weathered_arm_1k.jpg <urlopen error [Errno 104] Connection reset by peer>
-[lib] retry https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/rustic_stone_wall_02/rustic_stone_wall_02_rough_1k.jpg <urlopen error [Errno 104] Connection reset by peer>
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] retry https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/roof_planks/roof_planks_diff_1k.jpg <urlopen error [Errno 104] Connection reset by peer>
 [lib] ph_find textures ['painted', 'wood', 'planks'] -> blue_painted_planks
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
@@ -33,23 +30,19 @@
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
-[lib] retry https://api.polyhaven.com/files/wood_peeling_paint_weathered <urlopen error [Errno 104] Connection reset by peer>
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
-[lib] retry https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/clay_plaster/clay_plaster_diff_1k.jpg <urlopen error [Errno 104] Connection reset by peer>
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] retry https://api.polyhaven.com/files/wood_planks_dirt <urlopen error [Errno 104] Connection reset by peer>
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
-[lib] retry https://api.polyhaven.com/files/wooden_garage_door <urlopen error [Errno 104] Connection reset by peer>
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -62,10 +55,8 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] retry https://api.polyhaven.com/files/wood_planks_dirt <urlopen error [Errno 104] Connection reset by peer>
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] retry https://api.polyhaven.com/files/wood_planks_dirt <urlopen error [Errno 104] Connection reset by peer>
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -85,79 +76,53 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] retry https://api.polyhaven.com/files/dirt <urlopen error [Errno 104] Connection reset by peer>
-[lib] retry https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/dirt/dirt_arm_1k.jpg <urlopen error [Errno 104] Connection reset by peer>
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] retry https://api.polyhaven.com/files/wood_planks_dirt <urlopen error [Errno 104] Connection reset by peer>
 [lib] ph_find textures ['dirt', 'ground', 'sand'] -> playground_sand
-[lib] retry https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/playground_sand/playground_sand_nor_gl_2k.jpg <urlopen error [Errno 104] Connection reset by peer>
-[lib] retry https://api.polyhaven.com/files/Barrel_01 <urlopen error [Errno 104] Connection reset by peer>
 [lib] model Barrel_01 1
 [lib] model Barrel_02 1
-[lib] retry https://dl.polyhaven.org/file/ph-assets/Models/blend/1k/barrel_03/barrel_03_1k.blend <urlopen error [Errno 104] Connection reset by peer>
-[lib] retry https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/barrel_03/barrel_03_rough_1k.jpg <urlopen error [Errno 104] Connection reset by peer>
 [lib] model barrel_03 1
 [lib] model wine_barrel_01 4
-[lib] retry https://dl.polyhaven.org/file/ph-assets/Models/exr/1k/wooden_crate_01/wooden_crate_01_rough_1k.exr <urlopen error [Errno 104] Connection reset by peer>
 [lib] model wooden_crate_01 3
-[lib] retry https://dl.polyhaven.org/file/ph-assets/Models/blend/1k/wooden_crate_02/wooden_crate_02_1k.blend <urlopen error [Errno 104] Connection reset by peer>
 [lib] model wooden_crate_02 2
 [lib] model wooden_military_crate 3
-[lib] retry https://dl.polyhaven.org/file/ph-assets/Models/exr/1k/Rockingchair_01/Rockingchair_01_metallic_1k.exr <urlopen error [Errno 104] Connection reset by peer>
 [lib] model Rockingchair_01 1
-[lib] retry https://dl.polyhaven.org/file/ph-assets/Models/exr/1k/WoodenChair_01/WoodenChair_01_nor_gl_1k.exr <urlopen error [Errno 104] Connection reset by peer>
 [lib] model WoodenChair_01 1
 [lib] model painted_wooden_bench 1
 [lib] model folding_wooden_stool 1
 [lib] model wooden_stool_01 1
 [lib] model wooden_bucket_01 2
-[lib] retry https://api.polyhaven.com/files/wooden_bucket_02 <urlopen error [Errno 104] Connection reset by peer>
 [lib] model wooden_bucket_02 3
-[lib] retry https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/wicker_basket_01/wicker_basket_01_diff_1k.jpg <urlopen error [Errno 104] Connection reset by peer>
 [lib] model wicker_basket_01 1
 [lib] model watering_can_metal_01 1
 [lib] model Lantern_01 2
 [lib] model grass_medium_01 103
-[lib] retry https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/grass_medium_02/grass_medium_02_diff_1k.jpg <urlopen error [Errno 104] Connection reset by peer>
-[lib] retry https://dl.polyhaven.org/file/ph-assets/Models/exr/1k/grass_medium_02/grass_medium_02_rough_1k.exr <urlopen error [Errno 104] Connection reset by peer>
 [lib] model grass_medium_02 11
-[lib] retry https://dl.polyhaven.org/file/ph-assets/Models/png/1k/shrub_01/shrub_01_alpha_1k.png <urlopen error [Errno 104] Connection reset by peer>
 [lib] model shrub_01 36
-[lib] retry https://dl.polyhaven.org/file/ph-assets/Models/png/1k/shrub_02/shrub_02_mask_1k.png <urlopen error [Errno 104] Connection reset by peer>
 [lib] model shrub_02 12
-[lib] retry https://dl.polyhaven.org/file/ph-assets/Models/exr/1k/shrub_03/shrub_03_rough_1k.exr <urlopen error [Errno 104] Connection reset by peer>
 [lib] model shrub_03 12
-[lib] retry https://dl.polyhaven.org/file/ph-assets/Models/exr/1k/wild_rooibos_bush/wild_rooibos_bush_rough_1k.exr <urlopen error [Errno 104] Connection reset by peer>
-[lib] retry https://dl.polyhaven.org/file/ph-assets/Models/exr/1k/wild_rooibos_bush/wild_rooibos_bush_nor_gl_1k.exr <urlopen error [Errno 104] Connection reset by peer>
 [lib] model wild_rooibos_bush 20
 [lib] model searsia_burchellii 9
 [lib] model namaqualand_boulder_02 4
-[lib] retry https://api.polyhaven.com/files/namaqualand_boulder_04 <urlopen error [Errno 104] Connection reset by peer>
 [lib] model namaqualand_boulder_04 4
 [lib] model rock_07 4
 [lib] model rock_09 4
-[lib] retry https://api.polyhaven.com/files/stone_01 <urlopen error [Errno 104] Connection reset by peer>
-[lib] retry https://api.polyhaven.com/files/stone_01 <urlopen error [Errno 104] Connection reset by peer>
 [lib] model stone_01 4
-[lib] retry https://dl.polyhaven.org/file/ph-assets/Models/exr/1k/dead_tree_trunk/dead_tree_trunk_nor_gl_1k.exr <urlopen error [Errno 104] Connection reset by peer>
 [lib] model dead_tree_trunk 1
-[lib] retry https://dl.polyhaven.org/file/ph-assets/Models/blend/1k/dead_tree_trunk_02/dead_tree_trunk_02_1k.blend <urlopen error [Errno 104] Connection reset by peer>
 [lib] model dead_tree_trunk_02 4
 [lib] model dead_quiver_trunk 4
-[lib] retry https://dl.polyhaven.org/file/ph-assets/Models/exr/1k/tree_stump_01/tree_stump_01_rough_1k.exr <urlopen error [Errno 104] Connection reset by peer>
 [lib] model tree_stump_01 1
-19:02:04 | INFO: Data are loaded, start creating Blender stuff
-19:02:04 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
-19:02:04 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
-19:02:04 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
-19:02:04 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
-19:02:05 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
-19:02:05 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
-19:02:06 | INFO: glTF import finished in 2.24s
+19:46:51 | INFO: Data are loaded, start creating Blender stuff
+19:46:51 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
+19:46:52 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
+19:46:52 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
+19:46:52 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
+19:46:52 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
+19:46:52 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
+19:46:53 | INFO: glTF import finished in 1.76s
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -165,20 +130,7 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] retry https://api.polyhaven.com/files/wood_planks_dirt <urlopen error [Errno 104] Connection reset by peer>
 [lib] hdri sun 146 elev 48.5 -> az 200
-[lib] retry https://api.polyhaven.com/files/dry_ground_01 <urlopen error [Errno 104] Connection reset by peer>
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] retry https://api.polyhaven.com/files/wood_planks_dirt <urlopen error [Errno 104] Connection reset by peer>
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -191,15 +143,25 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-RSS built 1807 MB
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+RSS built 1849 MB
 EXTRAS kick 1
-RSS extras 1835 MB
+RSS extras 1871 MB
 CLEARCAM kick 0
-RSS lod 1858 MB
-RSS posed 1861 MB
-RSS depsgraph 1861 MB
-OBJECTS 11346 MESHES 10614 IMAGES 212 224 Mpx
-04:55.885  render           | Saved: '/home/runner/work/wanderly/wanderly/out/kick_0.png'
-RTIME 39.4
-RSS rendered 6422 MB
+RSS lod 1893 MB
+RSS posed 1895 MB
+RSS depsgraph 1895 MB
+OBJECTS 11375 MESHES 10639 IMAGES 212 224 Mpx
+03:23.648  render           | Saved: '/home/runner/work/wanderly/wanderly/out/kick_0.png'
+RTIME 60.2
+RSS rendered 6699 MB
 RENDERED kick 2.04
