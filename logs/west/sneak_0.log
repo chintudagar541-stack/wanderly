@@ -1,7 +1,6 @@
-00:00.796  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.813  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -13,7 +12,6 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
@@ -23,11 +21,13 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
@@ -117,11 +117,11 @@
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
 [lib] hdri sun 143 elev 12.0 -> az 300
-RSS built 1992 MB
-RSS lod 1992 MB
-RSS posed 1992 MB
-RSS depsgraph 1992 MB
-OBJECTS 9398 MESHES 9002 IMAGES 187 216 Mpx
-03:55.503  render           | Saved: '/home/runner/work/wanderly/wanderly/out/sneak_0.png'
-RSS rendered 6775 MB
+RSS built 1895 MB
+RSS lod 1895 MB
+RSS posed 1895 MB
+RSS depsgraph 1895 MB
+OBJECTS 9488 MESHES 9092 IMAGES 187 216 Mpx
+04:32.865  render           | Saved: '/home/runner/work/wanderly/wanderly/out/sneak_0.png'
+RSS rendered 6853 MB
 RENDERED sneak 1.5
