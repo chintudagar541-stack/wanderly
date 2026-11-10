@@ -96,7 +96,8 @@ class Act:
 
 
 class Actor:
-    def __init__(self, ch, acts, face=None, look=None, talk=None, blink_seed=0, props=None, rest_pose=None):
+    def __init__(self, ch, acts, face=None, look=None, talk=None, blink_seed=0, props=None, rest_pose=None, level=True, level_deg=-6.0):
+        self.level, self.level_deg = level, level_deg
         self.ch = ch; self.acts = sorted(acts, key=lambda a: a.t); self.face = face or [(0, 'neutral')]
         self.look = look; self.talk = talk or []; self.props = props or []
         r = random.Random(blink_seed); self.blinks = []; tt = r.uniform(.3, 2.0)
@@ -130,6 +131,16 @@ class Actor:
                     ang = max(-1.2, min(1.2, math.atan2(f2.x * d2.y - f2.y * d2.x, f2.dot(d2))))
                     for b_, k in (('Spine2', .2), ('Neck', .55), ('Head', 1.0)):
                         if b_ in rots: rots[b_] = Matrix.Rotation(ang * k, 3, 'Z') @ rots[b_]
+        if self.level and 'Head' in rots:            # keep the gaze near the horizon (many mocap takes look at the floor)
+            hb = self.ch.rt.bones['Head']; f = rots['Head'] @ hb.matrix_local.to_3x3().inverted() @ Vector((0, -1, 0))
+            pitch = math.asin(max(-1, min(1, f.z / max(f.length, 1e-6))))
+            want = math.radians(self.level_deg)
+            if pitch < want:
+                ax = Vector((f.x, f.y, 0)).cross(Vector((0, 0, 1)))
+                if ax.length > 1e-6:
+                    ax.normalize(); corr = (want - pitch)
+                    for b_, k in (('Spine2', .2), ('Neck', .55), ('Head', 1.0)):
+                        if b_ in rots: rots[b_] = Matrix.Rotation(corr * k, 3, ax) @ rots[b_]
         self.ch.rt.apply(rots, hips); M.relax_fingers(self.ch.rig)
         # face
         import realchar as R

@@ -380,7 +380,7 @@ def s_unbelievable(sh):
     jack, = sh.cast('JACK')
     sh.actor(jack, [CA.Act(0, '86_09', 9.5, 4, loc=(S - W_ * .6, -2.4, DECK), yaw=90, lock_root=True), CA.Act(.6, '79_73', 3.4, 4, loc=(S - W_ * .6, -2.4, DECK), yaw=60, lock_root=True)],
              face=[(0, 'suspicious'), (.6, 'shock')], look=lambda t: (-S, 12, 1.6))
-    cu(sh, jack, angle=20, elev=0, size=(1.1, .38), lens=55, fstop=1.8)
+    cu(sh, jack, angle=25, elev=0, size=(1.4, .6), lens=50, fstop=1.8)
 
 
 def s_sneak(sh):
@@ -413,8 +413,8 @@ def s_vault(sh):
     sh.updates.append(swing)
     T.lantern('vault_lamp', (c.x + 1.6, c.y - 1.2, 1.3), c='Interior', energy=35)
     def cam(t):
-        return (Vector((c.x + 2.4, c.y - 1.6, 1.5)).lerp(Vector((c.x + 1.7, c.y - .9, 1.55)), ease(t / sh.dur)), c + Vector((-.6, .0, 0)), 26, 0, c, .008)
-    sh.camera(cam, fstop=2.8)
+        return (Vector((c.x + 2.6, c.y + .9, 1.75)).lerp(Vector((c.x + 2.0, c.y + .6, 1.7)), ease(t / sh.dur)), c + Vector((-.3, -.3, -.1)), 24, 0, c, .008)
+    sh.camera(cam, fstop=4.0); sh.keylight(30.0, (1, .85, .65))
 
 
 def s_gold(sh):
@@ -437,7 +437,7 @@ def s_draw(sh):
     o = setup(sh, 'night', 20, 300, town=True, interior='bank', veg=.2); night_lights()
     jack, = sh.cast('JACK')
     jp = Vector((-S - 2.0, 11.3, .2))
-    sh.actor(jack, [CA.Act(0, '79_96', 1.2, 6, loc=jp, yaw=90, lock_root=True)], face=[(0, 'determined'), (1.4, 'angry')])
+    sh.actor(jack, [CA.Act(0, '79_96', 1.2, 6, loc=jp, yaw=-90, lock_root=True)], face=[(0, 'determined'), (1.4, 'angry')])
     gun = jack.gun
     def draw(t):
         if gun is None: return
@@ -446,10 +446,10 @@ def s_draw(sh):
             gun.parent = None; gun.matrix_world = hm @ Matrix.Translation((0, .09, .03)) @ Matrix.Rotation(math.radians(-90), 4, 'X')
     sh.updates.append(draw)
     def cam(t):
-        hip = bone_pos(jack, 'Hips'); h = head_of(jack)
-        tgt = (hip + Vector((-.15, -.1, 0))).lerp(h, ease((t - .8) / .7))
-        return ((jp + Vector((.9, -1.4, .9))).lerp(jp + Vector((1.0, -1.2, 1.5)), ease((t - .8) / .7)), tgt, K([(0, 40), (sh.dur, 32)], t), 0, tgt, .01)
-    sh.camera(cam, fstop=2.2)
+        hip = bone_pos(jack, 'RightHand'); h = head_of(jack)
+        tgt = hip.lerp(h, ease((t - .8) / .7)); s = K([(0, .7), (.8, .7), (1.5, 1.1), (sh.dur, 1.0)], t)
+        return (framed(tgt, facing(jack), 35, K([(0, -10), (1.5, 0)], t), s, 35), tgt, 35, 0, tgt, .01)
+    sh.camera(cam, fstop=2.2); sh.keylight(22.0, (1, .85, .65))
 
 
 def open_vault(o, a=math.radians(75)):
@@ -534,7 +534,7 @@ def s_reading(sh):
         sh.actor(ch, [CA.Act(0, ['80_48', '77_02', '79_74', '77_05', '80_44', '80_48'][k], 1.2 + k * .6, 6, loc=(x, y, DECK), yaw=-90 + (k - 2.5) * 10, lock_root=True)], face=[(0, ['angry', 'shock', 'shout', 'suspicious', 'worry', 'angry'][k])], look=lambda t: (-S, -.8, 1.85))
     def cam(t):
         return (Vector((-S + 4.2, -5.0, 1.65)).lerp(Vector((-S + 3.6, -3.6, 1.7)), ease(t / sh.dur)), (-S + .8, -1.0, 1.55), 28, 0, None, .01)
-    sh.camera(cam, fstop=4.0)
+    sh.camera(cam, fstop=4.0); sh.keylight(14.0)
 
 
 def s_neverseen(sh):

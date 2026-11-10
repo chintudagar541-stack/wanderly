@@ -71,7 +71,7 @@ def gold_bar(name, loc, rot=0.0):
 
 
 def sack(name, loc, fill=1.0, label=True):
-    m = T.ph_or('burlap', ('fabric', 'burlap'), lambda: plain('burlapp', '#a08a60', .95), scale=.15, avoid=('leather', 'denim'))
+    m = plain('burlapp', '#8a7450', .95)
     bpy.ops.mesh.primitive_uv_sphere_add(segments=32, ring_count=16, radius=.22, location=loc); o = bpy.context.active_object; o.name = name
     for v in o.data.vertices:
         if v.co.z > .1: v.co.x *= .45 + .3 * (1 - fill); v.co.y *= .45 + .3 * (1 - fill)
