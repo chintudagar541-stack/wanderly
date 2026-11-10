@@ -1,7 +1,6 @@
-00:00.480  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.547  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -13,10 +12,11 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
@@ -118,11 +118,11 @@
 [lib] model tree_stump_01 1
 [lib] hdri sun 146 elev 48.5 -> az 110
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-RSS built 1961 MB
-RSS lod 2171 MB
-RSS posed 2171 MB
-RSS depsgraph 2171 MB
-OBJECTS 9457 MESHES 9064 IMAGES 187 216 Mpx
-03:58.968  render           | Saved: '/home/runner/work/wanderly/wanderly/out/robbed_0.png'
-RSS rendered 7298 MB
+RSS built 1932 MB
+RSS lod 2154 MB
+RSS posed 2154 MB
+RSS depsgraph 2154 MB
+OBJECTS 9584 MESHES 9191 IMAGES 187 216 Mpx
+04:00.321  render           | Saved: '/home/runner/work/wanderly/wanderly/out/robbed_0.png'
+RSS rendered 7318 MB
 RENDERED robbed 1.5
