@@ -1,0 +1,94 @@
+00:00.690  cycles           | WARNING CUEW initialization failed: Error opening the library
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['painted', 'wood', 'planks'] -> blue_painted_planks
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
+[lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
+[lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
+[lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
+[lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
+[lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
+[lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
+[lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
+[lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['dirt', 'ground', 'sand'] -> playground_sand
+[lib] hdri sun 143 elev 3.5 -> az 235
+RSS built 1235 MB
+RSS lod 2098 MB
+RSS posed 2098 MB
+RSS depsgraph 2098 MB
+OBJECTS 9032 MESHES 8983 IMAGES 61 83 Mpx
+03:52.155  render           | Saved: '/home/runner/work/wanderly/wanderly/out/m_veg0.png'
+RSS rendered 4498 MB
+RENDERED hook 2.6
