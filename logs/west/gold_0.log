@@ -1,0 +1,8 @@
+00:00.701  cycles           | WARNING CUEW initialization failed: Error opening the library
+[lib] hdri sun 142 elev 10.9 -> az 300
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['fabric', 'burlap'] -> fabric_pattern_07
+00:44.989  render           | Saved: '/home/runner/work/wanderly/wanderly/out/gold_0.png'
+RENDERED gold 1.56
