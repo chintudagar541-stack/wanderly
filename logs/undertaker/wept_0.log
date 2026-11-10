@@ -1,4 +1,4 @@
-00:01.015  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.799  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -115,14 +115,14 @@
 [lib] model dead_tree_trunk_02 4
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
-20:21:02 | INFO: Data are loaded, start creating Blender stuff
-20:21:02 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
-20:21:02 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
-20:21:02 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
-20:21:02 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
-20:21:02 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
-20:21:02 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
-20:21:04 | INFO: glTF import finished in 1.77s
+20:35:15 | INFO: Data are loaded, start creating Blender stuff
+20:35:15 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
+20:35:15 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
+20:35:15 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
+20:35:16 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
+20:35:16 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
+20:35:16 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
+20:35:17 | INFO: glTF import finished in 2.06s
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -153,15 +153,15 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-RSS built 1865 MB
+RSS built 1850 MB
 EXTRAS wept 0
-RSS extras 1890 MB
+RSS extras 1877 MB
 CLEARCAM wept 0
-RSS lod 1895 MB
-RSS posed 1895 MB
-RSS depsgraph 1895 MB
-OBJECTS 11104 MESHES 10533 IMAGES 212 224 Mpx
-04:57.014  render           | Saved: '/home/runner/work/wanderly/wanderly/out/wept_0.png'
-RTIME 65.3
-RSS rendered 6534 MB
+RSS lod 1882 MB
+RSS posed 1882 MB
+RSS depsgraph 1882 MB
+OBJECTS 11108 MESHES 10537 IMAGES 212 224 Mpx
+03:56.126  render           | Saved: '/home/runner/work/wanderly/wanderly/out/wept_0.png'
+RTIME 72.8
+RSS rendered 6522 MB
 RENDERED wept 0.83
