@@ -1,0 +1,33 @@
+FAIL adrian-cross    kokoro:am_puck                   No module named 'kokoro'
+FAIL adrian-cross    kokoro:am_michael                No module named 'kokoro'
+FAIL adrian-cross    piper:en_US-ryan-high            /usr/bin/python3: No module named piper
+
+FAIL maya-reed       kokoro:af_nicole                 No module named 'kokoro'
+FAIL maya-reed       kokoro:bf_emma                   No module named 'kokoro'
+FAIL maya-reed       piper:en_US-hfc_female-medium    /usr/bin/python3: No module named piper
+
+FAIL thomas-hayes    kokoro:bm_george                 No module named 'kokoro'
+FAIL thomas-hayes    kokoro:am_onyx                   No module named 'kokoro'
+FAIL thomas-hayes    piper:en_US-norman-medium        /usr/bin/python3: No module named piper
+
+FAIL elias-voss      kokoro:bm_fable                  No module named 'kokoro'
+FAIL elias-voss      kokoro:bm_lewis                  No module named 'kokoro'
+FAIL elias-voss      piper:en_GB-alan-medium          /usr/bin/python3: No module named piper
+
+FAIL nora-vale       kokoro:af_heart                  No module named 'kokoro'
+FAIL nora-vale       kokoro:af_bella                  No module named 'kokoro'
+FAIL nora-vale       piper:en_US-amy-medium           /usr/bin/python3: No module named piper
+
+FAIL leo-park        kokoro:am_adam                   No module named 'kokoro'
+FAIL leo-park        kokoro:am_echo                   No module named 'kokoro'
+FAIL leo-park        piper:en_US-joe-medium           /usr/bin/python3: No module named piper
+
+FAIL narrator-hindi  kokoro:hm_omega                  No module named 'kokoro'
+FAIL narrator-hindi  kokoro:hm_psi                    No module named 'kokoro'
+FAIL narrator-hindi  kokoro:hf_alpha                  No module named 'kokoro'
+FAIL narrator-hindi  piper:hi_IN-rohan-medium         /usr/bin/python3: No module named piper
+
+FAIL narrator-hindi  piper:hi_IN-pratham-medium       /usr/bin/python3: No module named piper
+
+FAIL narrator-hindi  piper:hi_IN-priyamvada-medium    /usr/bin/python3: No module named piper
+
