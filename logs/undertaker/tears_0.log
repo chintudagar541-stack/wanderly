@@ -1,4 +1,4 @@
-00:00.612  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.772  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -115,14 +115,14 @@
 [lib] model dead_tree_trunk_02 4
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
-19:05:07 | INFO: Data are loaded, start creating Blender stuff
-19:05:07 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
-19:05:07 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
-19:05:07 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
-19:05:07 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
-19:05:07 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
-19:05:07 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
-19:05:08 | INFO: glTF import finished in 1.32s
+19:51:53 | INFO: Data are loaded, start creating Blender stuff
+19:51:53 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
+19:51:54 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
+19:51:54 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
+19:51:54 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
+19:51:54 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
+19:51:54 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
+19:51:55 | INFO: glTF import finished in 1.93s
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -153,29 +153,15 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-RSS built 1851 MB
-Traceback (most recent call last):
-  File "/home/runner/work/wanderly/wanderly/blender/undertaker/story.py", line 726, in <module>
-    F.main(SHOTS)
-    ~~~~~~^^^^^^^
-  File "/home/runner/work/wanderly/wanderly/blender/west/film.py", line 751, in main
-    sh = Shot(sid); (shots or SHOTS)[sid](sh); rss('built'); sh.populate(); rss('extras'); sh.clear_camera(); sh.lod(); rss('lod')
-                                                             ~~~~~~~~~~~^^
-  File "/home/runner/work/wanderly/wanderly/blender/west/film.py", line 64, in populate
-    self.at(self.dur / 2); bpy.context.view_layer.update()
-    ~~~~~~~^^^^^^^^^^^^^^
-  File "/home/runner/work/wanderly/wanderly/blender/west/film.py", line 165, in at
-    for a in self.actors: a.apply(t)
-                          ~~~~~~~^^^
-  File "/home/runner/work/wanderly/wanderly/blender/west/toon.py", line 491, in apply
-    self.t = t; self.ch.apply(t)
-                ~~~~~~~~~~~~~^^^
-  File "/home/runner/work/wanderly/wanderly/blender/pirate/inkchar.py", line 271, in apply
-    s = self.fn(t); sc = self.s
-  File "/home/runner/work/wanderly/wanderly/blender/undertaker/story.py", line 63, in <lambda>
-    actor.ch.fn = lambda t: fn(t, f0(t))
-                                  ~~^^^
-  File "/home/runner/work/wanderly/wanderly/blender/west/toon.py", line 482, in _fn
-    d = Vector(tg) - Vector(s['loc']); want = math.degrees(math.atan2(d.x, -d.y)) if d.length > 1e-3 else s['yaw']
-        ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
-AttributeError: Vector subtraction: vectors must have the same dimensions for this operation
+RSS built 1889 MB
+EXTRAS tears 0
+RSS extras 1911 MB
+CLEARCAM tears 1
+RSS lod 1913 MB
+RSS posed 1913 MB
+RSS depsgraph 1913 MB
+OBJECTS 11558 MESHES 10816 IMAGES 212 224 Mpx
+03:21.359  render           | Saved: '/home/runner/work/wanderly/wanderly/out/tears_0.png'
+RTIME 46.0
+RSS rendered 6483 MB
+RENDERED tears 1.38
