@@ -1,0 +1,8 @@
+00:00.450  cycles           | WARNING CUEW initialization failed: Error opening the library
+[lib] hdri sun 142 elev 10.9 -> az 300
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['fabric', 'burlap'] -> fabric_pattern_07
+01:07.184  render           | Saved: '/home/runner/work/wanderly/wanderly/out/arrest_0.png'
+RENDERED arrest 1.38
