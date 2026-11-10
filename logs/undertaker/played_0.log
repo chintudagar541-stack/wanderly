@@ -1,4 +1,4 @@
-00:00.663  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.734  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -115,14 +115,14 @@
 [lib] model dead_tree_trunk_02 4
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
-20:34:47 | INFO: Data are loaded, start creating Blender stuff
-20:34:47 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
-20:34:47 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
-20:34:47 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
-20:34:48 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
-20:34:48 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
-20:34:48 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
-20:34:49 | INFO: glTF import finished in 1.67s
+20:51:30 | INFO: Data are loaded, start creating Blender stuff
+20:51:30 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
+20:51:30 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
+20:51:30 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
+20:51:30 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
+20:51:31 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
+20:51:31 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
+20:51:31 | INFO: glTF import finished in 1.76s
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -153,15 +153,15 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-RSS built 1902 MB
+RSS built 1878 MB
 EXTRAS played 0
-RSS extras 1973 MB
+RSS extras 1947 MB
 CLEARCAM played 0
-RSS lod 1973 MB
-RSS posed 1973 MB
-RSS depsgraph 1973 MB
+RSS lod 1947 MB
+RSS posed 1947 MB
+RSS depsgraph 1947 MB
 OBJECTS 11806 MESHES 10956 IMAGES 212 224 Mpx
-03:42.261  render           | Saved: '/home/runner/work/wanderly/wanderly/out/played_0.png'
-RTIME 69.0
-RSS rendered 6587 MB
+03:30.853  render           | Saved: '/home/runner/work/wanderly/wanderly/out/played_0.png'
+RTIME 47.8
+RSS rendered 6416 MB
 RENDERED played 0.66
