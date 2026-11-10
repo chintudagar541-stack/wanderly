@@ -123,7 +123,7 @@ class Shot:
                     if dist < rad or (dist < 3.2 and d.normalized().dot(fw) > .8 and dist < (tg - c).length - .6): bad = True
                 if bad:
                     for o in [ch.root] + list(ch.root.children_recursive): o.hide_render = True; o.hide_viewport = True
-                    hidden += 1; break
+                    a.gone = True; hidden += 1; break          # also parked far below: per-frame face updates unhide eyes/teeth
         print('CLEARCAM', self.sid, hidden, flush=True)
 
     def keylight(self, energy=25.0, col=(1, .9, .8), size=1.2):
@@ -162,7 +162,9 @@ class Shot:
         return seen
 
     def at(self, t):
-        for a in self.actors: a.apply(t)
+        for a in self.actors:
+            a.apply(t)
+            if getattr(a, 'gone', False): a.ch.root.location.z = -500.0
         for u in self.updates: u(t)
         bpy.context.view_layer.update()
         co, fn = self.cam; r = fn(t)

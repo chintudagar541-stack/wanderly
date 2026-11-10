@@ -269,7 +269,7 @@ def s_splinter(sh):
     def cam(t):
         hp = tip[0] if tip else Vector((1.3, 3.5, 1.1)); f, sd = side_of(ez); h = head_of(ez)
         mid = hp.lerp(h, .45)
-        return (hp + f * (.85 - .06 * t) - sd * .1 + Vector((0, 0, .12)), mid, 45, 0, hp, .004)
+        return (hp + f * (1.55 - .1 * t) - sd * .12 + Vector((0, 0, .15)), mid, 40, 0, hp, .004)
     sh.camera(cam, fstop=2.2); sh.keylight(16)
 
 
@@ -321,7 +321,7 @@ def s_small(sh):
     lie_in(sh, ez, c, [(0, 'grit')], head_y=.52, z=.24)
     def cam(t):
         u = ease(t / sh.dur)
-        p = c.world((1.75, .15, .95)).lerp(c.world((.8, 2.45, .62)), u)
+        p = c.world((1.75, .15, .95)).lerp(c.world((.95, 2.75, .75)), u)
         tg = c.world((0, .55, .42)).lerp(c.world((0, 1.7, .32)), u)
         return (p, tg, 30 + 4 * u, 0, tg, .008)
     sh.camera(cam, fstop=3.2)
@@ -496,6 +496,8 @@ def s_decision(sh):
 def perfect_set(sh, with_people=True, crowd=0, wreaths=(0, 1, 2, 3)):
     """the velvet funeral on Boot Hill: draped stand, wreaths, flowers, candles, band, paid mourners"""
     c = grave_coffin(kind='velvet', name='vcoffin'); c.open(1.0)
+    for o in bpy.data.objects:
+        if o.name.startswith(('mound', 'shovel')): o.hide_render = True
     drape = T.plain('drape', '#3a1430', .9); drape.node_tree.nodes['Principled BSDF'].inputs['Sheen Weight'].default_value = 1.0
     T.box('drape', (1.5, 2.6, .05), (0, 95.95, HZ + .07), drape)
     for k, (x, y) in enumerate(((-1.25, 94.2), (1.25, 94.2), (-1.25, 97.8), (1.25, 97.8))):
@@ -556,9 +558,9 @@ def s_velvet(sh):
     lie_in(sh, ez, c, [(0, 'relief')])
     def cam(t):
         u = ease(t / sh.dur)
-        p = c.world((1.45, 2.1, 1.35)).lerp(c.world((1.15, .25, 1.2)), u)
-        tg = c.world((0, 1.25, .35)).lerp(c.world((0, .45, .5)), u)
-        return (p, tg, 32, 0, tg, .004)
+        p = c.world((1.7, 2.3, 1.75)).lerp(c.world((1.25, .9, 1.55)), u)
+        tg = c.world((0, 1.3, .35)).lerp(c.world((0, .55, .45)), u)
+        return (p, tg, 30, 0, tg, .004)
     sh.camera(cam, fstop=3.2)
 
 
@@ -568,14 +570,14 @@ def s_band(sh):
     c, ez, band = perfect_set(sh)
     lie_in(sh, ez, c, [(0, 'relief')])
     play_band(sh, band)
-    sh.camera(cam_keys([(0, (1.45, 99.45, HZ + 1.15), (3.5, 97.3, HZ + 1.25), 26), (sh.dur, (1.6, 99.2, HZ + 1.2), (3.55, 97.25, HZ + 1.3), 28)], roll=-3, shake=.008), fstop=3.2)
+    sh.camera(cam_keys([(0, (.6, 100.4, HZ + 1.3), (3.5, 97.3, HZ + 1.2), 26), (sh.dur, (.75, 100.15, HZ + 1.3), (3.55, 97.3, HZ + 1.25), 28)], roll=-3, shake=.008), fstop=3.5)
 
 
 def s_tears(sh):
     """'Real tears. He paid for those.'  The undertaker presses a coin into each widow's glove - they instantly burst into
     tears."""
     stage(sh, 'sunset', 12, 245)
-    c, ez, band = perfect_set(sh)
+    c, ez, band = perfect_set(sh, wreaths=(1, 2, 3))
     lie_in(sh, ez, c, [(0, 'relief')])
     mort = toon(sh, 'MORT', MORT)
     ws = [toon(sh, f'W{k}', widow(k)) for k in range(2)]
@@ -677,8 +679,8 @@ def s_wept(sh):
     mort = toon(sh, 'MORT', MORT)
     a = stand(sh, mort, (-.95, 93.7), 40, '77_02', 3.0, face=[(0, 'sad')], look=lambda t: (0, 96, HZ + .5))
     def mod(t, s):
-        f, sd = side_of(mort); hc = head_of(mort, -.1)
-        s['handR'] = tuple(hc + f * .3 + sd * .12 + Vector((0, 0, .03 * math.sin(t * 10)))); return s
+        f, sd = side_of(mort); hc = head_of(mort, -.3)
+        s['handR'] = tuple(hc + f * .3 + sd * .1 + Vector((0, 0, .03 * math.sin(t * 10)))); return s
     override(a, mod)
     hk = T.box('hanky', (.15, .02, .15), (0, 0, 0), T.plain('hanky', '#f4f0e8', .8)); hold(sh, hk, mort, 'R', (0, 0, .07), rot=(.3, 0, .4))
     tear_streams(sh, [(mort, .0)], n=8)
@@ -689,7 +691,7 @@ def s_wept(sh):
 def town_crowd(sh, n=22, face='laugh', clips=('79_70', '80_44', '79_70', '77_02', '80_48'), arriving=False):
     out = []; rng = random.Random(9)
     for k in range(n):
-        ring = 4.2 + (k % 3) * 1.25; a = math.radians(-160 + k * (320 / n) + rng.uniform(-5, 5))
+        ring = 4.2 + (k % 3) * 1.25; a = math.radians(55 + k * (290 / n) + rng.uniform(-5, 5))
         x, y = math.cos(a) * ring * 1.15, 96 + math.sin(a) * ring
         if -1.8 < x < 1.8 and y > 96: x += 3.5 * (1 if x >= 0 else -1)
         ch = toon(sh, f'C{k}', TO.crowd_preset(400 + k) if k % 4 else widow(k))
@@ -717,15 +719,15 @@ def s_laugh(sh):
     """'To laugh. Because everyone knew Ezra would climb out any second.'  From inside the ring: sweep across the laughing,
     pointing faces, then settle on the closed coffin with the grinning crowd behind it, waiting."""
     stage(sh, 'sunset', 9, 245)
-    c, ez, band = perfect_set(sh, wreaths=(1, 3))
+    c, ez, band = perfect_set(sh, wreaths=(3,))
     c.open(0.0)
     crowd = town_crowd(sh, 22, face='laugh')
     for a in sh.actors:
         if getattr(a, 'ch', None) in crowd: a.face = H.expr_track([(0, 'laugh'), (3.6, 'grin')])
     def cam(t):
-        u = ease(t / sh.dur); ang = math.radians(245 - 105 * u); r = 3.0
+        u = ease(t / sh.dur); ang = math.radians(175 + 115 * u); r = 3.0
         p = Vector((math.cos(ang) * r, 96 + math.sin(ang) * r, HZ + 1.75))
-        out = Vector((math.cos(ang - .25) * 6.0, 96 + math.sin(ang - .25) * 6.0, HZ + 1.3))
+        out = Vector((math.cos(ang + .25) * 6.0, 96 + math.sin(ang + .25) * 6.0, HZ + 1.3))
         tg = out.lerp(Vector((0, 96, HZ + .7)), ease((t - 2.8) / 1.8))
         return (p, tg, 26, 0, tg, .008)
     sh.camera(cam, fstop=4)
@@ -739,7 +741,7 @@ def s_didnt(sh):
     c.open(0.0)
     town_crowd(sh, 22, face=['watch', 'confused', 'watch', 'bored'], clips=('77_02', '40_10'))
     tg = c.world((0, 1.0, .5))
-    sh.camera(cam_keys([(0, (.05, 99.45, HZ + 1.25), tg, 30), (sh.dur, (.03, 98.75, HZ + 1.05), tg, 34)], shake=.003), fstop=2.8)
+    sh.camera(cam_keys([(0, (.05, 99.9, HZ + 1.85), tg + Vector((0, -.6, .35)), 30), (sh.dur, (.03, 99.2, HZ + 1.6), tg + Vector((0, -.5, .3)), 33)], shake=.003), fstop=3.2)
 
 
 def s_days(sh):
@@ -764,7 +766,7 @@ def s_days(sh):
             if '_fl' in o.name: o.location = l0 + Vector((.12 * w, 0, -.3 * w))
             else: o.scale = (1, 1, 1 - .5 * w); o.location = l0 - Vector((0, 0, .11 * w)); o.rotation_euler = (0, .6 * w, 0)
     sh.updates.append(cyc)
-    sh.camera(cam_keys([(0, (3.3, 100.4, HZ + 2.1), (0, 95.7, HZ + .45), 30), (sh.dur, (3.2, 100.2, HZ + 2.05), (0, 95.7, HZ + .45), 30)], shake=.0), fstop=6)
+    sh.camera(cam_keys([(0, (.5, 101.2, HZ + 2.3), (0, 95.6, HZ + .55), 30), (sh.dur, (.48, 101.0, HZ + 2.25), (0, 95.6, HZ + .55), 30)], shake=.0), fstop=6)
     sh.no_extras = True
 
 
