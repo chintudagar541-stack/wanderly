@@ -1,7 +1,7 @@
-00:00.761  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.767  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] hdri sun 143 elev 12.0 -> az 300
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-01:07.022  render           | Saved: '/home/runner/work/wanderly/wanderly/out/vault_0.png'
+01:07.217  render           | Saved: '/home/runner/work/wanderly/wanderly/out/vault_0.png'
 RENDERED vault 0.6
