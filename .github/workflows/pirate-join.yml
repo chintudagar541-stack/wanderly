@@ -14,11 +14,15 @@ jobs:
       - uses: actions/checkout@v5
       - id: r
         run: echo "run_id=$(jq -r .run_id blender/pirate/join.json)" >> $GITHUB_OUTPUT
-      - uses: actions/download-artifact@v4
-        with: { path: art, pattern: 'chunk-*', merge-multiple: true, run-id: '${{ steps.r.outputs.run_id }}', github-token: '${{ secrets.GITHUB_TOKEN }}' }
+      - name: download all chunks (gh paginates; download-artifact@v4 stops at 100)
+        env: { GH_TOKEN: '${{ github.token }}' }
+        run: |
+          mkdir -p dl art
+          gh run download ${{ steps.r.outputs.run_id }} -p 'chunk-*' -D dl
+          find dl -name '*.mp4' -exec mv -t art {} +
+          echo "chunks: $(ls art | wc -l)"
       - run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg fonts-dejavu-core >/dev/null; pip install pillow -q 2>/dev/null || true
-          ls art | wc -l
           python3 blender/pirate/compose.py art final.mp4
           mkdir -p previews/pirate
           ffmpeg -loglevel error -y -i final.mp4 -c:v libx264 -preset slow -b:v 9000k -maxrate 11000k -bufsize 20000k -pix_fmt yuv420p -c:a copy -movflags +faststart previews/pirate/final_share.mp4
