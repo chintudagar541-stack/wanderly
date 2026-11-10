@@ -1,7 +1,6 @@
-00:00.860  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.531  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -13,7 +12,9 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -27,7 +28,6 @@
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
@@ -118,11 +118,11 @@
 [lib] model tree_stump_01 1
 [lib] hdri sun 143 elev 3.5 -> az 250
 Info: Object has non-uniform scale, unwrap will operate on a non-scaled version of the mesh
-RSS built 2534 MB
-RSS lod 2564 MB
-RSS posed 2568 MB
-RSS depsgraph 2568 MB
-OBJECTS 9600 MESHES 9201 IMAGES 188 217 Mpx
-04:35.108  render           | Saved: '/home/runner/work/wanderly/wanderly/out/pullposter_0.png'
-RSS rendered 8246 MB
+RSS built 2541 MB
+RSS lod 2569 MB
+RSS posed 2579 MB
+RSS depsgraph 2579 MB
+OBJECTS 9580 MESHES 9181 IMAGES 188 217 Mpx
+03:17.492  render           | Saved: '/home/runner/work/wanderly/wanderly/out/pullposter_0.png'
+RSS rendered 8210 MB
 RENDERED pullposter 1.65
