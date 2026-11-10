@@ -1,4 +1,4 @@
-00:00.579  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.600  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -13,21 +13,21 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
-[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-[lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
-[lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
+[lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['painted', 'wood'] -> wood_peeling_paint_weathered
 [lib] ph_find textures ['wood', 'door'] -> wooden_garage_door
@@ -115,14 +115,14 @@
 [lib] model dead_tree_trunk_02 4
 [lib] model dead_quiver_trunk 4
 [lib] model tree_stump_01 1
-09:59:02 | INFO: Data are loaded, start creating Blender stuff
-09:59:02 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
-09:59:02 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
-09:59:03 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
-09:59:03 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
-09:59:03 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
-09:59:03 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
-09:59:04 | INFO: glTF import finished in 1.70s
+10:23:09 | INFO: Data are loaded, start creating Blender stuff
+10:23:09 | INFO: Blender create Mesh node horse_hi_rt_eyeShape
+10:23:09 | INFO: Blender create Mesh node horse_hi_lf_eyeShape
+10:23:09 | INFO: Blender create Mesh node horse_hi_cn_bodyShape
+10:23:10 | INFO: Blender create Mesh node horse_hi_cn_upper_teethShape
+10:23:10 | INFO: Blender create Mesh node horse_hi_cn_lower_teethShape
+10:23:10 | INFO: Blender create Mesh node horse_hi_cn_tongueShape
+10:23:11 | INFO: glTF import finished in 1.70s
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
@@ -131,14 +131,14 @@
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] hdri sun 136 elev 4.9 -> az 20
-RSS built 1921 MB
+RSS built 1952 MB
 EXTRAS walkin 9
-RSS extras 1921 MB
+RSS extras 1952 MB
 CLEARCAM walkin 0
-RSS lod 1991 MB
-RSS posed 1992 MB
-RSS depsgraph 1992 MB
-OBJECTS 11407 MESHES 10362 IMAGES 189 217 Mpx
-06:22.502  render           | Saved: '/home/runner/work/wanderly/wanderly/out/walkin_0.png'
-RSS rendered 7417 MB
+RSS lod 1976 MB
+RSS posed 1977 MB
+RSS depsgraph 1977 MB
+OBJECTS 11584 MESHES 10560 IMAGES 189 217 Mpx
+05:19.462  render           | Saved: '/home/runner/work/wanderly/wanderly/out/walkin_0.png'
+RSS rendered 7335 MB
 RENDERED walkin 1.47
