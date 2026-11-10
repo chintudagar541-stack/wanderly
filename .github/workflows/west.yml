@@ -1,5 +1,5 @@
-# DAGAR CLIPS - Wild West short. blender/west/job.json lists test tasks (stills) or the full film (later).
-# Runs the same Blender as local development (pip bpy 5.2.3, Python 3.13) so results match.
+# DAGAR CLIPS - Wild West short. blender/west/job.json: mode "tasks" (ad-hoc test scripts), "stills" (check frames of every shot)
+# or "video" (every frame, chunked, then joined with subtitles + audio into previews/west/final). Same Blender as local dev (pip bpy 5.2.3).
 name: West render
 on:
   push:
@@ -11,47 +11,90 @@ permissions:
 jobs:
   plan:
     runs-on: ubuntu-latest
-    outputs: { tasks: '${{ steps.p.outputs.tasks }}' }
+    outputs: { jobs: '${{ steps.p.outputs.jobs }}', mode: '${{ steps.p.outputs.mode }}', cast: '${{ steps.p.outputs.cast }}' }
     steps:
       - uses: actions/checkout@v5
       - id: p
-        run: echo "tasks=$(jq -c .tasks blender/west/job.json)" >> $GITHUB_OUTPUT
-  task:
+        run: |
+          echo "jobs=$(python3 blender/west/plan.py)" >> $GITHUB_OUTPUT
+          echo "mode=$(jq -r .mode blender/west/job.json)" >> $GITHUB_OUTPUT
+          echo "cast=$(jq -r '.cast // true' blender/west/job.json)" >> $GITHUB_OUTPUT
+  cast:
     needs: plan
+    if: needs.plan.outputs.cast == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/west-setup
+      - name: Build cast + portraits
+        run: |
+          mkdir -p /tmp/castout; cd blender/west
+          python3 cast.py -- build /tmp/castout/cast.blend 2>&1 | grep -E "built|Error|Traceback|Saved" | tail -40
+          CAST=/tmp/castout/cast.blend python3 portraits.py -- /tmp/castout 2>&1 | grep -E "portrait|Error|Traceback"
+          ls -la /tmp/castout
+      - uses: actions/upload-artifact@v4
+        with: { name: cast, path: /tmp/castout, retention-days: 7 }
+  task:
+    needs: [plan, cast]
+    if: always() && needs.plan.result == 'success' && (needs.cast.result == 'success' || needs.cast.result == 'skipped')
     runs-on: ubuntu-latest
     timeout-minutes: 340
     strategy:
       fail-fast: false
       max-parallel: 20
-      matrix: { t: '${{ fromJson(needs.plan.outputs.tasks) }}' }
+      matrix: { t: '${{ fromJson(needs.plan.outputs.jobs) }}' }
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/setup-python@v5
-        with: { python-version: '3.13', cache: 'pip', cache-dependency-path: 'blender/west/requirements.txt' }
-      - name: Install Blender (bpy) + MakeHuman MPFB + CMU mocap
+      - uses: ./.github/actions/west-setup
+      - uses: actions/download-artifact@v4
+        if: needs.plan.outputs.cast == 'true'
+        with: { name: cast, path: /tmp/cast }
+      - name: Run
         run: |
-          sudo apt-get update -qq && sudo apt-get install -y -qq libxi6 libxxf86vm1 libxfixes3 libxrender1 libgl1 libxkbcommon0 libsm6 libegl1 ffmpeg fonts-dejavu-core >/dev/null
-          pip install -q -r blender/west/requirements.txt
-          git clone -q --depth 1 https://github.com/makehumancommunity/mpfb2.git /tmp/mpfb2
-          D=$HOME/.config/blender/5.2/extensions/user_default; mkdir -p $D; cp -r /tmp/mpfb2/src/mpfb $D/mpfb
-          mkdir -p /tmp/mocap && cd /tmp/mocap && git clone -q --depth 1 --filter=blob:none --no-checkout https://github.com/una-dinosauria/cmu-mocap.git && cd cmu-mocap
-          git checkout HEAD -- $(cat $GITHUB_WORKSPACE/blender/west/clips.txt | sed 's#^\(\([0-9]*\)_.*\)#data/\2/\1.bvh#' | awk -F/ '{printf "data/%03d/%s\n", $2, $3}')
-      - name: Run task
-        run: |
-          mkdir -p out; set -o pipefail
-          cd blender/west
-          export USE_PH=1 $(echo '${{ toJson(matrix.t.env) }}' | jq -r 'to_entries|map("\(.key)=\(.value)")|join(" ")')
-          python3 ${{ matrix.t.script }} -- $GITHUB_WORKSPACE/out/${{ matrix.t.id }}.png ${{ join(matrix.t.args, ' ') }} 2>&1 | grep -v "^Fra:\|degenerated\|strokes" | tee $GITHUB_WORKSPACE/out/log.txt | tail -150
-      - name: Save to the branch
-        if: always()
+          mkdir -p out; set -o pipefail; cd blender/west
+          export USE_PH=1 CAST=/tmp/cast/cast.blend FACES=/tmp/cast
+          export RW=$(jq -r '.w // 1440' job.json) RH=$(jq -r '.h // 2560' job.json) SAMPLES=$(jq -r '.samples // 64' job.json) VEG=$(jq -r '.veg // 1.0' job.json) HANDLE=$(jq -r '.handle // 0.25' job.json)
+          export $(echo '${{ toJson(matrix.t.env) }}' | jq -r 'if . == null then "" else to_entries|map("\(.key)=\(.value)")|join(" ") end')
+          if [ "${{ needs.plan.outputs.mode }}" = "video" ]; then
+            python3 film.py -- frames ${{ matrix.t.shot }} ${{ matrix.t.a }} ${{ matrix.t.b }} $GITHUB_WORKSPACE/out/frames 2>&1 | grep -E "frame|Error|Traceback|line" | tee $GITHUB_WORKSPACE/out/log.txt | tail -60
+            S=$(ls $GITHUB_WORKSPACE/out/frames | head -1 | sed 's/f_0*//; s/.png//'); [ -z "$S" ] && S=0
+            ffmpeg -loglevel error -y -framerate 24 -start_number $S -i $GITHUB_WORKSPACE/out/frames/f_%05d.png -c:v libx264 -preset slow -crf 14 -pix_fmt yuv420p $GITHUB_WORKSPACE/out/chunk_${{ matrix.t.id }}.mp4
+            rm -rf $GITHUB_WORKSPACE/out/frames
+          else
+            python3 ${{ matrix.t.script }} -- ${{ join(matrix.t.args, ' ') }} $GITHUB_WORKSPACE/out/${{ matrix.t.id }}.png ${{ matrix.t.t }} 2>&1 | grep -v "^Fra:\|degenerated\|strokes" | tee $GITHUB_WORKSPACE/out/log.txt | tail -120
+          fi
+      - name: Save still + log to the branch
+        if: always() && needs.plan.outputs.mode != 'video'
         run: |
           mkdir -p previews/west logs/west
           cp out/*.json previews/west/ 2>/dev/null || true
           [ -f out/${{ matrix.t.id }}.png ] && ffmpeg -loglevel error -y -i out/${{ matrix.t.id }}.png -q:v 2 previews/west/${{ matrix.t.id }}.jpg || true
           tail -c 30000 out/log.txt > logs/west/${{ matrix.t.id }}.log 2>/dev/null || true
           git config user.name "github-actions"; git config user.email "github-actions@users.noreply.github.com"
-          git add previews/west logs/west; git stash -u -q -- blender || true; git commit -qm "west ${{ matrix.t.id }} [skip ci]" || exit 0
+          git add previews/west logs/west; git commit -qm "west ${{ matrix.t.id }} [skip ci]" || exit 0
+          for i in 1 2 3 4 5 6 7 8 9 10; do git pull --rebase --autostash -q && git push -q && break; sleep $((RANDOM % 9 + 3)); done
+      - uses: actions/upload-artifact@v4
+        if: needs.plan.outputs.mode == 'video'
+        with: { name: 'chunk-${{ matrix.t.id }}', path: 'out/chunk_*.mp4', retention-days: 5 }
+  join:
+    needs: [plan, task]
+    if: always() && needs.plan.outputs.mode == 'video'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: download chunks
+        env: { GH_TOKEN: '${{ github.token }}' }
+        run: |
+          mkdir -p dl art; gh run download ${{ github.run_id }} -p 'chunk-*' -D dl; find dl -name '*.mp4' -exec mv -t art {} +; echo "chunks: $(ls art | wc -l)"
+      - run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg fonts-dejavu-core >/dev/null; pip install -q pillow
+          python3 blender/west/compose.py art final.mp4
+          mkdir -p previews/west
+          ffmpeg -loglevel error -y -i final.mp4 -c:v libx264 -preset slow -b:v 9000k -maxrate 11000k -bufsize 20000k -pix_fmt yuv420p -c:a copy -movflags +faststart previews/west/final_share.mp4
+          split -b 90m -d final.mp4 previews/west/final_full.mp4.part
+          git config user.name "github-actions"; git config user.email "github-actions@users.noreply.github.com"
+          git add previews/west/final_*; git commit -qm "west final video [skip ci]" || exit 0
           for i in 1 2 3 4 5 6 7 8; do git pull --rebase --autostash -q && git push -q && break; sleep $((RANDOM % 9 + 3)); done
       - uses: actions/upload-artifact@v4
-        if: always()
-        with: { name: 'out-${{ matrix.t.id }}', path: 'out/*.png', retention-days: 5 }
+        with: { name: 'video', path: 'final.mp4', retention-days: 30 }

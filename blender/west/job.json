@@ -1,3 +1,1 @@
-{"rev": 3, "tasks": [
- {"id": "phlist", "script": "phlist.py", "args": [], "env": {}}
-]}
+{"rev": 4, "mode": "stills", "w": 720, "h": 1280, "samples": 32, "veg": 0.7, "at": [0.6], "only": ""}

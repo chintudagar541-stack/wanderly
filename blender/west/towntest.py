@@ -3,7 +3,7 @@ from mathutils import Vector
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 bpy.ops.wm.read_factory_settings(use_empty=True)
 import town as T
-out = sys.argv[sys.argv.index('--') + 1]; view = sys.argv[sys.argv.index('--') + 2]
+_a = sys.argv[sys.argv.index('--') + 1:]; out = next(x for x in _a if x.endswith('.png')); view = next((x for x in _a if x and not x.endswith('.png')), 'street')
 sc = bpy.context.scene; sc.render.engine = 'CYCLES'; sc.cycles.samples = int(os.environ.get('S', 16)); sc.cycles.use_denoising = True
 sc.render.resolution_x, sc.render.resolution_y = int(os.environ.get('RW', 360)), int(os.environ.get('RH', 640))
 T.build_town(); T.sky(os.environ.get('MOOD', 'sunset'), sun_elev=float(os.environ.get('ELEV', 12)), sun_az=float(os.environ.get('AZ', 200))); T.haze()

@@ -485,7 +485,9 @@ class Person:
             st.type = 'HAIR'; st.count = count; st.hair_length = length; st.use_advanced_hair = True
             st.emit_from = 'FACE'; st.use_emit_random = True; st.use_even_distribution = True
             L_ = length / 4.0 / math.sqrt(normal ** 2 + tang ** 2 + down ** 2); st.normal_factor = normal * L_; st.tangent_factor = tang * L_; st.tangent_phase = phase; st.object_align_factor = (0, 0, -down * L_)
-            st.child_type = 'INTERPOLATED'; st.child_percent = children; st.rendered_child_count = children; st.child_length = 1.0
+            hatted = bool(P['outfit'].get('hat')) and name == 'scalp_hair'
+            if hatted: count = int(count * .45)
+            st.child_type = 'INTERPOLATED'; st.child_percent = 1; st.rendered_child_count = max(4, int(children * (.5 if hatted else .7))); st.child_length = 1.0; st.display_percentage = 10
             st.roughness_1 = rough; st.roughness_1_size = .05; st.roughness_endpoint = rough * .6; st.clump_factor = clump
             st.kink = 'CURL' if kink else 'NO'; st.kink_amplitude = kink; st.kink_frequency = 6
             st.material_slot = hm.name if hasattr(st, 'material_slot') else st.material_slot
