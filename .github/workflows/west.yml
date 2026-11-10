@@ -88,11 +88,17 @@ jobs:
         env: { GH_TOKEN: '${{ github.token }}' }
         run: |
           SRC=$(jq -r '.src_run // empty' blender/west/job.json); [ -z "$SRC" ] && SRC=${{ github.run_id }}
-          EXTRA_RUNS=$(jq -r '(.also_runs // []) | map(tostring) | join(" ")' blender/west/job.json)
-          mkdir -p dl art; for R in $EXTRA_RUNS; do mkdir -p dl/r$R; gh run download $R -p 'chunk-*' -D dl/r$R || true; done
-          gh run download $SRC -p 'chunk-*' -D dl; find dl -name '*.mp4' -exec mv -t art {} +; echo "chunks: $(ls art | wc -l)"
+          RUNS="$(jq -r '(.also_runs // []) | map(tostring) | join(" ")' blender/west/job.json) $SRC"
+          mkdir -p dl art
+          for R in $RUNS; do
+            for n in $(gh api "repos/${{ github.repository }}/actions/runs/$R/artifacts?per_page=100" --paginate --jq '.artifacts[] | select(.name|startswith("chunk-")) | .name'); do
+              [ -d "dl/$n" ] && continue
+              for t in 1 2 3 4 5 6; do gh run download $R -n $n -D dl/$n 2>/dev/null && break; rm -rf "dl/$n"; sleep $((t * 20)); done
+            done
+          done
+          find dl -name '*.mp4' -exec mv -t art {} +; echo "chunks: $(ls art | wc -l)"
       - run: |
-          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg fonts-dejavu-core >/dev/null; pip install -q pillow
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg fonts-dejavu-core >/dev/null; pip install -q pillow numpy
           JENV=$(jq -r '.env // {} | to_entries|map("\(.key)=\(.value)")|join(" ")' blender/west/job.json); [ -n "$JENV" ] && export $JENV
           python3 blender/west/compose.py art final.mp4
           mkdir -p previews/west
