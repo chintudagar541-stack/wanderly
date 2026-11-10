@@ -105,7 +105,7 @@ def boot_hill():
     sign = _tex('boothill_sign', (1200, 260), lambda im, d: (d.rectangle([0, 0, 1200, 260], fill=(214, 200, 168)), d.rectangle([12, 12, 1188, 248], outline=(60, 40, 30), width=8),
                                                             d.text((600, 132), 'BOOT HILL', font=_font(170), fill=(52, 30, 22), anchor='mm')))
     box('gatebeam', (3.6, .14, .2), (G.x, y0, gz + 3.3), fw)
-    plane_tex('gatesign', 3.0, .65, (G.x, y0 - .08, gz + 2.8), sign, rot=(math.pi / 2, 0, 0))
+    plane_tex('gatesign', 3.0, .65, (G.x, y0 - .08, gz + 2.8), sign)
     # headstones in loose rows (names painted, readable), the four EZRA PIKE graves near the front
     rng = random.Random(11)
     names = ['J. MORGAN', 'ED "LUCKY" HART', 'OLD TOM', 'SALLY RAE', 'B. COLLINS', 'DOC WEBB', 'HANK DUBOIS', 'MAE LOWELL', 'ONE-EYED PETE', 'C. BRENNAN',
@@ -120,6 +120,8 @@ def boot_hill():
         headstone(f'hs{k}', (x, y), names[k], f'18{rng.randint(55, 79)}', kind=rng.choice(['cross', 'slab', 'slab', 'board']), tilt=rng.uniform(-8, 8))
     for k, (dt, x) in enumerate((('MAR 3', -6.0), ('APR 9', -3.6), ('MAY 21', 3.6), ('JUN 2', 6.0))):
         headstone(f'ezra{k}', (G.x + x, G.y - 4.2), 'EZRA PIKE', dt + ' 1880', kind='board', tilt=(k - 1.5) * 3, crossed=True)
+        gm = bpy.data.objects.new(f'ezmound{k}', mm); gm.location = (G.x + x, G.y - 3.0, ground_z(G.x + x, G.y - 3.0) - .06); gm.scale = (.42, .62, .45); put(gm)
+        flowers(f'ezfl{k}', (G.x + x + .05, G.y - 4.0, ground_z(G.x + x, G.y - 4.0)), n=3, spread=.15)
     dead_tree((G.x + 9.5, G.y + 8.5))
     dead_tree((G.x - 10.5, G.y + 6.0), s=.8)
     return hill
@@ -147,7 +149,7 @@ def headstone(name, xy, who, date, kind='slab', tilt=0.0, crossed=False):
     stone = plain(name + '_s', '#8f8c84', .85) if kind == 'slab' else wood(name + 'w', '#8a6a48', weather=.9, planks=False)
     body = box(name, (w, .12, h), (x, y, z + h / 2), stone, rot=(math.radians(-4), math.radians(tilt), 0), bevel=.03 if kind == 'slab' else 0)
     face = plane_tex(name + '_face', w * .9, h * .85, (0, -.065, 0), m)
-    face.parent = body; face.location = (0, -.062, 0); face.rotation_euler = (math.pi / 2, 0, 0)
+    face.parent = body; face.location = (0, -.062, 0)
 
 
 def shovel(p, ang=15):
@@ -260,7 +262,7 @@ def shop_interior(at=Vector((-40.0, -60.0, 0)), lamp=True):
         d.text((W_ / 2, 70), 'PRICES', font=f, fill=(230, 220, 190), anchor='mm')
         for k, (a, b) in enumerate((('PINE BOX', '$20'), ('OAK', '$40'), ('VELVET', '$200'), ('CRYING', '$1 EACH'))):
             d.text((60, 170 + k * 95), a, font=f2, fill=(230, 220, 190), anchor='lm'); d.text((W_ - 60, 170 + k * 95), b, font=f2, fill=(230, 200, 120), anchor='rm')
-    plane_tex('s_priceboard', 1.6, 1.25, (x0 - 1.2, y0 + D / 2 - .1, 2.9), _tex('priceboard', (800, 620), price), rot=(math.pi / 2, 0, math.pi))
+    plane_tex('s_priceboard', 1.6, 1.25, (x0 - 1.2, y0 + D / 2 - .1, 2.9), _tex('priceboard', (800, 620), price))
     ledger = plain('s_ledger', '#5a2a22', .7); box('s_ledger', (.5, .36, .05), (x0 - .8, y0 - 2.6, 1.125), ledger)
     if lamp:
         l = bpy.data.lights.new('s_lamp', 'POINT'); l.energy = 260; l.color = (1, .72, .42); l.shadow_soft_size = .15

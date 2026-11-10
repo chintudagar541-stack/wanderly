@@ -137,9 +137,9 @@ class Toon(H.Human):
             for v in cr.data.vertices:
                 if v.co.z > 0: v.co.x *= 1.06; v.co.y *= 1.06
             cr.scale = (hx * .7, hy * .78, hz * 1.25)
-            br = cyl(self.cid + '_brim', 1.0, .02, (0, 0, top + .01), m, seg=48); br.scale = (hx * 1.28, hy * 1.34, 1)
+            br = cyl(self.cid + '_brim', 1.0, .035, (0, 0, top + .015), m, seg=48); br.scale = (hx * 1.22, hy * 1.26, 1)
             for v in br.data.vertices:
-                if abs(v.co.x) > .6: v.co.z += (abs(v.co.x) - .6) * .25
+                if abs(v.co.x) > .7: v.co.z += (abs(v.co.x) - .7) * .12
             bd = torus(self.cid + '_hband', 1.0, .02, (0, 0, top + .05), solid('#3a3a42', .5), seg=40, mseg=8); bd.scale = (hx * .72, hy * .8, 1)
             for o_ in (cr, br, bd): smooth(o_); self._on(o_, self.head)
             return

@@ -79,12 +79,13 @@ def local_to_world(loc, yaw, sc, p):
     return tuple(M @ Vector(p))
 
 
-def lie_in(sh, ch, coffin, face, sit=None, hands='folded', wave=None, hand_targets=None):
-    """lay a toon in a coffin (feet at the foot end, face up).  sit(t) -> 0..1 sits the torso up.  hands: 'folded'|'side'|None"""
+def lie_in(sh, ch, coffin, face, sit=None, hands='folded', wave=None, hand_targets=None, head_y=.36, z=.34):
+    """lay a toon in a coffin, face up, head on the pillow (head_y from the head end).  The toon head is ~.56 m deep, so
+    the body rides z above the coffin floor (z=.2 keeps the face under a closed lid).  sit(t) -> 0..1 sits the torso up."""
     yaw_c = math.degrees(coffin.root.rotation_euler.z); yaw = yaw_c + 180
-    ftrack = H.expr_track(face)
+    ftrack = H.expr_track(face); reach = 1.1 * ch.s
     def pose(t):
-        feet = coffin.world((0, coffin.length - .12, .1))
+        feet = coffin.world((0, head_y + reach, z))
         u = sit(t) if sit else 0.0
         d = dict(loc=tuple(feet), yaw=yaw, face=ftrack(t), lean=(.714 * u, 0), head=[0, -18 * (1 - u), 0], crouch=0.0)
         sc = ch.s
@@ -143,19 +144,33 @@ def cam_keys(keys, roll=0.0, shake=.008, lens=None):
     return fn
 
 
+def clear_area(xy, r):
+    """hide town props (horses, wagons, barrels...) around a spot so a set piece can sit there"""
+    for o in list(bpy.data.objects):
+        if o.parent is not None or o.type not in ('MESH', 'EMPTY', 'CURVE') or o.hide_render: continue
+        p = o.matrix_world.translation
+        if math.hypot(p.x - xy[0], p.y - xy[1]) > r or (o.type == 'MESH' and max(o.dimensions) > 6.0): continue
+        for q in [o] + list(o.children_recursive): q.hide_render = True
+
+
+def side_of(ch):
+    f = facing(ch); return f, f.cross(Vector((0, 0, 1))).normalized()
+
+
 # ------------------------------------------------------------------ 1-2  Boot Hill, the four graves, the climb out
 def s_hook(sh):
-    """'Ezra Pike had been buried four times.'  Close on a board marked EZRA PIKE / NOT DEAD, pull back and up through the
-    row of four identical graves to the whole of Boot Hill with Dry Gulch beyond, dusk."""
+    """'Ezra Pike had been buried four times.'  Close on a board marked EZRA PIKE / NOT DEAD, pull back and up along the
+    row of four identical graves, the undertaker waiting at the far end, dusk."""
     stage(sh, 'sunset', 7, 300)
     mort = toon(sh, 'MORT', MORT)
-    stand(sh, mort, (8.2, 93.4), -120, '40_10', 2.0, face=[(0, 'bored')])
-    sh.camera(cam_keys([(0, (-5.6, 90.55, HZ + .62), (-6.0, 91.8, HZ + .45), 34), (sh.dur, (1.2, 84.2, HZ + 3.6), (0.5, 92.5, HZ + .9), 24)], roll=lambda t: K([(0, 3), (sh.dur, 0)], t), shake=.006), fstop=3.5)
+    stand(sh, mort, (7.3, 92.6), -70, '40_10', 2.0, face=[(0, 'bored')])
+    sh.camera(cam_keys([(0, (-6.2, 90.65, HZ + .74), (-6.0, 91.8, HZ + .42), 32), (.45, (-6.25, 90.55, HZ + .78), (-5.98, 91.8, HZ + .44), 32),
+                        (sh.dur, (-9.4, 88.7, HZ + 2.2), (1.2, 92.6, HZ + .5), 26)], roll=lambda t: K([(0, 2), (sh.dur, 0)], t), shake=.006), fstop=4)
 
 
 def s_climb(sh):
-    """'And every time, he climbed out to complain about the service.'  Into the open grave: the lid bangs open, Ezra sits
-    up furious and waves his complaint form at the undertaker peering over the edge."""
+    """'And every time, he climbed out to complain about the service.'  Low at the foot of the open grave: the lid bangs
+    open, Ezra sits up furious, waving his complaint form; the undertaker peers down from the far rim, the town beyond."""
     stage(sh, 'sunset', 7, 300)
     c = grave_coffin(at=Vector((0, 94.95, HZ - U.PIT[3] + .05)), planks=False)
     c.open(0)
@@ -167,12 +182,12 @@ def s_climb(sh):
     def hands(t, feet, yaw, sc):
         if t < 1.1: return {}
         w = math.sin((t - 1.1) * 9) * .06
-        return {'handR': local_to_world(feet, yaw, sc, (.12, -.55 + w, ch_h(ez) + .25)), 'handL': local_to_world(feet, yaw, sc, (-.18, -.4, ch_h(ez) * .8))}
+        return {'handR': local_to_world(feet, yaw, sc, (.2, .25 + w, ch_h(ez) + .55)), 'handL': local_to_world(feet, yaw, sc, (-.25, .3, ch_h(ez) * .55))}
     lie_in(sh, ez, c, [(0, 'deadpan'), (.6, 'furious'), (2.2, 'shout')], sit=sit, hands=None, hand_targets=hands)
-    hold(sh, form, ez, 'R', (0, .02, .18), rot=(math.radians(80), 0, math.radians(180)))
-    stand(sh, mort, (.25, 98.15), 0, '77_02', 3.0, face=[(0, 'bored'), (2.4, 'deadpan')], look=lambda t: (0, 96, 0.8))
-    sh.camera(cam_keys([(0, (1.55, 92.6, HZ + 1.6), (0, 96.2, .9), 26), (1.2, (1.25, 93.1, HZ + 1.25), (0, 96.4, 1.1), 28), (sh.dur, (.9, 93.8, HZ + .95), (.05, 96.6, 1.45), 32)],
-                       roll=lambda t: K([(0, -4), (sh.dur, -1)], t), shake=.01), fstop=2.8)
+    hold(sh, form, ez, 'R', (0, 0, .2), rot=(0, 0, math.radians(180)))
+    stand(sh, mort, (.35, 94.15), 180, '77_02', 3.0, face=[(0, 'bored'), (2.4, 'deadpan')], look=lambda t: (0, 96.0, 1.0))
+    sh.camera(cam_keys([(0, (.55, 98.05, HZ + .95), (0, 95.6, .6), 26), (1.2, (.5, 97.9, HZ + .72), (0, 95.6, .85), 28), (sh.dur, (.42, 97.75, HZ + .55), (0, 95.5, 1.1), 30)],
+                       roll=lambda t: K([(0, -3), (sh.dur, -1)], t), shake=.01), fstop=3.2)
     sh.keylight(14.0, (1, .85, .7))
 
 
@@ -187,22 +202,22 @@ def s_gulch(sh):
 
 
 def s_healthy(sh):
-    """'Ezra was the healthiest man in town, and the most dramatic.'  Ezra struts down the street flexing, then throws the
-    back of his hand to his forehead in a theatrical swoon."""
+    """'Ezra was the healthiest man in town, and the most dramatic.'  Leading dolly: Ezra struts up the busy street towards
+    us, chest out, then throws the back of his hand to his forehead in a theatrical swoon."""
     stage(sh, 'day', 34, 120, veg=.6, grave=False)
     ez = toon(sh, 'EZRA', EZ)
     a = walk(sh, ez, (1.4, 1.0, 0), 180, '82_08', 1.0, face=[(0, 'smug'), (2.05, 'ohno')], speed=1.0)
     def mod(t, s):
         if t > 2.0:
-            u = ease((t - 2.0) / .25); fwd = Vector((0, 1, 0))
-            hd = head_of(ez, .05) + Vector((.05, -.25, .06))
+            u = ease((t - 2.0) / .25); f, sd = side_of(ez)
+            hd = head_of(ez, .12) + f * .3 + sd * .05
             s['handR'] = tuple(Vector(s['handR']).lerp(hd, u)); s['lean'] = (s['lean'][0] - .12 * u, s['lean'][1]); s['head'] = [s['head'][0], -14 * u, 0]
         return s
     override(a, mod)
     def cam(t):
         y = 1.0 + 1.25 * min(t, 2.0) + .2 * max(0, t - 2.0)
-        return (Vector((4.8, y - 1.6 - .3 * t, 1.55)), Vector((1.4, y + .2, 1.45)), K([(0, 30), (sh.dur, 38)], t), 0, Vector((1.4, y, 1.5)), .012)
-    sh.camera(cam, fstop=2.8)
+        return (Vector((.85, y + 3.7 - .3 * t, 1.5)), Vector((1.35, y, 1.12)), K([(0, 30), (sh.dur, 34)], t), 0, Vector((1.4, y + .2, 1.3)), .012)
+    sh.camera(cam, fstop=3.2)
 
 
 def s_cough(sh):
@@ -212,66 +227,74 @@ def s_cough(sh):
     a = stand(sh, ez, (1.4, 4.0), 160, '77_02', 2.0, face=[(0, 'strain'), (.3, 'shock')], z=0)
     def mod(t, s):
         u = ease(t / .2) * (1 - ease((t - .3) / .2))
-        s['handR'] = tuple(Vector(s['handR']).lerp(head_of(ez, -.12) + Vector((0, -.25, 0)), u * .9)); s['lean'] = (s['lean'][0] + .06 * u, 0)
+        s['handR'] = tuple(Vector(s['handR']).lerp(head_of(ez, -.12) + facing(ez) * .25, u * .9)); s['lean'] = (s['lean'][0] + .06 * u, 0)
         return s
     override(a, mod)
     cu(sh, ez, angle=18, elev=2, size=(.75, .6), lens=50, fstop=2.0)
 
 
 def s_fun1(sh):
-    """'Funeral.'  Smash to straight overhead: Ezra already lying in a pine coffin, hands folded, utterly content."""
+    """'Funeral.'  Smash to straight overhead: Ezra already lying in a pine coffin in the middle of the street, hands
+    folded, utterly content; townsfolk peer in from the edges of frame."""
     stage(sh, 'day', 34, 120, veg=.5, grave=False)
-    c = U.Coffin('coffin', (-3.4, 20.6, 0), yaw=0, kind='pine'); c.open(1.0)
+    P = Vector((.4, 20.6, 0))
+    clear_area(P, 2.6)
+    c = U.Coffin('coffin', tuple(P), yaw=0, kind='pine'); c.open(1.0)
     ez = toon(sh, 'EZRA', EZ)
     lie_in(sh, ez, c, [(0, 'smug')])
-    lily = U.flowers('lily', (-3.38, 21.45, .9), n=3, spread=.05)
-    sh.camera(cam_keys([(0, (-3.4, 21.15, 3.6), (-3.4, 21.2, .4), 30), (sh.dur, (-3.4, 21.15, 3.3), (-3.4, 21.2, .4), 31)], roll=90, shake=.004), fstop=4)
+    U.flowers('lily', c.world((.04, .95, .78)), n=3, spread=.05)
+    for k, (dx, dy, yw) in enumerate(((1.2, .5, -90), (-1.25, 1.1, 90), (1.15, 1.85, -95))):
+        ch = toon(sh, f'P{k}', TO.crowd_preset(90 + k * 7))
+        stand(sh, ch, (P.x + dx, P.y + dy), yw, '77_02', 1.0 + k, face=[(0, ['bored', 'deadpan', 'confused'][k])], look=lambda t: tuple(c.world((0, .6, .5))), z=0)
+    tg = c.world((0, 1.05, .4))
+    sh.camera(cam_keys([(0, tg + Vector((0, .14, 3.4)), tg, 30), (sh.dur, tg + Vector((0, .13, 3.1)), tg, 31)], roll=0, shake=.004), fstop=4)
 
 
 def s_splinter(sh):
-    """'A splinter?'  Insert: Ezra's raised fingertip with a tiny splinter, his horrified face soft behind it."""
+    """'A splinter?'  Ezra holds up a fingertip with a tiny splinter, his face behind it frozen in terror."""
     stage(sh, 'day', 34, 120, veg=.5, grave=False)
     ez = toon(sh, 'EZRA', EZ)
     a = stand(sh, ez, (1.4, 4.0), 160, '77_02', 3.0, face=[(0, 'terror')], z=0)
     tip = []
     def mod(t, s):
-        hp = head_of(ez, -.05) + Vector((-.1, -.42, -.05)); s['handR'] = tuple(hp); tip[:] = [hp]; return s
+        f, sd = side_of(ez); hp = head_of(ez, -.05) + f * .34 + sd * .2 - Vector((0, 0, .22)); s['handR'] = tuple(hp); tip[:] = [hp]; return s
     override(a, mod)
-    spl = T.box('splinter', (.006, .006, .05), (0, 0, 0), T.plain('splinter', '#8a6a3a', .8))
+    spl = T.box('splinter', (.008, .008, .07), (0, 0, 0), T.plain('splinter', '#8a6a3a', .8))
     def u(t):
-        if tip: spl.location = tip[0] + Vector((0, -.04, .03)); spl.rotation_euler = (0, math.radians(30), 0)
+        if tip: spl.location = tip[0] + Vector((0, 0, .07)); spl.rotation_euler = (math.radians(15), math.radians(20), 0)
     sh.updates.append(u)
     def cam(t):
-        hp = tip[0] if tip else Vector((1.3, 3.5, 1.4))
-        return (hp + Vector((.25, -.55, .02)) + Vector((0, .06 * t, 0)), hp, 60, 0, hp, .004)
-    sh.camera(cam, fstop=1.6); sh.keylight(16)
+        hp = tip[0] if tip else Vector((1.3, 3.5, 1.1)); f, sd = side_of(ez); h = head_of(ez)
+        mid = hp.lerp(h, .45)
+        return (hp + f * (.85 - .06 * t) - sd * .1 + Vector((0, 0, .12)), mid, 45, 0, hp, .004)
+    sh.camera(cam, fstop=2.2); sh.keylight(16)
 
 
 def s_fun2(sh):
-    """'Funeral.'  Low angle: four pallbearers march the open coffin down the street towards camera, Ezra waving to the
-    town from inside like a parade float."""
+    """'Funeral.'  Four pallbearers march the open coffin down the street towards camera, Ezra sitting up inside waving to
+    the town like a parade float, the welcome banner overhead."""
     stage(sh, 'day', 34, 120, veg=.6, grave=False)
-    c = U.Coffin('coffin', (0, 0, 0), yaw=0, kind='pine'); c.open(1.0)
+    c = U.Coffin('coffin', (0, 0, 0), yaw=180, kind='pine'); c.open(1.0)
     ez = toon(sh, 'EZRA', EZ)
-    v = 1.15; y0 = 14.0
+    v = 1.15; y0 = 14.0; H0 = 1.42
     bearers = []
-    for k, (dx, dy) in enumerate(((-.62, .35), (.62, .35), (-.62, 1.75), (.62, 1.75))):
+    for k, (dx, dy) in enumerate(((-.7, .35), (.7, .35), (-.7, 1.75), (.7, 1.75))):
         ch = toon(sh, f'P{k}', TO.crowd_preset(60 + k))
         a = walk(sh, ch, (dx, y0 + dy, 0), 0, '82_08', 1.0 + k * .3, face=[(0, 'bored')], speed=.9)
         def mod(t, s, dx=dx, dy=dy, a=a):
             cy = y0 - v * t; s['loc'] = (dx * 1.05, cy + dy, s['loc'][2]); s['yaw'] = 0
-            s['handL' if dx > 0 else 'handR'] = (dx * .55, cy + dy, 1.42)
+            s['handL' if dx > 0 else 'handR'] = (dx * .55, cy + dy, H0)
             return s
         override(a, mod); bearers.append(ch)
     def carry(t):
-        c.root.location = (0, y0 - v * t - .05, 1.42 + .03 * math.sin(t * 7)); c.root.rotation_euler = (0, 0, 0)
+        c.root.location = (0, y0 + 2.12 - v * t, H0 + .03 * math.sin(t * 7)); c.root.rotation_euler = (0, 0, math.pi)
     sh.updates.append(carry)
     def hands(t, feet, yaw, sc):
         w = math.sin(t * 8) * .12
-        return {'handR': local_to_world(feet, yaw, sc, (.32 + w, -.15, ch_h(ez) + .55))}
-    lie_in(sh, ez, c, [(0, 'happy')], hands='folded', hand_targets=hands)
+        return {'handR': local_to_world(feet, yaw, sc, (.3 + w, .35, ch_h(ez) + .6))}
+    lie_in(sh, ez, c, [(0, 'happy'), (1.0, 'grin')], sit=lambda t: .55, hands='folded', hand_targets=hands)
     sh.keep_clear = [(0, y0 - v * k * .5, 0) for k in range(6)]
-    sh.camera(cam_keys([(0, (1.0, 8.6, .55), (0, 14.2, 1.7), 24), (sh.dur, (1.1, 8.0, .6), (0, 12.2, 1.7), 26)], roll=-3, shake=.012), fstop=3.2)
+    sh.camera(cam_keys([(0, (1.3, 8.3, 1.9), (0, 13.6, 2.15), 24), (sh.dur, (1.35, 7.8, 1.9), (0, 12.0, 2.05), 26)], roll=-2, shake=.012), fstop=3.5)
 
 
 # ------------------------------------------------------------------ 9-12  funerals one and two
@@ -287,19 +310,18 @@ def funeral_base(sh, kind='pine', length=2.15, lid=0.0, joe=True, n_mourn=4, mou
 
 
 def s_small(sh):
-    """'The first time, the coffin was too small.'  Slow pan along a short coffin, lid on, to Ezra's boots sticking out of
-    the end; the priest reads on regardless."""
+    """'The first time, the coffin was too small.'  Slow push along a short closed coffin to the end: Ezra's boots stick
+    out through it; the priest reads on regardless behind."""
     stage(sh, 'day', 36, 200)
     c, people, jo = funeral_base(sh, length=1.5, lid=0.0)
     ez = toon(sh, 'EZRA', EZ)
-    lie_in(sh, ez, c, [(0, 'grit')])
-    feet = c.world((0, 1.5, .25))
+    lie_in(sh, ez, c, [(0, 'grit')], head_y=.52, z=.24)
     def cam(t):
         u = ease(t / sh.dur)
-        tg = c.world((0, .2, .5)).lerp(c.world((0, 1.9, .3)), u)
-        p = tg + Vector((1.9 - .5 * u, -.6 + .3 * u, .55 + .2 * u))
-        return (p, tg, 32, 0, tg, .008)
-    sh.camera(cam, fstop=2.4)
+        p = c.world((1.75, .15, .95)).lerp(c.world((.8, 2.45, .62)), u)
+        tg = c.world((0, .55, .42)).lerp(c.world((0, 1.7, .32)), u)
+        return (p, tg, 30 + 4 * u, 0, tg, .008)
+    sh.camera(cam, fstop=3.2)
 
 
 def s_kick(sh):
@@ -315,160 +337,166 @@ def s_kick(sh):
         u = t - TK; lid.parent = None
         p0 = c.world((0, .75, .55)); lid.location = p0 + Vector((1.6 * u, 1.2 * u, 4.2 * u - 4.9 * u * u)); lid.rotation_euler = (u * 9, u * 5, u * 2)
     sh.updates.append(fly)
-    lie_in(sh, ez, c, [(0, 'grit'), (TK, 'furious')], sit=lambda t: ease((t - TK - .1) / .45), hands=None)
+    lie_in(sh, ez, c, [(0, 'grit'), (TK, 'furious')], sit=lambda t: ease((t - TK - .1) / .45), hands=None, head_y=.52, z=.24)
     for a in sh.actors:
         if hasattr(a, 'face') and a.ch is not ez and a.ch.cid.startswith('M'): a.face = H.expr_track([(0, 'sad'), (TK + .08, 'terror')])
     jo_a = [a for a in sh.actors if getattr(a, 'ch', None) is jo][0]; jo_a.face = H.expr_track([(0, 'deadpan'), (TK + .05, 'scream')])
-    sh.camera(cam_keys([(0, (3.4, 101.2, HZ + 1.55), (-.6, 95.3, HZ + .9), 28), (sh.dur, (3.0, 100.6, HZ + 1.5), (-.5, 95.6, HZ + 1.0), 30)],
+    sh.camera(cam_keys([(0, (3.4, 101.2, HZ + 1.6), (-.6, 95.3, HZ + 1.15), 28), (sh.dur, (3.0, 100.6, HZ + 1.55), (-.5, 95.6, HZ + 1.25), 30)],
                        roll=lambda t: 2.5 * math.sin(max(0, t - TK) * 30) * math.exp(-max(0, t - TK) * 5)), fstop=4)
 
 
 def s_nocry(sh):
-    """'The second time, nobody cried.'  Lateral dolly past three bored mourners: a yawn, a pocket watch, a sandwich."""
+    """'The second time, nobody cried.'  Slow diagonal dolly down the line of three bored mourners: a yawn, a pocket
+    watch, a blank stare."""
     stage(sh, 'day', 36, 200)
     c, people, jo = funeral_base(sh, lid=0.0, joe=False, n_mourn=3, mourn_face=['bored', 'deadpan', 'bored'])
     watch = T.cyl('pwatch', .04, .015, (0, 0, 0), T.plain('watchgold', '#d4b048', .3, 1.0), rot=(math.pi / 2, 0, 0), v=16); hold(sh, watch, people[1], 'R', (0, -.04, .06))
-    def cam(t):
-        u = ease(t / sh.dur); y = 93.6 + 2.6 * u
-        return (Vector((-.9, y - .8, HZ + 1.35)), Vector((-3.1, y + .4, HZ + 1.3)), 32, 0, Vector((-3.0, y + .4, HZ + 1.3)), .006)
-    sh.camera(cam, fstop=2.2)
+    sh.camera(cam_keys([(0, (-1.0, 91.7, HZ + 1.5), (-3.2, 94.1, HZ + 1.25), 30), (sh.dur, (-1.15, 93.0, HZ + 1.45), (-3.4, 95.4, HZ + 1.25), 32)], shake=.006), fstop=2.8)
 
 
 def s_names(sh):
-    """'Ezra sat up and asked for names.'  Ezra rises from the coffin with a notebook, jabbing his pencil at each mourner;
-    over-the-shoulder push-in from behind the mourners."""
+    """'Ezra sat up and asked for names.'  From the foot of the grave: Ezra rises from the open coffin with a notebook,
+    jabbing his pencil at the startled mourners."""
     stage(sh, 'day', 36, 200)
     c, people, jo = funeral_base(sh, lid=1.0, joe=False, n_mourn=3, mourn_face=['bored', 'deadpan', 'bored'])
+    for o in [c.lid] + list(c.lid.children_recursive): o.hide_render = True
     ez = toon(sh, 'EZRA', EZ)
     for a in sh.actors:
         if getattr(a, 'ch', None) in people: a.face = H.expr_track([(0, 'bored'), (.55, 'fear')])
     def hands(t, feet, yaw, sc):
         if t < .7: return {}
         jab = math.sin((t - .7) * 7) * .1
-        return {'handL': local_to_world(feet, yaw, sc, (-.15, -.45, ch_h(ez) + .1)), 'handR': local_to_world(feet, yaw, sc, (.45 + jab, -.35, ch_h(ez) + .3))}
+        return {'handL': local_to_world(feet, yaw, sc, (-.15, .2, ch_h(ez) * .9)), 'handR': local_to_world(feet, yaw, sc, (.55 + jab, .25, ch_h(ez) + .25))}
     lie_in(sh, ez, c, [(0, 'suspicious'), (1.2, 'angry')], sit=lambda t: ease((t - .05) / .55), hands=None, hand_targets=hands)
-    book = T.box('notebook', (.16, .22, .02), (0, 0, 0), T.plain('nb', '#d8ccb0', .8)); hold(sh, book, ez, 'L', (0, -.05, .05), rot=(math.radians(50), 0, math.radians(200)))
-    sh.camera(cam_keys([(0, (-4.3, 93.2, HZ + 1.75), (0, 96.2, HZ + 1.2), 30), (sh.dur, (-3.4, 94.1, HZ + 1.6), (0, 96.0, HZ + 1.25), 40)], shake=.009), fstop=2.4)
+    book = T.box('notebook', (.16, .22, .02), (0, 0, 0), T.plain('nb', '#d8ccb0', .8)); hold(sh, book, ez, 'L', (0, 0, .05), rot=(math.radians(50), 0, math.radians(20)))
+    sh.camera(cam_keys([(0, (1.25, 99.1, HZ + 1.65), (-1.35, 95.3, HZ + 1.05), 24), (sh.dur, (1.05, 98.5, HZ + 1.55), (-1.15, 95.45, HZ + 1.1), 27)], shake=.009), fstop=3.2)
 
 
 # ------------------------------------------------------------------ 13-15  the bill, the complaint
 def s_double(sh):
-    """'The third time, the undertaker charged him double.'  Shop interior: over Ezra's shoulder the undertaker brings the
-    DOUBLE stamp down on the invoice; push and rack to the paper."""
+    """'The third time, the undertaker charged him double.'  Shop interior, over Ezra's shoulder: the undertaker brings the
+    DOUBLE stamp down on the invoice twice; push in and rack to the paper."""
     out = stage(sh, 'day', 30, 110, veg=.3, grave=False, shop=True)
     o = SHOP; ctr = out['counter']
     mort = toon(sh, 'MORT', MORT); ez = toon(sh, 'EZRA', EZ)
-    bill = U.paper('bill', 'bill', ctr + Vector((.15, 0, .012)), rot=(0, 0, math.pi), w=.3, h=.4); bill.rotation_euler = (0, 0, math.pi)
-    a = stand(sh, mort, (ctr.x + .2, ctr.y + .8), 180, '77_02', 1.0, face=[(0, 'deadpan'), (1.3, 'smug')], z=0)
+    bp = ctr + Vector((-.22, -.12, .012))
+    bill = U.paper('bill', 'bill', bp, rot=(-math.pi / 2, 0, 0), w=.3, h=.4)
+    a = stand(sh, mort, (ctr.x - .1, ctr.y + .55), 0, '77_02', 1.0, face=[(0, 'deadpan'), (1.3, 'smirk')], z=0, look=lambda t: tuple(bp + Vector((0, 0, .3))) if t < 1.9 else tuple(head_of(ez)))
     stamp = T.cyl('stamp', .05, .1, (0, 0, 0), T.plain('stamp', '#4a2a1a', .6), v=12)
     def mod(t, s):
         k = 0.0
         for tt in (1.15, 1.75): k = max(k, math.exp(-((t - tt) / .09) ** 2))
-        up = ctr + Vector((.15, 0, .55 - .44 * k)); s['handR'] = tuple(up); return s
+        s['handR'] = tuple(bp + Vector((.04, .02, .5 - .42 * k))); return s
     override(a, mod); hold(sh, stamp, mort, 'R', (0, 0, -.06))
-    b = stand(sh, ez, (ctr.x - .15, ctr.y - 1.05), 0, '79_74', 2.0, face=[(0, 'confused'), (1.2, 'shock'), (1.8, 'furious')], z=0)
-    sh.camera(cam_keys([(0, (ctr.x - .9, ctr.y - 2.6, 1.95), (ctr.x + .2, ctr.y + .6, 1.55), 30), (1.9, (ctr.x - .45, ctr.y - 1.9, 1.75), (ctr.x + .15, ctr.y + .1, 1.2), 34),
-                        (sh.dur, (ctr.x - .05, ctr.y - .85, 1.55), (ctr.x + .15, ctr.y, 1.08), 40)], shake=.006), fstop=2.2)
+    stand(sh, ez, (ctr.x - .8, ctr.y - .95), 175, '79_74', 2.0, face=[(0, 'confused'), (1.2, 'shock'), (1.8, 'furious')], z=0, look=lambda t: tuple(bp))
+    sh.camera(cam_keys([(0, (ctr.x - .3, ctr.y - 2.7, ctr.z + .85), (ctr.x - .15, ctr.y + .45, ctr.z + .45), 30), (1.9, (ctr.x - .1, ctr.y - 1.85, ctr.z + .7), (ctr.x - .2, ctr.y + .1, ctr.z + .2), 34),
+                        (sh.dur, (ctr.x + .02, ctr.y - 1.05, ctr.z + .55), (ctr.x - .21, ctr.y - .1, ctr.z + .02), 38)], shake=.006), fstop=2.6)
+    T.lantern('ctrlamp', tuple(ctr + Vector((.55, .15, .2))), energy=35)
 
 
 def s_complaint(sh):
-    """'Ezra filed a complaint.'  Lantern-lit insert: pencil scratching TERRIBLE onto the complaint form."""
+    """'Ezra filed a complaint.'  Lantern light in the grave: Ezra sits in his coffin scribbling on the complaint form in
+    his lap; push in until the form reads."""
     stage(sh, 'sunset', 3, 300)
     c = grave_coffin(at=Vector((0, 94.95, HZ - U.PIT[3] + .05)), planks=False); c.open(1.0)
     ez = toon(sh, 'EZRA', EZ)
-    form_p = c.world((0, 1.05, .78))
-    form = U.paper('form', 'complaint', form_p, rot=(0, 0, 0), w=.34, h=.45); form.rotation_euler = (0, 0, math.pi)
+    form_p = c.world((0, 1.45, .66))
+    form = U.paper('form', 'complaint', form_p, rot=(math.radians(-80), 0, math.pi), w=.34, h=.45)
     pencil = T.cyl('pencil', .008, .16, (0, 0, 0), T.plain('pencil', '#d8a830', .6), v=6)
     def hands(t, feet, yaw, sc):
         wx = math.sin(t * 22) * .03 + (t % .6) * .12 - .04
-        return {'handR': tuple(form_p + Vector((wx, .05, .05))), 'handL': tuple(form_p + Vector((-.2, -.12, .02)))}
-    lie_in(sh, ez, c, [(0, 'determined')], sit=lambda t: 1.0, hands=None, hand_targets=hands)
+        return {'handR': tuple(form_p + Vector((wx, .02, .06))), 'handL': tuple(form_p + Vector((-.2, .1, .02)))}
+    lie_in(sh, ez, c, [(0, 'determined'), (1.0, 'smirk')], sit=lambda t: 1.0, hands=None, hand_targets=hands)
     hold(sh, pencil, ez, 'R', (0, 0, .04), rot=(0, math.radians(30), math.radians(20)))
-    T.lantern('glamp', tuple(c.world((.3, .7, .55))), energy=60)
-    sh.camera(cam_keys([(0, form_p + Vector((.08, -.1, .5)), form_p, 40), (sh.dur, form_p + Vector((.04, -.06, .38)), form_p, 44)], roll=90, shake=.003), fstop=2.8)
+    T.lantern('glamp', tuple(c.world((.38, .55, .55))), energy=60)
+    tg0 = c.world((0, 1.25, .78)); tg1 = c.world((0, 1.42, .68))
+    sh.camera(cam_keys([(0, (.32, 97.1, HZ + .42), tg0, 28), (sh.dur, (.18, 96.9, HZ + .12), tg1, 32)], shake=.003), fstop=3.2)
 
 
 def s_inside(sh):
-    """'From inside the grave.'  Crane straight up out of the pit: Ezra sitting in the coffin at the bottom of the grave by
-    lantern light, writing; the undertaker at the rim holding out his hand for the form."""
+    """'From inside the grave.'  Start low in the pit on Ezra handing his form up over his head; crane up and out of the
+    grave to find the undertaker at the rim reaching down for it, lantern glow below."""
     stage(sh, 'sunset', 3, 300)
     c = grave_coffin(at=Vector((0, 94.95, HZ - U.PIT[3] + .05)), planks=False); c.open(1.0)
     ez = toon(sh, 'EZRA', EZ); mort = toon(sh, 'MORT', MORT)
     form = U.paper('form', 'complaint', (0, 0, 0), w=.34, h=.45)
     def hands(t, feet, yaw, sc):
-        u = ease((t - 1.2) / .8)
-        return {'handR': local_to_world(feet, yaw, sc, (.15, -.5 - .2 * u, ch_h(ez) + .1 + .5 * u))}
+        u = ease((t - .6) / 1.0)
+        return {'handR': local_to_world(feet, yaw, sc, (.12, .5 + .15 * u, .7 + .65 * u))}
     lie_in(sh, ez, c, [(0, 'determined'), (1.4, 'smug')], sit=lambda t: 1.0, hands=None, hand_targets=hands)
-    hold(sh, form, ez, 'R', (0, 0, .2), rot=(math.radians(80), 0, math.radians(180)))
-    a = stand(sh, mort, (.1, 98.0), 0, '77_02', 4.0, face=[(0, 'deadpan')], look=lambda t: (0, 96, .9))
-    override(a, lambda t, s: (s.__setitem__('handR', tuple(Vector((.05, 97.45, HZ + .35)))) or s))
-    T.lantern('glamp', tuple(c.world((.3, .7, .55))), energy=70)
-    sh.camera(cam_keys([(0, (.15, 95.7, 1.25), (0, 96.4, .6), 24), (sh.dur, (2.2, 92.2, HZ + 3.2), (0, 96.6, .9), 26)], roll=lambda t: K([(0, 90), (sh.dur * .6, 0)], t), shake=.004), fstop=4)
+    hold(sh, form, ez, 'R', (0, 0, .2), rot=(0, 0, math.radians(180)))
+    a = stand(sh, mort, (.1, 94.2), 180, '77_02', 4.0, face=[(0, 'deadpan')], look=lambda t: (0, 95.6, 1.2))
+    override(a, lambda t, s: (s.__setitem__('handR', (.05, 94.75, HZ - .2)) or s))
+    T.lantern('glamp', tuple(c.world((.38, .55, .55))), energy=70)
+    sh.camera(cam_keys([(0, (.1, 97.1, 1.2), (0, 96.0, 1.2), 22), (.5, (.1, 97.1, 1.3), (0, 96.0, 1.25), 22), (sh.dur, (.4, 98.3, 5.9), (0, 95.6, 1.2), 24)], shake=.004), fstop=4)
 
 
 # ------------------------------------------------------------------ 16-17  the fourth funeral
 def s_empty(sh):
-    """'By the fourth funeral, the town stopped coming.'  Three empty benches, a tumbleweed bounces through, the undertaker
-    alone holding his hat; slow creep in."""
+    """'By the fourth funeral, the town stopped coming.'  Rows of empty benches, a tumbleweed bounces through, the
+    undertaker alone in front of them; slow creep in."""
     stage(sh, 'day', 30, 220)
     c = grave_coffin(); c.open(0)
     for k in range(3): U.bench(f'bench{k}', (-3.8 - k * 1.4, 95.9, HZ), yaw=90, length=3.2)
     mort = toon(sh, 'MORT', MORT)
-    stand(sh, mort, (1.45, 94.1), -60, '40_10', 3.0, face=[(0, 'bored')])
+    a = stand(sh, mort, (-2.15, 94.2), 18, '40_10', 3.0, face=[(0, 'bored'), (1.6, 'sad')])
     tw = PR.tumbleweed('tw', (-9, 96.9, HZ + .35))
     if tw:
         def roll(t):
             x = -9 + 4.2 * t; tw.location = (x, 96.9 - .3 * t, HZ + .35 + abs(math.sin(t * 5)) * .35); tw.rotation_euler = (0, t * 6, 0)
         sh.updates.append(roll)
-    sh.camera(cam_keys([(0, (4.6, 103.0, HZ + 1.4), (-3.2, 95.2, HZ + .7), 26), (sh.dur, (3.8, 102.0, HZ + 1.35), (-3.0, 95.4, HZ + .75), 28)], shake=.006), fstop=5)
+    sh.camera(cam_keys([(0, (-1.0, 91.0, HZ + 1.55), (-3.4, 95.7, HZ + .65), 26), (sh.dur, (-1.25, 91.75, HZ + 1.5), (-3.4, 95.7, HZ + .72), 28)], shake=.006), fstop=5)
 
 
 def s_card(sh):
-    """'Even the priest just mailed a card.'  Rack from the undertaker's flat face to the card propped on the coffin lid:
-    SORRY FOR YOUR LOSS (AGAIN)."""
+    """'Even the priest just mailed a card.'  Low on the closed coffin: a sympathy card propped on the lid - SORRY FOR YOUR
+    LOSS (AGAIN) - the undertaker standing over it, flat-faced."""
     stage(sh, 'day', 30, 220)
     c = grave_coffin(); c.open(0)
+    for k in range(3): U.bench(f'bench{k}', (-3.8 - k * 1.4, 95.9, HZ), yaw=90, length=3.2)
     mort = toon(sh, 'MORT', MORT)
-    stand(sh, mort, (1.2, 97.6), -120, '77_02', 2.0, face=[(0, 'deadpan'), (2.2, 'bored')], look=lambda t: (0, 95.6, HZ + .7))
-    cp = c.world((0, .65, .62))
-    card = U.paper('card', 'card', cp + Vector((0, 0, .12)), rot=(math.radians(78), 0, math.radians(200)), w=.3, h=.225)
-    env = T.box('envelope', (.32, .22, .01), cp + Vector((.25, .1, -.04)), T.plain('envelope', '#e8dcc0', .8), rot=(0, 0, .4))
-    fp = card.location.copy()
+    stand(sh, mort, (.35, 97.75), 0, '77_02', 2.0, face=[(0, 'deadpan'), (2.2, 'bored')], look=lambda t: tuple(c.world((0, .6, .6))))
+    cp = c.world((0, .6, .685))
+    card = U.paper('card', 'card', cp, rot=(math.radians(-14), 0, 0), w=.3, h=.225)
+    T.box('envelope', (.3, .2, .008), c.world((.2, .82, .58)), T.plain('envelope', '#e8dcc0', .8), rot=(0, 0, .4))
     def cam(t):
-        u = ease((t - .6) / 1.4)
-        tg = head_of(mort).lerp(fp, u)
-        p = fp + Vector((.25, -1.0, .2)).lerp(Vector((.12, -.55, .08)), ease(t / sh.dur))
-        return (p, fp + Vector((0, 0, -.02)), 50, 0, tg, .004)
-    sh.camera(cam, fstop=1.8); sh.keylight(14)
+        u = ease(t / sh.dur)
+        p = (cp + Vector((.04, -1.0, .26))).lerp(cp + Vector((.02, -.78, .2)), u)
+        tg = cp + Vector((0, .6, .14))
+        fc = head_of(mort).lerp(cp, ease((t - .2) / .5))
+        return (p, tg, 38, 0, fc, .004)
+    sh.camera(cam, fstop=2.8); sh.keylight(14)
 
 
 # ------------------------------------------------------------------ 18-22  the decision, the perfect funeral
 def s_decision(sh):
-    """'So the undertaker made a decision.'  Night, lantern-lit shop: low push-in on the undertaker; he slams his palm on
-    the ledger."""
+    """'So the undertaker made a decision.'  Night, lantern-lit shop: slow push-in on the undertaker behind his counter;
+    he slams his palm on the ledger."""
     out = stage(sh, 'night', 30, 110, veg=.3, grave=False, shop=True)
     ctr = out['counter']
     for n in ('s_window_l',):
         if n in bpy.data.objects: bpy.data.objects[n].data.energy = 120; bpy.data.objects[n].data.color = (.5, .6, 1.0)
     mort = toon(sh, 'MORT', MORT)
-    a = stand(sh, mort, (ctr.x + .1, ctr.y + .75), 180, '77_02', 2.0, face=[(0, 'suspicious'), (.9, 'determined')], z=0)
+    a = stand(sh, mort, (ctr.x + .1, ctr.y + .45), 0, '77_02', 2.0, face=[(0, 'suspicious'), (.9, 'determined')], z=0)
     def mod(t, s):
         k = ease((t - .75) / .12)
-        s['handR'] = tuple((ctr + Vector((.25, .05, .6))).lerp(ctr + Vector((.2, .05, .06)), k)) if t > .4 else s['handR']; return s
+        s['handR'] = tuple((ctr + Vector((-.32, -.05, .6))).lerp(ctr + Vector((-.28, -.05, .06)), k)) if t > .4 else s['handR']; return s
     override(a, mod)
+    T.lantern('ctrlamp', tuple(ctr + Vector((.55, -.05, .2))), energy=45)
     def cam(t):
-        h = head_of(mort); d = Vector((-.35, -1.0, -.25)).normalized()
-        dist = K([(0, 2.6), (sh.dur, 1.55)], t)
-        return (h + d * dist, h + Vector((0, 0, -.05)), 35, K([(0, 0), (sh.dur, -6)], t), h, .006 + .02 * math.exp(-max(0, t - .87) * 12) * (t > .87))
-    sh.camera(cam, fstop=2.0); sh.keylight(6, (1, .7, .45))
+        h = head_of(mort); d = Vector((-.18, -1.0, .02)).normalized()
+        dist = K([(0, 2.9), (sh.dur, 1.8)], t)
+        return (h + d * dist, h + Vector((0, 0, -.18)), 36, K([(0, 0), (sh.dur, -5)], t), h, .006 + .02 * math.exp(-max(0, t - .87) * 12) * (t > .87))
+    sh.camera(cam, fstop=2.4); sh.keylight(8, (1, .7, .45))
 
 
-def perfect_set(sh, with_people=True, crowd=0):
+def perfect_set(sh, with_people=True, crowd=0, wreaths=(0, 1, 2, 3)):
     """the velvet funeral on Boot Hill: draped stand, wreaths, flowers, candles, band, paid mourners"""
     c = grave_coffin(kind='velvet', name='vcoffin'); c.open(1.0)
     drape = T.plain('drape', '#3a1430', .9); drape.node_tree.nodes['Principled BSDF'].inputs['Sheen Weight'].default_value = 1.0
     T.box('drape', (1.5, 2.6, .05), (0, 95.95, HZ + .07), drape)
     for k, (x, y) in enumerate(((-1.25, 94.2), (1.25, 94.2), (-1.25, 97.8), (1.25, 97.8))):
+        if k not in wreaths: continue
         T.cyl(f'wstand{k}', .02, 1.2, (x, y, HZ + .6), T.plain('wstand', '#2a2a2a', .5, .8), v=6); U.wreath(f'wreath{k}', (x, y - .02, HZ + 1.25))
     for k in range(6): U.flowers(f'fl{k}', (-1.0 + k * .4, 93.6, HZ), n=6, spread=.18)
     for k, (x, y) in enumerate(((-.9, 93.9), (.9, 93.9), (-.9, 98.1), (.9, 98.1))):
@@ -484,22 +512,25 @@ def perfect_set(sh, with_people=True, crowd=0):
     return c, ez, band
 
 
+def tuba_at(ch): return head_of(ch, -.66) + Vector((-.22, 0, 0))
+
+
 def play_band(sh, band, t_on=0.0, t_off=99.0):
     for ch, a, ins, kind in band:
         def mod(t, s, ch=ch, kind=kind):
             on = t_on <= t <= t_off; bob = math.sin(t * 2 * math.pi * 1.4) * (.04 if on else 0)
             hc = head_of(ch, -.18)
             fw = Vector((-1, 0, 0))
-            if kind == 'trumpet': tg = hc + fw * .32 + Vector((0, 0, .02 + bob * .3))
-            elif kind == 'tuba': tg = hc + fw * .25 + Vector((0, 0, -.35))
-            else: tg = hc + fw * .35 + Vector((0, 0, -.55 + (abs(math.sin(t * 9)) * .12 if on else 0)))
-            s['handR'] = tuple(tg); s['handL'] = tuple(tg + Vector((0, .12, -.06))); s['crouch'] = s['crouch'] + max(0, bob) * .5
+            if kind == 'trumpet': tg = hc + fw * .32 + Vector((0, 0, .02 + bob * .3)); s['handR'] = tuple(tg); s['handL'] = tuple(tg + Vector((0, .12, -.06)))
+            elif kind == 'tuba': tl = tuba_at(ch); s['handR'] = tuple(tl + Vector((.02, -.08, -.14))); s['handL'] = tuple(tl + Vector((.02, .08, .18)))
+            else: tg = hc + fw * .35 + Vector((0, 0, -.55 + (abs(math.sin(t * 9)) * .12 if on else 0))); s['handR'] = tuple(tg); s['handL'] = tuple(tg + Vector((0, .12, -.06)))
+            s['crouch'] = s['crouch'] + max(0, bob) * .5
             return s
         override(a, mod)
         def u(t, ch=ch, ins=ins, kind=kind):
             p = bone_pos(ch, 'RightHand')
             if kind == 'trumpet': ins.location = p + Vector((-.05, 0, 0)); ins.rotation_euler = (0, 0, math.radians(-90))
-            elif kind == 'tuba': ins.location = head_of(ch, -.55) + Vector((-.25, 0, 0)); ins.rotation_euler = (0, 0, math.radians(90))
+            elif kind == 'tuba': ins.location = tuba_at(ch); ins.rotation_euler = (0, math.radians(-12), math.radians(90)); ins.scale = (.85, .85, .85)
             else: ins.location = head_of(ch, -.85) + Vector((-.32, 0, 0)); ins.rotation_euler = (0, 0, 0)
         sh.updates.append(u)
 
@@ -509,29 +540,32 @@ def s_perfect(sh):
     stage(sh, 'sunset', 12, 245)
     c, ez, band = perfect_set(sh)
     lie_in(sh, ez, c, [(0, 'relief')])
-    mourners(sh, 4, seed=3, face='sad')
+    mourners(sh, 8, seed=3, face='sad')
     play_band(sh, band)
-    sh.camera(cam_keys([(0, (4.5, 103.5, HZ + 6.5), (0, 96, HZ + .5), 22), (sh.dur, (3.2, 101.8, HZ + 2.6), (0, 95.9, HZ + .8), 26)], roll=lambda t: K([(0, 4), (sh.dur, 0)], t), shake=.005), fstop=5)
+    sh.camera(cam_keys([(0, (4.2, 103.2, HZ + 6.8), (0, 96, HZ + .5), 22), (sh.dur, (2.9, 101.3, HZ + 3.5), (0, 95.9, HZ + .6), 26)], roll=lambda t: K([(0, 4), (sh.dur, 0)], t), shake=.005), fstop=5)
 
 
 def s_velvet(sh):
-    """'A velvet coffin.'  Low dolly along the glossy coffin side and gold handles, purple velvet glowing."""
+    """'A velvet coffin.'  High three-quarter dolly along the open velvet coffin - gold handles, glowing purple lining -
+    ending on Ezra's peaceful face on the pillow."""
     stage(sh, 'sunset', 12, 245)
     c, ez, band = perfect_set(sh, with_people=False)
     lie_in(sh, ez, c, [(0, 'relief')])
     def cam(t):
-        u = ease(t / sh.dur); tg = c.world((0, 1.9 - 1.4 * u, .45)); p = tg + Vector((.95, .25, .12 + .1 * u))
-        return (p, tg, 30, 0, tg, .004)
-    sh.camera(cam, fstop=2.2)
+        u = ease(t / sh.dur)
+        p = c.world((1.45, 2.1, 1.35)).lerp(c.world((1.15, .25, 1.2)), u)
+        tg = c.world((0, 1.25, .35)).lerp(c.world((0, .45, .5)), u)
+        return (p, tg, 32, 0, tg, .004)
+    sh.camera(cam, fstop=3.2)
 
 
 def s_band(sh):
-    """'A brass band.'  Low angle on the three-piece band in full swing."""
+    """'A brass band.'  Low three-quarter angle on the three-piece band in full swing, Boot Hill behind."""
     stage(sh, 'sunset', 12, 245)
     c, ez, band = perfect_set(sh)
     lie_in(sh, ez, c, [(0, 'relief')])
     play_band(sh, band)
-    sh.camera(cam_keys([(0, (1.6, 95.4, HZ + .7), (3.6, 97.4, HZ + 1.3), 26), (sh.dur, (1.75, 95.1, HZ + .75), (3.7, 97.3, HZ + 1.4), 28)], roll=-4, shake=.008), fstop=3)
+    sh.camera(cam_keys([(0, (1.45, 99.45, HZ + 1.15), (3.5, 97.3, HZ + 1.25), 26), (sh.dur, (1.6, 99.2, HZ + 1.2), (3.55, 97.25, HZ + 1.3), 28)], roll=-3, shake=.008), fstop=3.2)
 
 
 def s_tears(sh):
@@ -551,40 +585,43 @@ def s_tears(sh):
                 hc = head_of(w, -.1); s['handR'] = tuple(hc + Vector((.22, 0, 0))); s['lean'] = (s['lean'][0] + .05 * math.sin(t * 14), 0)
             return s
         override(a, mod)
-    m = stand(sh, mort, (-.8, 94.3), -90, '77_02', 2.5, face=[(0, 'deadpan')], look=lambda t: pos[0] if t < 1.1 else pos[1])
+    m = stand(sh, mort, (-.8, 94.3), -90, '77_02', 2.5, face=[(0, 'deadpan')], look=lambda t: (pos[0][0], pos[0][1], HZ + 1.2) if t < 1.1 else (pos[1][0], pos[1][1], HZ + 1.2))
     def mmod(t, s):
         tg = pos[0] if t < 1.1 else pos[1]; u = math.sin(min(1, ((t - .3) % .7) / .7) * math.pi)
         s['handR'] = tuple(Vector((tg[0] + .6, tg[1], HZ + 1.1)).lerp(Vector((tg[0] + .3, tg[1], HZ + 1.05)), u)); return s
     override(m, mmod)
     coin = T.cyl('coin', .03, .006, (0, 0, 0), T.plain('coin', '#d8b448', .3, 1.0), rot=(math.pi / 2, 0, 0), v=14); hold(sh, coin, mort, 'R', (0, 0, .02))
-    # tear streams
+    tear_streams(sh, [(w, TT[k] + .12) for k, w in enumerate(ws)])
+    sh.camera(cam_keys([(0, (.8, 92.1, HZ + 1.55), (-1.7, 94.4, HZ + 1.4), 30), (sh.dur, (.55, 92.6, HZ + 1.5), (-1.8, 94.6, HZ + 1.4), 33)], shake=.008), fstop=2.6)
+
+
+def tear_streams(sh, who, n=6):
+    """comic tear streams squirting sideways from both eyes: who = [(toon, t_start)]"""
     tearm = T.plain('tear', '#9ad0ff', .05, transmit=.6)
     drops = []
-    for k, w in enumerate(ws):
-        for j in range(6): drops.append((w, k, j, T.lib.sphere(f'tear{k}{j}', .018, (0, 0, -50), tearm)))
-    def tears(t):
-        for w, k, j, d in drops:
-            if t < TT[k] + .12: d.location = (0, 0, -50); continue
-            ph = ((t - TT[k]) * 2.2 + j / 6) % 1.0; side = -1 if j % 2 else 1
-            d.location = head_of(w, .02) + Vector((.2 + ph * .05, side * .12, -ph * .5))
-    sh.updates.append(tears)
-    sh.camera(cam_keys([(0, (.8, 92.1, HZ + 1.55), (-1.7, 94.4, HZ + 1.4), 30), (sh.dur, (.55, 92.6, HZ + 1.5), (-1.8, 94.6, HZ + 1.4), 33)], shake=.008), fstop=2.6)
+    for k, (w, t0) in enumerate(who):
+        for j in range(n): drops.append((w, t0, j, T.lib.sphere(f'tear{k}_{j}', .018, (0, 0, -50), tearm)))
+    def upd(t):
+        for w, t0, j, d in drops:
+            if t < t0: d.location = (0, 0, -50); continue
+            f, sd = side_of(w); ph = ((t - t0) * 2.2 + j / n) % 1.0; side = -1 if j % 2 else 1
+            d.location = head_of(w, .02) + f * .2 + sd * side * (.14 + ph * .1) - Vector((0, 0, ph * .45))
+    sh.updates.append(upd)
 
 
 # ------------------------------------------------------------------ 23-26  happy, stopped, the band played, the undertaker wept
 def s_happy(sh):
-    """'Ezra lay there, listening, and for the first time in his life, he was happy.'  Slow overhead push on Ezra in the
+    """'Ezra lay there, listening, and for the first time in his life, he was happy.'  Slow push down onto Ezra in the
     velvet: eyes closed, the smile growing with the music, golden light and drifting petals."""
     stage(sh, 'sunset', 9, 245)
     c, ez, band = perfect_set(sh)
     lie_in(sh, ez, c, [(0, 'relief'), (2.6, 'smile'), (4.6, 'happy')])
     play_band(sh, band)
     petals(sh, c)
-    h = lambda: head_of(ez)
     def cam(t):
-        hp = h(); u = ease(t / sh.dur)
-        return (hp + Vector((.55 - .25 * u, -.15, 1.5 - .7 * u)), hp, 40, 90, hp, .004)
-    sh.camera(cam, fstop=2.0); sh.keylight(10, (1, .85, .65))
+        hp = head_of(ez); u = ease(t / sh.dur)
+        return (hp + Vector((.3 - .1 * u, 1.15 - .4 * u, 1.25 - .4 * u)), hp + Vector((0, .25 - .2 * u, 0)), 40, 0, hp, .004)
+    sh.camera(cam, fstop=2.4); sh.keylight(10, (1, .85, .65))
 
 
 def petals(sh, c, n=14, t_land=None):
@@ -602,45 +639,46 @@ def petals(sh, c, n=14, t_land=None):
 
 
 def s_stopped(sh):
-    """'So happy, his heart simply stopped.'  Extreme close on the smile.  The music cuts; a single petal settles on his nose;
-    he does not blink again."""
+    """'So happy, his heart simply stopped.'  Close on the smile, face-on.  The music cuts; a single petal settles on his
+    nose; he does not blink again."""
     stage(sh, 'sunset', 9, 245)
     c, ez, band = perfect_set(sh)
     TS = 1.7
-    p = lie_in(sh, ez, c, [(0, 'happy')])
-    ez_blink = ez
+    lie_in(sh, ez, c, [(0, 'happy')])
     petal = T.box('lastpetal', (.05, .035, .004), (0, 0, -60), T.plain('petal', '#c8406a', .6))
     def land(t):
         hp = head_of(ez, .05); u = ease((t - 1.9) / 1.4)
-        petal.location = (hp + Vector((-.2, 0, .6))).lerp(hp + Vector((0, -.32, .08)), u); petal.rotation_euler = (0, u * .5, math.sin(t * 3) * (1 - u))
+        petal.location = (hp + Vector((-.2, .1, .75))).lerp(hp + Vector((0, .0, .3)), u); petal.rotation_euler = (0, u * .3, math.sin(t * 3) * (1 - u))
     sh.updates.append(land)
     def cam(t):
-        hp = head_of(ez); d = K([(0, 1.0), (TS, .72), (sh.dur, .68)], t)
-        return (hp + Vector((.18, -.12, d)), hp + Vector((0, -.05, 0)), 50, 90, hp, .002 if t < TS else .0005)
-    sh.camera(cam, fstop=1.8); sh.keylight(10, (1, .85, .65))
+        hp = head_of(ez); d = K([(0, 1.0), (TS, .86), (sh.dur, .82)], t)
+        return (hp + Vector((.06, .42, .82)) * d, hp + Vector((0, .02, 0)), 45, 0, hp + Vector((0, 0, .2)), .002 if t < TS else .0005)
+    sh.camera(cam, fstop=2.4); sh.keylight(10, (1, .85, .65))
 
 
 def s_played(sh):
-    """'The band played.'  From behind the band: the coffin and mourners beyond, horns up."""
+    """'The band played.'  High over the band's shoulders: horns up, the open coffin and the mourners beyond."""
     stage(sh, 'sunset', 9, 245)
     c, ez, band = perfect_set(sh)
     lie_in(sh, ez, c, [(0, 'happy')])
-    mourners(sh, 4, seed=5, face='sad')
+    mourners(sh, 6, seed=5, face='sad')
     play_band(sh, band)
-    sh.camera(cam_keys([(0, (6.2, 98.6, HZ + 1.6), (-.5, 95.9, HZ + 1.0), 28), (sh.dur, (5.6, 98.3, HZ + 1.55), (-.6, 95.8, HZ + 1.0), 30)], shake=.008), fstop=3.2)
+    sh.camera(cam_keys([(0, (6.3, 98.7, HZ + 2.6), (-.5, 95.9, HZ + .8), 28), (sh.dur, (5.8, 98.4, HZ + 2.5), (-.6, 95.8, HZ + .8), 30)], shake=.008), fstop=4)
 
 
 def s_wept(sh):
-    """'The undertaker wept.'  Close: the undertaker dabbing his eyes with a white handkerchief."""
+    """'The undertaker wept.'  Close: the undertaker dabbing his streaming eyes with a white handkerchief."""
     stage(sh, 'sunset', 9, 245)
     c, ez, band = perfect_set(sh, with_people=False)
     lie_in(sh, ez, c, [(0, 'happy')])
     mort = toon(sh, 'MORT', MORT)
     a = stand(sh, mort, (-.95, 93.7), 40, '77_02', 3.0, face=[(0, 'sad')], look=lambda t: (0, 96, HZ + .5))
     def mod(t, s):
-        hc = head_of(mort, -.02); s['handR'] = tuple(hc + Vector((.12, -.28, -.02 + .03 * math.sin(t * 10)))); return s
+        f, sd = side_of(mort); hc = head_of(mort, -.1)
+        s['handR'] = tuple(hc + f * .3 + sd * .12 + Vector((0, 0, .03 * math.sin(t * 10)))); return s
     override(a, mod)
-    hk = T.box('hanky', (.16, .02, .16), (0, 0, 0), T.plain('hanky', '#f4f0e8', .8)); hold(sh, hk, mort, 'R', (0, -.03, .02), rot=(.3, 0, .4))
+    hk = T.box('hanky', (.15, .02, .15), (0, 0, 0), T.plain('hanky', '#f4f0e8', .8)); hold(sh, hk, mort, 'R', (0, 0, .07), rot=(.3, 0, .4))
+    tear_streams(sh, [(mort, .0)], n=8)
     cu(sh, mort, angle=25, elev=3, size=(.8, .62), lens=55, fstop=2.0)
 
 
@@ -673,35 +711,37 @@ def s_town(sh):
 
 
 def s_laugh(sh):
-    """'To laugh. Because everyone knew Ezra would climb out any second.'  Track across the laughing, pointing crowd to the
-    closed coffin, the laughter settling into expectant grins."""
+    """'To laugh. Because everyone knew Ezra would climb out any second.'  From inside the ring: sweep across the laughing,
+    pointing faces, then settle on the closed coffin with the grinning crowd behind it, waiting."""
     stage(sh, 'sunset', 9, 245)
-    c, ez, band = perfect_set(sh)
+    c, ez, band = perfect_set(sh, wreaths=(1, 3))
     c.open(0.0)
     crowd = town_crowd(sh, 22, face='laugh')
     for a in sh.actors:
         if getattr(a, 'ch', None) in crowd: a.face = H.expr_track([(0, 'laugh'), (3.6, 'grin')])
     def cam(t):
-        u = ease(t / sh.dur); ang = math.radians(200 - 120 * u); r = 6.6 - 2.0 * u
-        p = Vector((math.cos(ang) * r, 96 + math.sin(ang) * r, HZ + 1.6 - .3 * u))
-        tg = Vector((math.cos(ang) * 4.5, 96 + math.sin(ang) * 4.5, HZ + 1.3)).lerp(Vector((0, 96, HZ + .55)), ease((t - 2.6) / 1.8))
-        return (p, tg, 30, 0, tg, .008)
-    sh.camera(cam, fstop=3.2)
+        u = ease(t / sh.dur); ang = math.radians(245 - 105 * u); r = 3.0
+        p = Vector((math.cos(ang) * r, 96 + math.sin(ang) * r, HZ + 1.75))
+        out = Vector((math.cos(ang - .25) * 6.0, 96 + math.sin(ang - .25) * 6.0, HZ + 1.3))
+        tg = out.lerp(Vector((0, 96, HZ + .7)), ease((t - 2.8) / 1.8))
+        return (p, tg, 26, 0, tg, .008)
+    sh.camera(cam, fstop=4)
 
 
 def s_didnt(sh):
-    """'He didn't.'  Silence.  Slow push on the closed velvet coffin; the crowd behind, soft, waiting."""
+    """'He didn't.'  Silence.  Slow push on the closed velvet coffin framed by candles and wreaths; the crowd behind,
+    soft, waiting."""
     stage(sh, 'sunset', 7, 245)
     c, ez, band = perfect_set(sh)
     c.open(0.0)
     town_crowd(sh, 22, face=['watch', 'confused', 'watch', 'bored'], clips=('77_02', '40_10'))
-    tg = c.world((0, .9, .5))
-    sh.camera(cam_keys([(0, tg + Vector((1.9, -2.2, .7)), tg, 30), (sh.dur, tg + Vector((1.15, -1.35, .45)), tg, 34)], shake=.003), fstop=2.0)
+    tg = c.world((0, 1.0, .5))
+    sh.camera(cam_keys([(0, (.05, 99.45, HZ + 1.25), tg, 30), (sh.dur, (.03, 98.75, HZ + 1.05), tg, 34)], shake=.003), fstop=2.8)
 
 
 def s_days(sh):
-    """'And nobody noticed for three days.'  Locked-off wide of Boot Hill: three days and nights race past, the crowd gone,
-    the flowers wilting, the velvet coffin still sitting there."""
+    """'And nobody noticed for three days.'  Locked-off on the abandoned funeral: three days and nights race past, the
+    crowd gone, the flowers wilting, the velvet coffin still sitting there."""
     stage(sh, 'day', 30, 160)
     c, ez, band = perfect_set(sh, with_people=False)
     c.open(0.0)
@@ -709,14 +749,19 @@ def s_days(sh):
     e0 = sun.data.energy if sun else 3
     bgs = [n for n in bpy.context.scene.world.node_tree.nodes if n.type == 'BACKGROUND'] if bpy.context.scene.world and bpy.context.scene.world.use_nodes else []
     b0 = [n.inputs['Strength'].default_value for n in bgs]
+    fls = [(o, o.location.copy()) for o in bpy.data.objects if o.name.startswith('fl') and ('_fl' in o.name or '_st' in o.name)]
     D = 2.9 / 3
     def cyc(t):
         ph = (t / D) % 1.0; day = max(0.0, math.sin(ph * math.tau)); amt = .08 + .92 * day
         if t > 2.9: amt = .35 + .3 * (1 - (t - 2.9) / .5)
         if sun: sun.data.energy = e0 * amt; sun.rotation_euler = (math.radians(30), 0, math.radians(90 + 360 * ph))
         for n, b in zip(bgs, b0): n.inputs['Strength'].default_value = b * (.12 + .88 * amt)
+        w = ease(t / 3.0)
+        for o, l0 in fls:
+            if '_fl' in o.name: o.location = l0 + Vector((.12 * w, 0, -.3 * w))
+            else: o.scale = (1, 1, 1 - .5 * w); o.location = l0 - Vector((0, 0, .11 * w)); o.rotation_euler = (0, .6 * w, 0)
     sh.updates.append(cyc)
-    sh.camera(cam_keys([(0, (7.2, 106.5, HZ + 3.4), (0, 95.8, HZ + .7), 26), (sh.dur, (6.9, 106.0, HZ + 3.3), (0, 95.8, HZ + .7), 26)], shake=.0), fstop=6)
+    sh.camera(cam_keys([(0, (3.3, 100.4, HZ + 2.1), (0, 95.7, HZ + .45), 30), (sh.dur, (3.2, 100.2, HZ + 2.05), (0, 95.7, HZ + .45), 30)], shake=.0), fstop=6)
     sh.no_extras = True
 
 
