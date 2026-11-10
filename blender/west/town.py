@@ -668,7 +668,23 @@ def build_town(detail=True, y_range=(-30, 50)):
 # ------------------------------------------------------------------ Poly Haven props (CI)
 def ph_props(y0=-35, y1=60):
     if not PH: return
-    M = lambda *ids: lib.model(list(ids), res=os.environ.get('PH_MODEL_RES', '1k'))
+    def M(*ids):
+        m = lib.model(list(ids), res=os.environ.get('PH_MODEL_RES', '1k'))
+        if not m: return None
+        root, objs = m
+        cn = 'PHM_' + root.name
+        if cn not in bpy.data.collections:                  # one evaluated copy, instanced everywhere (memory stays flat)
+            c = bpy.data.collections.new(cn); bpy.context.scene.collection.children.link(c)
+            for o in [root] + list(objs):
+                for cc in list(o.users_collection): cc.objects.unlink(o)
+                c.objects.link(o)
+            c.instance_offset = root.location.copy()
+            bpy.context.view_layer.layer_collection.children[cn].exclude = True
+        return bpy.data.collections[cn]
+    def place(col, loc, rot=0.0, scale=1.0):
+        if col is None: return None
+        e = bpy.data.objects.new(col.name + '_i', None); e.instance_type = 'COLLECTION'; e.instance_collection = col
+        e.location = loc; e.rotation_euler = (0, 0, rot); e.scale = (scale,) * 3; coll('Far').objects.link(e); return e
     barrels = [m for m in (M('Barrel_01'), M('Barrel_02'), M('barrel_03'), M('wine_barrel_01')) if m]
     crates = [m for m in (M('wooden_crate_01'), M('wooden_crate_02'), M('wooden_military_crate')) if m]
     seats = [m for m in (M('Rockingchair_01'), M('WoodenChair_01'), M('painted_wooden_bench'), M('folding_wooden_stool'), M('wooden_stool_01')) if m]
@@ -685,18 +701,18 @@ def ph_props(y0=-35, y1=60):
             yy = f['y'] + rng.uniform(-f['w'] / 2 + .6, f['w'] / 2 - .6)
             if abs(yy - f['y']) < 1.0: continue
             pool = rng.choice([barrels, crates, seats, seats, small])
-            if pool: lib.place(rng.choice(pool), (wx - s * rng.uniform(0, .9), yy, .32), rot=rng.uniform(0, math.tau) if pool is not seats else math.radians(90 if s < 0 else -90) + rng.uniform(-.4, .4), scale=1.0)
-        if lantern and rng.random() < .6: lib.place(lantern, (f['fx'] - s * .35, f['y'] + .95, 2.15), rot=0, scale=1.0)
+            if pool: place(rng.choice(pool), (wx - s * rng.uniform(0, .9), yy, .32), rot=rng.uniform(0, math.tau) if pool is not seats else math.radians(90 if s < 0 else -90) + rng.uniform(-.4, .4), scale=1.0)
+        if lantern and rng.random() < .6: place(lantern, (f['fx'] - s * .35, f['y'] + .95, 2.15), rot=0, scale=1.0)
         for k in range(4):
-            if grassm: lib.place(rng.choice(grassm), (f['fx'] - s * (T_W := WALK) - s * rng.uniform(.0, .3), f['y'] + rng.uniform(-f['w'] / 2, f['w'] / 2), 0), rot=rng.uniform(0, math.tau), scale=rng.uniform(.6, 1.1))
+            if grassm: place(rng.choice(grassm), (f['fx'] - s * (T_W := WALK) - s * rng.uniform(.0, .3), f['y'] + rng.uniform(-f['w'] / 2, f['w'] / 2), 0), rot=rng.uniform(0, math.tau), scale=rng.uniform(.6, 1.1))
     for k in range(70):
         x = rng.choice((-1, 1)) * rng.uniform(STREET + 9, 80); y = rng.uniform(-70, 130)
         pool = rng.choice([shrubs, shrubs, rocks, trees, grassm])
-        if pool: lib.place(rng.choice(pool), (x, y, 0), rot=rng.uniform(0, math.tau), scale=rng.uniform(.7, 1.4))
+        if pool: place(rng.choice(pool), (x, y, 0), rot=rng.uniform(0, math.tau), scale=rng.uniform(.7, 1.4))
     for k in range(24):     # in the street margins: stones, odd tufts
         x = rng.choice((-1, 1)) * rng.uniform(STREET - WALK - 1.2, STREET - WALK - .3); y = rng.uniform(y0, y1)
         pool = rng.choice([rocks, grassm, grassm])
-        if pool: lib.place(rng.choice(pool), (x, y, 0), rot=rng.uniform(0, math.tau), scale=rng.uniform(.3, .6))
+        if pool: place(rng.choice(pool), (x, y, 0), rot=rng.uniform(0, math.tau), scale=rng.uniform(.3, .6))
 
 
 # ------------------------------------------------------------------ vegetation
@@ -885,12 +901,12 @@ def bank_interior(c='Interior'):
     for r in range(4):
         for k in range(10):
             box('goldbar', (.24, .1, .07), (vx - .5 - (k % 2) * .26, y0 + .3 + (k // 2) * .26, .9 + r * .38), gold, bevel=.01, c=c)
-    lamp = bpy.data.lights.new('vault_glow', 'POINT'); lamp.energy = 450; lamp.color = (1, .7, .35); lamp.shadow_soft_size = .3
+    lamp = bpy.data.lights.new('vault_glow', 'POINT'); lamp.energy = 900; lamp.color = (1, .7, .35); lamp.shadow_soft_size = .3
     lo = bpy.data.objects.new('vault_glow', lamp); lo.location = (vx - .3, y0 + .8, 2.2); coll(c).objects.link(lo)
     for k, yy in enumerate((y0 - 2.5, y0 + 2.5)):          # moonlight through the front windows + soft bounce
         l = bpy.data.lights.new(f'b_moon{k}', 'AREA'); l.energy = 260; l.size = 1.6; l.color = (.55, .65, 1.0)
         lo = bpy.data.objects.new(f'b_moon{k}', l); lo.location = (x0 - .4, yy, 2.0); lo.rotation_euler = (0, math.radians(-75), 0); coll(c).objects.link(lo)
-    l = bpy.data.lights.new('b_fill', 'AREA'); l.energy = 120; l.size = 4; l.color = (1, .8, .6); lo = bpy.data.objects.new('b_fill', l); lo.location = (x0 - D / 2, y0, H); coll(c).objects.link(lo)
+    l = bpy.data.lights.new('b_fill', 'AREA'); l.energy = 350; l.size = 4; l.color = (1, .8, .6); lo = bpy.data.objects.new('b_fill', l); lo.location = (x0 - D / 2, y0, H); coll(c).objects.link(lo)
     return dict(vault_door=vd, vault_center=Vector((vx + .6, y0 + .8, 1.65)), hall=Vector((x0 - 4, y0, 0.2)))
 
 

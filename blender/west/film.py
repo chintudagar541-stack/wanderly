@@ -24,7 +24,7 @@ class Shot:
     def __init__(self, sid):
         self.sid = sid; row = next(r for r in CFG['shots'] if r['id'] == sid)
         self.t0, self.dur = row['t0'], row['dur']; self.actors = []; self.updates = []; self.cam = None
-        self.chars = {}
+        self.chars = {}; self.key = None; self.key_e = 0.0
 
     # ---- helpers
     def cast(self, *ids):
@@ -45,6 +45,10 @@ class Shot:
 
     def actor(self, ch, acts, **kw):
         a = CA.Actor(ch, acts, blink_seed=len(self.actors) * 13 + 1, **kw); self.actors.append(a); return a
+
+    def keylight(self, energy=25.0, col=(1, .9, .8), size=1.2):
+        l = bpy.data.lights.new('key', 'AREA'); l.size = size; l.color = col; l.use_shadow = True
+        self.key = bpy.data.objects.new('key', l); bpy.context.scene.collection.objects.link(self.key); self.key_e = energy
 
     def camera(self, fn, lens=35, fstop=2.8, blur=True):
         cam = bpy.data.cameras.new('cam'); co = bpy.data.objects.new('cam', cam); bpy.context.scene.collection.objects.link(co)
@@ -87,6 +91,21 @@ class Shot:
         loc = loc + handheld(t, r[5] if len(r) > 5 else .012)
         co.location = loc; q = (tgt - loc).to_track_quat('-Z', 'Y'); co.rotation_euler = (q @ Quaternion((0, 0, 1), math.radians(roll))).to_euler()
         co.data.lens = lens; co.data.dof.focus_distance = max(.1, (focus - loc).length)
+        if self.key is not None:
+            d = (tgt - loc); dist = d.length; d.normalize(); side = d.cross(Vector((0, 0, 1))).normalized()
+            kp = loc - side * dist * .45 + Vector((0, 0, dist * .35 + .3))
+            self.key.location = kp; self.key.rotation_euler = (focus - kp).to_track_quat('-Z', 'Y').to_euler()
+            self.key.data.energy = self.key_e * max(.6, dist) ** 2
+
+
+def cu(sh, ch, angle=15, elev=4, size=(.75, .45), lens=50, up=.0, shake=.006, fstop=2.0, target='Head', key=18.0):
+    """close-up camera on a character: push-in from size[0] to size[1] metres of frame height"""
+    def fn(t):
+        p = head_of(ch, -.02 + up) if target == 'Head' else bone_pos(ch, target) + Vector((0, 0, up))
+        s = K([(0, size[0]), (sh.dur, size[1])], t)
+        return (framed(p, facing(ch), angle, elev, s, lens), p, lens, 0, p, shake)
+    sh.camera(fn, lens=lens, fstop=fstop)
+    if sh.key is None: sh.keylight(key)
 
 
 def handheld(t, amp):
@@ -108,7 +127,41 @@ def K(keys, t):
 
 
 def head_of(ch, up=.08):
-    pb = ch.rig.pose.bones['mixamorig:Head']; return ch.rig.matrix_world @ (pb.head + Vector((0, 0, up)))
+    """a point between the eyes (up=.08 default kept for callers that meant 'face centre')"""
+    pb = ch.rig.pose.bones['mixamorig:Head']; ax = (pb.tail - pb.head).normalized()
+    return ch.rig.matrix_world @ (pb.head + ax * .1) + Vector((0, 0, up - .08))
+
+
+def facing(ch):
+    """horizontal forward direction of a character (from the pelvis)"""
+    pb = ch.rig.pose.bones['mixamorig:Hips']; f = ch.rig.matrix_world.to_3x3() @ pb.matrix.to_3x3() @ Vector((0, 0, 1)); f.z = 0
+    return f.normalized() if f.length > 1e-4 else Vector((0, -1, 0))
+
+
+def _clear(subj, d, dist):
+    """free distance from subj along d (character geometry ignored)"""
+    sc = bpy.context.scene; dg = bpy.context.evaluated_depsgraph_get(); o = Vector(subj); tr = 0.0
+    for _ in range(8):
+        hit, loc, nor, idx, ob, mat = sc.ray_cast(dg, o + d * .02, d, distance=max(.01, dist - tr))
+        if not hit: return dist
+        if ob is not None and any(c.name.startswith('C_') or c.name == 'Props' for c in ob.users_collection) and not ob.name.startswith(('vault', 'b_', 's_')):
+            tr += (loc - o).length + .02; o = loc + d * .02; continue
+        return (loc - Vector(subj)).length - .15
+    return dist
+
+
+def framed(subj, face_dir, angle, elev, size, lens, ignore=()):
+    """camera position framing `subj` at `size` metres of frame height, from `angle` degrees around the subject's facing
+    (0 = straight on the face) and `elev` degrees up. If a wall/prop blocks that view, nearby angles are tried first,
+    then the camera is pulled in front of the obstacle."""
+    dist = size * lens / 36.0; best = None
+    for da in (0, 12, -12, 25, -25, 40, -40, 60, -60):
+        d = Matrix.Rotation(math.radians(angle + da), 3, 'Z') @ Vector(face_dir); d.z = 0; d.normalize()
+        d = (d * math.cos(math.radians(elev)) + Vector((0, 0, math.sin(math.radians(elev))))).normalized()
+        free = _clear(subj, d, dist)
+        if free >= dist * .9: return Vector(subj) + d * dist
+        if best is None or free > best[0]: best = (free, d)
+    return Vector(subj) + best[1] * max(.35, best[0])
 
 
 def bone_pos(ch, b): pb = ch.rig.pose.bones['mixamorig:' + b]; return ch.rig.matrix_world @ pb.head
@@ -176,10 +229,7 @@ def s_funniest(sh):
     jack, sher = sh.cast('JACK', 'SHER')
     sh.actor(jack, [CA.Act(0, '80_03', 3.0, 6, loc=(.3, 4.0, 0), yaw=180)], face=[(0, 'determined'), (.5, 'smirk')])
     sh.actor(sher, [CA.Act(0, '79_73', 4.0, 6, loc=(.3, 6.6, 0), yaw=0, lock_root=True)], face=[(0, 'fear')])
-    def cam(t):
-        h = head_of(jack, .02)
-        return (h + Vector(K([(0, (.6, -2.6, .1)), (sh.dur, (.25, -.75, .02))], t)), h, K([(0, 40), (sh.dur, 60)], t), 0, h, .006)
-    sh.camera(cam, fstop=2.2)
+    cu(sh, jack, angle=20, elev=2, size=(1.4, .5), lens=45, fstop=2.2)
 
 
 def s_nobody(sh):
@@ -290,9 +340,8 @@ def s_knew(sh):
     PR.poster('calendar', cal, (-S - 9.4 + .12, -2 + 1.2, 1.9), (math.pi / 2, 0, -math.pi / 2), size=(.55, .7))
     def cam(t):
         w = bone_pos(sher, 'RightHand'); h = head_of(sher)
-        p = Vector((desk.x + 1.6, desk.y - 1.7, 1.75)).lerp(Vector((desk.x + .6, desk.y - .8, 1.45)), ease(t / sh.dur))
-        tgt = h.lerp(w, ease((t - 1.6) / 1.8))
-        return (p, tgt, K([(0, 32), (sh.dur, 50)], t), 0, tgt, .008)
+        tgt = h.lerp(w, ease((t - 1.6) / 1.8)); s = K([(0, 1.4), (sh.dur, .5)], t)
+        return (framed(tgt, facing(sher), 25, 10, s, 40), tgt, 40, 0, tgt, .008)
     sh.camera(cam, fstop=2.0)
 
 
@@ -301,10 +350,7 @@ def s_suspicious(sh):
     setup(sh, 'day', 28, 110, veg=.4)
     jack, = sh.cast('JACK')
     sh.actor(jack, [CA.Act(0, '77_02', 2.0, 6, loc=(S - W_ * .5, -1.0, DECK), yaw=90, lock_root=True)], face=[(0, 'neutral'), (.7, 'suspicious')], look=lambda t: (-S, -2.0, 2.0))
-    def cam(t):
-        h = head_of(jack, .03)
-        return (h + Vector(K([(0, (-1.3, -.55, .02)), (sh.dur, (-.8, -.3, .02))], t)), h, 55, 0, h, .005)
-    sh.camera(cam, fstop=2.0)
+    cu(sh, jack, angle=35, elev=2, size=(.7, .45), lens=60)
 
 
 def s_nights(sh):
@@ -334,11 +380,7 @@ def s_unbelievable(sh):
     jack, = sh.cast('JACK')
     sh.actor(jack, [CA.Act(0, '86_09', 9.5, 4, loc=(S - W_ * .6, -2.4, DECK), yaw=90, lock_root=True), CA.Act(.6, '79_73', 3.4, 4, loc=(S - W_ * .6, -2.4, DECK), yaw=60, lock_root=True)],
              face=[(0, 'suspicious'), (.6, 'shock')], look=lambda t: (-S, 12, 1.6))
-    def cam(t):
-        h = head_of(jack, .02)
-        off = Vector(K([(0, (-1.6, .9, .1)), (.6, (-1.4, .8, .1)), (1.1, (-.65, .35, .03)), (sh.dur, (-.55, .3, .03))], t))
-        return (h + off, h, K([(0, 35), (1.1, 55), (sh.dur, 60)], t), 0, h, .005)
-    sh.camera(cam, fstop=1.8)
+    cu(sh, jack, angle=20, elev=0, size=(1.1, .38), lens=55, fstop=1.8)
 
 
 def s_sneak(sh):
@@ -378,16 +420,16 @@ def s_vault(sh):
 def s_gold(sh):
     """31.55-34.15 'and started filling his bags with gold.'  The sheriff stuffs gold bars into sacks, greedy grin; camera arcs."""
     o = setup(sh, 'night', 20, 300, town=False, interior='bank', haze=False)
-    c = o['vault_center']; sher, = sh.cast('SHER')
-    sh.actor(sher, [CA.Act(0, '80_08', 1.8, 6, loc=(c.x + .9, c.y - .1, .2), yaw=90, lock_root=True)], face=[(0, 'grin')], look=lambda t: (c.x - .6, c.y, .9))
+    c = o['vault_center']; open_vault(o); sher, = sh.cast('SHER'); sh.keylight(20.0, (1, .85, .65))
+    sh.actor(sher, [CA.Act(0, '80_08', 1.8, 6, loc=(c.x + 1.6, c.y - .1, .2), yaw=-90, lock_root=True)], face=[(0, 'grin')], look=lambda t: (c.x - .6, c.y, .9))
     bar = PR.gold_bar('held_bar', (0, 0, 0))
     sh.updates.append(lambda t: setattr(bar, 'location', bone_pos(sher, 'RightHand') + Vector((0, -.05, -.04))))
-    for k in range(3): PR.sack(f'sack{k}', (c.x + .6 + k * .35, c.y - .7 - (k % 2) * .25, .42), fill=.6 + .2 * k)
+    for k in range(3): PR.sack(f'sack{k}', (c.x + 1.25 + k * .3, c.y - .75 - (k % 2) * .25, .42), fill=.6 + .2 * k)
     T.lantern('vault_lamp', (c.x + 1.4, c.y - 1.0, 1.2), c='Interior', energy=35)
     def cam(t):
-        a = math.radians(K([(0, -60), (sh.dur, -20)], t)); h = head_of(sher)
-        return (Vector((c.x + .9 + math.sin(a) * 2.0, c.y - .1 - math.cos(a) * 2.0, 1.55)), h + Vector((0, 0, -.35)), 30, 0, h, .008)
-    sh.camera(cam, fstop=2.2)
+        h = head_of(sher, -.1); f = facing(sher)
+        return (framed(h, f, K([(0, -30), (sh.dur, -5)], t), -22, 1.4, 28), h + Vector((0, 0, -.2)), 28, 0, h, .008)
+    sh.camera(cam, fstop=2.4)
 
 
 def s_draw(sh):
@@ -410,21 +452,29 @@ def s_draw(sh):
     sh.camera(cam, fstop=2.2)
 
 
-def _bank_pair(sh, jack_face, sher_face, sher_turn=None, jack_talk=None, sher_talk=None, sher_clip=('80_08', 4.2)):
+def open_vault(o, a=math.radians(75)):
+    vd = bpy.data.objects['vault_door']; c = o['vault_center']; pivot = Vector((c.x + .2, c.y - 1.25, c.z))
+    vd.location = pivot + Matrix.Rotation(-a, 3, 'Z') @ (Vector((c.x + .2, c.y, c.z)) - pivot); vd.rotation_euler.z += -a
+
+
+def _bank_pair(sh, jack_face, sher_face, sher_turn=None, jack_talk=None, sher_talk=None, sher_clip=('80_08', 4.2), facing=False):
+    """Jack in the bank doorway side (+X) aiming at the sheriff, who works at the vault (-X)."""
     o = setup(sh, 'night', 20, 300, town=False, interior='bank', haze=False)
-    c = o['vault_center']; jack, sher = sh.cast('JACK', 'SHER')
-    jp = Vector((c.x + 4.2, c.y - .3, .2)); spos = Vector((c.x + .9, c.y - .1, .2))
-    sh.actor(jack, [CA.Act(0, '79_96', 2.4, 6, loc=jp, yaw=90, lock_root=True, speed=.3)], face=jack_face, talk=jack_talk, look=lambda t: head_of(sher))
-    acts = [CA.Act(0, sher_clip[0], sher_clip[1], 6, loc=spos, yaw=90, lock_root=True, speed=.15)]
-    if sher_turn is not None: acts.append(CA.Act(sher_turn, '69_18', 2.0, 6, loc=spos, yaw=90, lock_root=True, speed=1.1, blend=.5))
-    sh.actor(sher, acts, face=sher_face, talk=sher_talk)
+    c = o['vault_center']; open_vault(o); jack, sher = sh.cast('JACK', 'SHER')
+    sh.keylight(20.0, (1, .85, .65))
+    jp = Vector((c.x + 3.7, c.y - .4, .2)); spos = Vector((c.x + 1.6, c.y - .1, .2))
+    sh.actor(jack, [CA.Act(0, '79_96', 2.4, 6, loc=jp, yaw=-90, lock_root=True, speed=.3)], face=jack_face, talk=jack_talk, look=lambda t: head_of(sher))
+    if facing: acts = [CA.Act(0, '77_02', 2.0, 6, loc=spos, yaw=90, lock_root=True)]
+    else: acts = [CA.Act(0, sher_clip[0], sher_clip[1], 6, loc=spos, yaw=-90, lock_root=True, speed=.15)]
+    if sher_turn is not None: acts.append(CA.Act(sher_turn, '69_18', 2.2, 6, loc=spos, yaw=-90, lock_root=True, speed=1.0, blend=.5))
+    sh.actor(sher, acts, face=sher_face, talk=sher_talk, look=(lambda t: head_of(jack)) if (facing or sher_turn is not None) else None)
     if jack.gun:
         def g(t):
             hm = jack.rig.matrix_world @ jack.rig.pose.bones['mixamorig:RightHand'].matrix
             jack.gun.parent = None; jack.gun.matrix_world = hm @ Matrix.Translation((0, .09, .03)) @ Matrix.Rotation(math.radians(-90), 4, 'X')
         sh.updates.append(g)
     bar = PR.gold_bar('held_bar', (0, 0, 0)); sh.updates.append(lambda t: setattr(bar, 'location', bone_pos(sher, 'RightHand') + Vector((0, -.05, -.04))))
-    for k in range(3): PR.sack(f'sack{k}', (c.x + .6 + k * .35, c.y - .7 - (k % 2) * .25, .42), fill=.6 + .2 * k)
+    for k in range(3): PR.sack(f'sack{k}', (c.x + 1.25 + k * .3, c.y - .75 - (k % 2) * .25, .42), fill=.6 + .2 * k)
     T.lantern('vault_lamp', (c.x + 1.4, c.y - 1.0, 1.2), c='Interior', energy=35)
     return c, jack, sher
 
@@ -433,37 +483,33 @@ def s_handsup(sh):
     """36.65-38.10 '"Hands up, Sheriff!"'  over the gun barrel onto the sheriff's back; Jack shouts."""
     c, jack, sher = _bank_pair(sh, [(0, 'shout')], [(0, 'grin')], jack_talk=[(0.05, 1.1, 1.0)])
     def cam(t):
-        hp = bone_pos(jack, 'RightHand'); s_ = head_of(sher)
-        return (hp + Vector((.35, -.45, .25)), s_, K([(0, 30), (sh.dur, 38)], t), -3, s_, .012)
-    sh.camera(cam, fstop=2.0)
+        s_ = head_of(sher); j = bone_pos(jack, 'RightHand'); d = (j - s_); d.z = 0; d.normalize()
+        p = j + d * .95 + Vector((0, 0, .28)) + Vector((-d.y, d.x, 0)) * .38
+        return (p, s_ + Vector((0, 0, -.25)), K([(0, 28), (sh.dur, 34)], t), -3, s_, .012)
+    sh.camera(cam, fstop=2.2)
 
 
 def s_froze(sh):
     """38.10-39.65 'The sheriff froze.'  His face from the front: grin drops into shock, sweat; slow push."""
-    c, jack, sher = _bank_pair(sh, [(0, 'determined')], [(0, 'grin'), (.25, 'shock'), (1.0, 'fear')])
-    def cam(t):
-        h = head_of(sher, .02)
-        return (h + Vector(K([(0, (-1.3, -.2, .05)), (sh.dur, (-.75, -.12, .03))], t)), h, 60, 0, h, .004)
-    sh.camera(cam, fstop=1.8)
+    c, jack, sher = _bank_pair(sh, [(0, 'determined')], [(0, 'grin'), (.25, 'shock'), (1.0, 'fear')], sher_clip=('77_02', 2.0))
+    cu(sh, sher, angle=12, elev=3, size=(.8, .42), lens=55)
 
 
 def s_turn(sh):
     """39.65-42.55 'Then he slowly turned around and said...'  the sheriff turns to face Jack; fear becomes a smirk."""
-    c, jack, sher = _bank_pair(sh, [(0, 'determined'), (2.0, 'suspicious')], [(0, 'fear'), (1.6, 'neutral'), (2.3, 'smirk')], sher_turn=.3)
+    c, jack, sher = _bank_pair(sh, [(0, 'determined'), (2.0, 'suspicious')], [(0, 'fear'), (1.6, 'neutral'), (2.3, 'smirk')], sher_turn=.3, sher_clip=('77_02', 2.0))
     def cam(t):
-        h = head_of(sher, 0); j = head_of(jack)
-        p = Vector((c.x + 2.0, c.y - 1.9, 1.5)).lerp(Vector((c.x + 2.8, c.y - .9, 1.55)), ease(t / sh.dur))
-        return (p, h.lerp((h + j) / 2, .2), 30, 0, h, .006)
+        h = head_of(sher); j = head_of(jack); d = j - h; d.z = 0; d.normalize()
+        side = Vector((-d.y, d.x, 0))
+        p = h + d * 1.7 + side * 1.0 + Vector((0, 0, .05))
+        return (p, h.lerp(j, .15), 32, 0, h, .006)
     sh.camera(cam, fstop=2.4)
 
 
 def s_arrest(sh):
     """42.55-44.85 '"You're under arrest, cowboy."'  the sheriff, smug, faces the gun; push in."""
-    c, jack, sher = _bank_pair(sh, [(0, 'suspicious'), (1.0, 'shock')], [(0, 'smirk'), (.9, 'grin')], sher_turn=-3.0, sher_talk=[(.15, 1.6, .8)])
-    def cam(t):
-        h = head_of(sher, .02)
-        return (h + Vector(K([(0, (1.5, -.6, .0)), (sh.dur, (.8, -.3, .0))], t)), h, 50, 0, h, .005)
-    sh.camera(cam, fstop=1.8)
+    c, jack, sher = _bank_pair(sh, [(0, 'suspicious'), (1.0, 'shock')], [(0, 'smirk'), (.9, 'grin')], sher_talk=[(.15, 1.6, .8)], facing=True)
+    cu(sh, sher, angle=-20, elev=0, size=(.9, .5), lens=50)
 
 
 def s_poster_jack(sh):
@@ -532,10 +578,7 @@ def s_believed(sh):
 def s_trick(sh):
     """56.85-59.45 'But Jack had one final trick.'  close: his worry turns into a sly smile; he looks at camera."""
     jack, jp, people, acts = _surround(sh, 'sunset', [(0, 'worry'), (.8, 'smirk')], crowd_face='angry', n=8)
-    def cam(t):
-        h = head_of(jack, .03)
-        return (h + Vector(K([(0, (.0, -1.5, .05)), (sh.dur, (.05, -.7, .03))], t)), h, 55, 0, h, .004)
-    sh.camera(cam, fstop=1.8)
+    cu(sh, jack, angle=10, elev=-4, size=(.85, .45), lens=55)
 
 
 def s_pullposter(sh):
