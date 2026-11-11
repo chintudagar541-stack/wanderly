@@ -1,0 +1,23 @@
+{"textures": [
+ ["deck", ["weathered_brown_planks", "old_planks_02", "brown_planks_05"], "2k", ["diff", "nor"]],
+ ["hullwood", ["dark_wooden_planks", "brown_planks_07"], "1k", ["diff"]],
+ ["rawwood", ["raw_plank_wall", "rough_wood"], "1k", ["diff"]],
+ ["finewood", ["fine_grained_wood", "medieval_wood"], "1k", ["diff"]],
+ ["sand", ["coast_sand_01", "aerial_beach_01", "sand"], "2k", ["diff", "nor"]],
+ ["wetsand", ["coast_sand_05", "coast_sand_02", "wet sand"], "1k", ["diff"]],
+ ["stonewall", ["castle_wall_slates", "stone_wall", "medieval_blocks_02", "stone wall"], "1k", ["diff"]],
+ ["plaster", ["painted_plaster_wall", "plastered_wall", "plaster"], "1k", ["diff"]],
+ ["thatch", ["thatch_roof_angled", "thatch"], "1k", ["diff"]],
+ ["roofplanks", ["roof_planks"], "1k", ["diff"]],
+ ["canvas", ["fabric_pattern_05", "cotton", "fabric"], "1k", ["diff"]],
+ ["redfabric", ["fabric_pattern_07", "velvet", "red fabric"], "1k", ["diff"]],
+ ["terracotta", ["terracotta", "clay_floor", "clay"], "1k", ["diff"]],
+ ["rust", ["rusty_metal_02", "rust"], "1k", ["diff"]],
+ ["rock", ["rock_face", "rocky_terrain_02", "rock"], "1k", ["diff"]],
+ ["grassland", ["aerial_grass_rock", "forrest_ground_01", "grass"], "1k", ["diff"]],
+ ["rope", ["rope", "jute"], "1k", ["diff"]]
+], "skies": [
+ ["day", ["kloofendal_48d_partly_cloudy_puresky", "kloofendal_43d_clear_puresky", "puresky"]],
+ ["dusk", ["kloppenheim_02", "dikhololo_sunset", "sunset"]],
+ ["night", ["satara_night", "dikhololo_night", "night"]]
+]}
