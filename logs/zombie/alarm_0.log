@@ -1,0 +1,24 @@
+00:00.763  cycles           | WARNING CUEW initialization failed: Error opening the library
+[lib] hdri sun 146 elev 48.5 -> az 120
+[lib] ph_find textures ['asphalt', 'road'] -> asphalt_02
+[lib] ph_find textures ['concrete', 'pavement', 'floor'] -> concrete_pavement
+[lib] ph_find textures ['grass', 'lawn', 'meadow'] -> aerial_grass_rock
+[lib] ph_find textures ['plaster', 'concrete', 'wall'] -> painted_plaster_wall
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+RSS built 542 MB
+RSS extras 542 MB
+CLEARCAM alarm 0
+RSS lod 638 MB
+RSS posed 639 MB
+RSS depsgraph 639 MB
+OBJECTS 1415 MESHES 1277 IMAGES 48 37 Mpx
+01:32.923  render           | Saved: '/home/runner/work/wanderly/wanderly/out/alarm_0.png'
+RTIME 86.2
+RSS rendered 1510 MB
+RENDERED alarm 1.16
