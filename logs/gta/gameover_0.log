@@ -1,4 +1,4 @@
-00:00.763  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.720  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] hdri sun 146 elev 48.5 -> az 200
 [lib] ph_find textures ['marble', 'floor', 'tiles'] -> floor_tiles_06
 [lib] ph_find textures ['plaster', 'painted', 'wall'] -> painted_plaster_wall
@@ -52,14 +52,14 @@
 [lib] model trashbag 1
 [lib] model old_tyre 1
 SEAT_Z 0.422 sofa_03
-RSS built 1302 MB
-RSS extras 1302 MB
+RSS built 1298 MB
+RSS extras 1298 MB
 CLEARCAM gameover 0
 RSS lod 1323 MB
-RSS posed 1335 MB
-RSS depsgraph 1335 MB
-OBJECTS 2906 MESHES 2681 IMAGES 166 155 Mpx
-01:08.015  render           | Saved: '/home/runner/work/wanderly/wanderly/out/gameover_0.png'
-RTIME 37.5
-RSS rendered 5162 MB
+RSS posed 1326 MB
+RSS depsgraph 1326 MB
+OBJECTS 2904 MESHES 2679 IMAGES 166 155 Mpx
+00:56.374  render           | Saved: '/home/runner/work/wanderly/wanderly/out/gameover_0.png'
+RTIME 26.9
+RSS rendered 4998 MB
 RENDERED gameover 2.2
