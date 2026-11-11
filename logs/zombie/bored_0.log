@@ -1,4 +1,4 @@
-00:01.163  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.717  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] hdri sun 146 elev 48.5 -> az 120
 [lib] ph_find textures ['asphalt', 'road'] -> asphalt_02
 [lib] ph_find textures ['concrete', 'pavement', 'floor'] -> concrete_pavement
@@ -12,14 +12,14 @@
 [lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-RSS built 548 MB
-RSS extras 548 MB
+RSS built 549 MB
+RSS extras 549 MB
 CLEARCAM bored 0
-RSS lod 645 MB
-RSS posed 647 MB
-RSS depsgraph 647 MB
+RSS lod 646 MB
+RSS posed 649 MB
+RSS depsgraph 649 MB
 OBJECTS 1625 MESHES 1437 IMAGES 50 38 Mpx
-01:28.877  render           | Saved: '/home/runner/work/wanderly/wanderly/out/bored_0.png'
-RTIME 80.4
-RSS rendered 1534 MB
+01:15.489  render           | Saved: '/home/runner/work/wanderly/wanderly/out/bored_0.png'
+RTIME 61.9
+RSS rendered 1530 MB
 RENDERED bored 1.24
