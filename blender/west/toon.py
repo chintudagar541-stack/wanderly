@@ -157,6 +157,17 @@ class Toon(H.Human):
             bd = torus(self.cid + '_hband', 1.0, .014, (0, 0, top + .03), solid('#7a2a22' if straw else '#2a1a10', .7), seg=40, mseg=8); bd.scale = (hx * .745, hy * .825, 1)
             for o_ in (cr, br, bd): smooth(o_); self._on(o_, self.head)
             return
+        elif kind in ('cap', 'police'):                         # modern peaked cap: soft crown + stiff visor (police: flat top + badge)
+            cr = sphere(self.cid + '_crown', 1.0, (0, 0, top - hz * .05), m, seg=40, rings=20)
+            for v in cr.data.vertices:
+                if v.co.z < 0: v.co.z = 0
+                if kind == 'police' and v.co.z > .55: v.co.z = .55 + (v.co.z - .55) * .25; v.co.x *= 1.08; v.co.y *= 1.08
+                v.co.x *= hx * .84; v.co.y *= hy * .88; v.co.z *= hz * (.62 if kind == 'cap' else .78)
+            vz = box(self.cid + '_brim', (hx * 1.5, hy * .62, .018), (0, -hy * .98, top - hz * .02), solid('#141618' if kind == 'police' else col, .7), rot=(math.radians(-14), 0, 0))
+            parts = [cr, vz]
+            if kind == 'police':
+                parts.append(box(self.cid + '_hbadge', (.06, .012, .07), (0, -hy * .86, top + hz * .22), solid('#d8b848', .3, metal=1.0)))
+                parts.append(torus(self.cid + '_hband', 1.0, .018, (0, 0, top + .025), solid('#101214', .6), seg=40, mseg=8)); parts[-1].scale = (hx * .845, hy * .885, 1)
         else:
             cr = sphere(self.cid + '_crown', 1.0, (0, 0, top), m, seg=40, rings=20)
             for v in cr.data.vertices:
