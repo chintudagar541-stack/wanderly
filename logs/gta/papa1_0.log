@@ -1,4 +1,4 @@
-00:00.670  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.799  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] hdri sun 146 elev 48.5 -> az 200
 [lib] ph_find textures ['marble', 'floor', 'tiles'] -> floor_tiles_06
 [lib] ph_find textures ['plaster', 'painted', 'wall'] -> painted_plaster_wall
@@ -52,14 +52,14 @@
 [lib] model trashbag 1
 [lib] model old_tyre 1
 SEAT_Z 0.422 sofa_03
-RSS built 1322 MB
-RSS extras 1322 MB
+RSS built 1319 MB
+RSS extras 1319 MB
 CLEARCAM papa1 0
-RSS lod 1340 MB
-RSS posed 1349 MB
-RSS depsgraph 1349 MB
+RSS lod 1333 MB
+RSS posed 1350 MB
+RSS depsgraph 1350 MB
 OBJECTS 2974 MESHES 2721 IMAGES 166 155 Mpx
-01:30.552  render           | Saved: '/home/runner/work/wanderly/wanderly/out/papa1_0.png'
-RTIME 58.6
-RSS rendered 5029 MB
+01:30.258  render           | Saved: '/home/runner/work/wanderly/wanderly/out/papa1_0.png'
+RTIME 51.1
+RSS rendered 5059 MB
 RENDERED papa1 2.25
