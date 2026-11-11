@@ -303,6 +303,7 @@ def s_boarded(sh):
         k = abs(math.sin(t * 5.5)); s['handR'] = (C.FRONT - .12, y0 - .1, 1.75 + .3 * k); s['handL'] = (C.FRONT - .1, y0 + .45, 1.6); return s
     override(a, mod); hold(sh, ham, w, 'R', (0, 0, .05), rot=lambda t: (0, math.radians(-50 + 40 * abs(math.sin(t * 5.5))), 0))
     extras(sh, [(-8.6, 44, 90), (8.4, 52, -90)], seed=3, face='worry', walkers=[(-7.4, 60, 0, 1.6), (7.0, 70, 0, 1.5)])
+    sh.keylight(16)
     sh.camera(cam_keys([(0, (6.9, 37.6, 1.75), (9.2, 33.0, 1.65), 28), (sh.dur, (7.1, 37.0, 1.7), (9.2, 33.2, 1.65), 30)], shake=.009), fstop=3.2)
 
 
@@ -321,6 +322,7 @@ def s_shelf(sh):
             f, sd = side_of(ch); c = head_of(ch, -.55) + f * .3; s['handL'] = tuple(c - sd * .16); s['handR'] = tuple(c + sd * .16); return s
         override(a, mod)
         hold(sh, tp, ch, 'R', (0, 0, .0))
+    sh.keylight(16)
     sh.camera(cam_keys([(0, (-7.3, -1.6, 1.45), (-8.0, 6.0, 1.3), 28), (sh.dur, (-7.3, -1.2, 1.45), (-8.0, 4.6, 1.3), 30)], shake=.012), fstop=3.2)
 
 
@@ -422,13 +424,13 @@ def s_bought(sh):
 
 
 # ------------------------------------------------------------------ 15-19  City Hall, aim, the bite
-def ch_scene(sh, aim_t=None, cops=True, mayor_xy=(0.3, None), face=None, barrier=False):
+def ch_scene(sh, aim_t=None, cops=True, mayor_xy=(0.3, None), face=None, barrier=False, xs=(-2.4, -1.2, 1.8, 3.0)):
     stage(sh, 'day', 38, 320, boarded=True)
     yC = C.CITYHALL_Y
     if barrier: C.barriers(yC + 14, n=8)
     if cops:
         target = lambda t: (0.3, yC + 18.0, 1.3)
-        police_line(sh, yC + 12.6, [-2.4, -1.2, 1.8, 3.0], face=face or 'determined', aim=target)
+        police_line(sh, yC + 12.6, list(xs), face=face or 'determined', aim=target)
     extras(sh, [(-7.6, yC + 11.0, 180), (7.4, yC + 10.6, 180), (-8.6, yC + 12.4, 160), (8.6, yC + 12.2, 200)], seed=8, face=['fear', 'watch', 'worry', 'shock'], look=lambda t: (0.3, yC + 18, 1.5))
 
 
@@ -443,7 +445,7 @@ def s_cityhall(sh):
 
 def s_aim(sh):
     """'The whole police force took aim.'  Zombie's-eye dolly along the line of pistols pointed straight at us."""
-    ch_scene(sh)
+    ch_scene(sh, xs=(-2.0, -.7, .6, 1.9), face=['determined', 'angry', 'determined', 'suspicious'])
     yC = C.CITYHALL_Y
     sh.camera(cam_keys([(0, (-1.6, yC + 16.6, 1.45), (-1.0, yC + 12.6, 1.45), 24), (sh.dur, (2.4, yC + 16.5, 1.45), (1.6, yC + 12.6, 1.45), 24)], shake=.008), fstop=3.5)
 

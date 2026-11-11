@@ -289,11 +289,13 @@ def coffee_cart(y=CART_Y, x=2.2):
 
 
 def barriers(y, n=8, x0=-7.5, dx=2.1):
-    red = sign_mat('barrierstripe', 'POLICE LINE', bg='#f0f0f0', fg='#c02020', size=(800, 160))
+    red = plain('barrred', '#d02a20', .5); wht = plain('barrwht', '#f2f0ea', .5); leg = plain('barrleg', '#c8c8c8', .6)
     for k in range(n):
         x = x0 + k * dx
-        box(f'barr{k}', (1.9, .08, .3), (x, y, .9), red)
-        for dd in (-.8, .8): box(f'barrl{k}{dd}', (.06, .5, .9), (x + dd, y, .45), plain('barrleg', '#d0d0d0', .6))
+        for j in range(4): box(f'barr{k}_{j}', (.46, .05, .2), (x - .69 + j * .46, y, .92), red if (j + k) % 2 else wht)
+        for dd in (-.8, .8):
+            box(f'barrl{k}{dd}a', (.05, .05, .95), (x + dd, y - .12, .47), leg, rot=(math.radians(14), 0, 0))
+            box(f'barrl{k}{dd}b', (.05, .05, .95), (x + dd, y + .12, .47), leg, rot=(math.radians(-14), 0, 0))
 
 
 def studio(at=Vector((400, 0, 0))):
