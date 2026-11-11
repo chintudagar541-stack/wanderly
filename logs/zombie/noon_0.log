@@ -1,4 +1,4 @@
-00:01.171  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.948  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] hdri sun 146 elev 48.5 -> az 160
 [lib] ph_find textures ['asphalt', 'road'] -> asphalt_02
 [lib] ph_find textures ['concrete', 'pavement', 'floor'] -> concrete_pavement
@@ -11,14 +11,14 @@
 [lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-RSS built 538 MB
-RSS extras 538 MB
+RSS built 537 MB
+RSS extras 537 MB
 CLEARCAM noon 0
 RSS lod 604 MB
 RSS posed 605 MB
 RSS depsgraph 605 MB
-OBJECTS 1173 MESHES 1131 IMAGES 48 37 Mpx
-00:32.692  render           | Saved: '/home/runner/work/wanderly/wanderly/out/noon_0.png'
-RTIME 25.7
-RSS rendered 1455 MB
+OBJECTS 1174 MESHES 1131 IMAGES 48 37 Mpx
+00:38.619  render           | Saved: '/home/runner/work/wanderly/wanderly/out/noon_0.png'
+RTIME 26.1
+RSS rendered 1460 MB
 RENDERED noon 1.57
