@@ -1,4 +1,4 @@
-00:00.661  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.876  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] hdri sun 146 elev 48.5 -> az 120
 [lib] ph_find textures ['asphalt', 'road'] -> asphalt_02
 [lib] ph_find textures ['concrete', 'pavement', 'floor'] -> concrete_pavement
@@ -15,11 +15,11 @@
 RSS built 557 MB
 RSS extras 557 MB
 CLEARCAM waited 0
-RSS lod 692 MB
-RSS posed 702 MB
-RSS depsgraph 702 MB
-OBJECTS 1867 MESHES 1585 IMAGES 49 38 Mpx
-01:32.605  render           | Saved: '/home/runner/work/wanderly/wanderly/out/waited_0.png'
-RTIME 84.7
-RSS rendered 1612 MB
+RSS lod 694 MB
+RSS posed 705 MB
+RSS depsgraph 705 MB
+OBJECTS 1907 MESHES 1625 IMAGES 48 37 Mpx
+01:34.289  render           | Saved: '/home/runner/work/wanderly/wanderly/out/waited_0.png'
+RTIME 85.1
+RSS rendered 1607 MB
 RENDERED waited 1.13
