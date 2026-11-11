@@ -1,0 +1,27 @@
+00:00.405  cycles           | WARNING CUEW initialization failed: Error opening the library
+[lib] hdri sun 146 elev 48.5 -> az 120
+[lib] ph_find textures ['asphalt', 'road'] -> asphalt_02
+[lib] ph_find textures ['concrete', 'pavement', 'floor'] -> concrete_pavement
+[lib] ph_find textures ['grass', 'lawn', 'meadow'] -> aerial_grass_rock
+[lib] ph_find textures ['plaster', 'concrete', 'wall'] -> painted_plaster_wall
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+Traceback (most recent call last):
+  File "/home/runner/work/wanderly/wanderly/blender/zombie/story.py", line 579, in <module>
+    F.main(SHOTS)
+    ~~~~~~^^^^^^^
+  File "/home/runner/work/wanderly/wanderly/blender/west/film.py", line 753, in main
+    sh = Shot(sid); (shots or SHOTS)[sid](sh); rss('built'); sh.populate(); rss('extras'); sh.clear_camera(); sh.lod(); rss('lod')
+                    ~~~~~~~~~~~~~~~~~~~~~^^^^
+  File "/home/runner/work/wanderly/wanderly/blender/zombie/story.py", line 553, in s_home
+    C.footprints([(0.4, C.HOME_Y + 3.5), (0.5, 200), (0.4, 150), (1.2, C.BUS_Y + 3), (C.ROAD + 1, C.BUS_Y), (0.5, 120), (0.4, 80)])
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/wanderly/wanderly/blender/zombie/city.py", line 321, in footprints
+    p = a + dirn * (j * step) + side * (.13 if (j + k) % 2 else -.13)
+        ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+AttributeError: Vector addition: vectors must have the same dimensions for this operation
