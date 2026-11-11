@@ -1,4 +1,4 @@
-00:00.717  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.712  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] hdri sun 146 elev 48.5 -> az 250
 [lib] ph_find textures ['marble', 'floor', 'tiles'] -> floor_tiles_06
 [lib] ph_find textures ['plaster', 'painted', 'wall'] -> painted_plaster_wall
@@ -52,14 +52,14 @@
 [lib] model trashbag 1
 [lib] model old_tyre 1
 SEAT_Z 0.422 sofa_03
-RSS built 1302 MB
-RSS extras 1302 MB
+RSS built 1298 MB
+RSS extras 1298 MB
 CLEARCAM situp 0
-RSS lod 1314 MB
-RSS posed 1328 MB
-RSS depsgraph 1328 MB
-OBJECTS 2900 MESHES 2676 IMAGES 165 155 Mpx
-01:03.214  render           | Saved: '/home/runner/work/wanderly/wanderly/out/situp_0.png'
-RTIME 42.2
-RSS rendered 5052 MB
+RSS lod 1316 MB
+RSS posed 1330 MB
+RSS depsgraph 1330 MB
+OBJECTS 2898 MESHES 2674 IMAGES 165 155 Mpx
+00:58.072  render           | Saved: '/home/runner/work/wanderly/wanderly/out/situp_0.png'
+RTIME 27.8
+RSS rendered 5132 MB
 RENDERED situp 0.99
