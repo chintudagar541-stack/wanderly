@@ -1,5 +1,5 @@
-00:00.900  cycles           | WARNING CUEW initialization failed: Error opening the library
-[lib] hdri sun 146 elev 48.5 -> az 120
+00:00.732  cycles           | WARNING CUEW initialization failed: Error opening the library
+[lib] hdri sun 146 elev 48.5 -> az 320
 [lib] ph_find textures ['asphalt', 'road'] -> asphalt_02
 [lib] ph_find textures ['concrete', 'pavement', 'floor'] -> concrete_pavement
 [lib] ph_find textures ['grass', 'lawn', 'meadow'] -> aerial_grass_rock
@@ -12,14 +12,14 @@
 [lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-RSS built 553 MB
-RSS extras 553 MB
+RSS built 554 MB
+RSS extras 554 MB
 CLEARCAM aim 0
-RSS lod 692 MB
-RSS posed 693 MB
-RSS depsgraph 693 MB
-OBJECTS 1772 MESHES 1530 IMAGES 49 38 Mpx
-01:40.028  render           | Saved: '/home/runner/work/wanderly/wanderly/out/aim_0.png'
-RTIME 83.2
-RSS rendered 1584 MB
+RSS lod 691 MB
+RSS posed 692 MB
+RSS depsgraph 692 MB
+OBJECTS 1748 MESHES 1506 IMAGES 48 37 Mpx
+01:29.990  render           | Saved: '/home/runner/work/wanderly/wanderly/out/aim_0.png'
+RTIME 74.3
+RSS rendered 1591 MB
 RENDERED aim 1.18
