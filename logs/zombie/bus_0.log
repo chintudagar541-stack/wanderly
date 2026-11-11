@@ -1,0 +1,24 @@
+00:00.778  cycles           | WARNING CUEW initialization failed: Error opening the library
+[lib] hdri sun 143 elev 3.5 -> az 250
+[lib] ph_find textures ['asphalt', 'road'] -> asphalt_02
+[lib] ph_find textures ['concrete', 'pavement', 'floor'] -> concrete_pavement
+[lib] ph_find textures ['grass', 'lawn', 'meadow'] -> aerial_grass_rock
+[lib] ph_find textures ['plaster', 'concrete', 'wall'] -> painted_plaster_wall
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+RSS built 537 MB
+RSS extras 537 MB
+CLEARCAM bus 0
+RSS lod 595 MB
+RSS posed 600 MB
+RSS depsgraph 600 MB
+OBJECTS 1174 MESHES 1131 IMAGES 48 37 Mpx
+00:44.696  render           | Saved: '/home/runner/work/wanderly/wanderly/out/bus_0.png'
+RTIME 39.0
+RSS rendered 1453 MB
+RENDERED bus 2.17
