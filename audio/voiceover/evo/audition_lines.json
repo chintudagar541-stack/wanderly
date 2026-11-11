@@ -1,0 +1,135 @@
+[
+ {
+  "who": "narrator",
+  "voice": "kokoro:bm_george",
+  "speed": 1.0,
+  "text": "Earth formed about four point five four billion years ago. And trust me, it was not a five-star holiday destination.",
+  "out": "audio/voiceover/evo/aud_narrator_bm_george.wav"
+ },
+ {
+  "who": "narrator",
+  "voice": "kokoro:am_michael",
+  "speed": 1.0,
+  "text": "Earth formed about four point five four billion years ago. And trust me, it was not a five-star holiday destination.",
+  "out": "audio/voiceover/evo/aud_narrator_am_michael.wav"
+ },
+ {
+  "who": "narrator",
+  "voice": "kokoro:bm_fable",
+  "speed": 1.0,
+  "text": "Earth formed about four point five four billion years ago. And trust me, it was not a five-star holiday destination.",
+  "out": "audio/voiceover/evo/aud_narrator_bm_fable.wav"
+ },
+ {
+  "who": "narrator",
+  "voice": "kokoro:am_onyx",
+  "speed": 1.0,
+  "text": "Earth formed about four point five four billion years ago. And trust me, it was not a five-star holiday destination.",
+  "out": "audio/voiceover/evo/aud_narrator_am_onyx.wav"
+ },
+ {
+  "who": "teacher",
+  "voice": "kokoro:am_onyx",
+  "speed": 1.0,
+  "text": "No, Kevin. And that is exactly why you need to pay attention.",
+  "out": "audio/voiceover/evo/aud_teacher_am_onyx.wav"
+ },
+ {
+  "who": "teacher",
+  "voice": "kokoro:am_adam",
+  "speed": 1.0,
+  "text": "No, Kevin. And that is exactly why you need to pay attention.",
+  "out": "audio/voiceover/evo/aud_teacher_am_adam.wav"
+ },
+ {
+  "who": "teacher",
+  "voice": "kokoro:bm_lewis",
+  "speed": 1.0,
+  "text": "No, Kevin. And that is exactly why you need to pay attention.",
+  "out": "audio/voiceover/evo/aud_teacher_bm_lewis.wav"
+ },
+ {
+  "who": "teacher",
+  "voice": "kokoro:am_eric",
+  "speed": 1.0,
+  "text": "No, Kevin. And that is exactly why you need to pay attention.",
+  "out": "audio/voiceover/evo/aud_teacher_am_eric.wav"
+ },
+ {
+  "who": "kevin",
+  "voice": "kokoro:am_puck",
+  "speed": 1.0,
+  "text": "Sir, does that mean humans came from dinosaurs?",
+  "out": "audio/voiceover/evo/aud_kevin_am_puck.wav"
+ },
+ {
+  "who": "kevin",
+  "voice": "kokoro:am_echo",
+  "speed": 1.0,
+  "text": "Sir, does that mean humans came from dinosaurs?",
+  "out": "audio/voiceover/evo/aud_kevin_am_echo.wav"
+ },
+ {
+  "who": "kevin",
+  "voice": "kokoro:am_liam",
+  "speed": 1.0,
+  "text": "Sir, does that mean humans came from dinosaurs?",
+  "out": "audio/voiceover/evo/aud_kevin_am_liam.wav"
+ },
+ {
+  "who": "priya",
+  "voice": "kokoro:af_nova",
+  "speed": 1.0,
+  "text": "So technically, my legs are ancient fish technology? I want a refund.",
+  "out": "audio/voiceover/evo/aud_priya_af_nova.wav"
+ },
+ {
+  "who": "priya",
+  "voice": "kokoro:af_sky",
+  "speed": 1.0,
+  "text": "So technically, my legs are ancient fish technology? I want a refund.",
+  "out": "audio/voiceover/evo/aud_priya_af_sky.wav"
+ },
+ {
+  "who": "priya",
+  "voice": "kokoro:af_jessica",
+  "speed": 1.0,
+  "text": "So technically, my legs are ancient fish technology? I want a refund.",
+  "out": "audio/voiceover/evo/aud_priya_af_jessica.wav"
+ },
+ {
+  "who": "rohan",
+  "voice": "kokoro:am_liam",
+  "speed": 1.0,
+  "text": "Like homework, sir?",
+  "out": "audio/voiceover/evo/aud_rohan_am_liam.wav"
+ },
+ {
+  "who": "rohan",
+  "voice": "kokoro:am_eric",
+  "speed": 1.0,
+  "text": "Like homework, sir?",
+  "out": "audio/voiceover/evo/aud_rohan_am_eric.wav"
+ },
+ {
+  "who": "rohan",
+  "voice": "kokoro:am_echo",
+  "speed": 1.0,
+  "text": "Like homework, sir?",
+  "out": "audio/voiceover/evo/aud_rohan_am_echo.wav"
+ },
+ {
+  "who": "sam",
+  "voice": "kokoro:am_fenrir",
+  "speed": 1.0,
+  "text": "So when a pigeon attacks my food, it's technically a dinosaur attack?",
+  "out": "audio/voiceover/evo/aud_sam_am_fenrir.wav"
+ },
+ {
+  "who": "sam",
+  "voice": "kokoro:am_echo",
+  "speed": 1.0,
+  "text": "So when a pigeon attacks my food, it's technically a dinosaur attack?",
+  "out": "audio/voiceover/evo/aud_sam_am_echo.wav"
+ }
+]
