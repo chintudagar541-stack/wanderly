@@ -1,4 +1,4 @@
-00:00.727  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.800  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] hdri sun 146 elev 48.5 -> az 200
 [lib] ph_find textures ['marble', 'floor', 'tiles'] -> floor_tiles_06
 [lib] ph_find textures ['plaster', 'painted', 'wall'] -> painted_plaster_wall
@@ -52,14 +52,14 @@
 [lib] model trashbag 1
 [lib] model old_tyre 1
 SEAT_Z 0.422 sofa_03
-RSS built 1323 MB
-RSS extras 1323 MB
+RSS built 1314 MB
+RSS extras 1314 MB
 CLEARCAM chase 0
-RSS lod 1325 MB
-RSS posed 1339 MB
-RSS depsgraph 1339 MB
+RSS lod 1331 MB
+RSS posed 1344 MB
+RSS depsgraph 1344 MB
 OBJECTS 2975 MESHES 2720 IMAGES 165 155 Mpx
-01:17.944  render           | Saved: '/home/runner/work/wanderly/wanderly/out/chase_0.png'
-RTIME 46.4
-RSS rendered 5036 MB
+01:12.911  render           | Saved: '/home/runner/work/wanderly/wanderly/out/chase_0.png'
+RTIME 43.3
+RSS rendered 5030 MB
 RENDERED chase 1.98
