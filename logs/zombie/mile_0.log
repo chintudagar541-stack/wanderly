@@ -1,0 +1,24 @@
+00:00.422  cycles           | WARNING CUEW initialization failed: Error opening the library
+[lib] hdri sun 143 elev 3.5 -> az 20
+[lib] ph_find textures ['asphalt', 'road'] -> asphalt_02
+[lib] ph_find textures ['concrete', 'pavement', 'floor'] -> concrete_pavement
+[lib] ph_find textures ['grass', 'lawn', 'meadow'] -> aerial_grass_rock
+[lib] ph_find textures ['plaster', 'concrete', 'wall'] -> painted_plaster_wall
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+RSS built 538 MB
+RSS extras 538 MB
+CLEARCAM mile 0
+RSS lod 616 MB
+RSS posed 617 MB
+RSS depsgraph 617 MB
+OBJECTS 1245 MESHES 1174 IMAGES 48 37 Mpx
+00:23.807  render           | Saved: '/home/runner/work/wanderly/wanderly/out/mile_0.png'
+RTIME 15.4
+RSS rendered 1263 MB
+RENDERED mile 1.32
