@@ -199,6 +199,7 @@ class Human(Char):
                 for j in range(5):
                     u = -1 + j / 2; xx = x + u * .046; zz = z + s_ * (.03 * (1 - u * u) - .012)
                     if s_ < 0: zz = z + .016 * (-u * sd) - .0 + .0 * u; zz = z + .02 * abs(u) * 0 + (-u * sd) * .018   # '> <' slanted squeeze
+                    if .5 < arc < .95: zz = z - .025 * (1 - u * u) - .004                  # sleeping: soft 'u' lids
                     ar.points[j].co = (xx, self.surf_y(xx, zz) - .004, zz, 1)
             elif ring > .5:
                 rx = .05 * p['ex']; rz = .05 * max(.12, p['ey'] * .95 * bl)

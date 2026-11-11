@@ -147,7 +147,7 @@ def scooter(name='scooter', loc=(0, 0, 0), yaw=0.0, col='#8a1620', plate='DL 3S 
     return root
 
 
-def lpg_cylinder(name='lpg'):
+def lpg_cylinder(name='lpg', scale=1.0):
     """14.2 kg domestic LPG cylinder: red body, collar guard with handle cut-outs, foot ring, valve + pressure regulator cap"""
     root = bpy.data.objects.new(name, None); T.coll('Town').objects.link(root)
     red = paint(name + '_red', '#c4161a', .35, .15, .6); grey = paint(name + '_g', '#9a9ca0', .45, .8, 0)
@@ -167,6 +167,7 @@ def lpg_cylinder(name='lpg'):
     import city as C
     import typo as TY
     lab = C.sign(name + '_label', 'LPG', .09, .05, (0, -.163, .4), facing=(0, -1), bg='#c4161a', fg='#f4f0e8', size=(240, 130), font_scale=.7, **TY.kw('oswald_b')); lab.parent = root
+    root.scale = (scale,) * 3; root['s'] = scale
     return root
 
 

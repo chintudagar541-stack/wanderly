@@ -187,7 +187,6 @@ def bed(bc):
     HR.rbox('bed_head', (.07, 1.2, .95), (bc.x + 1.03, bc.y, .5), wd, .12)
     HR.rbox('bed_headtop', (.1, 1.26, .07), (bc.x + 1.03, bc.y, .98), wd, .3)
     HR.rbox('bed_foot', (.06, 1.2, .5), (bc.x - 1.03, bc.y, .3), wd, .12)
-    for sd in (-1, 1): HR.rbox(f'bed_post{sd}', (.09, .09, 1.05), (bc.x + 1.03, bc.y + sd * .6, .52), wd, .25)
     HR.rbox('mattress', (1.98, 1.08, .17), (bc.x, bc.y, .4), checker('bedsheet', '#2a5aa8', '#3a78c0', 14, lines='#e8e8e0'), .35)
     pm = plain('pillowc', '#f2ece0', .85)
     for sd in (-1, 1): HR.rbox(f'pillow{sd}', (.36, .48, .13), (bc.x + .76, bc.y + sd * .26, .53), pm, .45)

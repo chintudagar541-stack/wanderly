@@ -16,7 +16,7 @@ import house as HS
 
 stand, walk, override, side_of, hold, cam_keys, toon = Z.stand, Z.walk, Z.override, Z.side_of, Z.hold, Z.cam_keys, Z.toon
 import hero as HR
-H.EXPR['sleep'] = dict(H.EXPR['bored'], ring=1.0, lid=.96, pup=.5, w=.05, op=.025, smile=0.0, bh=-.01, bt=0.0)
+H.EXPR['sleep'] = dict(H.EXPR['bored'], ring=0.0, arc=.8, lid=0.0, pup=.5, w=.05, op=.03, smile=.005, bh=-.015, bt=0.0)
 
 # ------------------------------------------------------------------ the family (original characters)
 P = TO.preset
@@ -162,8 +162,8 @@ def carry_rig(sh, son, cyl, extra=None):
         return d
     def cu_(t):
         bpy.context.view_layer.update(); d = son.fn(t); cr = d.get('crouch', 0)
-        local = Vector((0, -.42, son.L - cr / sc - .5 / sc))
-        cyl.matrix_world = son.root.matrix_world @ Matrix.Translation(local) @ Matrix.Scale(1 / sc, 4)
+        local = Vector((0, -.4, son.L - cr / sc - .22 / sc))
+        cyl.matrix_world = son.root.matrix_world @ Matrix.Translation(local) @ Matrix.Scale(cyl.get('s', 1.0) / sc, 4)
     sh.updates.append(cu_)
     return hands
 
@@ -193,7 +193,7 @@ def s_situp(sh):
     stage(sh, 'day', 18, 250)
     son = cast(sh, 'SON', SON)
     in_bed(sh, son, [(0, 'shock'), (.7, 'determined')], sit=lambda t: ease(t / .3) * .95)
-    sh.camera(cam_keys([(0, (2.55, 2.35, 1.2), (3.6, 3.6, 1.0), 24), (sh.dur, (2.65, 2.45, 1.2), (3.6, 3.6, 1.05), 26)], shake=.012), fstop=3)
+    sh.camera(cam_keys([(0, (2.35, 2.25, 1.5), (3.75, 3.6, 1.1), 21), (sh.dur, (2.45, 2.35, 1.48), (3.75, 3.6, 1.15), 23)], shake=.012), fstop=3)
     sh.keylight(10, (1, .85, .7))
 
 
@@ -264,7 +264,7 @@ def s_failed(sh):
 def s_slipper(sh):
     """Papa slowly rises... reaches down for his chappal... and raises it like a weapon.  Low hero angle."""
     stage(sh, 'day', 30, 200)
-    papa = cast(sh, 'PAPA', PAPA); slip = HR.chappal('papa_chappal'); ref = body_ref(papa); sc = papa.s
+    papa = cast(sh, 'PAPA', PAPA); slip = HR.chappal('papa_chappal'); slip.scale = (1.5, 1.5, 1.5); ref = body_ref(papa); sc = papa.s
     def hands(t, d):
         loc = Vector(d['loc'])
         if t < 1.0: return dict(handR=l2w(loc, 0, sc, (.22, -.12, papa.L - .3 * ease(t / .9))))
@@ -289,7 +289,7 @@ def ell(th):
 
 
 def chase(sh, t_off=0.0):
-    papa = cast(sh, 'PAPA', PAPA); son = cast(sh, 'SON', SON); slip = HR.chappal('papa_chappal'); ref = body_ref(papa)
+    papa = cast(sh, 'PAPA', PAPA); son = cast(sh, 'SON', SON); slip = HR.chappal('papa_chappal'); slip.scale = (1.5, 1.5, 1.5); ref = body_ref(papa)
     th_s0 = math.atan2((SPOT.y - ELL_C.y) / ELL_R[1], (SPOT.x - ELL_C.x) / ELL_R[0])
     a_s = sh.actor(son, [TO.Act(0, '09_01', .3, sh.dur + 2, loc=(0, 0, 0), yaw=0, speed=1.25, lock_root=True)], face=[(0, 'terror')])
     a_p = sh.actor(papa, [TO.Act(0, '09_01', .9, sh.dur + 2, loc=(0, 0, 0), yaw=0, speed=1.1, lock_root=True)], face=[(0, 'rage')], talk=[(0, sh.dur, .5)])
@@ -333,7 +333,7 @@ def s_escape(sh):
 
 
 def mummy_scene(sh, son_face, mummy_face, son_talk=None, mummy_talk=None, cyl_t=None):
-    son = cast(sh, 'SON', SON); mum = cast(sh, 'MUMMY', MUMMY); cyl = HR.lpg_cylinder('lpg')
+    son = cast(sh, 'SON', SON); mum = cast(sh, 'MUMMY', MUMMY); cyl = HR.lpg_cylinder('lpg', .78)
     a_s = stand(sh, son, (PORCH.x, PORCH.y), 0, '77_02', 1.0, face=son_face, z=PORCH.z, talk=son_talk)
     a_m = stand(sh, mum, (GATE.x, GATE.y), 180, '80_48', 1.2, face=mummy_face, z=GATE.z, talk=mummy_talk)
     c0 = Vector((GATE.x + .45, GATE.y - .05, GATE.z))
@@ -369,14 +369,14 @@ def s_mummy(sh):
     """MUMMY: 'WHERE ARE YOU GOING?'  Boss entrance: Mummy at the gate, hands on hips, a gas cylinder at her feet."""
     stage(sh, 'day', 35, 200)
     son, mum, cyl = mummy_scene(sh, [(0, 'happy'), (.66, 'shock')], [(0, 'suspicious')], mummy_talk=[(.66, 1.81, 1.0)])
-    sh.camera(cam_keys([(0, (DX - .38, .15, .6), (GATE.x, GATE.y, 1.25), 22), (sh.dur, (DX - .35, .1, .62), (GATE.x, GATE.y, 1.3), 26)], roll=3, shake=.006), fstop=3)
+    sh.camera(cam_keys([(0, (DX - .9, -.15, .85), (GATE.x, GATE.y, 1.2), 22), (sh.dur, (DX - .85, -.18, .88), (GATE.x, GATE.y, 1.25), 26)], roll=3, shake=.006), fstop=3)
 
 
 def s_walk(sh):
     """SON: 'Just taking a walk.'  The most innocent smile ever attempted."""
     stage(sh, 'day', 35, 200)
     son, mum, cyl = mummy_scene(sh, [(0, 'nervous'), (.5, 'grin')], [(0, 'suspicious')], son_talk=[(.56, 1.81, 1.0)])
-    cu(sh, son, angle=10, elev=0, size=(.75, .65), lens=45, fstop=2.2)
+    cu(sh, son, angle=40, elev=0, size=(.75, .65), lens=45, fstop=2.2)
 
 
 def s_cylinder(sh):
@@ -401,7 +401,7 @@ def s_street(sh):
     """MISSION UPDATED: DELIVER THE CYLINDER.  Wide down the colony street: he staggers along hugging the cylinder; the
     neighbours watch and laugh."""
     stage(sh, 'day', 35, 200)
-    son = cast(sh, 'SON', SON); cyl = HR.lpg_cylinder('lpg')
+    son = cast(sh, 'SON', SON); cyl = HR.lpg_cylinder('lpg', .78)
     p0, p1 = Vector((DX + .3, -3.3, 0)), Vector((DX + 1.6, -4.4, 0))
     carry_walk(sh, son, cyl, p0, p1, sh.dur, [(0, 'strain')])
     Z.extras(sh, [(DX - 4.0, -8.0, 10), (DX - 5.2, -7.6, -20), (DX + 5.6, -1.9, 200)], seed=22, face='laugh', look=lambda t: (DX + 1, -4, 1.2))
@@ -412,7 +412,7 @@ def s_camera(sh):
     """SON (to camera): 'I downloaded G T A to escape reality...' ... 'Reality downloaded me instead.'  He stops mid-street and
     looks straight down the lens; slow push in."""
     stage(sh, 'day', 35, 200)
-    son = cast(sh, 'SON', SON); cyl = HR.lpg_cylinder('lpg')
+    son = cast(sh, 'SON', SON); cyl = HR.lpg_cylinder('lpg', .78)
     p = Vector((DX + 1.6, -4.4, 0))
     a = carry_walk(sh, son, cyl, p, p, 0, [(0, 'strain'), (.5, 'deadpan'), (4.2, 'bored'), (5.6, 'deadpan')])
     a.talk = [(.92, 3.98, 1.0), (5.72, 7.78, 1.0)]
@@ -426,14 +426,15 @@ def s_camera(sh):
 def s_gameover(sh):
     """GAME OVER - REASON: INDIAN PARENTS.  The cylinder wins: he topples over backwards, still hugging it."""
     stage(sh, 'day', 35, 200)
-    son = cast(sh, 'SON', SON); cyl = HR.lpg_cylinder('lpg')
+    son = cast(sh, 'SON', SON); cyl = HR.lpg_cylinder('lpg', .78)
     p = Vector((DX + 1.6, -4.4, 0)); TF = .35
     a = carry_walk(sh, son, cyl, p, p, 0, [(0, 'strain'), (.4, 'scream'), (1.4, 'sleep')])
     def fall(t):
         u = ease((t - TF) / .55); bounce = .05 * math.sin(max(0, t - TF - .55) * 18) * math.exp(-max(0, t - TF - .55) * 6)
         son.root.rotation_euler = (math.radians(-86 * min(1.0, u + bounce)), 0, son.root.rotation_euler.z); son.root.location.z += .32 * u
     sh.actors.append(type('Post', (), {'ch': son, 'apply': lambda self_, t: fall(t)})())
-    sh.camera(cam_keys([(0, (p.x + .2, -7.1, 2.1), (p.x, -4.1, .6), 30), (sh.dur, (p.x + .1, -6.3, 3.3), (p.x, -3.8, .25), 32)], roll=lambda t: K([(0, 0), (sh.dur, -6)], t), shake=.0), fstop=4)
+    sh.camera(cam_keys([(0, (p.x + .3, p.y - 2.6, 2.0), (p.x, p.y + .2, .7), 30), (.9, (p.x + .2, p.y - 1.2, 3.0), (p.x, p.y + .6, .2), 30), (sh.dur, (p.x + .1, p.y + .2, 3.4), (p.x, p.y + .75, 0), 40)],
+                       roll=lambda t: K([(0, 0), (sh.dur, -8)], t), shake=.0), fstop=6)
 
 
 SHOTS = {k[2:]: v for k, v in list(globals().items()) if k.startswith('s_') and callable(v)}
