@@ -1,0 +1,25 @@
+00:00.829  cycles           | WARNING CUEW initialization failed: Error opening the library
+[lib] hdri sun 146 elev 48.5 -> az 120
+[lib] ph_find textures ['asphalt', 'road'] -> asphalt_02
+[lib] ph_find textures ['concrete', 'pavement', 'floor'] -> concrete_pavement
+[lib] ph_find textures ['grass', 'lawn', 'meadow'] -> aerial_grass_rock
+[lib] ph_find textures ['plaster', 'concrete', 'wall'] -> painted_plaster_wall
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+RSS built 548 MB
+RSS extras 548 MB
+CLEARCAM doctor 0
+RSS lod 693 MB
+RSS posed 693 MB
+RSS depsgraph 693 MB
+OBJECTS 1646 MESHES 1454 IMAGES 49 38 Mpx
+01:38.845  render           | Saved: '/home/runner/work/wanderly/wanderly/out/doctor_0.png'
+RTIME 91.4
+RSS rendered 1585 MB
+RENDERED doctor 1.79
