@@ -186,7 +186,7 @@ sfx *= .45 * vr / grms(sfx)
 sfx = np.clip(sfx, -.7 * np.abs(v).max(), .7 * np.abs(v).max())
 amb *= .3 * vr / (np.sqrt(np.mean(amb ** 2)) + 1e-9)
 print('levels dB vs voice (gated RMS): music %.1f  sfx %.1f' % (20 * np.log10(grms(music) / vr), 20 * np.log10(grms(sfx) / vr)))
-bed = music + amb + sfx
+bed = (music + amb + sfx) * float(os.environ.get('BED', '1'))      # BED=.5 -> background 50% quieter
 write(os.path.join(tmp, 'bed.wav'), bed / max(1.0, np.abs(bed).max()))
 mixa = os.path.join(tmp, 'mix.m4a')
 sh('ffmpeg', '-loglevel', 'error', '-y', '-i', vw, '-i', os.path.join(tmp, 'bed.wav'), '-filter_complex',
