@@ -279,7 +279,7 @@ def interior(night=False):
     poster('poster1', 'LEVEL\nUP', (bx0 + 1.6, by1 - .07, 1.7), .6, .85, (0, -1), '#1a1a3a', '#40e0ff')
     poster('poster2', 'NO\nSLEEP\nJUST\nGAMES', (bx1 - .07, by0 + 2.5, 1.6), .55, .8, (-1, 0), '#3a0a1a', '#ff5070')
     poster('poster3', 'PRESS\nSTART', (bx0 + .78, by0 + .07, 1.75), .5, .55, (0, 1), '#20103a', '#ffd040', size=(600, 660))
-    put('steel_frame_shelves_01', (bx1 - .3, by1 - .45, 0), -90, .8)
+    put('steel_frame_shelves_01', (bx1 - .3, by0 + .35, 0), -90, .8)
     switchboard('swb_bed', (bx0 + .07, by0 + .6, 1.25), (1, 0))
     fans = []
     for k, c_ in enumerate((Vector((bc.x - .4, bc.y - .6, 0)), Vector((TABLE.x, TABLE.y, 0)))):
@@ -496,7 +496,7 @@ def street(night=False):
         if put('tree_small_02', (x, y, 0), k * 70, s_) is None:
             cyl(f'trunk{k}', .12, 2.5, (x, y, 1.25), plain('bark', '#5a4030', .9), v=10); T.lib.sphere(f'crown{k}', 1.4, (x, y, 3.2), plain('leafy', '#3a7a2a', .8))
     put('covered_car', (-11.5, -7.3, 0), 90, 1.0)
-    HR.scooter('scooter_ours', (dx + 1.5, -.95, .12), 75, '#8a1620')
+    HR.scooter('scooter_ours', (dx + 1.85, -.45, .12), 80, '#8a1620')
     HR.scooter('scooter_nb', (-7.6, -2.4, 0), 160, '#e8e8e4', plate='DL 8C XY 0921')
     HR.scooter('scooter_shop', (16.0, -7.9, 0), 20, '#1a3a8a', plate='HR 26 DK 3307')
     for k, (x, y) in enumerate(((-9.2, -1.6), (18.3, -1.6))): put('trashbag', (x, y, 0), k * 50, 1.0)

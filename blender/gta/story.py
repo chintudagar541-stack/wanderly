@@ -16,6 +16,7 @@ import house as HS
 
 stand, walk, override, side_of, hold, cam_keys, toon = Z.stand, Z.walk, Z.override, Z.side_of, Z.hold, Z.cam_keys, Z.toon
 import hero as HR
+H.EXPR['ko'] = dict(H.EXPR['strain'], arc=-1.0, op=.07, w=.07, smile=-.02, sweat=1.0)
 H.EXPR['sleep'] = dict(H.EXPR['bored'], ring=0.0, arc=.8, lid=0.0, pup=.5, w=.05, op=.03, smile=.005, bh=-.015, bt=0.0)
 
 # ------------------------------------------------------------------ the family (original characters)
@@ -38,6 +39,15 @@ class Puppet:
     def apply(self, t):
         self.ch.apply(t)
         if self.post: self.post(t)
+
+
+def relocate(d, loc, yaw):
+    """move a mocap pose to a new root position/heading, carrying its world-space hand targets along"""
+    l0 = Vector(d['loc']); y0 = math.radians(d['yaw']); R = Matrix.Rotation(math.radians(yaw) - y0, 3, 'Z')
+    for k in ('handL', 'handR'):
+        if d.get(k) is not None: d[k] = tuple(Vector(loc) + R @ (Vector(d[k]) - l0))
+    d['loc'] = tuple(loc); d['yaw'] = yaw
+    return d
 
 
 def l2w(loc, yaw, sc, p):
@@ -142,8 +152,8 @@ def papa_reading(sh, papa, face, paper_up=lambda t: 1.0, look=None, talk=None, r
         u = paper_up(t); h = Vector(d['loc']) + ref['head'] - Vector((0, 0, d.get('crouch', 0)))
         return h + Vector((0, -.36 - .1 * (1 - u), -.05 - .62 * (1 - u))), u
     def hands(t, d):
-        c, u = at_(t, d)
-        return dict(handL=tuple(c + Vector((.2, .02, -.05))), handR=tuple(c + Vector((-.2, .02, -.05))))
+        c, u = at_(t, d); Rx = Matrix.Rotation(math.radians(-65 * (1 - u)), 3, 'X')
+        return dict(handL=tuple(c + Rx @ Vector((.21, .03, .2))), handR=tuple(c + Rx @ Vector((-.21, .03, .2))))
     a = sitting(sh, papa, face, look=look, hands=hands, talk=talk, rise=rise)
     def pu(t):
         d = papa.fn(t); c, u = at_(t, d); paper.location = c; paper.rotation_euler = (math.radians(-65 * (1 - u)), 0, 0)
@@ -157,12 +167,12 @@ def carry_rig(sh, son, cyl, extra=None):
     sc = son.s
     def hands(d):
         loc, yaw, cr = d['loc'], d['yaw'], d.get('crouch', 0)
-        z = son.L - cr / sc + son.TL * .32
-        d['handL'] = l2w(loc, yaw, sc, (-.17, -.36, z)); d['handR'] = l2w(loc, yaw, sc, (.17, -.36, z))
+        z = son.L - cr / sc + son.TL * .5
+        d['handL'] = l2w(loc, yaw, sc, (-.17, -.34, z)); d['handR'] = l2w(loc, yaw, sc, (.17, -.34, z))
         return d
     def cu_(t):
         bpy.context.view_layer.update(); d = son.fn(t); cr = d.get('crouch', 0)
-        local = Vector((0, -.4, son.L - cr / sc - .22 / sc))
+        local = Vector((0, -.34, son.L - cr / sc - .02 / sc))
         cyl.matrix_world = son.root.matrix_world @ Matrix.Translation(local) @ Matrix.Scale(cyl.get('s', 1.0) / sc, 4)
     sh.updates.append(cu_)
     return hands
@@ -206,9 +216,9 @@ def s_approach(sh):
     p0, p1 = Vector((2.5, 3.05, 0)), SPOT; yw = math.degrees(math.atan2(p1.x - p0.x, -(p1.y - p0.y)))
     a = sh.actor(son, [TO.Act(0, '82_08', 1.0, sh.dur + 2, loc=tuple(p0), yaw=yw, lock_root=True)], face=[(0, 'smile'), (1.3, 'grin')], talk=[(.68, 2.82, 1.0)])
     def mv(t, d):
-        u = min(1.0, t / 1.9); d['loc'] = tuple(p0.lerp(p1, u))
+        u = min(1.0, t / 1.9); k = ease((t - 1.9) / .4) if t > 1.9 else 0.0
+        relocate(d, p0.lerp(p1, u), yw + (YAW_SP - yw) * k)
         if t > 1.9:
-            k = ease((t - 1.9) / .4); d['yaw'] = yw + (YAW_SP - yw) * k
             for sd, sx in (('L', -1), ('R', 1)): d['foot' + sd] = (sx * .12 * (1 + k * 0), d['foot' + sd][1] * (1 - k), 0)
         return d
     override(a, mv)
@@ -273,7 +283,7 @@ def s_slipper(sh):
     sitting(sh, papa, [(0, 'deadpan'), (1.1, 'rage')], hands=hands, rise=lambda t: ease(t / 1.0))
     hold(sh, slip, papa, 'R', (0, 0, .02), rot=lambda t: (math.radians(90 if t > 1.1 else 0), 0, 0))
     s = SEAT
-    sh.camera(cam_keys([(0, (s.x + .5, s.y - 1.6, .45), (s.x + .1, s.y - .2, 1.0), 22), (sh.dur, (s.x + .45, s.y - 1.35, .4), (s.x + .1, s.y - .3, 1.4), 22)],
+    sh.camera(cam_keys([(0, (s.x + .5, s.y - 1.6, .45), (s.x + .1, s.y - .2, 1.0), 22), (sh.dur, (s.x + .45, s.y - 1.35, .4), (s.x + .1, s.y - .3, 1.15), 22)],
                        roll=lambda t: K([(0, 0), (sh.dur, 5)], t), shake=.006), fstop=3)
     sh.keylight(12, (1, .8, .6))
 
@@ -294,12 +304,12 @@ def chase(sh, t_off=0.0):
     a_s = sh.actor(son, [TO.Act(0, '09_01', .3, sh.dur + 2, loc=(0, 0, 0), yaw=0, speed=1.25, lock_root=True)], face=[(0, 'terror')])
     a_p = sh.actor(papa, [TO.Act(0, '09_01', .9, sh.dur + 2, loc=(0, 0, 0), yaw=0, speed=1.1, lock_root=True)], face=[(0, 'rage')], talk=[(0, sh.dur, .5)])
     def ms(t, d):
-        p, yw = ell(th_s0 - W_RUN * (t + t_off)); d['loc'] = tuple(p); d['yaw'] = yw; return d
+        p, yw = ell(th_s0 - W_RUN * (t + t_off)); relocate(d, p, yw); d['lean'] = (min(d['lean'][0], .1), d['lean'][1] * .5); return d
     def mp(t, d):
-        p, yw = ell(th_s0 - W_RUN * (t + t_off) + 1.9); d['loc'] = tuple(p); d['yaw'] = yw
-        d['handR'] = tuple(Vector(d['loc']) + Matrix.Rotation(math.radians(yw), 3, 'Z') @ Vector((.25, .05, 0)) + Vector((0, 0, ref['head'].z + .3 + .06 * math.sin(t * 14))))
+        p, yw = ell(th_s0 - W_RUN * (t + t_off) + 2.6); relocate(d, p, yw); d['lean'] = (min(d['lean'][0], .06), d['lean'][1] * .5)
+        d['handR'] = tuple(Vector(d['loc']) + Matrix.Rotation(math.radians(yw), 3, 'Z') @ Vector((.25, .05, 0)) + Vector((0, 0, ref['head'].z + .42 + .06 * math.sin(t * 14))))
         return d
-    override(a_s, ms); override(a_p, mp); hold(sh, slip, papa, 'R', (0, 0, .02), rot=lambda t: (math.radians(80), 0, math.radians(ell(th_s0 - W_RUN * (t + t_off) + 1.9)[1])))
+    override(a_s, ms); override(a_p, mp); hold(sh, slip, papa, 'R', (0, 0, .02), rot=lambda t: (math.radians(80), 0, math.radians(ell(th_s0 - W_RUN * (t + t_off) + 2.6)[1])))
     return papa, son
 
 
@@ -314,7 +324,7 @@ def s_chase(sh):
     """Round and round the table.  Top-down-ish wide from the corner - the most Indian chase in history."""
     stage(sh, 'day', 30, 200)
     papa, son = chase(sh, 2.8)
-    sh.camera(cam_keys([(0, (-2.6, .4, 2.5), (-.5, 2.4, .5), 18), (sh.dur, (-2.5, .55, 2.45), (-.5, 2.4, .5), 19)], roll=-3, shake=.015), fstop=6)
+    sh.camera(cam_keys([(0, (-2.75, .3, 2.6), (-.5, 2.45, .2), 15), (sh.dur, (-2.7, .35, 2.58), (-.5, 2.4, .2), 16)], roll=-3, shake=.015), fstop=7)
 
 
 def s_escape(sh):
@@ -325,7 +335,7 @@ def s_escape(sh):
     a = sh.actor(son, [TO.Act(0, '09_01', .3, 1.2, loc=tuple(p0), yaw=0, speed=1.25, lock_root=True), TO.Act(.95, '77_02', 1.0, 6, loc=tuple(p1), yaw=0, lock_root=True)],
                  face=[(0, 'terror'), (1.15, 'relief'), (1.7, 'happy')])
     def mv(t, d):
-        u = min(1.0, t / 1.0); p = p0.lerp(p1, u); d['loc'] = (p.x, p.y, .12 if p.y < 0 else 0); d['yaw'] = 0
+        u = min(1.0, t / 1.0); p = p0.lerp(p1, u); relocate(d, (p.x, p.y, .12 if p.y < 0 else 0), 0)
         if t > .95: d['lean'] = (d['lean'][0] + .08 + .02 * math.sin(t * 10), d['lean'][1])
         return d
     override(a, mv)
@@ -336,7 +346,7 @@ def mummy_scene(sh, son_face, mummy_face, son_talk=None, mummy_talk=None, cyl_t=
     son = cast(sh, 'SON', SON); mum = cast(sh, 'MUMMY', MUMMY); cyl = HR.lpg_cylinder('lpg', .78)
     a_s = stand(sh, son, (PORCH.x, PORCH.y), 0, '77_02', 1.0, face=son_face, z=PORCH.z, talk=son_talk)
     a_m = stand(sh, mum, (GATE.x, GATE.y), 180, '80_48', 1.2, face=mummy_face, z=GATE.z, talk=mummy_talk)
-    c0 = Vector((GATE.x + .45, GATE.y - .05, GATE.z))
+    c0 = Vector((GATE.x - .45, GATE.y - .05, GATE.z))
     if cyl_t is None:
         cyl.location = c0
     else:
@@ -375,8 +385,11 @@ def s_mummy(sh):
 def s_walk(sh):
     """SON: 'Just taking a walk.'  The most innocent smile ever attempted."""
     stage(sh, 'day', 35, 200)
-    son, mum, cyl = mummy_scene(sh, [(0, 'nervous'), (.5, 'grin')], [(0, 'suspicious')], son_talk=[(.56, 1.81, 1.0)])
-    cu(sh, son, angle=40, elev=0, size=(.75, .65), lens=45, fstop=2.2)
+    son, mum, cyl = mummy_scene(sh, [(0, 'nervous'), (.3, 'grin_teeth')], [(0, 'suspicious')], son_talk=[(.56, 1.81, .6)])
+    def cam(t):
+        h = head_of(son, -.05)
+        return (Vector((DX + .95, -1.45, 1.15)) + Vector((-.05, .1, 0)) * t / sh.dur, h, 30, 0, h, .004)
+    sh.camera(cam, fstop=2.4); sh.keylight(14)
 
 
 def s_cylinder(sh):
@@ -391,8 +404,8 @@ def carry_walk(sh, son, cyl, p0, p1, dur, face):
     a = sh.actor(son, [TO.Act(0, '82_08', 1.0, sh.dur + 2, loc=tuple(p0), yaw=yw, lock_root=True, speed=.6)], face=face)
     hands = carry_rig(sh, son, cyl)
     def mv(t, d):
-        u = min(1.0, t / dur) if dur > 0 else 0; d['loc'] = tuple(p0.lerp(p1, u)); d['yaw'] = yw + 4 * math.sin(t * 3.1)
-        d['crouch'] = d.get('crouch', 0) + .1 + .02 * math.sin(t * 6.2); d['lean'] = (d['lean'][0] - .07, d['lean'][1] + .04 * math.sin(t * 3.1))
+        u = min(1.0, t / dur) if dur > 0 else 0; relocate(d, p0.lerp(p1, u), yw + 4 * math.sin(t * 3.1))
+        d['crouch'] = d.get('crouch', 0) + .12 + .025 * math.sin(t * 6.2); d['lean'] = (-.09, d['lean'][1] + .05 * math.sin(t * 3.1))
         return hands(d)
     override(a, mv); return a
 
@@ -404,8 +417,8 @@ def s_street(sh):
     son = cast(sh, 'SON', SON); cyl = HR.lpg_cylinder('lpg', .78)
     p0, p1 = Vector((DX + .3, -3.3, 0)), Vector((DX + 1.6, -4.4, 0))
     carry_walk(sh, son, cyl, p0, p1, sh.dur, [(0, 'strain')])
-    Z.extras(sh, [(DX - 4.0, -8.0, 10), (DX - 5.2, -7.6, -20), (DX + 5.6, -1.9, 200)], seed=22, face='laugh', look=lambda t: (DX + 1, -4, 1.2))
-    sh.camera(cam_keys([(0, (DX - 2.4, -7.4, 2.3), (DX + .6, -3.6, .9), 24), (sh.dur, (DX - 1.9, -7.3, 2.1), (DX + 1.4, -4.2, .9), 26)], shake=.004), fstop=5)
+    Z.extras(sh, [(DX - 2.6, -8.0, 10), (DX - 3.4, -7.7, -20), (DX + 3.6, -8.1, -30), (DX + 4.6, -2.0, 200), (DX - 2.4, -2.1, 160)], seed=22, face='laugh', look=lambda t: (DX + 1, -4, 1.2))
+    sh.camera(cam_keys([(0, (DX - 1.2, -6.6, 1.5), (DX + .6, -3.7, .9), 26), (sh.dur, (DX - .7, -6.6, 1.45), (DX + 1.4, -4.2, .9), 28)], shake=.004), fstop=4)
 
 
 def s_camera(sh):
@@ -428,7 +441,7 @@ def s_gameover(sh):
     stage(sh, 'day', 35, 200)
     son = cast(sh, 'SON', SON); cyl = HR.lpg_cylinder('lpg', .78)
     p = Vector((DX + 1.6, -4.4, 0)); TF = .35
-    a = carry_walk(sh, son, cyl, p, p, 0, [(0, 'strain'), (.4, 'scream'), (1.4, 'sleep')])
+    a = carry_walk(sh, son, cyl, p, p, 0, [(0, 'strain'), (.4, 'scream'), (1.4, 'ko')])
     def fall(t):
         u = ease((t - TF) / .55); bounce = .05 * math.sin(max(0, t - TF - .55) * 18) * math.exp(-max(0, t - TF - .55) * 6)
         son.root.rotation_euler = (math.radians(-86 * min(1.0, u + bounce)), 0, son.root.rotation_euler.z); son.root.location.z += .32 * u
