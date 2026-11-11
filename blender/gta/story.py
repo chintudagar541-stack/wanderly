@@ -21,7 +21,7 @@ H.EXPR['sleep'] = dict(H.EXPR['bored'], ring=1.0, lid=.96, pup=.5, w=.05, op=.02
 # ------------------------------------------------------------------ the family (original characters)
 P = TO.preset
 SON = P('Son', '#e8b42a', '#1e2a4a', hat=None, haircol='#120c08', height=.97, boots='#2a5aa8', belt='#1e2a4a', collar=False, buttons=False)
-PAPA = P('Papa', '#f2efe6', '#f2efe6', dress=True, dresscol='#f2efe6', hat=None, haircol='#3a3632', stache=True, beardcol='#141010', height=1.0,
+PAPA = P('Papa', '#f2efe6', '#2e6a4b', hat=None, haircol='#3a3632', stache=True, beardcol='#141010', height=1.0,
          boots='#5a3a20', collar=False, buttons=False)
 MUMMY = P('Mummy', '#e2701a', '#e2701a', dress=True, dresscol='#e2701a', shawl='#d8a838', hat=None, haircol='#0e0a08', bun=True, height=.93,
           boots='#c8a040', collar=False, buttons=False)
@@ -52,9 +52,11 @@ def dress_up(sh, ch, who):
         z = ch.TL * .6
         s = C.sign('SON_print', 'TALEVENTURE', ch.rw * 1.25, .06, (0, 0, 0), facing=(0, -1), bg='#e8b42a', fg='#16162a', size=(1000, 130), font_scale=.72, **TY.kw('montserrat'))
         s.parent = ch.torso; s.location = (0, ch.fy(z) - .006, z); s.rotation_euler = (0, 0, 0)
-    if who == 'PAPA':
-        o = bpy.data.objects.get(ch.cid + '_dress')
-        if o: o.data.materials.clear(); o.data.materials.append(HS.checker('lungi', '#2e6a4a', '#2a4a8a', 18, lines='#e8e4d8'))
+    if who == 'PAPA':                                   # checked lungi on the legs (legs, so he can sit and run properly)
+        lm = HS.checker('lungi', '#2e6a4a', '#2a4a8a', 18, lines='#e8e4d8')
+        for o in [ch.root] + list(ch.root.children_recursive):
+            for sl in getattr(o, 'material_slots', []):
+                if sl.material and sl.material.name.startswith('s_#2e6a4b'): sl.material = lm
         g = Z.glasses_prop(ch.cid + '_specs'); Z.wear_glasses(sh, ch, g)
     if who == 'MUMMY':
         o = bpy.data.objects.get(ch.cid + '_dress')
@@ -81,6 +83,9 @@ def stage(sh, mood='day', elev=35, az=200, night=False):
     F.setup(sh, mood, elev, az, town=False, haze=False); sh.town = False
     bpy.context.scene.view_settings.exposure = .35 if mood == 'day' else 0.0
     out = HS.build(night)
+    bpy.context.view_layer.update(); dg = bpy.context.evaluated_depsgraph_get()
+    hit = bpy.context.scene.ray_cast(dg, Vector((SEAT.x, SEAT.y, 1.6)), Vector((0, 0, -1)))
+    sh.seat_z = hit[1].z if hit[0] and .25 < hit[1].z < .7 else .45; print('SEAT_Z', round(sh.seat_z, 3), hit[0] and hit[4].name)
     for k, fan in enumerate(out['fans']): sh.updates.append(lambda t, fan=fan, k=k: setattr(fan, 'rotation_euler', (0, 0, t * 9.0 + k)))
     return out
 
@@ -116,16 +121,16 @@ def in_bed(sh, ch, face, sit=lambda t: 0.0):
     return p
 
 
-def sitting(sh, ch, face, look=None, hands=None, rise=None, talk=None, seat_h=.42):
+def sitting(sh, ch, face, look=None, hands=None, rise=None, talk=None, seat_h=None):
     """Papa on the sofa: hips on the cushion, feet on the floor; rise(t) -> 0..1 stands him up"""
     root = SEAT
     a = stand(sh, ch, (root.x, root.y), 0, '77_02', 1.0, face=face, look=look, z=0, talk=talk)
     def mod(t, d):
         u = rise(t) if rise else 0.0
-        sit_c = max(0.0, ch.L * ch.s - seat_h)
+        sit_c = max(0.0, ch.L * ch.s - ((seat_h or getattr(sh, 'seat_z', .45)) + .09 * ch.s))
         d['crouch'] = sit_c * (1 - u); d['loc'] = (root.x, root.y - .3 * u, 0); d['yaw'] = 0
-        for sd, sx in (('L', -1), ('R', 1)): d['foot' + sd] = (sx * .13, -.34 * (1 - u), 0)
-        d['lean'] = (d['lean'][0] * .4 - .05 * (1 - u), d['lean'][1] * .4)
+        for sd, sx in (('L', -1), ('R', 1)): d['foot' + sd] = (sx * .15, -.42 * (1 - u), 0)
+        d['lean'] = (d['lean'][0] * .4 - .07 * (1 - u), d['lean'][1] * .4)
         if hands: d.update(hands(t, d))
         return d
     override(a, mod); return a
@@ -135,13 +140,13 @@ def papa_reading(sh, papa, face, paper_up=lambda t: 1.0, look=None, talk=None, r
     paper = prop_newspaper(); ref = body_ref(papa)
     def at_(t, d):
         u = paper_up(t); h = Vector(d['loc']) + ref['head'] - Vector((0, 0, d.get('crouch', 0)))
-        return h + Vector((0, -.36 - .08 * (1 - u), -.05 - .3 * (1 - u))), u
+        return h + Vector((0, -.36 - .1 * (1 - u), -.05 - .62 * (1 - u))), u
     def hands(t, d):
         c, u = at_(t, d)
         return dict(handL=tuple(c + Vector((.2, .02, -.05))), handR=tuple(c + Vector((-.2, .02, -.05))))
     a = sitting(sh, papa, face, look=look, hands=hands, talk=talk, rise=rise)
     def pu(t):
-        d = papa.fn(t); c, u = at_(t, d); paper.location = c; paper.rotation_euler = (math.radians(-35 * (1 - u)), 0, 0)
+        d = papa.fn(t); c, u = at_(t, d); paper.location = c; paper.rotation_euler = (math.radians(-65 * (1 - u)), 0, 0)
     sh.updates.append(pu)
     return a, paper
 
@@ -234,7 +239,7 @@ def s_silence(sh):
     papa = cast(sh, 'PAPA', PAPA); son = cast(sh, 'SON', SON)
     papa_reading(sh, papa, [(0, 'deadpan')], paper_up=lambda t: 0.0)
     stand(sh, son, (SPOT.x, SPOT.y), YAW_SP, '77_02', 1.4, face=[(0, 'smug'), (.8, 'nervous')], z=0)
-    sh.camera(cam_keys([(0, (2.0, .7, 1.35), (-.3, 3.3, .9), 24), (sh.dur, (2.0, .7, 1.35), (-.3, 3.3, .9), 24)], shake=.0), fstop=5)
+    sh.camera(cam_keys([(0, (-2.1, 1.75, 1.4), (.1, 3.2, .85), 20), (sh.dur, (-2.1, 1.75, 1.4), (.1, 3.2, .85), 20)], shake=.0), fstop=5)
 
 
 def s_zoom(sh):
