@@ -6,6 +6,7 @@ from mathutils import Vector
 import lib
 out = sys.argv[sys.argv.index('--') + 1]
 IDS = os.environ.get('IDS', '').split(',')
+for o in list(bpy.data.objects): bpy.data.objects.remove(o)
 res = {}; thumbs = []
 sc = bpy.context.scene; sc.render.engine = 'CYCLES'; sc.cycles.samples = 12; sc.cycles.device = 'CPU'
 sc.render.resolution_x = 320; sc.render.resolution_y = 320
