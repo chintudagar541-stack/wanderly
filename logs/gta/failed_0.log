@@ -1,4 +1,4 @@
-00:00.861  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.577  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] hdri sun 146 elev 48.5 -> az 200
 [lib] ph_find textures ['marble', 'floor', 'tiles'] -> floor_tiles_06
 [lib] ph_find textures ['plaster', 'painted', 'wall'] -> painted_plaster_wall
@@ -55,11 +55,11 @@ SEAT_Z 0.422 sofa_03
 RSS built 1299 MB
 RSS extras 1299 MB
 CLEARCAM failed 0
-RSS lod 1320 MB
-RSS posed 1328 MB
-RSS depsgraph 1328 MB
+RSS lod 1322 MB
+RSS posed 1323 MB
+RSS depsgraph 1323 MB
 OBJECTS 2897 MESHES 2673 IMAGES 165 155 Mpx
-01:47.916  render           | Saved: '/home/runner/work/wanderly/wanderly/out/failed_0.png'
-RTIME 57.5
-RSS rendered 5041 MB
+01:01.296  render           | Saved: '/home/runner/work/wanderly/wanderly/out/failed_0.png'
+RTIME 45.1
+RSS rendered 5013 MB
 RENDERED failed 0.99
