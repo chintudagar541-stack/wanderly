@@ -20,7 +20,7 @@ def falling_tree(sh, ter, xy, t0, yaw=0.0, h=18.0, kind='pine_tree_01'):
 
 def eruption(sh, p, scale=1.0, seed=0):
     col = TR.plume(f'erupt{seed}', p, height=260 * scale, r0=6 * scale, r1=90 * scale, drift=(80 * scale, 20 * scale),
-                   density=.12, glow=1.0, speed=7 * scale, seed=seed)
+                   density=.12, glow=.35, speed=7 * scale, seed=seed)
     sh.updates.append(col); embers(sh, (p[0], p[1], p[2] + 30 * scale), 60, (30 * scale, 30 * scale), 40 * scale, seed=seed + 50, size=.4 * scale)
     l = bpy.data.lights.new(f'eruptl{seed}', 'POINT'); l.energy = 3e6 * scale; l.color = (1, .4, .1); o = bpy.data.objects.new('eruptl', l); TR.coll().objects.link(o)
     o.location = (p[0], p[1], p[2] + 10)
@@ -49,7 +49,7 @@ def s_p02(sh):
     w, ter = nat(sh, 'permian'); fx, fy = fz(w)
     for k, (x, y) in enumerate([(-260, 900), (320, 1100), (40, 1400)]): eruption(sh, (fx + x, fy + y, 0), 3.0, seed=k)
     for k, (x, y, t0, yw) in enumerate([(-6, 22, 2.0, 70), (9, 30, 5.5, -60), (-14, 40, 8.0, 100)]): falling_tree(sh, ter, (fx + x, fy + y), t0, yw, 20)
-    sh.updates.append(lambda t: setattr(bpy.context.scene.view_settings, 'exposure', -.6 * ease(t / sh.dur)))
+    sh.updates.append(lambda t: setattr(bpy.context.scene.view_settings, 'exposure', -.45 - .6 * ease(t / sh.dur)))
     sh.camera(cam_fn([(0, G(ter, fx, fy - 12, 2.5), G(ter, fx, fy + 60, 14), 22), (sh.dur, G(ter, fx + 3, fy - 6, 3), G(ter, fx, fy + 60, 18), 24)], shake=.006,
                      quake=lambda t: .02 + .03 * max(0, math.sin(t * 1.3))), fstop=11)
 
@@ -68,7 +68,7 @@ def s_p05(sh):
     """small early dinosaurs dart through the forest like nervous chickens"""
     w, ter = nat(sh, 'triassic'); fx, fy = fz(w)
     for k in range(4):
-        x0 = fx - 14 + k * 1.6; go(sh, 'compy', [(x0, fy + 6 + k * 1.5), (x0 + 9, fy + 2 + k), (x0 + 14, fy + 8 + k), (x0 + 30, fy + 4)], ter, clip='run', name=f'compy{k}',
+        x0 = fx - 7 + k * 1.6; go(sh, 'compy', [(x0, fy + 6 + k * 1.5), (x0 + 9, fy + 2 + k), (x0 + 14, fy + 8 + k), (x0 + 30, fy + 4)], ter, clip='run', name=f'compy{k}',
                                    scale=1.3, phase=k * .23, t0=k * .4)
     go(sh, 'raptor', [(fx - 10, fy + 12), (fx + 2, fy + 7), (fx + 20, fy + 10)], ter, clip='run', name='earlyraptor', scale=.8, t0=4.5)
     sh.camera(cam_fn([(0, G(ter, fx - 6, fy - 6, 1.0), G(ter, fx - 4, fy + 6, .5), 30), (sh.dur, G(ter, fx + 4, fy - 5, 1.1), G(ter, fx + 10, fy + 7, .5), 30)], shake=.006), fstop=5)
@@ -150,8 +150,8 @@ def s_d01(sh):
 def s_d02(sh):
     """pterosaurs glide over the coastline (HUD: NOT A DINOSAUR)"""
     w, ter = nat(sh, 'coast_cretaceous')
-    flock(sh, 'ptero', 5, (-60, -30, 22), (60, 10, 26), 0, sh.dur * 1.1, seed=4, spread=8)
-    sh.camera(cam_fn([(0, (-20, -60, 14), (-10, -20, 22), 26), (sh.dur, (10, -56, 16), (20, -10, 24), 26)], shake=.005), fstop=11)
+    flock(sh, 'ptero', 5, (-45, -40, 16), (45, -26, 22), 0, sh.dur * 1.05, seed=4, spread=6, scale=1.5)
+    sh.camera(cam_fn([(0, (-14, -64, 10), (-14, -38, 17), 28), (sh.dur, (8, -62, 11), (14, -30, 20), 28)], shake=.005), fstop=11)
 
 
 def s_d03(sh):
@@ -190,7 +190,7 @@ def s_d05(sh):
     """a small bird lands on a giant dinosaur's head; the dinosaur does not react"""
     w, ter = nat(sh, 'cretaceous'); fx, fy = fz(w); hz = ter.z(fx, fy + 6)
     big = still(sh, 'tricera', (fx, fy + 6), 25, ter, clip='idle', name='calmtri')
-    bpy.context.view_layer.update(); top = big.head() + Vector((0, 0, .35))
+    yw = math.radians(25); top = Vector((fx, fy + 6, hz)) + Vector((math.sin(yw), -math.cos(yw), 0)) * 3.0 + Vector((0, 0, 2.3))
     land = 5.0
     def fly(t):
         u = ease(min(1, t / land)); p = (top + Vector((-14, 10, 9))).lerp(top, u) + Vector((0, 0, 3 * math.sin(u * math.pi) * (1 - u)))
@@ -207,7 +207,7 @@ def s_a01(sh):
     tri = still(sh, 'tricera', (fx, fy + 6), -20, ter, clip='graze', name='grazer')
     still(sh, 'tricera', (fx - 9, fy + 16), 40, ter, clip='graze', name='grazer2', phase=1.3)
     go(sh, 'sauropod', [(fx + 40, fy + 60), (fx - 20, fy + 70)], ter, name='bgsaur')
-    bpy.context.view_layer.update(); hd = tri.head() + Vector((0, 0, .5))
+    yw = math.radians(-20); hd = Vector((fx, fy + 6, ter.z(fx, fy + 6))) + Vector((math.sin(yw), -math.cos(yw), 0)) * 3.4 + Vector((0, 0, 1.9))
     df = swim(sh, 'dragonfly', lambda t: (*(lambda p: (p.x, p.y))((hd + Vector((3, -2, 1.5))).lerp(hd, ease(min(1, t / 3.5)))), 200,
                                           ((hd + Vector((3, -2, 1.5))).lerp(hd, ease(min(1, t / 3.5)))).z + .05 * math.sin(t * 9)), 'dfly', clip='fly', scale=1.5)
     sh.camera(cam_fn([(0, G(ter, fx + 3, fy - 2, 2.0), tuple(hd), 30), (sh.dur, G(ter, fx + 2.4, fy - 1, 2.0), tuple(hd), 36)], shake=.003), fstop=5)
@@ -229,13 +229,14 @@ def s_a03(sh):
     """the asteroid enters the atmosphere; the sky glows orange; white flash"""
     w, ter = nat(sh, 'impact'); fx, fy = fz(w); impact_phase(sh, w, lambda t: dict(entry=.2 + .8 * t / sh.dur))
     flash_light(sh, lambda t: max(0.0, (t - sh.dur + .5) / .5), 80, (1, .9, .8))
-    sh.updates.append(lambda t: setattr(bpy.context.scene.view_settings, 'exposure', 3.0 * max(0.0, (t - sh.dur + .4) / .4)))
+    sh.updates.append(lambda t: setattr(bpy.context.scene.view_settings, 'exposure', -.45 + 3.5 * max(0.0, (t - sh.dur + .4) / .4)))
     sh.camera(cam_fn([(0, G(ter, fx, fy - 10, 3), (fx - 600, fy + 3000, 2000), 22), (sh.dur, G(ter, fx, fy - 10, 3), (fx, fy + 3200, 200), 22)], shake=.006), fstop=16)
 
 
 def s_a04(sh):
     """impact: fireball, shockwave, earthquakes, a wall of dust"""
     w, ter = nat(sh, 'impact'); fx, fy = fz(w); impact_phase(sh, w, lambda t: dict(boom=t / 10.0, burn=1 if t > 6 else 0))
+    sh.updates.append(lambda t: setattr(bpy.context.scene.view_settings, 'exposure', -.45 - 1.6 * min(1.0, t / 2.5)))
     for k, (x, y) in enumerate([(-8, 30), (10, 36), (-20, 50), (16, 60)]): falling_tree(sh, ter, (fx + x, fy + y), 3.0 + k * .4, 180 + k * 10, 18)
     sh.camera(cam_fn([(0, G(ter, fx, fy - 20, 6), (fx + 200, fy + 3200, 400), 22), (sh.dur, G(ter, fx, fy - 26, 8), (fx + 200, fy + 3200, 900), 20)], shake=.006,
                      quake=lambda t: .08 * math.exp(-max(0, t - 2.5) * .25) if t > 2.5 else .01), fstop=16)
@@ -254,7 +255,7 @@ def ash_fall(sh, center, n=400, seed=0, area=20):
 def s_a05(sh):
     """forests burn, the sky goes dark, dinosaurs struggle in the cold"""
     w, ter = nat(sh, 'impact'); fx, fy = fz(w); impact_phase(sh, w, lambda t: dict(burn=1))
-    bpy.context.scene.view_settings.exposure = -1.2; ash_fall(sh, G(ter, fx, fy + 8), 500, 1)
+    bpy.context.scene.view_settings.exposure = -1.6; ash_fall(sh, G(ter, fx, fy + 8), 500, 1)
     b = go(sh, 'tricera', [(fx - 10, fy + 12), (fx + 4, fy + 8)], ter, name='cold', anim=.6)
     b.set_clip(CR.clip_of(b, 'Fall'), .8, at=5.5); f = b.path; b.move(lambda t: f(min(t, 5.5)))
     sh.camera(cam_fn([(0, G(ter, fx + 2, fy - 4, 1.8), G(ter, fx - 4, fy + 10, 1.8), 28), (sh.dur, G(ter, fx + 3, fy - 3, 1.7), G(ter, fx + 2, fy + 8, 1.6), 30)], shake=.004), fstop=6)
@@ -264,12 +265,12 @@ def s_a06(sh):
     """a bird flies calmly out of the smoke"""
     w, ter = nat(sh, 'impact'); fx, fy = fz(w); impact_phase(sh, w, lambda t: dict(burn=1))
     bpy.context.scene.view_settings.exposure = -.6
-    sm = TR.smoke_column('wall', G(ter, fx, fy + 14), rate=20, life=12, rise=1.5, r0=6, r1=14, wind=(0, -1.0), turb=4, col=(.25, .23, .22), density=.12, voxel=.4, seed=9)
+    sm = TR.plume('wall', G(ter, fx, fy + 30, -1), height=26, r0=6, r1=11, drift=(3, 0), col=(.3, .28, .26), density=.35, speed=1.2, seed=9)
     sh.updates.append(sm)
     hz = ter.z(fx, fy)
-    swim(sh, 'pigeon', line3((fx, fy + 22, hz + 4), (fx + .4, fy - 1, hz + 3.2), 0, sh.dur * 1.05, .15, .9), 'survivor', clip='fly', scale=1.0)
+    swim(sh, 'pigeon', line3((fx, fy + 30, hz + 6), (fx + .4, fy - 1, hz + 3.2), 0, sh.dur * 1.05, .15, .9), 'survivor', clip='fly', scale=1.0)
     sh.camera(cam_fn([(0, (fx + .6, fy - 3, hz + 3.0), (fx, fy + 10, hz + 3.6), 35), (sh.dur, (fx + .8, fy - 3.4, hz + 3.0), (fx, fy, hz + 3.4), 35)], shake=.003,
-                     focus=lambda t: Vector((fx, fy + 22 - 23 * t / sh.dur, hz + 3.6))), fstop=4)
+                     focus=lambda t: Vector((fx, fy + 30 - 31 * t / sh.dur, hz + 4.5))), fstop=5)
 
 
 def leaf_pile(ter, x, y, n=60, seed=0):
@@ -282,12 +283,12 @@ def leaf_pile(ter, x, y, n=60, seed=0):
 def s_a07(sh):
     """the camera pans down through the smoke to a tiny mammal under fallen leaves, blinking"""
     w, ter = nat(sh, 'impact'); fx, fy = fz(w); impact_phase(sh, w, lambda t: dict(burn=1))
-    bpy.context.scene.view_settings.exposure = -.4; leaf_pile(ter, fx, fy, 90, 1)
+    bpy.context.scene.view_settings.exposure = -.8; leaf_pile(ter, fx, fy, 90, 1)
     sm = TR.smoke_column('lowsmoke', G(ter, fx + 1, fy + 3, 2), rate=8, life=10, rise=.8, r0=1.5, r1=5, wind=(.3, -.2), turb=1.5, col=(.3, .28, .26), density=.08, voxel=.15, seed=2)
     sh.updates.append(sm)
     still(sh, 'rat', (fx, fy + .05), 200, ter, clip='look', name='survivor_mammal', scale=1.0)
     hz = ter.z(fx, fy)
-    sh.camera(cam_fn([(0, (fx + .4, fy - 1.0, hz + 6), (fx, fy + 4, hz + 6), 30), (sh.dur * .7, (fx + .3, fy - .7, hz + .4), (fx, fy, hz + .08), 45), (sh.dur, (fx + .25, fy - .55, hz + .2), (fx, fy, hz + .08), 60)],
+    sh.camera(cam_fn([(0, (fx + .4, fy - 1.0, hz + 6), (fx, fy + 4, hz + 6), 30), (sh.dur * .7, (fx + .45, fy - 1.0, hz + .45), (fx, fy, hz + .1), 45), (sh.dur, (fx + .4, fy - .85, hz + .25), (fx, fy, hz + .1), 55)],
                      shake=.002), fstop=2.8)
 
 
@@ -306,7 +307,7 @@ def s_n01(sh):
 def s_n02(sh):
     """mammals spread: grasslands, forests and the sky (bats)"""
     w, ter = nat(sh, 'paleogene'); fx, fy = fz(w)
-    for k in range(5): go(sh, 'deer', [(fx - 30 + k * 2, fy + 20 + k * 3), (fx + 30, fy + 18 + k * 3)], ter, name=f'mam{k}', phase=k * .3, scale=.8)
+    for k in range(5): go(sh, 'deer', [(fx - 10 + k * 2, fy + 14 + k * 3), (fx + 30, fy + 12 + k * 3)], ter, name=f'mam{k}', phase=k * .3, scale=.8)
     flock(sh, 'bat', 9, (fx + 30, fy + 30, ter.z(fx, fy) + 12), (fx - 30, fy - 5, ter.z(fx, fy) + 8), 0, sh.dur, seed=5, spread=4, scale=1.2)
     sh.camera(cam_fn([(0, G(ter, fx, fy - 12, 2.5), G(ter, fx, fy + 20, 4), 24), (sh.dur, G(ter, fx + 4, fy - 10, 3), G(ter, fx + 4, fy + 20, 5), 24)], shake=.003), fstop=8)
 
@@ -351,5 +352,7 @@ def s_n04(sh):
         z = hz + .4 + hops * .55
         return (fx, fy + 3 - .42, 180, z)
     b.move(climb)
-    sh.camera(cam_fn([(0, (fx + .9, fy + .6, hz + 1.2), (fx, fy + 3, hz + 1.2), 32), (sh.dur, (fx + 1.2, fy + .4, hz + 9.5), (fx, fy + 3, hz + 9.8), 32)], shake=.002,
-                     focus=lambda t: Vector(b.root.location)), fstop=4)
+    def cam(t):                                    # rides up with the climber, slightly below and to the side
+        z = climb(t)[3]; m = Vector((fx, fy + 2.5, z + .35))
+        return (m + Vector((1.3, -2.0, -.25)), m, 35, 0, m, .002)
+    sh.camera(cam, fstop=4)

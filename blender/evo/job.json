@@ -1,1 +1,16 @@
-{"rev": 0, "mode": "tasks", "tasks": []}
+{
+ "rev": 19,
+ "mode": "video",
+ "only": "e07,e08,p03,h05,h07,h08,t01,t02,t03,t04,t05,t07,b08,b09",
+ "chunk": 24,
+ "handle": 0.25,
+ "env": {
+  "RW": "1920",
+  "RH": "1080",
+  "SAMPLES": "32",
+  "ADAPT": ".02"
+ },
+ "w": 1920,
+ "h": 1080,
+ "samples": 32
+}

@@ -388,6 +388,7 @@ def sun_light(az, el, energy=4.0, col=(1, .95, .88), angle=.8):
 
 def fog(density=.002, col=(.9, .75, .6), anis=.3, size=(3000, 3000, 600), center=(0, 0, 0)):
     """aerial haze as a bounded volume box (a world volume would swallow the sky): distant hills fade, sun rays read"""
+    if os.environ.get('NOFOG'): return None
     o = T.box('haze', size, (center[0], center[1], center[2] + size[2] / 2 - 20), None)
     m = bpy.data.materials.new('haze_vol'); m.use_nodes = True; N = m.node_tree.nodes; N.remove(N['Principled BSDF'])
     pv = N.new('ShaderNodeVolumePrincipled'); pv.inputs['Color'].default_value = (*col, 1); pv.inputs['Density'].default_value = density; pv.inputs['Anisotropy'].default_value = anis
@@ -597,10 +598,10 @@ def wind_tick(t, gust=1.0):
         md.angle = a * gust * (math.sin(t * 1.3 + hash(o.name) % 7) * .6 + math.sin(t * 3.1 + hash(o.name) % 5) * .4)
 
 
-def plume(name, base, height=300.0, r0=10.0, r1=90.0, drift=(60.0, 20.0), col=(.32, .29, .26), density=.08, glow=0.0, speed=6.0, seed=0):
+def plume(name, base, height=300.0, r0=10.0, r1=90.0, drift=(60.0, 20.0), col=(.32, .29, .26), density=.08, glow=0.0, speed=6.0, seed=0, glow_h=.08):
     """a volcanic ash column as one procedural volume: a widening, wind-bent cone whose density is carved by 4D noise that
     rises with time (billows roll upward and grow with height) - no particle balls.  returns update(t)"""
-    bx, by, bz = base; w = 2 * (r1 + max(abs(drift[0]), abs(drift[1]))) + 20
+    bx, by, bz = base; R_ = max(r0, r1) * 1.7; w = 2 * (R_ + max(abs(drift[0]), abs(drift[1]))) + R_ * .3
     o = T.box(name, (w, w, height), (bx + drift[0] / 2, by + drift[1] / 2, bz + height / 2), None); o.visible_shadow = True
     m = bpy.data.materials.new(name + '_vol'); m.use_nodes = True; N, L = m.node_tree.nodes, m.node_tree.links; N.remove(N['Principled BSDF'])
     def node(t, **kw):
@@ -631,10 +632,10 @@ def plume(name, base, height=300.0, r0=10.0, r1=90.0, drift=(60.0, 20.0), col=(.
     cm = node('ShaderNodeCombineXYZ'); L.new(math_('MULTIPLY', qx, sc_), cm.inputs[0]); L.new(math_('MULTIPLY', qy, sc_), cm.inputs[1])
     L.new(math_('MULTIPLY', zr, sc_), cm.inputs[2])
     nz = node('ShaderNodeTexNoise', noise_dimensions='4D'); L.new(cm.outputs[0], nz.inputs['Vector']); nz.inputs['Scale'].default_value = 2.4
-    nz.inputs['Detail'].default_value = 14; nz.inputs['Roughness'].default_value = .6; nz.inputs['Distortion'].default_value = .9
+    nz.inputs['Detail'].default_value = float(os.environ.get('PLUMEDETAIL', 14)); nz.inputs['Roughness'].default_value = .6; nz.inputs['Distortion'].default_value = .9
     L.new(math_('ADD', math_('MULTIPLY', tv.outputs[0], .03), seed * 7.3), nz.inputs['W'])
     nz2 = node('ShaderNodeTexNoise', noise_dimensions='4D'); L.new(cm.outputs[0], nz2.inputs['Vector']); nz2.inputs['Scale'].default_value = 9.0
-    nz2.inputs['Detail'].default_value = 8; nz2.inputs['Roughness'].default_value = .65; L.new(math_('MULTIPLY', tv.outputs[0], .08), nz2.inputs['W'])
+    nz2.inputs['Detail'].default_value = min(8.0, float(os.environ.get('PLUMEDETAIL', 14)) * .6); nz2.inputs['Roughness'].default_value = .65; L.new(math_('MULTIPLY', tv.outputs[0], .08), nz2.inputs['W'])
     billow = math_('MULTIPLY', mrange(nz.outputs['Fac'], .3, .6, .05, 1), mrange(nz2.outputs['Fac'], .32, .62, .25, 1))
     edge = mrange(math_('ADD', d, math_('MULTIPLY', math_('SUBTRACT', nz.outputs['Fac'], .5), 1.2)), .6, 1.05, 1, 0)
     top = mrange(u, .7, 1.0, 1, 0); bot = mrange(Z, -2, height * .02, 0, 1)
@@ -642,7 +643,7 @@ def plume(name, base, height=300.0, r0=10.0, r1=90.0, drift=(60.0, 20.0), col=(.
     pv = node('ShaderNodeVolumePrincipled'); pv.inputs['Color'].default_value = (*col, 1); pv.inputs['Anisotropy'].default_value = .25
     L.new(dens, pv.inputs['Density'])
     if glow:
-        L.new(math_('MULTIPLY', math_('MULTIPLY', mrange(Z, 0, height * .22, 1, 0, 'LINEAR'), glow), math_('DIVIDE', dens, density)), pv.inputs['Emission Strength']); pv.inputs['Emission Color'].default_value = (1, .28, .04, 1)
+        L.new(math_('MULTIPLY', math_('MULTIPLY', mrange(Z, 0, height * glow_h, 1, 0, 'LINEAR'), glow), math_('DIVIDE', dens, density)), pv.inputs['Emission Strength']); pv.inputs['Emission Color'].default_value = (1, .28, .04, 1)
     L.new(pv.outputs[0], N['Material Output'].inputs['Volume']); o.data.materials.clear(); o.data.materials.append(m)
     def upd(t): tv.outputs[0].default_value = t
     return upd

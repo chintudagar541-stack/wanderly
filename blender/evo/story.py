@@ -56,6 +56,18 @@ def cast(sh, cid, preset):
 
 def stage(sh, world, mood='day', elev=35, az=200):
     F.setup(sh, mood, elev, az, town=False, haze=False); sh.town = False
+    cy = bpy.context.scene.cycles
+    if os.environ.get('GPU'):                          # Kaggle / any NVIDIA box: same scene, same settings, rendered on the GPU
+        pr = bpy.context.preferences.addons['cycles'].preferences
+        for kind in ('OPTIX', 'CUDA'):
+            try:
+                pr.compute_device_type = kind; pr.refresh_devices()
+                devs = [d for d in pr.devices if d.type == kind]
+                if devs:
+                    for d in pr.devices: d.use = d.type == kind
+                    cy.device = 'GPU'; print('GPU', kind, [d.name for d in devs], flush=True); break
+            except Exception as e: print('gpu fail', kind, e)
+    cy.volume_step_rate = float(os.environ.get('VOLSTEP', 1.0)); cy.volume_max_steps = int(os.environ.get('VOLMAX', 1024))   # coarser volume marching for the final
     for o in [o for o in bpy.data.objects if o.name.startswith('sun')]: bpy.data.objects.remove(o)
     w = getattr(W, world)()
     tick = getattr(W, world + '_tick', None)
@@ -103,7 +115,7 @@ def class_extras(sh, seed=0, faces=('bored', 'idle', 'watch')):
     for k, (x, y) in enumerate([(-3.3, -2.4), (3.3, -2.4), (-3.3, -0.85), (3.3, -0.85), (-3.3, 0.7), (3.3, 0.7), (-1.1, 0.7), (-1.1, 2.25), (1.1, 2.25), (1.1, -2.4)]):
         if (x, y) in SEATS.values(): continue
         pr = Z.CIV(500 + seed * 20 + k); pr['height'] = r.uniform(.82, .9)
-        ch = toon(sh, f'ST{k}', pr, protect=True)
+        ch = toon(sh, f'ST{k}', pr)
         a = stand(sh, ch, (x, y - .55), 180, '77_02', r.uniform(.5, 3), face=[(0, r.choice(faces))], z=0)
         def mod(t, d, x=x, y=y, ch=ch):
             d['crouch'] = max(0.0, ch.L * ch.s - .54); d['loc'] = (x, y - .5, 0); d['yaw'] = 180
@@ -285,13 +297,46 @@ def _clear_props(self, rad=1.7):
     """also hide scattered props (rocks, trees, plants) the camera would pass through or sit inside"""
     _clear0(self, rad)
     if self.cam is None: return
-    cps = [Vector(self.cam[1](self.dur * k / 12)[0]) for k in range(13)]; n = 0
+    cps = []
+    for k in range(13):                                 # lens path + the sight line to the subject (props must not sit inside either)
+        r_ = self.cam[1](self.dur * k / 12); c0, tg = Vector(r_[0]), Vector(r_[1])
+        cps += [q for q in (c0.lerp(tg, u) for u in (0, .25, .5, .75, .92)) if (q - c0).length < 15.0]   # near the lens only: no holes in far forests
+    n = 0
     for e in bpy.data.objects:
         if e.instance_type != 'COLLECTION' or e.instance_collection is None or e.hide_render: continue
         cen, r = _coll_radius(e.instance_collection); r *= max(e.scale); c = e.matrix_world @ cen
-        if any((c - p).length < r * .9 + .4 for p in cps): e.hide_render = True; n += 1
+        if any((c - p).length < r * .75 + .3 for p in cps): e.hide_render = True; n += 1
     print('CLEARPROPS', n, flush=True)
+    if os.environ.get('CAMDBG'):                      # what is the lens inside of?
+        p = Vector(self.cam[1](self.dur * .6)[0]); bpy.context.view_layer.update(); hits = []
+        for o in bpy.data.objects:
+            if o.hide_render: continue
+            if o.type == 'MESH':
+                bb = [o.matrix_world @ Vector(v) for v in o.bound_box]
+            elif o.instance_type == 'COLLECTION' and o.instance_collection:
+                cen, r = _coll_radius(o.instance_collection); c = o.matrix_world @ cen; r *= max(o.scale)
+                bb = [c - Vector((r, r, r)), c + Vector((r, r, r))]
+            else: continue
+            lo = Vector([min(v[i] for v in bb) for i in range(3)]); hi = Vector([max(v[i] for v in bb) for i in range(3)])
+            if all(lo[i] <= p[i] <= hi[i] for i in range(3)): hits.append(o.name)
+        ter = getattr(self, 'ter', None)
+        self.at(self.dur * .6)
+        print('BEASTS', [(o.name, tuple(round(v, 1) for v in o.location), tuple(round(v, 2) for v in o.scale)) for o in bpy.data.objects if o.name.endswith('_root')][:12], flush=True)
+        print('CAMDBG', tuple(round(v, 2) for v in p), 'ground', round(ter.z(p.x, p.y), 2) if ter else None, hits[:40], flush=True)
 F.Shot.clear_camera = _clear_props
+
+_cam0 = F.Shot.camera
+def _camera_safe(self, fn, *a, **k):
+    """never let the lens sink under the terrain (rough ground between keyed positions)"""
+    ter = getattr(self, 'ter', None)
+    if ter is not None:
+        f0 = fn
+        def fn(t):
+            r = list(f0(t)); p = Vector(r[0]); g = ter.z(p.x, p.y) + .3
+            if p.z < g: r[0] = Vector((p.x, p.y, g))
+            return tuple(r)
+    return _cam0(self, fn, *a, **k)
+F.Shot.camera = _camera_safe
 
 SHOTS = {k[2:]: v for k, v in list(globals().items()) if k.startswith('s_') and callable(v)}
 
