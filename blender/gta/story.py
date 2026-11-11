@@ -167,12 +167,12 @@ def carry_rig(sh, son, cyl, extra=None):
     sc = son.s
     def hands(d):
         loc, yaw, cr = d['loc'], d['yaw'], d.get('crouch', 0)
-        z = son.L - cr / sc + son.TL * .5
-        d['handL'] = l2w(loc, yaw, sc, (-.17, -.34, z)); d['handR'] = l2w(loc, yaw, sc, (.17, -.34, z))
+        z = son.L - cr / sc + son.TL * .62
+        yy = -(son.rw * .9 + .1 / sc); d['handL'] = l2w(loc, yaw, sc, (-.14, yy, z)); d['handR'] = l2w(loc, yaw, sc, (.14, yy, z))
         return d
     def cu_(t):
         bpy.context.view_layer.update(); d = son.fn(t); cr = d.get('crouch', 0)
-        local = Vector((0, -.34, son.L - cr / sc - .02 / sc))
+        local = Vector((0, -(son.rw * .9 + .13 / sc), son.L - cr / sc + .06 / sc))
         cyl.matrix_world = son.root.matrix_world @ Matrix.Translation(local) @ Matrix.Scale(cyl.get('s', 1.0) / sc, 4)
     sh.updates.append(cu_)
     return hands
@@ -342,13 +342,20 @@ def s_escape(sh):
     sh.camera(cam_keys([(0, (DX + .9, -4.4, 1.25), (DX, -.3, 1.05), 26), (sh.dur, (DX + .8, -3.9, 1.2), (DX, -.6, 1.0), 28)], shake=.006), fstop=4)
 
 
-def mummy_scene(sh, son_face, mummy_face, son_talk=None, mummy_talk=None, cyl_t=None):
+def mummy_scene(sh, son_face, mummy_face, son_talk=None, mummy_talk=None, cyl_t=None, son_yaw=0):
     son = cast(sh, 'SON', SON); mum = cast(sh, 'MUMMY', MUMMY); cyl = HR.lpg_cylinder('lpg', .78)
-    a_s = stand(sh, son, (PORCH.x, PORCH.y), 0, '77_02', 1.0, face=son_face, z=PORCH.z, talk=son_talk)
+    a_s = stand(sh, son, (PORCH.x, PORCH.y), son_yaw, '77_02', 1.0, face=son_face, z=PORCH.z, talk=son_talk)
     a_m = stand(sh, mum, (GATE.x, GATE.y), 180, '80_48', 1.2, face=mummy_face, z=GATE.z, talk=mummy_talk)
     c0 = Vector((GATE.x - .45, GATE.y - .05, GATE.z))
     if cyl_t is None:
         cyl.location = c0
+        def rest(t, d):
+            d['handL'] = d['handR'] = None; return d
+        override(a_s, rest)
+        def hips(t, d):                                 # Mummy: hands on hips, boss stance
+            m = mum.s; z = mum.L - d.get('crouch', 0) / m + mum.TL * .1
+            d['handL'] = l2w(d['loc'], d['yaw'], m, (-mum.rw * 1.25, .02, z)); d['handR'] = l2w(d['loc'], d['yaw'], m, (mum.rw * 1.25, .02, z)); return d
+        override(a_m, hips)
     else:
         hand_s = carry_rig(sh, son, cyl) if False else None
         def mm(t, d):                                   # Mummy lifts it (effortlessly) and pushes it into his arms
@@ -385,7 +392,7 @@ def s_mummy(sh):
 def s_walk(sh):
     """SON: 'Just taking a walk.'  The most innocent smile ever attempted."""
     stage(sh, 'day', 35, 200)
-    son, mum, cyl = mummy_scene(sh, [(0, 'nervous'), (.3, 'grin_teeth')], [(0, 'suspicious')], son_talk=[(.56, 1.81, .6)])
+    son, mum, cyl = mummy_scene(sh, [(0, 'nervous'), (.3, 'grin_teeth')], [(0, 'suspicious')], son_talk=[(.56, 1.81, .6)], son_yaw=32)
     def cam(t):
         h = head_of(son, -.05)
         return (Vector((DX + .95, -1.45, 1.15)) + Vector((-.05, .1, 0)) * t / sh.dur, h, 30, 0, h, .004)
@@ -417,8 +424,8 @@ def s_street(sh):
     son = cast(sh, 'SON', SON); cyl = HR.lpg_cylinder('lpg', .78)
     p0, p1 = Vector((DX + .3, -3.3, 0)), Vector((DX + 1.6, -4.4, 0))
     carry_walk(sh, son, cyl, p0, p1, sh.dur, [(0, 'strain')])
-    Z.extras(sh, [(DX - 2.6, -8.0, 10), (DX - 3.4, -7.7, -20), (DX + 3.6, -8.1, -30), (DX + 4.6, -2.0, 200), (DX - 2.4, -2.1, 160)], seed=22, face='laugh', look=lambda t: (DX + 1, -4, 1.2))
-    sh.camera(cam_keys([(0, (DX - 1.2, -6.6, 1.5), (DX + .6, -3.7, .9), 26), (sh.dur, (DX - .7, -6.6, 1.45), (DX + 1.4, -4.2, .9), 28)], shake=.004), fstop=4)
+    Z.extras(sh, [(DX - 2.6, -2.05, 150), (DX - 3.6, -2.2, 140), (DX - 4.5, -2.0, 170), (DX + 4.6, -2.0, 200), (DX - 2.6, -8.0, 10)], seed=22, face='laugh', look=lambda t: (DX + 1, -4, 1.2))
+    sh.camera(cam_keys([(0, (DX + 3.3, -5.4, 1.3), (DX + .5, -3.5, .85), 30), (sh.dur, (DX + 3.1, -5.5, 1.25), (DX + 1.2, -4.0, .85), 34)], shake=.004), fstop=4)
 
 
 def s_camera(sh):

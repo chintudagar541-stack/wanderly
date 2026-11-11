@@ -234,7 +234,7 @@ def interior(night=False):
     cyl('chai_cup', .035, .07, (TABLE.x + .3, TABLE.y - .1, .43), plain('cup', '#f4f0e8', .4), v=14)
     cyl('chai_tea', .032, .005, (TABLE.x + .3, TABLE.y - .1, .465), plain('chai', '#a8703a', .3), v=14)
     cyl('saucer', .06, .008, (TABLE.x + .3, TABLE.y - .1, .396), plain('cup', '#f4f0e8', .4), v=18)
-    C.sign('paper_on_table', 'THE DAILY PRAGATI', .36, .26, (TABLE.x - .25, TABLE.y + .05, .4), facing=(0, -1), bg='#ece8dc', fg='#222', size=(500, 360), font_scale=.18, **TY.kw('playfair')).rotation_euler = (math.radians(-90), 0, .3)
+    pass
     v = TV
     put('modern_wooden_cabinet', (v.x, v.y + .02, 0), 180, (.62, .8, .9), fallback=lambda: box('tv_cab', (1.3, .45, .55), (v.x, v.y, .28), plain('teak', '#5a3420', .45), bevel=.02))
     if put('Television_01', (v.x, v.y + .02, .61), 180, 1.3) is None:
