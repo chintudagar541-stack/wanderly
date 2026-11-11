@@ -1,0 +1,25 @@
+00:00.615  cycles           | WARNING CUEW initialization failed: Error opening the library
+[lib] hdri sun 146 elev 48.5 -> az 120
+[lib] ph_find textures ['asphalt', 'road'] -> asphalt_02
+[lib] ph_find textures ['concrete', 'pavement', 'floor'] -> concrete_pavement
+[lib] ph_find textures ['grass', 'lawn', 'meadow'] -> aerial_grass_rock
+[lib] ph_find textures ['plaster', 'concrete', 'wall'] -> painted_plaster_wall
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+RSS built 561 MB
+RSS extras 561 MB
+CLEARCAM bite 0
+RSS lod 718 MB
+RSS posed 719 MB
+RSS depsgraph 719 MB
+OBJECTS 1951 MESHES 1640 IMAGES 49 38 Mpx
+01:17.794  render           | Saved: '/home/runner/work/wanderly/wanderly/out/bite_0.png'
+RTIME 62.1
+RSS rendered 1632 MB
+RENDERED bite 2.15
