@@ -1,4 +1,4 @@
-00:00.854  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.664  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] hdri sun 146 elev 48.5 -> az 200
 [lib] ph_find textures ['marble', 'floor', 'tiles'] -> floor_tiles_06
 [lib] ph_find textures ['plaster', 'painted', 'wall'] -> painted_plaster_wall
@@ -54,14 +54,14 @@
 /home/runner/work/wanderly/wanderly/blender/gta/story.py:64: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
   m = bpy.data.materials.new('saree'); m.use_nodes = True; N = m.node_tree.nodes; L = m.node_tree.links; b = N['Principled BSDF']
 SEAT_Z 0.422 sofa_03
-RSS built 1305 MB
-RSS extras 1305 MB
+RSS built 1301 MB
+RSS extras 1301 MB
 CLEARCAM walk 0
-RSS lod 1339 MB
-RSS posed 1354 MB
-RSS depsgraph 1354 MB
-OBJECTS 2981 MESHES 2726 IMAGES 166 155 Mpx
-01:14.562  render           | Saved: '/home/runner/work/wanderly/wanderly/out/walk_0.png'
-RTIME 55.7
-RSS rendered 5000 MB
+RSS lod 1333 MB
+RSS posed 1349 MB
+RSS depsgraph 1349 MB
+OBJECTS 2979 MESHES 2724 IMAGES 166 155 Mpx
+01:16.008  render           | Saved: '/home/runner/work/wanderly/wanderly/out/walk_0.png'
+RTIME 56.5
+RSS rendered 5051 MB
 RENDERED walk 1.26
