@@ -315,7 +315,7 @@ def footprints(path, step=.62, name='fp'):
     m = plain('footprint', '#4a3e30', .95)
     out = []
     for k, (a, b) in enumerate(zip(path[:-1], path[1:])):
-        a, b = Vector(a), Vector(b); d = (b - a); L = d.length; dirn = d.normalized(); side = Vector((-dirn.y, dirn.x, 0))
+        a, b = Vector((a[0], a[1], 0)), Vector((b[0], b[1], 0)); d = (b - a); L = d.length; dirn = d.normalized(); side = Vector((-dirn.y, dirn.x, 0))
         n = int(L / step)
         for j in range(n):
             p = a + dirn * (j * step) + side * (.13 if (j + k) % 2 else -.13)

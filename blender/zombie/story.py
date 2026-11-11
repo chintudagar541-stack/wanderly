@@ -156,10 +156,10 @@ def phone_prop(name, txt='NO WI-FI'):
 def glasses_prop(name):
     root = bpy.data.objects.new(name, None); T.coll('Town').objects.link(root)
     rim = T.plain('rim', '#1a1a1e', .4, .5)
-    for x in (-.075, .075):
-        o = T.lib.torus(f'{name}{x}', .055, .009, (x, 0, 0), rim, rot=(math.pi / 2, 0, 0), seg=24, mseg=6); o.parent = root
-        g = T.cyl(f'{name}g{x}', .052, .004, (x, 0, 0), T.plain('lens', '#d8e8f0', .05, transmit=.8), rot=(math.pi / 2, 0, 0), v=20); g.parent = root
-    br = T.box(name + 'br', (.05, .01, .01), (0, 0, .015), rim); br.parent = root
+    for x in (-.12, .12):
+        o = T.lib.torus(f'{name}{x}', .075, .011, (x, 0, 0), rim, rot=(math.pi / 2, 0, 0), seg=24, mseg=6); o.parent = root
+        g = T.cyl(f'{name}g{x}', .072, .004, (x, 0, 0), T.plain('lens', '#d8e8f0', .05, transmit=.8), rot=(math.pi / 2, 0, 0), v=20); g.parent = root
+    br = T.box(name + 'br', (.1, .012, .012), (0, 0, .02), rim); br.parent = root
     return root
 
 
@@ -178,7 +178,7 @@ def megaphone(name):
 
 
 def pistol(name):
-    g = PR.revolver(name); g.scale = (1.3, 1.3, 1.3); return g
+    g = PR.revolver(name); g.scale = (2.0, 2.0, 2.0); return g
 
 
 def tp_stack(name, n=4):
@@ -205,10 +205,10 @@ def police_line(sh, y, xs, face='determined', aim=None, seed=0):
             g = pistol(f'gun{k}')
             def mod(t, s, c=c):
                 f, sd = side_of(c); tg = Vector(aim(t)); h = head_of(c, -.35)
-                d = (tg - h); d.z = 0; d.normalize()
-                s['handR'] = tuple(h + d * .48 + sd * .06); s['handL'] = tuple(h + d * .42 - sd * .02 - Vector((0, 0, .04))); return s
+                d = (tg - h); d.z = 0; d.normalize(); h = head_of(c, -.22)
+                s['handR'] = tuple(h + d * .5 + sd * .06); s['handL'] = tuple(h + d * .44 - sd * .02 - Vector((0, 0, .04))); return s
             override(a, mod)
-            hold(sh, g, c, 'R', (0, 0, .03), track=lambda t, c=c: (Vector(aim(t)) - head_of(c, -.35)).normalized())
+            hold(sh, g, c, 'R', (0, 0, .03), track=lambda t, c=c: (Vector(aim(t)) - head_of(c, -.22)).normalized())
     return cops
 
 
@@ -251,7 +251,7 @@ def s_jogger(sh):
             s['handR'] = tuple(Vector(s['handR']).lerp(h + Vector((-.2, .65, .15)), u))
         return s
     override(a, mod)
-    sh.camera(cam_keys([(0, (6.4, 189.0, 1.5), (7.6, 194.5, 1.25), 32), (sh.dur, (6.5, 190.2, 1.45), (7.4, 194.0, 1.3), 36)], shake=.012), fstop=2.8)
+    sh.camera(cam_keys([(0, (4.7, 188.6, 1.45), (7.5, 194.6, 1.25), 30), (sh.dur, (4.9, 189.8, 1.45), (7.4, 194.0, 1.3), 34)], shake=.012), fstop=2.8)
     sh.keylight(12, (1, .78, .58))
 
 
@@ -260,9 +260,9 @@ def s_mile(sh):
     dawn haze, and one tiny swaying silhouette on it."""
     stage(sh, 'sunset', 6, 20)
     j = toon(sh, 'JOG', JOG)
-    stand(sh, j, (7.6, 193.4), 160, '77_02', 1.4, face=[(0, 'scream')], look=lambda t: (1.0, 222, 1.4))
-    zombie(sh, (0.6, 224.0, 0), yaw=0, speed=.25)
-    sh.camera(cam_keys([(0, (8.3, 191.3, 1.75), (2.0, 222.0, 1.4), 40), (sh.dur, (8.2, 191.6, 1.72), (1.4, 222.0, 1.3), 52)], shake=.006), fstop=5)
+    stand(sh, j, (6.95, 193.4), 160, '77_02', 1.4, face=[(0, 'scream')], look=lambda t: (1.0, 222, 1.4))
+    zombie(sh, (0.8, 222.0, 0), yaw=0, speed=.25)
+    sh.camera(cam_keys([(0, (6.5, 190.6, 1.85), (0.9, 221.5, 1.2), 50), (sh.dur, (6.5, 190.9, 1.85), (0.9, 221.5, 1.15), 62)], shake=.006), fstop=6)
 
 
 def s_alarm(sh):
@@ -303,7 +303,7 @@ def s_boarded(sh):
         k = abs(math.sin(t * 5.5)); s['handR'] = (C.FRONT - .12, y0 - .1, 1.75 + .3 * k); s['handL'] = (C.FRONT - .1, y0 + .45, 1.6); return s
     override(a, mod); hold(sh, ham, w, 'R', (0, 0, .05), rot=lambda t: (0, math.radians(-50 + 40 * abs(math.sin(t * 5.5))), 0))
     extras(sh, [(-8.6, 44, 90), (8.4, 52, -90)], seed=3, face='worry', walkers=[(-7.4, 60, 0, 1.6), (7.0, 70, 0, 1.5)])
-    sh.camera(cam_keys([(0, (6.6, 27.6, 1.7), (9.3, 34.5, 1.8), 28), (sh.dur, (6.3, 28.8, 1.65), (9.4, 35.5, 1.8), 30)], shake=.009), fstop=3.2)
+    sh.camera(cam_keys([(0, (6.9, 37.6, 1.75), (9.2, 33.0, 1.65), 28), (sh.dur, (7.1, 37.0, 1.7), (9.2, 33.2, 1.65), 30)], shake=.009), fstop=3.2)
 
 
 def s_shelf(sh):
@@ -312,7 +312,7 @@ def s_shelf(sh):
     mart_y = None
     for o in bpy.data.objects:
         if o.name.endswith('_sign') and o.name.startswith('bld') and 'MART' in o.data.materials[0].name: pass
-    ys = [(-8.2, 3.0), (-7.4, 5.5), (-8.8, 7.8), (-7.0, 9.6)]
+    ys = [(-8.4, 4.0), (-7.4, 6.2), (-8.8, 8.6), (-7.2, 10.4)]
     for k, (x, y) in enumerate(ys):
         ch = toon(sh, f'P_shop{k}', CIV(20 + k))
         a = walk(sh, ch, (x, y, C.CURB), 0, '09_01' if k % 2 == 0 else '82_09', .3, face=[(0, ['fear', 'determined', 'grin', 'worry'][k])], speed=.8 if k % 2 == 0 else 1.3)
@@ -321,7 +321,7 @@ def s_shelf(sh):
             f, sd = side_of(ch); c = head_of(ch, -.55) + f * .3; s['handL'] = tuple(c - sd * .16); s['handR'] = tuple(c + sd * .16); return s
         override(a, mod)
         hold(sh, tp, ch, 'R', (0, 0, .0))
-    sh.camera(cam_keys([(0, (-3.6, -3.0, 1.3), (-7.8, 5.0, 1.3), 28), (sh.dur, (-3.8, -2.2, 1.3), (-7.8, 3.6, 1.3), 30)], shake=.012), fstop=3.2)
+    sh.camera(cam_keys([(0, (-7.3, -1.6, 1.45), (-8.0, 6.0, 1.3), 28), (sh.dur, (-7.3, -1.2, 1.45), (-8.0, 4.6, 1.3), 30)], shake=.012), fstop=3.2)
 
 
 def s_waited(sh):
@@ -339,7 +339,7 @@ def s_noon(sh):
     """'By noon, the zombie had reached the bus stop.'  High noon, wide: the zombie shuffles up to the bus stop."""
     stage(sh, 'day', 72, 160)
     zombie(sh, (C.ROAD + 1.0, C.BUS_Y + 4.0, C.CURB), yaw=0, speed=.25)
-    sh.camera(cam_keys([(0, (-3.0, C.BUS_Y - 9, 2.4), (C.ROAD + 1.6, C.BUS_Y + 1.5, 1.3), 28), (sh.dur, (-2.6, C.BUS_Y - 8, 2.1), (C.ROAD + 1.6, C.BUS_Y + 1.8, 1.3), 30)], shake=.005), fstop=6)
+    sh.camera(cam_keys([(0, (1.0, C.BUS_Y - 5.5, 1.9), (C.ROAD + 1.3, C.BUS_Y + 1.8, 1.2), 30), (sh.dur, (1.4, C.BUS_Y - 4.6, 1.8), (C.ROAD + 1.3, C.BUS_Y + 2.0, 1.2), 33)], shake=.005), fstop=5)
 
 
 def s_bus(sh):
@@ -351,7 +351,7 @@ def s_bus(sh):
     def sit(t, s):
         s['crouch'] = .62; s['loc'] = (bx - .2, C.BUS_Y, C.CURB + .02); return s
     override(a, sit)
-    sh.camera(cam_keys([(0, (1.0, C.BUS_Y - 4.6, 1.5), (bx, C.BUS_Y + .3, 1.2), 30), (sh.dur, (2.0, C.BUS_Y - 3.0, 1.35), (bx, C.BUS_Y + .3, 1.1), 34)], shake=.004), fstop=3.5)
+    sh.camera(cam_keys([(0, (4.2, C.BUS_Y - 3.4, 1.45), (bx - .2, C.BUS_Y + .2, 1.15), 32), (sh.dur, (4.8, C.BUS_Y - 2.4, 1.35), (bx - .2, C.BUS_Y + .2, 1.1), 38)], shake=.004), fstop=3.2)
     sh.keylight(9, (1, .7, .5))
 
 
@@ -360,7 +360,7 @@ def s_bored(sh):
     """'On day two, the city got bored.'  The barrier line: one cop asleep standing up, one yawning, one on his phone."""
     stage(sh, 'day', 30, 120, boarded=True)
     C.barriers(C.CITYHALL_Y + 14, n=8)
-    cops = police_line(sh, C.CITYHALL_Y + 12.6, [-3.0, -.4, 2.2, 4.8], face=['bored', 'bored', 'deadpan', 'bored'])
+    cops = police_line(sh, C.CITYHALL_Y + 12.6, [-2.2, -.6, 1.0, 2.6], face=['bored', 'bored', 'deadpan', 'bored'])
     ph = phone_prop('ph1')
     for a in sh.actors:
         if getattr(a, 'ch', None) is cops[2]:
@@ -372,7 +372,7 @@ def s_bored(sh):
     extras(sh, [(-6.8, C.CITYHALL_Y + 11.0, 150), (6.9, C.CITYHALL_Y + 11.2, 200)], seed=5, face=['bored', 'bored'])
     for k, (x, y) in enumerate(((-6.8, C.CITYHALL_Y + 11.0),)):
         pass
-    sh.camera(cam_keys([(0, (-4.8, C.CITYHALL_Y + 16.6, 1.6), (0.5, C.CITYHALL_Y + 12.4, 1.4), 26), (sh.dur, (-3.6, C.CITYHALL_Y + 16.4, 1.55), (1.2, C.CITYHALL_Y + 12.4, 1.4), 28)], shake=.006), fstop=3.2)
+    sh.camera(cam_keys([(0, (-3.6, C.CITYHALL_Y + 15.6, 1.7), (0.2, C.CITYHALL_Y + 12.5, 1.35), 26), (sh.dur, (-2.8, C.CITYHALL_Y + 15.5, 1.65), (.9, C.CITYHALL_Y + 12.5, 1.35), 28)], shake=.006), fstop=3.2)
 
 
 def s_news(sh):
@@ -380,7 +380,8 @@ def s_news(sh):
     F.setup(sh, 'night', 20, 120, town=False, haze=False); sh.town = False
     at = C.studio()
     an = toon(sh, 'ANCHOR', ANCHOR)
-    stand(sh, an, (at.x - .4, at.y + .5), 0, '80_48', 1.0, face=[(0, 'grin')], z=0, talk=[(0, 2.6, 1.0)])
+    T.box('st_riser', (2.4, 1.4, .4), (at.x - .4, at.y + .55, .2), T.plain('riser', '#1a2030', .4))
+    stand(sh, an, (at.x - .4, at.y + .5), 0, '80_48', 1.0, face=[(0, 'grin')], z=.4, talk=[(0, 2.6, 1.0)])
     sh.camera(cam_keys([(0, (at.x + .6, at.y - 4.6, 1.7), (at.x + .55, at.y + 2.0, 1.9), 26), (sh.dur, (at.x + .4, at.y - 3.6, 1.65), (at.x + .6, at.y + 2.0, 1.95), 28)], shake=.003), fstop=4)
 
 
@@ -390,8 +391,8 @@ def s_cart(sh):
     stage(sh, 'day', 34, 120)
     cart = Vector((2.2, C.CART_Y, 0))
     b = toon(sh, 'BARISTA', BARISTA)
-    stand(sh, b, (cart.x + 1.0, cart.y - .2), -90, '80_48', 1.0, face=[(0, 'grin')], z=0)
-    zombie(sh, (0.4, C.CART_Y + 9.5, 0), yaw=0, speed=.25)
+    stand(sh, b, (cart.x - 1.0, cart.y - .5), 200, '80_48', 1.0, face=[(0, 'grin')], z=0)
+    zombie(sh, (0.2, C.CART_Y + 6.5, 0), yaw=0, speed=.25)
     extras(sh, [(-7.6, C.CART_Y - 4, 90), (-7.8, C.CART_Y - 3, 0)], seed=6, face='watch', look=lambda t: (0.4, C.CART_Y + 9, 1.4))
     sh.camera(cam_keys([(0, (-1.6, C.CART_Y - 5.4, 1.6), (1.4, C.CART_Y + 2.0, 1.3), 26), (sh.dur, (-1.2, C.CART_Y - 4.2, 1.5), (1.4, C.CART_Y + 2.5, 1.3), 28)], shake=.006), fstop=4)
 
@@ -417,34 +418,34 @@ def s_bought(sh):
         return s
     override(ab, bmod)
     hold(sh, cup, z, 'R', (0, 0, -.04))
-    sh.camera(cam_keys([(0, (cart.x - .3, cart.y - 3.0, 1.55), (cart.x - .4, cart.y, 1.3), 30), (sh.dur, (cart.x - .5, cart.y - 2.4, 1.5), (cart.x - .6, cart.y, 1.35), 34)], shake=.005), fstop=2.8)
+    sh.camera(cam_keys([(0, (cart.x - .2, cart.y - 3.9, 1.6), (cart.x - .1, cart.y, 1.25), 26), (sh.dur, (cart.x - .3, cart.y - 3.3, 1.55), (cart.x - .2, cart.y, 1.3), 29)], shake=.005), fstop=3.2)
 
 
 # ------------------------------------------------------------------ 15-19  City Hall, aim, the bite
-def ch_scene(sh, aim_t=None, cops=True, mayor_xy=(0.3, None), face=None):
-    stage(sh, 'day', 30, 120, boarded=True)
+def ch_scene(sh, aim_t=None, cops=True, mayor_xy=(0.3, None), face=None, barrier=False):
+    stage(sh, 'day', 38, 320, boarded=True)
     yC = C.CITYHALL_Y
-    C.barriers(yC + 14, n=8)
+    if barrier: C.barriers(yC + 14, n=8)
     if cops:
         target = lambda t: (0.3, yC + 18.0, 1.3)
-        police_line(sh, yC + 12.6, [-5.6, -2.8, 3.0, 5.8], face=face or 'determined', aim=target)
+        police_line(sh, yC + 12.6, [-2.4, -1.2, 1.8, 3.0], face=face or 'determined', aim=target)
     extras(sh, [(-7.6, yC + 11.0, 180), (7.4, yC + 10.6, 180), (-8.6, yC + 12.4, 160), (8.6, yC + 12.2, 200)], seed=8, face=['fear', 'watch', 'worry', 'shock'], look=lambda t: (0.3, yC + 18, 1.5))
 
 
 def s_cityhall(sh):
     """'On day three, it finally reached City Hall.'  High wide from the City Hall portico: the zombie shuffles across the
     plaza towards the police line."""
-    ch_scene(sh)
+    ch_scene(sh, barrier=True)
     yC = C.CITYHALL_Y
     zombie(sh, (0.3, yC + 23.0, 0), yaw=0, speed=.3)
-    sh.camera(cam_keys([(0, (-2.0, yC + 3.5, 8.0), (0.3, yC + 20.0, 1.0), 26), (sh.dur, (-1.6, yC + 4.5, 6.2), (0.3, yC + 20.5, 1.1), 28)], shake=.004), fstop=6)
+    sh.camera(cam_keys([(0, (-1.8, yC + 8.2, 3.6), (0.3, yC + 21.5, 1.0), 26), (sh.dur, (-1.5, yC + 9.0, 3.0), (0.3, yC + 21.8, 1.1), 28)], shake=.004), fstop=6)
 
 
 def s_aim(sh):
     """'The whole police force took aim.'  Zombie's-eye dolly along the line of pistols pointed straight at us."""
     ch_scene(sh)
     yC = C.CITYHALL_Y
-    sh.camera(cam_keys([(0, (-4.0, yC + 16.4, 1.35), (-1.0, yC + 12.6, 1.4), 26), (sh.dur, (3.6, yC + 16.2, 1.35), (1.4, yC + 12.6, 1.4), 26)], shake=.008), fstop=3.2)
+    sh.camera(cam_keys([(0, (-1.6, yC + 16.6, 1.45), (-1.0, yC + 12.6, 1.45), 24), (sh.dur, (2.4, yC + 16.5, 1.45), (1.6, yC + 12.6, 1.45), 24)], shake=.008), fstop=3.5)
 
 
 def s_bite(sh):
@@ -488,7 +489,7 @@ def s_gently(sh):
     override(az, zmod)
     cu_two = lambda t: head_of(m, -.2).lerp(head_of(z, -.2), .5)
     def cam(t):
-        c = cu_two(t); return (c + Vector((-1.75 + .2 * t / sh.dur, -.3, .25)), c, 36, 0, c, .004)
+        c = cu_two(t); return (c + Vector((-1.6 + .2 * t / sh.dur, .75, .2)), c, 34, 0, c, .004)
     sh.camera(cam, fstop=2.4)
 
 
