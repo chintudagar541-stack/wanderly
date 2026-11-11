@@ -1,0 +1,67 @@
+00:00.854  cycles           | WARNING CUEW initialization failed: Error opening the library
+[lib] hdri sun 146 elev 48.5 -> az 200
+[lib] ph_find textures ['marble', 'floor', 'tiles'] -> floor_tiles_06
+[lib] ph_find textures ['plaster', 'painted', 'wall'] -> painted_plaster_wall
+[lib] ph_find textures ['plaster', 'painted', 'wall'] -> painted_plaster_wall
+[lib] ph_find textures ['wood', 'planks', 'door'] -> wood_planks_dirt
+[lib] model sofa_03 1
+[lib] model throw_pillows_01 2
+[lib] model modern_coffee_table_01 1
+[lib] model modern_wooden_cabinet 5
+[lib] model Television_01 1
+[lib] model potted_plant_02 3
+[lib] model wall_clock 4
+[lib] model hanging_picture_frame_01 1
+[lib] model hanging_picture_frame_02 1
+[lib] model wicker_basket_01 1
+[lib] ph_find textures ['wood', 'planks'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'veneer', 'oak'] -> oak_veneer_01
+[lib] model painted_wooden_nightstand 2
+[lib] ph_find textures ['wood', 'veneer'] -> rosewood_veneer1
+[lib] model gaming_console 2
+[lib] model gamepad 1
+[lib] model plastic_monobloc_chair_01 1
+[lib] model steel_frame_shelves_01 1
+[lib] model ceiling_fan 2
+[lib] ph_find textures ['asphalt', 'road'] -> asphalt_02
+[lib] ph_find textures ['dirt', 'ground', 'gravel'] -> gravel_ground_01
+[lib] ph_find textures ['paving', 'cobblestone', 'brick floor'] -> cobblestone_04
+[lib] model water_manhole_cover 2
+[lib] ph_find textures ['plaster', 'painted', 'wall'] -> painted_plaster_wall
+[lib] ph_find textures ['plaster', 'painted', 'wall'] -> painted_plaster_wall
+[lib] model planter_pot_clay 1
+[lib] ph_find textures ['plaster', 'painted', 'wall'] -> painted_plaster_wall
+[lib] ph_find textures ['plaster', 'painted', 'wall'] -> painted_plaster_wall
+[lib] ph_find textures ['concrete', 'plaster'] -> concrete_floor_worn_001
+[lib] ph_find textures ['plaster', 'painted', 'wall'] -> painted_plaster_wall
+[lib] model potted_plant_04 4
+[lib] ph_find textures ['plaster', 'painted', 'wall'] -> painted_plaster_wall
+[lib] ph_find textures ['plaster', 'painted', 'wall'] -> painted_plaster_wall
+[lib] ph_find textures ['plaster', 'painted', 'wall'] -> painted_plaster_wall
+[lib] ph_find textures ['plaster', 'painted', 'wall'] -> painted_plaster_wall
+[lib] ph_find textures ['plaster', 'painted', 'wall'] -> painted_plaster_wall
+[lib] ph_find textures ['corrugated', 'metal'] -> corrugated_iron
+[lib] ph_find textures ['wood', 'planks'] -> wood_planks_dirt
+[lib] model brass_pot_01 2
+[lib] model plastic_crate_01 1
+[lib] ph_find textures ['plaster', 'painted', 'wall'] -> painted_plaster_wall
+[lib] ph_find textures ['plaster', 'painted', 'wall'] -> painted_plaster_wall
+[lib] ph_find textures ['concrete'] -> concrete_floor_worn_001
+[lib] model tree_small_02 12
+[lib] model covered_car 5
+[lib] model trashbag 1
+[lib] model old_tyre 1
+/home/runner/work/wanderly/wanderly/blender/gta/story.py:64: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  m = bpy.data.materials.new('saree'); m.use_nodes = True; N = m.node_tree.nodes; L = m.node_tree.links; b = N['Principled BSDF']
+SEAT_Z 0.422 sofa_03
+RSS built 1305 MB
+RSS extras 1305 MB
+CLEARCAM walk 0
+RSS lod 1339 MB
+RSS posed 1354 MB
+RSS depsgraph 1354 MB
+OBJECTS 2981 MESHES 2726 IMAGES 166 155 Mpx
+01:14.562  render           | Saved: '/home/runner/work/wanderly/wanderly/out/walk_0.png'
+RTIME 55.7
+RSS rendered 5000 MB
+RENDERED walk 1.26
