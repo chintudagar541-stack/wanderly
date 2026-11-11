@@ -1,49 +1,38 @@
-/home/runner/work/wanderly/wanderly/blender/gta/phcheck.py:12: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+/home/runner/work/wanderly/wanderly/blender/gta/phcheck.py:13: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
   w = bpy.data.worlds.new('w'); sc.world = w; w.use_nodes = True; w.node_tree.nodes['Background'].inputs[1].default_value = 1.2
 [lib] model old_bed_frame 1
-00:02.994  render           | Saved: '/tmp/th_old_bed_frame.png'
-[lib] model GothicBed_01 4
-00:04.864  render           | Saved: '/tmp/th_GothicBed_01.png'
+00:03.665  render           | Saved: '/tmp/th_old_bed_frame.png'
 [lib] model painted_wooden_nightstand 2
-00:07.019  render           | Saved: '/tmp/th_painted_wooden_nightstand.png'
+00:05.976  render           | Saved: '/tmp/th_painted_wooden_nightstand.png'
+[lib] retry https://api.polyhaven.com/files/ClassicNightstand_01 <urlopen error [SSL: SSLV3_ALERT_HANDSHAKE_FAILURE] ssl/tls alert handshake failure (_ssl.c:1035)>
 [lib] model ClassicNightstand_01 1
-00:09.165  render           | Saved: '/tmp/th_ClassicNightstand_01.png'
+00:20.564  render           | Saved: '/tmp/th_ClassicNightstand_01.png'
 [lib] model alarm_clock_01 13
-00:11.501  render           | Saved: '/tmp/th_alarm_clock_01.png'
+00:22.950  render           | Saved: '/tmp/th_alarm_clock_01.png'
 [lib] model metal_office_desk 9
-00:13.498  render           | Saved: '/tmp/th_metal_office_desk.png'
+00:25.364  render           | Saved: '/tmp/th_metal_office_desk.png'
 [lib] model small_wooden_table_01 1
-00:15.579  render           | Saved: '/tmp/th_small_wooden_table_01.png'
+00:27.586  render           | Saved: '/tmp/th_small_wooden_table_01.png'
 [lib] model classic_laptop 3
-00:17.835  render           | Saved: '/tmp/th_classic_laptop.png'
+00:30.210  render           | Saved: '/tmp/th_classic_laptop.png'
 [lib] model gaming_console 2
-00:23.899  render           | Saved: '/tmp/th_gaming_console.png'
+00:33.912  render           | Saved: '/tmp/th_gaming_console.png'
 [lib] model gamepad 1
-00:27.545  render           | Saved: '/tmp/th_gamepad.png'
+00:36.243  render           | Saved: '/tmp/th_gamepad.png'
 [lib] model desk_lamp_arm_01 43
-00:29.943  render           | Saved: '/tmp/th_desk_lamp_arm_01.png'
+00:38.901  render           | Saved: '/tmp/th_desk_lamp_arm_01.png'
 [lib] model plastic_monobloc_chair_01 1
-00:52.708  render           | Saved: '/tmp/th_plastic_monobloc_chair_01.png'
+01:05.875  render           | Saved: '/tmp/th_plastic_monobloc_chair_01.png'
 [lib] model wooden_bookshelf_worn 1
-00:54.709  render           | Saved: '/tmp/th_wooden_bookshelf_worn.png'
-[lib] model book_encyclopedia_set_01 21
-00:56.938  render           | Saved: '/tmp/th_book_encyclopedia_set_01.png'
+01:09.620  render           | Saved: '/tmp/th_wooden_bookshelf_worn.png'
 [lib] model steel_frame_shelves_01 1
-00:58.913  render           | Saved: '/tmp/th_steel_frame_shelves_01.png'
-[lib] model electric_stove 24
-01:01.181  render           | Saved: '/tmp/th_electric_stove.png'
-[lib] model pot_enamel_01 2
-01:04.822  render           | Saved: '/tmp/th_pot_enamel_01.png'
-[lib] model brass_pot_01 2
-01:08.564  render           | Saved: '/tmp/th_brass_pot_01.png'
-[lib] model brass_diya_lantern 3
-01:13.617  render           | Saved: '/tmp/th_brass_diya_lantern.png'
-[lib] model wicker_basket_01 1
-01:17.233  render           | Saved: '/tmp/th_wicker_basket_01.png'
+01:12.110  render           | Saved: '/tmp/th_steel_frame_shelves_01.png'
 [lib] model dining_chair_02 1
-01:19.431  render           | Saved: '/tmp/th_dining_chair_02.png'
-[lib] model dining_table 2
-01:21.228  render           | Saved: '/tmp/th_dining_table.png'
+01:14.547  render           | Saved: '/tmp/th_dining_chair_02.png'
+[lib] model wicker_basket_01 1
+01:17.008  render           | Saved: '/tmp/th_wicker_basket_01.png'
+[lib] model brass_pot_01 2
+01:19.516  render           | Saved: '/tmp/th_brass_pot_01.png'
 {
 "old_bed_frame": {
 "lo": [
@@ -62,24 +51,6 @@
 1.2014838457107544
 ],
 "n": 1
-},
-"GothicBed_01": {
-"lo": [
--0.7113074660301208,
--0.9868945479393005,
--1.181181374931839e-07
-],
-"hi": [
-0.782444417476654,
-1.053105354309082,
-1.5338401794433594
-],
-"size": [
-1.493751883506775,
-2.0399999618530273,
-1.533840298652649
-],
-"n": 4
 },
 "painted_wooden_nightstand": {
 "lo": [
@@ -279,24 +250,6 @@
 ],
 "n": 1
 },
-"book_encyclopedia_set_01": {
-"lo": [
--0.019316473975777626,
--1.4895176887512207,
--0.9985414743423462
-],
-"hi": [
-3.766587734222412,
-0.510482668876648,
-1.0014585256576538
-],
-"size": [
-3.7859041690826416,
-2.000000476837158,
-2.0
-],
-"n": 21
-},
 "steel_frame_shelves_01": {
 "lo": [
 -0.5486865639686584,
@@ -312,96 +265,6 @@
 1.0974148511886597,
 0.5021176338195801,
 2.140501022338867
-],
-"n": 1
-},
-"electric_stove": {
-"lo": [
--0.5483750700950623,
--0.5483750700950623,
-0.0
-],
-"hi": [
-0.5483750700950623,
-0.5483750700950623,
-0.8586971759796143
-],
-"size": [
-1.0967501401901245,
-1.0967501401901245,
-0.8586971759796143
-],
-"n": 24
-},
-"pot_enamel_01": {
-"lo": [
--0.13146506249904633,
--0.09023720771074295,
-0.00014360249042510986
-],
-"hi": [
-0.13146506249904633,
-0.09023720771074295,
-0.17840638756752014
-],
-"size": [
-0.26293012499809265,
-0.1804744154214859,
-0.17826278507709503
-],
-"n": 2
-},
-"brass_pot_01": {
-"lo": [
--0.15101325511932373,
--0.15080177783966064,
--0.0008529216283932328
-],
-"hi": [
-0.1509324014186859,
-0.15089081227779388,
-0.2900947332382202
-],
-"size": [
-0.30194565653800964,
-0.3016926050186157,
-0.29094764590263367
-],
-"n": 2
-},
-"brass_diya_lantern": {
-"lo": [
--0.05629947409033775,
--0.05539681762456894,
-6.757676601409912e-06
-],
-"hi": [
-0.06670506298542023,
-0.06760772317647934,
-0.38083070516586304
-],
-"size": [
-0.12300454080104828,
-0.12300454080104828,
-0.38082394003868103
-],
-"n": 3
-},
-"wicker_basket_01": {
-"lo": [
--0.19188226759433746,
--0.14707215130329132,
--0.0009166551753878593
-],
-"hi": [
-0.19134199619293213,
-0.14794304966926575,
-0.11650627851486206
-],
-"size": [
-0.3832242488861084,
-0.29501521587371826,
-0.1174229308962822
 ],
 "n": 1
 },
@@ -423,21 +286,39 @@
 ],
 "n": 1
 },
-"dining_table": {
+"wicker_basket_01": {
 "lo": [
--1.1328890323638916,
--0.712041974067688,
--0.004275118932127953
+-0.19188226759433746,
+-0.14707215130329132,
+-0.0009166551753878593
 ],
 "hi": [
-1.1230069398880005,
-0.6781940460205078,
-0.872714102268219
+0.19134199619293213,
+0.14794304966926575,
+0.11650627851486206
 ],
 "size": [
-2.2558960914611816,
-1.3902360200881958,
-0.8769892454147339
+0.3832242488861084,
+0.29501521587371826,
+0.1174229308962822
+],
+"n": 1
+},
+"brass_pot_01": {
+"lo": [
+-0.15101325511932373,
+-0.15080177783966064,
+-0.0008529216283932328
+],
+"hi": [
+0.1509324014186859,
+0.15089081227779388,
+0.2900947332382202
+],
+"size": [
+0.30194565653800964,
+0.3016926050186157,
+0.29094764590263367
 ],
 "n": 2
 }
