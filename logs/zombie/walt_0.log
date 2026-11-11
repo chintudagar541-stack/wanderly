@@ -1,5 +1,5 @@
-00:00.664  cycles           | WARNING CUEW initialization failed: Error opening the library
-[lib] hdri sun 146 elev 48.5 -> az 120
+00:00.787  cycles           | WARNING CUEW initialization failed: Error opening the library
+[lib] hdri sun 146 elev 48.5 -> az 320
 [lib] ph_find textures ['asphalt', 'road'] -> asphalt_02
 [lib] ph_find textures ['concrete', 'pavement', 'floor'] -> concrete_pavement
 [lib] ph_find textures ['grass', 'lawn', 'meadow'] -> aerial_grass_rock
@@ -12,14 +12,14 @@
 [lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-RSS built 565 MB
-RSS extras 565 MB
+RSS built 564 MB
+RSS extras 564 MB
 CLEARCAM walt 0
-RSS lod 723 MB
-RSS posed 724 MB
-RSS depsgraph 724 MB
-OBJECTS 2041 MESHES 1696 IMAGES 49 38 Mpx
-00:56.794  render           | Saved: '/home/runner/work/wanderly/wanderly/out/walt_0.png'
-RTIME 45.7
-RSS rendered 1636 MB
+RSS lod 721 MB
+RSS posed 721 MB
+RSS depsgraph 721 MB
+OBJECTS 2017 MESHES 1672 IMAGES 48 37 Mpx
+01:28.563  render           | Saved: '/home/runner/work/wanderly/wanderly/out/walt_0.png'
+RTIME 74.3
+RSS rendered 1640 MB
 RENDERED walt 1.07
