@@ -1,13 +1,13 @@
-00:00.869  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.680  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] hdri sun 143 elev 12.0 -> az 120
-RSS built 535 MB
-RSS extras 535 MB
+RSS built 536 MB
+RSS extras 536 MB
 CLEARCAM news 0
-RSS lod 535 MB
-RSS posed 535 MB
-RSS depsgraph 535 MB
-OBJECTS 104 MESHES 64 IMAGES 3 3 Mpx
-00:29.826  render           | Saved: '/home/runner/work/wanderly/wanderly/out/news_0.png'
-RTIME 28.3
-RSS rendered 1112 MB
+RSS lod 536 MB
+RSS posed 536 MB
+RSS depsgraph 536 MB
+OBJECTS 105 MESHES 65 IMAGES 3 3 Mpx
+00:15.276  render           | Saved: '/home/runner/work/wanderly/wanderly/out/news_0.png'
+RTIME 13.8
+RSS rendered 1113 MB
 RENDERED news 1.43
