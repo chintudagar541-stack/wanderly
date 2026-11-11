@@ -1,0 +1,30 @@
+[
+ {
+  "who": "son",
+  "voice": "kokoro:hm_psi",
+  "speed": 0.95,
+  "text": "I downloaded G T A, to escape reality...",
+  "out": "audio/voiceover/gta/s4_v0.wav"
+ },
+ {
+  "who": "son",
+  "voice": "kokoro:hm_psi",
+  "speed": 0.95,
+  "text": "I... downloaded G.T.A. to escape reality.",
+  "out": "audio/voiceover/gta/s4_v1.wav"
+ },
+ {
+  "who": "son",
+  "voice": "kokoro:hm_psi",
+  "speed": 0.95,
+  "text": "So I downloaded G-T-A to escape reality...",
+  "out": "audio/voiceover/gta/s4_v2.wav"
+ },
+ {
+  "who": "son",
+  "voice": "kokoro:hm_psi",
+  "speed": 0.95,
+  "text": "Me? I downloaded GTA to escape reality...",
+  "out": "audio/voiceover/gta/s4_v3.wav"
+ }
+]
