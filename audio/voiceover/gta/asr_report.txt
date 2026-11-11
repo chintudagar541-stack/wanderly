@@ -1,0 +1,24 @@
+0.67   3.1s  kokoro:hm_psi          aud_son_hm_psi_0.wav         | Dad can have 500 rupees.
+0.86   6.0s  kokoro:hm_psi          aud_son_hm_psi_1.wav         | I downloaded GT, A to Escape Reality.  Reality downloaded me instead.
+0.77   2.5s  kokoro:am_puck         aud_son_am_puck_0.wav        | Dad can I have 500 rupees?
+1.00   5.5s  kokoro:am_puck         aud_son_am_puck_1.wav        | I downloaded GTA to escape reality. Reality downloaded me instead.
+0.77   3.2s  kokoro:am_echo         aud_son_am_echo_0.wav        | Dad, can I have 500 rupees?
+1.00   5.6s  kokoro:am_echo         aud_son_am_echo_1.wav        | I downloaded GTA to escape reality. Reality downloaded me instead.
+0.77   2.5s  kokoro:am_fenrir       aud_son_am_fenrir_0.wav      | Dad, can I have 500 rupees?
+1.00   5.5s  kokoro:am_fenrir       aud_son_am_fenrir_1.wav      | I downloaded GTA to escape reality. Reality downloaded me instead.
+0.84   3.9s  kokoro:hm_omega        aud_father_hm_omega_0.wav    | What happened to the 500 I gave you yesterday?
+1.00   3.3s  kokoro:hm_omega        aud_father_hm_omega_1.wav    | Inflation, you don't even have a job.
+0.84   4.0s  kokoro:am_michael      aud_father_am_michael_0.wav  | What happened to the 500 I gave you yesterday?
+1.00   3.2s  kokoro:am_michael      aud_father_am_michael_1.wav  | Inflation. You don't even have a job.
+0.84   3.9s  kokoro:bm_george       aud_father_bm_george_0.wav   | What happened to the 500 I gave you yesterday?
+1.00   3.1s  kokoro:bm_george       aud_father_bm_george_1.wav   | Inflation, you don't even have a job.
+0.84   3.9s  kokoro:am_onyx         aud_father_am_onyx_0.wav     | What happened to the 500 I gave you yesterday?
+1.00   2.9s  kokoro:am_onyx         aud_father_am_onyx_1.wav     | Inflation, you don't even have a job.
+0.89   3.5s  kokoro:hf_alpha        aud_mother_hf_alpha_0.wav    | Get up, you have been sleeping for 12 hours.
+1.00   3.2s  kokoro:hf_alpha        aud_mother_hf_alpha_1.wav    | Good. Take this gas cylinder to the shop.
+0.89   3.1s  kokoro:hf_beta         aud_mother_hf_beta_0.wav     | Get up, you have been sleeping for 12 hours.
+1.00   3.0s  kokoro:hf_beta         aud_mother_hf_beta_1.wav     | Good, take this gas cylinder to the shop.
+0.89   3.4s  kokoro:af_bella        aud_mother_af_bella_0.wav    | Get up. You have been sleeping for 12 hours.
+1.00   3.2s  kokoro:af_bella        aud_mother_af_bella_1.wav    | Good. Take this gas cylinder to the shop.
+0.89   3.8s  kokoro:af_nicole       aud_mother_af_nicole_0.wav   | Get up. You have been sleeping for 12 hours.
+1.00   3.7s  kokoro:af_nicole       aud_mother_af_nicole_1.wav   | Good, take this gas cylinder to the shop.
