@@ -1,0 +1,22 @@
+{
+ "deck": "weathered_brown_planks",
+ "hullwood": "dark_wooden_planks",
+ "rawwood": "raw_plank_wall",
+ "finewood": "fine_grained_wood",
+ "sand": "coast_sand_01",
+ "wetsand": "coast_sand_05",
+ "stonewall": "castle_wall_slates",
+ "plaster": "painted_plaster_wall",
+ "thatch": "thatch_roof_angled",
+ "roofplanks": "roof_planks",
+ "canvas": "fabric_pattern_05",
+ "redfabric": "fabric_pattern_07",
+ "terracotta": "patio_tiles",
+ "rust": "rusty_metal_02",
+ "rock": "rock_face",
+ "grassland": "aerial_grass_rock",
+ "rope": "european_walnut_veneer_04",
+ "sky_day": "kloofendal_48d_partly_cloudy_puresky",
+ "sky_dusk": "kloppenheim_02",
+ "sky_night": "satara_night"
+}
