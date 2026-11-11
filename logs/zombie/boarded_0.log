@@ -1,0 +1,25 @@
+00:00.726  cycles           | WARNING CUEW initialization failed: Error opening the library
+[lib] hdri sun 146 elev 48.5 -> az 120
+[lib] ph_find textures ['asphalt', 'road'] -> asphalt_02
+[lib] ph_find textures ['concrete', 'pavement', 'floor'] -> concrete_pavement
+[lib] ph_find textures ['grass', 'lawn', 'meadow'] -> aerial_grass_rock
+[lib] ph_find textures ['plaster', 'concrete', 'wall'] -> painted_plaster_wall
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+RSS built 545 MB
+RSS extras 545 MB
+CLEARCAM boarded 0
+RSS lod 641 MB
+RSS posed 648 MB
+RSS depsgraph 648 MB
+OBJECTS 1536 MESHES 1377 IMAGES 48 37 Mpx
+01:28.750  render           | Saved: '/home/runner/work/wanderly/wanderly/out/boarded_0.png'
+RTIME 81.3
+RSS rendered 1527 MB
+RENDERED boarded 1.26
