@@ -1,5 +1,5 @@
-00:00.708  cycles           | WARNING CUEW initialization failed: Error opening the library
-[lib] hdri sun 146 elev 48.5 -> az 120
+00:00.402  cycles           | WARNING CUEW initialization failed: Error opening the library
+[lib] hdri sun 146 elev 48.5 -> az 320
 [lib] ph_find textures ['asphalt', 'road'] -> asphalt_02
 [lib] ph_find textures ['concrete', 'pavement', 'floor'] -> concrete_pavement
 [lib] ph_find textures ['grass', 'lawn', 'meadow'] -> aerial_grass_rock
@@ -15,11 +15,11 @@
 RSS built 562 MB
 RSS extras 562 MB
 CLEARCAM wifi 0
-RSS lod 714 MB
-RSS posed 716 MB
-RSS depsgraph 716 MB
-OBJECTS 1954 MESHES 1642 IMAGES 50 38 Mpx
-01:01.106  render           | Saved: '/home/runner/work/wanderly/wanderly/out/wifi_0.png'
-RTIME 49.0
-RSS rendered 1630 MB
+RSS lod 713 MB
+RSS posed 713 MB
+RSS depsgraph 713 MB
+OBJECTS 1930 MESHES 1618 IMAGES 49 38 Mpx
+00:59.490  render           | Saved: '/home/runner/work/wanderly/wanderly/out/wifi_0.png'
+RTIME 48.4
+RSS rendered 1627 MB
 RENDERED wifi 1.62
