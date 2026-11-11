@@ -1,0 +1,24 @@
+00:00.740  cycles           | WARNING CUEW initialization failed: Error opening the library
+[lib] hdri sun 146 elev 48.5 -> az 120
+[lib] ph_find textures ['asphalt', 'road'] -> asphalt_02
+[lib] ph_find textures ['concrete', 'pavement', 'floor'] -> concrete_pavement
+[lib] ph_find textures ['grass', 'lawn', 'meadow'] -> aerial_grass_rock
+[lib] ph_find textures ['plaster', 'concrete', 'wall'] -> painted_plaster_wall
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+RSS built 557 MB
+RSS extras 557 MB
+CLEARCAM tuesday 0
+RSS lod 705 MB
+RSS posed 714 MB
+RSS depsgraph 714 MB
+OBJECTS 1781 MESHES 1498 IMAGES 48 37 Mpx
+00:52.878  render           | Saved: '/home/runner/work/wanderly/wanderly/out/tuesday_0.png'
+RTIME 43.5
+RSS rendered 1612 MB
+RENDERED tuesday 1.84
