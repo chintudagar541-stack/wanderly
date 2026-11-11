@@ -1,4 +1,4 @@
-00:00.805  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.711  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] hdri sun 146 elev 48.5 -> az 200
 [lib] ph_find textures ['marble', 'floor', 'tiles'] -> floor_tiles_06
 [lib] ph_find textures ['plaster', 'painted', 'wall'] -> painted_plaster_wall
@@ -51,17 +51,17 @@
 [lib] model covered_car 5
 [lib] model trashbag 1
 [lib] model old_tyre 1
-/home/runner/work/wanderly/wanderly/blender/gta/story.py:64: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+/home/runner/work/wanderly/wanderly/blender/gta/story.py:74: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
   m = bpy.data.materials.new('saree'); m.use_nodes = True; N = m.node_tree.nodes; L = m.node_tree.links; b = N['Principled BSDF']
 SEAT_Z 0.422 sofa_03
-RSS built 1299 MB
-RSS extras 1299 MB
+RSS built 1302 MB
+RSS extras 1302 MB
 CLEARCAM cylinder 0
-RSS lod 1326 MB
-RSS posed 1342 MB
-RSS depsgraph 1342 MB
+RSS lod 1329 MB
+RSS posed 1346 MB
+RSS depsgraph 1346 MB
 OBJECTS 2979 MESHES 2724 IMAGES 166 155 Mpx
-01:11.666  render           | Saved: '/home/runner/work/wanderly/wanderly/out/cylinder_0.png'
-RTIME 49.4
-RSS rendered 4946 MB
+01:20.812  render           | Saved: '/home/runner/work/wanderly/wanderly/out/cylinder_0.png'
+RTIME 49.2
+RSS rendered 5068 MB
 RENDERED cylinder 1.98
