@@ -1,4 +1,4 @@
-00:00.651  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.845  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] hdri sun 146 elev 48.5 -> az 200
 [lib] ph_find textures ['marble', 'floor', 'tiles'] -> floor_tiles_06
 [lib] ph_find textures ['plaster', 'painted', 'wall'] -> painted_plaster_wall
@@ -52,14 +52,14 @@
 [lib] model trashbag 1
 [lib] model old_tyre 1
 SEAT_Z 0.422 sofa_03
-RSS built 1306 MB
-RSS extras 1306 MB
+RSS built 1308 MB
+RSS extras 1308 MB
 CLEARCAM slipper 0
-RSS lod 1321 MB
-RSS posed 1335 MB
-RSS depsgraph 1335 MB
+RSS lod 1325 MB
+RSS posed 1330 MB
+RSS depsgraph 1330 MB
 OBJECTS 2909 MESHES 2681 IMAGES 164 155 Mpx
-01:10.458  render           | Saved: '/home/runner/work/wanderly/wanderly/out/slipper_0.png'
-RTIME 39.8
-RSS rendered 5062 MB
+01:19.104  render           | Saved: '/home/runner/work/wanderly/wanderly/out/slipper_0.png'
+RTIME 49.4
+RSS rendered 5106 MB
 RENDERED slipper 1.43
