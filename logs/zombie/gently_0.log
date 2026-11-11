@@ -1,5 +1,5 @@
-00:00.780  cycles           | WARNING CUEW initialization failed: Error opening the library
-[lib] hdri sun 146 elev 48.5 -> az 120
+00:00.827  cycles           | WARNING CUEW initialization failed: Error opening the library
+[lib] hdri sun 146 elev 48.5 -> az 320
 [lib] ph_find textures ['asphalt', 'road'] -> asphalt_02
 [lib] ph_find textures ['concrete', 'pavement', 'floor'] -> concrete_pavement
 [lib] ph_find textures ['grass', 'lawn', 'meadow'] -> aerial_grass_rock
@@ -12,14 +12,14 @@
 [lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-RSS built 561 MB
-RSS extras 561 MB
+RSS built 559 MB
+RSS extras 559 MB
 CLEARCAM gently 4
-RSS lod 717 MB
-RSS posed 717 MB
-RSS depsgraph 717 MB
-OBJECTS 1951 MESHES 1640 IMAGES 49 38 Mpx
-01:46.201  render           | Saved: '/home/runner/work/wanderly/wanderly/out/gently_0.png'
-RTIME 89.5
-RSS rendered 1580 MB
+RSS lod 714 MB
+RSS posed 714 MB
+RSS depsgraph 714 MB
+OBJECTS 1927 MESHES 1616 IMAGES 48 37 Mpx
+01:46.580  render           | Saved: '/home/runner/work/wanderly/wanderly/out/gently_0.png'
+RTIME 96.4
+RSS rendered 1578 MB
 RENDERED gently 1.84
