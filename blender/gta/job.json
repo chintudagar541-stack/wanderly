@@ -1,0 +1,33 @@
+{
+ "rev": 1,
+ "mode": "tasks",
+ "tasks": [
+  {
+   "id": "ph0",
+   "script": "phcheck.py",
+   "args": [],
+   "env": {
+    "IDS": "sofa_02,sofa_03,Sofa_01,chinese_sofa,CoffeeTable_01,modern_coffee_table_01,industrial_coffee_table,Television_01,television_02,ClassicConsole_01,modern_wooden_cabinet,ceiling_fan,wall_clock,tea_set_01,hanging_picture_frame_01,hanging_picture_frame_02,potted_plant_02,potted_plant_04,throw_pillows_01,mounted_fluorescent_lights,drawer_cabinet,vintage_cabinet_01",
+    "USE_PH": "1"
+   }
+  },
+  {
+   "id": "ph1",
+   "script": "phcheck.py",
+   "args": [],
+   "env": {
+    "IDS": "old_bed_frame,GothicBed_01,painted_wooden_nightstand,ClassicNightstand_01,alarm_clock_01,metal_office_desk,small_wooden_table_01,classic_laptop,gaming_console,gamepad,desk_lamp_arm_01,plastic_monobloc_chair_01,wooden_bookshelf_worn,book_encyclopedia_set_01,steel_frame_shelves_01,electric_stove,pot_enamel_01,brass_pot_01,brass_diya_lantern,wicker_basket_01,dining_chair_02,dining_table",
+    "USE_PH": "1"
+   }
+  },
+  {
+   "id": "ph2",
+   "script": "phcheck.py",
+   "args": [],
+   "env": {
+    "IDS": "covered_car,exterior_aircon_unit,small_lpg_tank,propane_tank,rollershutter_door,rollershutter_window_01,large_iron_gate,street_lamp_01,street_lamp_02,modular_electricity_poles,modular_electric_cables,power_box_01,utility_box_01,water_manhole_cover,metal_trash_can,plastic_crate_01,tree_small_02,jacaranda_tree,shrub_01,shrub_03,planter_pot_clay,planter_box_01,old_tyre,cement_bag,modular_urban_apartments_facade,concrete_road_barrier,wooden_picnic_table,trashbag,security_light",
+    "USE_PH": "1"
+   }
+  }
+ ]
+}
