@@ -1,4 +1,4 @@
-00:00.701  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:01.099  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] hdri sun 146 elev 48.5 -> az 200
 [lib] ph_find textures ['marble', 'floor', 'tiles'] -> floor_tiles_06
 [lib] ph_find textures ['plaster', 'painted', 'wall'] -> painted_plaster_wall
@@ -51,17 +51,17 @@
 [lib] model covered_car 5
 [lib] model trashbag 1
 [lib] model old_tyre 1
-/home/runner/work/wanderly/wanderly/blender/gta/story.py:64: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+/home/runner/work/wanderly/wanderly/blender/gta/story.py:74: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
   m = bpy.data.materials.new('saree'); m.use_nodes = True; N = m.node_tree.nodes; L = m.node_tree.links; b = N['Principled BSDF']
 SEAT_Z 0.422 sofa_03
-RSS built 1306 MB
-RSS extras 1306 MB
+RSS built 1305 MB
+RSS extras 1305 MB
 CLEARCAM mummy 0
-RSS lod 1331 MB
-RSS posed 1345 MB
-RSS depsgraph 1345 MB
+RSS lod 1328 MB
+RSS posed 1342 MB
+RSS depsgraph 1342 MB
 OBJECTS 2979 MESHES 2724 IMAGES 166 155 Mpx
-01:12.143  render           | Saved: '/home/runner/work/wanderly/wanderly/out/mummy_0.png'
+01:01.944  render           | Saved: '/home/runner/work/wanderly/wanderly/out/mummy_0.png'
 RTIME 40.5
-RSS rendered 5076 MB
+RSS rendered 5031 MB
 RENDERED mummy 1.26
