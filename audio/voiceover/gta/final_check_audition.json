@@ -1,0 +1,72 @@
+[
+ {
+  "who": "mother",
+  "voice": "kokoro:hf_alpha",
+  "speed": 1.08,
+  "text": "Get up! You have been sleeping for twelve hours!",
+  "out": "audio/voiceover/gta/m1.wav"
+ },
+ {
+  "who": "son",
+  "voice": "kokoro:hm_psi",
+  "speed": 1.0,
+  "text": "Dad... can I have five hundred rupees?",
+  "out": "audio/voiceover/gta/s1.wav"
+ },
+ {
+  "who": "father",
+  "voice": "kokoro:hm_omega",
+  "speed": 1.0,
+  "text": "What happened to the five hundred I gave you yesterday?",
+  "out": "audio/voiceover/gta/f1.wav"
+ },
+ {
+  "who": "son",
+  "voice": "kokoro:hm_psi",
+  "speed": 1.0,
+  "text": "Inflation.",
+  "out": "audio/voiceover/gta/s2.wav"
+ },
+ {
+  "who": "father",
+  "voice": "kokoro:hm_omega",
+  "speed": 1.12,
+  "text": "Inflation? You don't even have a job!",
+  "out": "audio/voiceover/gta/f2.wav"
+ },
+ {
+  "who": "mother",
+  "voice": "kokoro:hf_alpha",
+  "speed": 1.05,
+  "text": "Where are you going?",
+  "out": "audio/voiceover/gta/m2.wav"
+ },
+ {
+  "who": "son",
+  "voice": "kokoro:hm_psi",
+  "speed": 1.0,
+  "text": "Just taking a walk.",
+  "out": "audio/voiceover/gta/s3.wav"
+ },
+ {
+  "who": "mother",
+  "voice": "kokoro:hf_alpha",
+  "speed": 1.05,
+  "text": "Good. Take this gas cylinder to the shop.",
+  "out": "audio/voiceover/gta/m3.wav"
+ },
+ {
+  "who": "son",
+  "voice": "kokoro:hm_psi",
+  "speed": 0.95,
+  "text": "I downloaded GTA to escape reality...",
+  "out": "audio/voiceover/gta/s4.wav"
+ },
+ {
+  "who": "son",
+  "voice": "kokoro:hm_psi",
+  "speed": 0.95,
+  "text": "Reality downloaded me instead.",
+  "out": "audio/voiceover/gta/s5.wav"
+ }
+]
