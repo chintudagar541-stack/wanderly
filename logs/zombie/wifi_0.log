@@ -1,0 +1,25 @@
+00:00.708  cycles           | WARNING CUEW initialization failed: Error opening the library
+[lib] hdri sun 146 elev 48.5 -> az 120
+[lib] ph_find textures ['asphalt', 'road'] -> asphalt_02
+[lib] ph_find textures ['concrete', 'pavement', 'floor'] -> concrete_pavement
+[lib] ph_find textures ['grass', 'lawn', 'meadow'] -> aerial_grass_rock
+[lib] ph_find textures ['plaster', 'concrete', 'wall'] -> painted_plaster_wall
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+[lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
+RSS built 562 MB
+RSS extras 562 MB
+CLEARCAM wifi 0
+RSS lod 714 MB
+RSS posed 716 MB
+RSS depsgraph 716 MB
+OBJECTS 1954 MESHES 1642 IMAGES 50 38 Mpx
+01:01.106  render           | Saved: '/home/runner/work/wanderly/wanderly/out/wifi_0.png'
+RTIME 49.0
+RSS rendered 1630 MB
+RENDERED wifi 1.62
