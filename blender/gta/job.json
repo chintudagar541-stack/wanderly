@@ -1,31 +1,87 @@
 {
- "rev": 2,
+ "rev": 3,
  "mode": "tasks",
+ "w": 540,
+ "h": 960,
+ "samples": 32,
  "tasks": [
   {
-   "id": "ph0",
-   "script": "phcheck.py",
-   "args": [],
+   "id": "set0",
+   "script": "settest.py",
+   "args": [
+    "0"
+   ],
    "env": {
-    "IDS": "sofa_02,sofa_03,Sofa_01,chinese_sofa,CoffeeTable_01,modern_coffee_table_01,Television_01,television_02,ClassicConsole_01,modern_wooden_cabinet,ceiling_fan,wall_clock,tea_set_01,hanging_picture_frame_01,hanging_picture_frame_02,potted_plant_02,throw_pillows_01,mounted_fluorescent_lights",
     "USE_PH": "1"
    }
   },
   {
-   "id": "ph1",
-   "script": "phcheck.py",
-   "args": [],
+   "id": "set1",
+   "script": "settest.py",
+   "args": [
+    "1"
+   ],
    "env": {
-    "IDS": "old_bed_frame,painted_wooden_nightstand,ClassicNightstand_01,alarm_clock_01,metal_office_desk,small_wooden_table_01,classic_laptop,gaming_console,gamepad,desk_lamp_arm_01,plastic_monobloc_chair_01,wooden_bookshelf_worn,steel_frame_shelves_01,dining_chair_02,wicker_basket_01,brass_pot_01",
     "USE_PH": "1"
    }
   },
   {
-   "id": "ph2",
-   "script": "phcheck.py",
-   "args": [],
+   "id": "set2",
+   "script": "settest.py",
+   "args": [
+    "2"
+   ],
    "env": {
-    "IDS": "covered_car,exterior_aircon_unit,small_lpg_tank,street_lamp_02,power_box_01,utility_box_01,water_manhole_cover,metal_trash_can,plastic_crate_01,shrub_01,shrub_03,planter_pot_clay,planter_box_01,old_tyre,concrete_road_barrier,trashbag,security_light,potted_plant_04",
+    "USE_PH": "1"
+   }
+  },
+  {
+   "id": "set3",
+   "script": "settest.py",
+   "args": [
+    "3"
+   ],
+   "env": {
+    "USE_PH": "1"
+   }
+  },
+  {
+   "id": "set4",
+   "script": "settest.py",
+   "args": [
+    "4"
+   ],
+   "env": {
+    "USE_PH": "1"
+   }
+  },
+  {
+   "id": "set5",
+   "script": "settest.py",
+   "args": [
+    "5"
+   ],
+   "env": {
+    "USE_PH": "1"
+   }
+  },
+  {
+   "id": "set6",
+   "script": "settest.py",
+   "args": [
+    "6"
+   ],
+   "env": {
+    "USE_PH": "1"
+   }
+  },
+  {
+   "id": "set7",
+   "script": "settest.py",
+   "args": [
+    "7"
+   ],
+   "env": {
     "USE_PH": "1"
    }
   }

@@ -13,11 +13,12 @@ import town as T
 import lib
 from town import box, cyl, plain, put
 import city as C
+import hero as HR
 
 H = 2.8
 LIV = (-3.0, 2.0, 0.0, 4.5); BED = (2.0, 5.2, 1.5, 4.5)
-DOOR = (-1.4, -0.4)
-SOFA = Vector((-.6, 3.85, 0)); TV = Vector((-.6, .35, 0)); TABLE = Vector((-.6, 2.35, 0))
+DOOR = (0.5, 1.5); WINF = (-2.7, -1.6)
+SOFA = Vector((-.6, 3.95, 0)); TV = Vector((-.75, .3, 0)); TABLE = Vector((-.6, 2.35, 0))
 BEDC = Vector((4.05, 3.65, 0)); BED_TOP = .5
 _M = {}
 
@@ -98,141 +99,407 @@ def poster(name, txt, c, w, h, facing, bg, fg, size=(600, 840)):
     return C.sign(name, txt, w, h, c, facing=facing, bg=bg, fg=fg, size=size, font_scale=.5, border=fg)
 
 
+# ------------------------------------------------------------------ Poly Haven models (CC0), instanced; primitives as fallback
+PHC = {}
+
+
+def phm(aid):
+    if not T.PH or os.environ.get('NOPHPROPS'): return None
+    if aid in PHC: return PHC[aid]
+    PHC[aid] = None
+    try:
+        m = lib.model([aid], res=os.environ.get('PH_MODEL_RES', '1k'))
+    except Exception as e:
+        lib.log('phm fail', aid, e); m = None
+    if not m: return None
+    root, objs = m; cn = 'PHM_' + aid
+    c = bpy.data.collections.new(cn); bpy.context.scene.collection.children.link(c)
+    for o in [root] + list(objs):
+        for cc in list(o.users_collection): cc.objects.unlink(o)
+        c.objects.link(o)
+    c.instance_offset = root.location.copy()
+    bpy.context.view_layer.layer_collection.children[cn].exclude = True
+    PHC[aid] = c; return c
+
+
+def put(aid, loc, rot=0.0, scale=1.0, fallback=None):
+    """place a Poly Haven model (rot in degrees about Z; models face -Y); fallback() builds a stand-in when PH is off"""
+    c = phm(aid)
+    if c is None:
+        return fallback() if fallback else None
+    e = bpy.data.objects.new(aid + '_i', None); e.instance_type = 'COLLECTION'; e.instance_collection = c
+    e.location = loc; e.rotation_euler = (0, 0, math.radians(rot)); e.scale = scale if isinstance(scale, tuple) else (scale,) * 3
+    T.coll('Town').objects.link(e); return e
+
+
+def conduit(name, pts, m=None):
+    """surface-run electric wiring conduit (white PVC) - every Indian wall has it"""
+    m = m or plain('conduit', '#ece8e0', .5)
+    T.lib.tube(name, [Vector(p) for p in pts], .012, m=m)
+
+
+def switchboard(name, c, facing):
+    ang = math.atan2(facing[1], facing[0]) - math.pi / 2
+    root = bpy.data.objects.new(name, None); T.coll('Town').objects.link(root); root.location = c; root.rotation_euler = (0, 0, ang)
+    HR.rbox(name + '_b', (.32, .03, .14), (0, -.015, 0), plain('swb', '#f2f0ea', .4), .15, root, sub=1)
+    for k in range(4): HR.rbox(f'{name}_s{k}', (.035, .015, .05), (-.11 + k * .06, -.035, .01), plain('sw', '#e8e4dc', .4), .3, root, sub=1)
+    T.lib.sphere(name + '_led', .006, (.13, -.034, .04), plain('swled', '#ff3020', .3, emit='#ff3020', strength=3)).parent = root
+    return root
+
+
+def curtain(name, c, w, h, facing, col, pattern='#e8b84a'):
+    """pleated cotton curtain on a rod: a wavy strip (folds) with a printed motif"""
+    ang = math.atan2(facing[1], facing[0]) - math.pi / 2
+    bm = bmesh.new(); nx, nz = 28, 6; vs = []
+    for i in range(nx + 1):
+        row = []
+        for j in range(nz + 1):
+            x = -w / 2 + w * i / nx; z = -h + h * j / nz; y = .035 * math.sin(i * math.pi / 2) * (1 - .3 * j / nz)
+            row.append(bm.verts.new((x, y, z)))
+        vs.append(row)
+    for i in range(nx):
+        for j in range(nz): bm.faces.new((vs[i][j], vs[i + 1][j], vs[i + 1][j + 1], vs[i][j + 1]))
+    m = checker(name + '_m', col, pattern, 22, rough=.9)
+    o = HR._obj(name, bm, m, 1); o.location = c; o.rotation_euler = (0, 0, ang)
+    so = o.modifiers.new('sol', 'SOLIDIFY'); so.thickness = .006
+    rod = cyl(name + '_rod', .012, w + .3, (0, 0, .04), plain('rod', '#8a6a3a', .3, .8), rot=(0, math.pi / 2, 0), v=8); rod.parent = o
+    return o
+
+
+def door_leaf(name, w, h, mat):
+    """panelled wooden door with a brass handle, hinge at local x=0, opening along +x"""
+    root = bpy.data.objects.new(name, None); T.coll('Town').objects.link(root)
+    HR.rbox(name + '_slab', (w, .05, h), (w / 2, 0, h / 2), mat, .08, root, sub=1)
+    for k, (z0, z1) in enumerate(((.15, .95), (1.1, 1.9))):
+        for sd in (-1, 1):
+            HR.rbox(f'{name}_p{k}{sd}', (w * .36, .016, z1 - z0), (w / 2 + sd * w * .22, sd * 0 - .03, (z0 + z1) / 2), mat, .1, root, sub=1)
+            HR.rbox(f'{name}_q{k}{sd}', (w * .36, .016, z1 - z0), (w / 2 + sd * w * .22, .03, (z0 + z1) / 2), mat, .1, root, sub=1)
+    br = plain('brass', '#c8a040', .3, 1.0)
+    for y in (-.05, .05): T.lib.sphere(f'{name}_k{y}', .03, (w - .1, y, 1.0), br, seg=12, rings=8).parent = root
+    return root
+
+
+def bed(bc):
+    """wooden double bed: headboard with panels, rounded mattress, checked bedsheet, soft pillows"""
+    wd = mat_ph('bedwood', ('wood', 'veneer', 'oak'), '#6a4028', scale=.6, tint='#8a5838')
+    HR.rbox('bed_frame', (2.05, 1.15, .3), (bc.x, bc.y, .17), wd, .1)
+    HR.rbox('bed_head', (.07, 1.2, .95), (bc.x + 1.03, bc.y, .5), wd, .12)
+    HR.rbox('bed_headtop', (.1, 1.26, .07), (bc.x + 1.03, bc.y, .98), wd, .3)
+    HR.rbox('bed_foot', (.06, 1.2, .5), (bc.x - 1.03, bc.y, .3), wd, .12)
+    for sd in (-1, 1): HR.rbox(f'bed_post{sd}', (.09, .09, 1.05), (bc.x + 1.03, bc.y + sd * .6, .52), wd, .25)
+    HR.rbox('mattress', (1.98, 1.08, .17), (bc.x, bc.y, .4), checker('bedsheet', '#2a5aa8', '#3a78c0', 14, lines='#e8e8e0'), .35)
+    pm = plain('pillowc', '#f2ece0', .85)
+    for sd in (-1, 1): HR.rbox(f'pillow{sd}', (.36, .48, .13), (bc.x + .76, bc.y + sd * .26, .53), pm, .45)
+    return wd
+
+
 def interior(night=False):
-    floor = mat_ph('floortile', ('marble', 'tiles', 'floor'), '#d8ccb8', scale=.8)
-    paint_l = mat_ph('wall_living', ('plaster', 'painted', 'wall'), '#e8d8b0', scale=.6, tint='#f0dca8')
-    paint_b = mat_ph('wall_bed', ('plaster', 'painted', 'wall'), '#a8c8d8', scale=.6, tint='#a8cce0')
+    floor = mat_ph('floortile', ('marble', 'floor', 'tiles'), '#e0d8cc', scale=.9)
+    paint_l = mat_ph('wall_living', ('plaster', 'painted', 'wall'), '#ecdcb4', scale=.6, tint='#f2e2b8')
+    paint_b = mat_ph('wall_bed', ('plaster', 'painted', 'wall'), '#a8c8d8', scale=.6, tint='#b4d4e4')
+    skirt = plain('skirting', '#8a7a68', .4)
     box('floor', (8.4, 4.8, .06), (1.1, 2.25, -.03), floor)
-    box('ceiling', (8.4, 4.8, .06), (1.1, 2.25, H + .03), plain('ceilingw', '#f0ece4', .9))
+    box('ceiling', (8.4, 4.8, .06), (1.1, 2.25, H + .03), plain('ceilingw', '#f4f0e8', .9, emit='#f4f0e8', strength=.35))
     x0, x1, y0, y1 = LIV
-    wall('lw_front', (x0, y0), (x1, y0), mat=paint_l, holes=[(DOOR[0] - x0, DOOR[1] - x0, 0, 2.1), (3.2, 4.4, 1.0, 2.1)])
-    wall('lw_back', (x0, y1), (x1, y1), mat=paint_l, holes=[(1.0, 2.2, 1.0, 2.1)])
+    wall('lw_front', (x0, y0), (x1, y0), mat=paint_l, holes=[(DOOR[0] - x0, DOOR[1] - x0, 0, 2.1), (WINF[0] - x0, WINF[1] - x0, .95, 2.05)])
+    wall('lw_back', (x0, y1), (x1, y1), mat=paint_l, holes=[(.5, 1.6, 1.0, 2.05)])
     wall('lw_left', (x0, y0), (x0, y1), mat=paint_l)
     wall('lw_right', (x1, y0), (x1, y1), mat=paint_l, holes=[(2.6, 3.5, 0, 2.1)])
     bx0, bx1, by0, by1 = BED
     wall('bw_front', (bx0, by0), (bx1, by0), mat=paint_b)
     wall('bw_back', (bx0, by1), (bx1, by1), mat=paint_b)
     wall('bw_right', (bx1, by0), (bx1, by1), mat=paint_b, holes=[(1.0, 2.1, 1.0, 2.0)])
-    for nm, y in (('skirt_l', 0), ): pass
-    # windows (morning light)
-    window('win_lfront', (x0 + 3.8, y0, 1.55), 1.2, 1.1, (0, -1), light=None)
-    window('win_lback', (x0 + 1.6, y1, 1.55), 1.2, 1.1, (0, 1), light=120)
-    window('win_bed', (bx1, by0 + 1.55, 1.5), 1.1, 1.0, (1, 0), light=220)
-    # front door (open inward) and frame
-    dw = plain('doorwood', '#6a3e22', .5)
-    d = box('frontdoor', (1.0, .06, 2.08), (0, 0, 0), dw); d.location = (DOOR[0] + .5 * math.cos(math.radians(100)) + 0, .5 * math.sin(math.radians(100)), 1.04)
-    d.rotation_euler = (0, 0, math.radians(100))
-    d.location = (DOOR[0] + .03, .5, 1.04)
-    for x in DOOR: box(f'dframe{x}', (.08, .16, 2.12), (x, 0, 1.06), dw)
-    # living room furniture
-    sofa_m = mat_ph('sofa', ('fabric', 'leather'), '#7a3a2a', scale=.5, tint='#8a4430')
+    for nm, a, b in (('sk_lf', (x0, .07), (DOOR[0], .07)), ('sk_lf2', (DOOR[1], .07), (x1, .07)), ('sk_lb', (x0, y1 - .07), (x1, y1 - .07)),
+                     ('sk_ll', (x0 + .07, 0), (x0 + .07, y1)), ('sk_bb', (bx0, by1 - .07), (bx1, by1 - .07)), ('sk_br', (bx1 - .07, by0), (bx1 - .07, by1))):
+        a, b = Vector(a), Vector(b); c = (a + b) / 2; d = b - a
+        box(nm, (d.length, .015, .09), (c.x, c.y, .045), skirt, rot=(0, 0, math.atan2(d.y, d.x)))
+    # door frame + the open front door
+    dw = mat_ph('doorwood', ('wood', 'planks', 'door'), '#6a3e22', scale=.5, tint='#7a4a2a')
+    for x in DOOR: box(f'dframe{x}', (.08, .16, 2.14), (x, 0, 1.07), dw)
+    box('dframe_top', (DOOR[1] - DOOR[0] + .16, .16, .08), ((DOOR[0] + DOOR[1]) / 2, 0, 2.14), dw)
+    dl = door_leaf('frontdoor', DOOR[1] - DOOR[0] - .04, 2.06, dw); dl.location = (DOOR[1] - .02, .04, 0); dl.rotation_euler = (0, 0, math.radians(180 - 80))
+    # windows: frame + glass + grill + curtains (morning sun comes through the back window)
+    window('win_lfront', ((WINF[0] + WINF[1]) / 2, y0, 1.5), WINF[1] - WINF[0], 1.1, (0, -1))
+    window('win_lback', (x0 + 1.05, y1, 1.52), 1.1, 1.05, (0, 1), light=140)
+    window('win_bed', (bx1, by0 + 1.55, 1.5), 1.1, 1.0, (1, 0), light=240)
+    curtain('cur_lf', ((WINF[0] + WINF[1]) / 2 - .35, y0 + .1, 2.2), .5, 1.35, (0, 1), '#c86a3a')
+    curtain('cur_lb', (x0 + .45, y1 - .1, 2.2), .45, 1.35, (0, -1), '#c86a3a')
+    curtain('cur_lb2', (x0 + 1.65, y1 - .1, 2.2), .45, 1.35, (0, -1), '#c86a3a')
+    curtain('cur_bed', (bx1 - .1, by0 + .85, 2.15), .5, 1.3, (-1, 0), '#2a6a8a', '#e8e0c8')
+    # ---- living room
     s = SOFA
-    box('sofa_base', (2.2, .8, .3), (s.x, s.y, .2), sofa_m, bevel=.04)
-    box('sofa_back', (2.2, .22, .55), (s.x, s.y + .32, .55), sofa_m, bevel=.05)
-    for sx in (-1, 1): box(f'sofa_arm{sx}', (.2, .8, .45), (s.x + sx * 1.1, s.y, .32), sofa_m, bevel=.05)
-    for k in range(3): box(f'sofa_cush{k}', (.68, .62, .1), (s.x - .7 + k * .7, s.y - .04, .4), sofa_m, bevel=.04)
-    T.lib.sphere('sofa_pillow', .14, (s.x + .85, s.y + .12, .55), checker('pillowck', '#d8a020', '#c86020', 30)).scale = (1, .45, 1)
-    tw = plain('teak', '#5a3420', .45)
-    t = TABLE; box('ctable_top', (1.1, .6, .05), (t.x, t.y, .42), tw, bevel=.01)
-    for sx in (-1, 1):
-        for sy in (-1, 1): box(f'ctable_leg{sx}{sy}', (.05, .05, .4), (t.x + sx * .48, t.y + sy * .24, .2), tw)
-    cyl('chai_cup', .035, .07, (t.x + .3, t.y - .1, .48), plain('cup', '#f4f0e8', .4), v=12)
-    cyl('chai_tea', .032, .005, (t.x + .3, t.y - .1, .515), plain('chai', '#a8703a', .3), v=12)
-    v = TV; box('tv_cab', (1.6, .45, .55), (v.x, v.y, .28), tw, bevel=.02)
-    box('tv', (1.1, .08, .65), (v.x, v.y + .02, .9), plain('tvbody', '#141416', .3))
-    box('tv_scr', (1.02, .01, .58), (v.x, v.y + .065, .9), plain('tvscr', '#203048', .2, emit='#3060a0', strength=.6))
-    # walls: clock, calendar, family photos, tube light, curtains
-    cyl('clock', .17, .03, (x0 + 2.5, y1 - .08, 2.15), plain('clockface', '#f4f0e8', .5), rot=(math.pi / 2, 0, 0), v=24)
-    C.sign('calendar', '2026\nNOVEMBER', .4, .55, (x0 + .1, 2.0, 1.7), facing=(1, 0), bg='#f4f0e4', fg='#b02020', size=(400, 550))
+    put('sofa_03', (s.x, s.y + .12, 0), 0, .8, fallback=lambda: _sofa_prim(s))
+    put('throw_pillows_01', (s.x + .55, s.y + .05, .36), 0, .6)
+    put('modern_coffee_table_01', (TABLE.x, TABLE.y, 0), 0, 1.0, fallback=lambda: _table_prim(TABLE))
+    cyl('chai_cup', .035, .07, (TABLE.x + .3, TABLE.y - .1, .43), plain('cup', '#f4f0e8', .4), v=14)
+    cyl('chai_tea', .032, .005, (TABLE.x + .3, TABLE.y - .1, .465), plain('chai', '#a8703a', .3), v=14)
+    cyl('saucer', .06, .008, (TABLE.x + .3, TABLE.y - .1, .396), plain('cup', '#f4f0e8', .4), v=18)
+    C.sign('paper_on_table', 'THE DAILY PRAGATI', .36, .26, (TABLE.x - .25, TABLE.y + .05, .4), facing=(0, -1), bg='#ece8dc', fg='#222', size=(500, 360), font_scale=.18).rotation_euler = (math.radians(-90), 0, .3)
+    v = TV
+    put('modern_wooden_cabinet', (v.x, v.y + .02, 0), 180, (.62, .8, .9), fallback=lambda: box('tv_cab', (1.3, .45, .55), (v.x, v.y, .28), plain('teak', '#5a3420', .45), bevel=.02))
+    if put('Television_01', (v.x, v.y + .02, .61), 180, 1.3) is None:
+        box('tv', (.75, .45, .55), (v.x, v.y + .02, .87), plain('tvbody', '#1a1a1c', .3), bevel=.03)
+    if not T.PH: box('tv_scr', (.56, .01, .4), (v.x, v.y + .26, .87), plain('tvscr', '#203048', .15, emit='#5080c0', strength=.5))
+    put('potted_plant_02', (x0 + .45, y1 - .45, 0), 30, 1.0)
+    put('potted_plant_02', (v.x - 1.05, v.y + .3, 0), -40, .7)
+    if put('wall_clock', (s.x, y1 - .01, 2.25), 0, 1.0) is None:
+        cyl('clock', .17, .03, (s.x, y1 - .08, 2.2), plain('clockface', '#f4f0e8', .5), rot=(math.pi / 2, 0, 0), v=24)
+    put('hanging_picture_frame_01', (s.x - .95, y1 - .07, 1.7), 0, .7)
+    put('hanging_picture_frame_02', (s.x + .95, y1 - .07, 1.75), 0, .7)
+    C.sign('calendar', 'NOVEMBER\n2026', .4, .55, (x0 + .07, 2.0, 1.7), facing=(1, 0), bg='#f4f0e4', fg='#b02020', size=(400, 550))
+    put('hanging_picture_frame_02', (x0 + .08, 3.3, 1.75), 90, .6)
+    box('tubelight_b', (1.25, .05, .06), (x0 + .07, 1.0, 2.4), plain('tubeholder', '#ece8e0', .4), rot=(0, 0, math.pi / 2))
+    box('tubelight', (1.18, .035, .035), (x0 + .1, 1.0, 2.38), plain('tube', '#ffffff', .2, emit='#fff8e8', strength=10 if night else 4), rot=(0, 0, math.pi / 2))
+    switchboard('swb_door', (DOOR[0] - .35, .07, 1.25), (0, 1)); switchboard('swb_sofa', (s.x + 1.3, y1 - .07, 1.25), (0, -1))
+    conduit('cd1', [(DOOR[0] - .35, .07, 1.32), (DOOR[0] - .35, .07, 2.7), (x0 + .07, .07, 2.7), (x0 + .07, 1.0, 2.7), (x0 + .07, 1.0, 2.45)])
+    conduit('cd2', [(s.x + 1.3, y1 - .07, 1.32), (s.x + 1.3, y1 - .07, 2.72), (TABLE.x, y1 - .07, 2.72)])
+    put('wicker_basket_01', (x0 + .4, .5, 0), 20, 1.0)
+    rack = mat_ph('rackwood', ('wood', 'planks'), '#5a3a22', scale=.4)
+    HR.rbox('shoerack', (.75, .3, .45), (DOOR[0] - .6, .3, .23), rack, .05)
     for k in range(3):
-        C.sign(f'photo{k}', '', .32, .4, (s.x - .7 + k * .7, y1 - .07, 1.75 + (k % 2) * .08), facing=(0, -1), bg=['#8a6a4a', '#5a7a8a', '#7a5a6a'][k], fg='#000000', size=(64, 80), border='#d8b040')
-    box('tubelight', (1.2, .05, .05), (s.x, y1 - .1, 2.45), plain('tube', '#ffffff', .2, emit='#fff8e8', strength=8 if night else 3))
-    for x in (x0 + 1.0, x0 + 2.2): box(f'curtain{x}', (.25, .05, 1.5), (x, y1 - .1, 1.5), plain('curtain', '#c86a3a', .9))
-    # shoe rack + chappals by the door, papa's spare slipper by the sofa
-    box('shoerack', (.6, .3, .5), (DOOR[0] - .55, .25, .25), tw)
-    # bedroom
-    bc = BEDC; bw_ = plain('bedwood', '#6a4028', .5)
-    box('bed_frame', (2.0, 1.05, .32), (bc.x, bc.y, .16), bw_, bevel=.02)
-    box('bed_head', (.08, 1.1, .85), (bc.x + 1.0, bc.y, .42), bw_, bevel=.02)
-    box('mattress', (1.95, 1.0, .16), (bc.x, bc.y, .4), checker('bedsheet', '#2a5aa8', '#3a78c0', 14, lines='#e8e8e0'), bevel=.04)
-    box('pillow', (.35, .55, .1), (bc.x + .75, bc.y, .52), plain('pillow', '#f0ece4', .8), bevel=.04)
-    box('blanket', (1.0, 1.04, .06), (bc.x - .4, bc.y, .5), checker('blanket', '#c84a3a', '#a83a2a', 10), bevel=.03)
-    box('desk', (1.1, .55, .05), (bx0 + .75, by0 + .45, .72), tw)
-    for sx in (-1, 1): box(f'desk_leg{sx}', (.05, .5, .7), (bx0 + .75 + sx * .5, by0 + .45, .35), tw)
-    box('monitor', (.55, .05, .35), (bx0 + .75, by0 + .32, 1.0), plain('tvbody', '#141416', .3))
-    box('monitor_scr', (.5, .01, .3), (bx0 + .75, by0 + .35, 1.0), plain('pcscr', '#102040', .2, emit='#40a0ff', strength=2.5))
-    box('pc', (.18, .4, .42), (bx0 + 1.2, by0 + .45, .96), plain('pc', '#1a1a1e', .4))
-    T.lib.sphere('clothes', .25, (bx0 + .5, by0 + 1.05, .55), plain('clothes', '#4a6a3a', .9)).scale = (1, .8, .5)
-    box('chair', (.45, .45, .05), (bx0 + .5, by0 + 1.05, .45), tw)
+        c_ = HR.chappal(f'rack_chappal{k}'); c_.location = (DOOR[0] - .85 + k * .22, .3, .455); c_.rotation_euler = (0, 0, math.radians(90 + k * 12))
+    # ---- bedroom (the gamer's den)
+    bc = BEDC; bed(bc)
+    put('painted_wooden_nightstand', (bc.x + .85, bc.y - .85, 0), 0, .9)
+    tw = mat_ph('deskwood', ('wood', 'veneer'), '#5a3420', scale=.5)
+    HR.rbox('desk', (1.15, .55, .045), (bx0 + .78, by0 + .4, .74), tw, .1)
+    for sx in (-1, 1): HR.rbox(f'desk_leg{sx}', (.045, .5, .72), (bx0 + .78 + sx * .53, by0 + .4, .36), tw, .2)
+    blk = plain('tvbody', '#141416', .3)
+    HR.rbox('monitor', (.6, .04, .36), (bx0 + .78, by0 + .3, 1.07), blk, .08)
+    box('monitor_scr', (.56, .005, .32), (bx0 + .78, by0 + .33, 1.07), plain('pcscr', '#102040', .2, emit='#40a0ff', strength=2.5))
+    HR.rbox('monitor_st', (.05, .05, .16), (bx0 + .78, by0 + .28, .84), blk, .2); HR.rbox('monitor_ft', (.22, .14, .015), (bx0 + .78, by0 + .28, .77), blk, .3)
+    HR.rbox('keyboard', (.42, .13, .02), (bx0 + .78, by0 + .5, .775), plain('kb', '#1e1e22', .5), .2)
+    HR.rbox('pc', (.2, .42, .44), (bx0 + 1.22, by0 + .42, .985), blk, .05)
+    box('pc_led', (.004, .3, .02), (bx0 + 1.115, by0 + .42, 1.12), plain('rgb', '#ff30c0', .2, emit='#ff30c0', strength=6))
+    put('gaming_console', (bx0 + .4, by0 + .45, .765), 10, 1.0)
+    put('gamepad', (bx0 + .55, by0 + .6, .765), -20, .5)
+    if put('plastic_monobloc_chair_01', (bx0 + .78, by0 + 1.0, 0), 15, 1.0) is None:
+        box('chair', (.45, .45, .05), (bx0 + .78, by0 + 1.05, .45), plain('monobloc', '#f2f0ea', .5))
+    T.lib.sphere('clothes', .22, (bx0 + .78, by0 + 1.18, .62), checker('tshirtpile', '#4a6a3a', '#3a5a2a', 30)).scale = (1.1, .8, .45)
     poster('poster1', 'LEVEL\nUP', (bx0 + 1.6, by1 - .07, 1.7), .6, .85, (0, -1), '#1a1a3a', '#40e0ff')
     poster('poster2', 'NO\nSLEEP\nJUST\nGAMES', (bx1 - .07, by0 + 2.5, 1.6), .55, .8, (-1, 0), '#3a0a1a', '#ff5070')
-    fan = ceiling_fan('fan_bed', Vector((bc.x - .4, bc.y - .6, 0)))
-    fan2 = ceiling_fan('fan_liv', Vector((TABLE.x, TABLE.y, 0)))
-    return dict(fans=[fan, fan2])
+    poster('poster3', 'PRESS\nSTART', (bx0 + .78, by0 + .07, 1.75), .5, .55, (0, 1), '#20103a', '#ffd040', size=(600, 660))
+    put('steel_frame_shelves_01', (bx1 - .3, by1 - .45, 0), -90, .8)
+    switchboard('swb_bed', (bx0 + .07, by0 + .6, 1.25), (1, 0))
+    fans = []
+    for k, c_ in enumerate((Vector((bc.x - .4, bc.y - .6, 0)), Vector((TABLE.x, TABLE.y, 0)))):
+        f = put('ceiling_fan', (c_.x, c_.y, H), 0, .85)
+        if f is None: f = ceiling_fan(f'fan{k}', c_)
+        fans.append(f)
+    # ceiling lights (soft, warm) so the rooms read
+    for k, (x, y, e) in enumerate(((-1.4, 1.6, 160), (.4, 3.4, 120), (3.6, 2.6, 140))):
+        l = bpy.data.lights.new(f'room{k}', 'AREA'); l.energy = e * (1.6 if night else 1.0); l.size = 1.6; l.color = (1, .92, .8)
+        o = bpy.data.objects.new(f'room{k}', l); T.coll('Town').objects.link(o); o.location = (x, y, H - .15)
+    return dict(fans=fans)
+
+
+def _sofa_prim(s):
+    sofa_m = mat_ph('sofa', ('fabric', 'leather'), '#7a3a2a', scale=.5, tint='#8a4430')
+    HR.rbox('sofa_base', (2.0, .8, .3), (s.x, s.y, .2), sofa_m, .1)
+    HR.rbox('sofa_back', (2.0, .22, .55), (s.x, s.y + .32, .55), sofa_m, .2)
+    for sx in (-1, 1): HR.rbox(f'sofa_arm{sx}', (.2, .8, .45), (s.x + sx * 1.0, s.y, .32), sofa_m, .25)
+    for k in range(2): HR.rbox(f'sofa_cush{k}', (.8, .62, .12), (s.x - .41 + k * .82, s.y - .04, .41), sofa_m, .35)
+
+
+def _table_prim(t):
+    tw = plain('teak', '#5a3420', .45); HR.rbox('ctable_top', (1.1, .6, .05), (t.x, t.y, .4), tw, .1)
+    for sx in (-1, 1):
+        for sy in (-1, 1): box(f'ctable_leg{sx}{sy}', (.05, .05, .38), (t.x + sx * .48, t.y + sy * .24, .19), tw)
+
+
+
+def chajja(name, c, w, facing, depth=.45):
+    """the concrete sunshade slab over every Indian window"""
+    ang = math.atan2(facing[1], facing[0]) - math.pi / 2
+    o = HR.rbox(name, (w + .3, depth, .07), (0, 0, 0), mat_ph('concrete', ('concrete', 'plaster'), '#c8c0b0', scale=.5), .15, sub=1)
+    o.rotation_euler = (math.radians(-6), 0, ang); o.location = Vector(c) + Vector((facing[0], facing[1], 0)) * (depth / 2)
+    return o
+
+
+def ext_window(name, c, w, h, facing, frame='#e8e2d4', grill='#1c1e20', lit=False):
+    """outside view of a window: dark glass with sky reflection, frame, a patterned MS grill box, chajja on top"""
+    ang = math.atan2(facing[1], facing[0]) - math.pi / 2
+    root = bpy.data.objects.new(name, None); T.coll('Town').objects.link(root); root.location = c; root.rotation_euler = (0, 0, ang)
+    gl = plain('extglass_lit' if lit else 'extglass', '#2a3440', .04, emit='#ffcc80' if lit else None, strength=1.5 if lit else 0)
+    fr = plain('frame' + frame, frame, .5); ir = plain('grill' + grill, grill, .45, .6)
+    box(name + '_gl', (w, .02, h), (0, .02, 0), gl).parent = root
+    for x in (-w / 2, 0, w / 2): box(f'{name}_fv{x:.2f}', (.05, .06, h + .05), (x, 0, 0), fr).parent = root
+    for z in (-h / 2, h / 2): box(f'{name}_fh{z:.2f}', (w + .05, .06, .05), (0, 0, z), fr).parent = root
+    gd = -.14
+    for k in range(9): cyl(f'{name}_g{k}', .007, h, (-w / 2 + w * (k + .5) / 9, gd, 0), ir, v=6).parent = root
+    for z in (-h / 2, -h / 6, h / 6, h / 2): box(f'{name}_gh{z:.2f}', (w + .04, .012, .012), (0, gd, z), ir).parent = root
+    for x in (-w / 2 - .02, w / 2 + .02): box(f'{name}_gs{x:.2f}', (.012, .14, h), (x, gd / 2, 0), ir).parent = root
+    chajja(name + '_ch', Vector(c) + Vector((0, 0, h / 2 + .12)), w, facing)
+    return root
+
+
+def water_tank(name, c, r=.5, h=.9):
+    """black ribbed plastic rooftop water tank"""
+    m = plain('tankblk', '#1a1a1c', .55)
+    secs = []
+    for k in range(9):
+        z = h * k / 8; rr = r * (1.0 if k % 2 == 0 else .965)
+        if k == 8: rr = r * .8
+        secs.append((z, 0, 0, rr * 2, rr * 2, 2))
+    o = HR.loft(name, secs + [(h + .06, 0, 0, r * .35, r * .35, 2)], m, axis='z', n=28, sub=1); o.location = c
+    cyl(name + '_lid', r * .3, .05, (c[0], c[1], c[2] + h + .07), m, v=16)
+    return o
+
+
+def plaster(col, key=None):
+    return mat_ph('plaster_' + (key or col), ('plaster', 'painted', 'wall'), col, scale=.7, tint=col)
+
+
+def rowhouse(name, x0, w, front_y, side, floors, col, seed, shop=None, night=False):
+    """an Indian colony house: plastered block, floor bands, windows with grills + chajjas, a balcony with railing and
+    drying clothes, parapet, water tank, AC unit, rain pipe; ground floor = gate+door or a shop shutter with a board.
+    side=+1: front faces -Y (north side of the street); side=-1: front faces +Y"""
+    r = random.Random(seed); fdir = (0, -side); D = 8.0; FH = 3.1; Hh = floors * FH + .3
+    cy = front_y + side * D / 2; xc = x0 + w / 2
+    pm = plaster(col)
+    box(name + '_body', (w, D, Hh), (xc, cy, Hh / 2), pm)
+    band = plaster('#e8e0d0', 'band')
+    for f in range(1, floors + 1):
+        box(f'{name}_band{f}', (w + .08, .14, .14), (xc, front_y - side * .05, f * FH), band)
+    box(name + '_parapet', (w + .1, .2, .7), (xc, front_y + side * .1, Hh + .35), band)
+    for f in range(floors):
+        z = f * FH + 1.55
+        if f == 0 and shop: continue
+        nwin = 2 if w > 5 else 1
+        for k in range(nwin):
+            xx = x0 + w * (k + 1) / (nwin + 1)
+            if f == 0 and k == 0 and not shop: continue
+            ext_window(f'{name}_w{f}{k}', (xx, front_y - side * .01, z), r.choice([1.1, 1.3]), 1.15, fdir, lit=night and r.random() < .6,
+                       frame=r.choice(['#e8e2d4', '#6a4a30', '#8a9a8a']), grill=r.choice(['#1c1e20', '#2a5a4a', '#3a2a5a']))
+    if floors >= 2:                                              # balcony on the 1st floor
+        bw_ = min(w - 1.0, 3.2); bx = x0 + w * .3 + r.uniform(-.3, .3); by = front_y - side * .55
+        HR.rbox(f'{name}_bal', (bw_, 1.1, .14), (bx, by, FH + .07), mat_ph('concrete', ('concrete', 'plaster'), '#c8c0b0', scale=.5), .1, sub=1)
+        rail = plain('rail' + str(seed % 3), ['#2a2a2a', '#2a5a4a', '#6a2a2a'][seed % 3], .45, .6)
+        for k in range(int(bw_ / .12)): cyl(f'{name}_rl{k}', .009, .85, (bx - bw_ / 2 + .06 + k * .12, by - side * .52, FH + .55), rail, v=6)
+        box(f'{name}_rtop', (bw_, .05, .04), (bx, by - side * .52, FH + .98), rail)
+        if r.random() < .8:
+            box(f'{name}_clrope', (bw_ - .2, .006, .006), (bx, by - side * .3, FH + 1.9), plain('rope', '#d8d0c0', .9))
+            for k in range(r.randint(2, 4)):
+                cl = HR.rbox(f'{name}_cl{k}', (r.uniform(.35, .55), .015, r.uniform(.45, .8)), (bx - bw_ / 2 + .4 + k * .55, by - side * .3, FH + 1.6),
+                             plain('cloth' + str(k), ['#c83030', '#3060c0', '#e8c030', '#f0f0f0', '#e07ab0'][(k + seed) % 5], .95), .1, sub=1)
+        if r.random() < .6: put('potted_plant_04', (bx + bw_ / 2 - .25, by - side * .3, FH + .14), r.uniform(0, 360), 1.6)
+    if r.random() < .7:                                          # AC outdoor unit
+        acx = x0 + r.uniform(.6, w - .6); acz = (floors - 1) * FH + r.uniform(.6, 1.0)
+        HR.rbox(f'{name}_ac', (.8, .3, .55), (acx, front_y - side * .17, acz), plain('acunit', '#ecebe6', .45), .08, sub=1)
+        cyl(f'{name}_acfan', .19, .02, (acx - .1, front_y - side * .33, acz), plain('acgrill', '#3a3a3a', .6), rot=(math.pi / 2, 0, 0), v=20)
+    pipe = plain('pipe', '#3a3a3a', .5)
+    cyl(f'{name}_pipe', .04, Hh, (x0 + .2, front_y - side * .06, Hh / 2), pipe, v=8)
+    water_tank(f'{name}_tank', (x0 + r.uniform(1.0, w - 1.0), cy + side * r.uniform(-1, 1), Hh), r.uniform(.45, .6))
+    if r.random() < .5:                                          # dish antenna on the parapet
+        d = T.lib.sphere(f'{name}_dish', .3, (x0 + w - .7, front_y + side * .1, Hh + .95), plain('dish', '#e8e8e4', .4), seg=20, rings=10)
+        d.scale = (1, .25, 1); d.rotation_euler = (math.radians(20), 0, math.radians(r.uniform(-30, 30)))
+    if shop:
+        sw = w - 1.0
+        sh_ = mat_ph('shutter', ('corrugated', 'metal'), '#8a8c8e', scale=.4)
+        box(f'{name}_shut', (sw, .06, .55), (xc, front_y - side * .02, 2.55), sh_)
+        box(f'{name}_shopin', (sw, .1, 2.25), (xc, front_y + side * .2, 1.12), plain('shopdark', '#2a241e', .9))
+        C.sign(f'{name}_board', shop, sw + .3, .75, (xc, front_y - side * .12, 3.25), facing=fdir, bg=r.choice(['#c01818', '#f0d020', '#1a5aa8', '#1a8a4a']),
+               fg='#ffffff' if 'GAS' in shop else '#1a1a1a', size=(1100, 220), font_scale=.5)
+        box(f'{name}_step', (sw, .5, .18), (xc, front_y - side * .25, .09), mat_ph('concrete', ('concrete', 'plaster'), '#c8c0b0', scale=.5))
+    else:                                                        # gate + compound wall + door
+        gx = x0 + w * .72
+        door_leaf(f'{name}_door', .95, 2.05, mat_ph('doorwood', ('wood', 'planks', 'door'), '#6a3e22', scale=.5)).location = (gx - .47, front_y - side * .01, 0)
+        cw = plaster('#e0d0b0', 'compound')
+        for xa, xb in ((x0, gx - .7), (gx + .7, x0 + w)):
+            if xb - xa > .1: box(f'{name}_cw{xa:.1f}', (xb - xa, .15, 1.0), ((xa + xb) / 2, front_y - side * 1.6, .5), cw)
+    return dict(x0=x0, w=w, front_y=front_y)
+
+
+def pole(name, x, y, h=8.0):
+    pm = mat_ph('polecon', ('concrete',), '#8a8a84', scale=.4)
+    HR.loft(name, [(0, 0, 0, .26, .2, 3), (h, 0, 0, .14, .12, 3)], pm, axis='z', n=12, sub=0).location = (x, y, 0)
+    box(name + '_arm', (1.3, .08, .08), (x, y, h - .5), plain('polesteel', '#5a5a58', .5, .6))
+    for k in (-.55, -.2, .2, .55): cyl(f'{name}_ins{k}', .03, .09, (x + k, y, h - .41), plain('insul', '#e8e4dc', .3), v=10)
+    lamp = HR.rbox(name + '_lamp', (.45, .16, .08), (x, y - .7, h - 1.4), plain('lamphead', '#3a3a3a', .4), .2, sub=1)
+    box(name + '_lamparm', (.04, .7, .04), (x, y - .35, h - 1.35), plain('polesteel', '#5a5a58', .5, .6))
+    return Vector((x, y, h - .4))
 
 
 def street(night=False):
-    road = mat_ph('road', ('asphalt', 'road'), '#5a5650', scale=.35)
-    dirt = mat_ph('dust', ('dirt', 'ground', 'gravel'), '#a89070', scale=.4)
-    box('road', (60, 5.6, .06), (0, -5.2, -.03), road)
-    box('kerb_n', (60, .9, .1), (0, -2.0, .02), dirt); box('kerb_s', (60, .9, .1), (0, -8.4, .02), dirt)
-    box('porch', (3.4, 1.6, .12), (-.9, -.8, .06), mat_ph('porch', ('concrete', 'tiles'), '#b8b0a0', scale=.6))
+    road = mat_ph('road', ('asphalt', 'road'), '#5a5650', scale=.6)
+    dirt = mat_ph('dust', ('dirt', 'ground', 'gravel'), '#a89070', scale=.6)
+    pave = mat_ph('pavers', ('paving', 'cobblestone', 'brick floor'), '#9a9088', scale=.5)
+    box('road', (80, 5.2, .06), (0, -5.2, -.03), road)
+    box('shoulder_n', (80, .9, .08), (0, -2.15, -.01), dirt); box('shoulder_s', (80, .9, .08), (0, -8.25, -.01), dirt)
+    box('drain_n', (80, .3, .1), (0, -1.65, -.04), plain('drain', '#4a4840', .7)); box('drain_s', (80, .3, .1), (0, -8.85, -.04), plain('drain', '#4a4840', .7))
     box('ground_far', (300, 300, .1), (0, 0, -.12), dirt)
+    put('water_manhole_cover', (-4.0, -5.0, .005), 0, 1.0)
+    # our house: porch, gate, compound wall, upper floor with balcony
+    dx = (DOOR[0] + DOOR[1]) / 2
+    box('porch', (3.6, 1.5, .12), (dx - .4, -.75, .06), pave)
+    box('porch_step', (1.2, .3, .06), (dx, -1.62, .03), pave)
+    pw = plaster('#e0d0b0', 'compound'); post = plaster('#d8c8a8', 'post')
+    for x in (dx - .62, dx + .62): HR.rbox(f'gatepost{x}', (.22, .22, 1.35), (x, -1.65, .67), post, .08, sub=1)
     gate = plain('gate', '#2a4a3a', .5, .4)
-    for x in (-1.45, -.35): box(f'gatepost{x}', (.2, .2, 1.3), (x, -1.65, .65), plain('post', '#d8c8a8', .7))
-    for k in range(8): cyl(f'gatebar{k}', .012, 1.0, (-2.6 - k * .14, -1.65, .55), gate, v=6)
-    box('compound', (5.0, .15, 1.1), (-4.0, -1.65, .55), plain('compound', '#e0d0b0', .8)); box('compound2', (5.0, .15, 1.1), (2.2, -1.65, .55), plain('compound', '#e0d0b0', .8))
-    # our house front (outside of the living room wall) + the neighbours on both sides of the street
-    r = random.Random(4)
-    cols = ['#e8c890', '#b8d8c8', '#f0b8a8', '#c8c0e8', '#f0e0a0', '#a8c8e0', '#e8a888', '#d0e0a8']
-    box('our_house_up', (8.4, .12, 3.2), (1.1, -.06, 4.4), mat_ph('ourpaint', ('plaster', 'painted'), '#e8c890', .6, '#ecd090'))
-    box('our_parapet', (8.4, .3, .5), (1.1, -.1, 6.2), plain('parapet', '#d8b878', .8))
-    window('our_win_up', (0.4, -.08, 4.3), 1.4, 1.1, (0, -1))
-    box('balcony', (2.2, .9, .12), (2.6, -.5, 3.0), plain('slab', '#c8c0b0', .8))
-    for k in range(10): cyl(f'balrail{k}', .015, .8, (1.6 + k * .22, -.92, 3.45), plain('rail', '#2a2a2a', .5, .5), v=6)
-    C.sign('nameplate', 'SHARMA\nNIWAS', .6, .32, (-1.75, -.08, 1.6), facing=(0, -1), bg='#2a2a2a', fg='#e8d8a0', size=(500, 270))
-    for side, yf in ((-1, -9.0), (1, None)):
-        x = -26.0
-        while x < 26:
-            w = r.uniform(5, 7.5)
-            if side == 1 and -3.4 < x + w / 2 < 6.0: x += w + .3; continue          # our house
-            col = r.choice(cols); h = r.choice([6.2, 6.5, 9.4])
-            y = (yf - 4.0) if side == -1 else 4.0
-            box(f'nb{side}_{x:.0f}', (w, 8.0, h), (x + w / 2, y, h / 2), C.windows(f'nbw{col}', col, glass='#2a3440', lit=.05 if not night else .5, cols=2.0, rows=3.2, emit=.8))
-            ff = y + (4.0 if side == -1 else -4.0)
-            box(f'nbbal{side}_{x:.0f}', (w * .7, 1.0, .12), (x + w / 2, ff + (.5 if side == -1 else -.5), 3.1), plain('slab', '#c8c0b0', .8))
-            for k in range(int(w * .7 / .25)): cyl(f'nbr{side}_{x:.0f}_{k}', .012, .8, (x + w * .15 + k * .25, ff + (1.0 if side == -1 else -1.0), 3.55), plain('rail', '#2a2a2a', .5, .5), v=6)
-            if r.random() < .5: box(f'ac{side}_{x:.0f}', (.8, .3, .55), (x + w * .75, ff + (.16 if side == -1 else -.16), 4.6), plain('ac', '#e8e8e4', .4))
-            if r.random() < .6:                                   # clothes line on the balcony
-                for k in range(4): box(f'cl{side}_{x:.0f}_{k}', (.35, .02, .5), (x + w * .3 + k * .45, ff + (.9 if side == -1 else -.9), 3.6), plain('cloth' + str(k), ['#c83030', '#3060c0', '#e8c030', '#f0f0f0'][k], .9))
-            x += w + .3
-    # shops across the road
-    C.sign('gas_shop', 'SHARMA GAS AGENCY', 4.2, .7, (3.5, -9.0 + .1, 2.6), facing=(0, 1), bg='#c01818', fg='#ffffff', size=(1024, 170))
-    C.sign('chai_shop', 'CHAI  -  10 Rs', 2.6, .6, (-7.5, -9.0 + .1, 2.5), facing=(0, 1), bg='#f0d020', fg='#2a1a10', size=(800, 180))
-    for k in range(5): cyl(f'shopcyl{k}', .16, .7, (2.2 + k * .45, -8.6, .38), plain('lpg', '#c81818', .35), v=16)
-    # electric poles + a tangle of wires
-    pm = plain('pole', '#8a8a84', .8)
-    poles = [(-8.5, -2.2), (1.5, -2.2), (11.5, -2.2), (-3.0, -8.6), (7.0, -8.6)]
-    for k, (x, y) in enumerate(poles):
-        cyl(f'pole{k}', .1, 8.0, (x, y, 4.0), pm, v=10); box(f'polebar{k}', (1.2, .08, .08), (x, y, 7.4), pm)
-    wire = plain('wire', '#1a1a1a', .6)
-    rr = random.Random(9)
-    for a, b in ((0, 1), (1, 2), (0, 3), (3, 4), (1, 4), (2, 4), (1, 3)):
-        pa, pb = Vector((*poles[a], 7.4)), Vector((*poles[b], 7.4))
+    for k in range(9): cyl(f'gatebar{k}', .012, 1.0, (dx - .7 - .12 - k * .12, -1.62 - k * .03, .55), gate, v=6)       # the gate leaf, swung open
+    box('compound', (6.0, .15, 1.1), (dx - .7 - 3.0, -1.65, .55), pw); box('compound2', (2.8, .15, 1.1), (dx + .7 + 1.4, -1.65, .55), pw)
+    for k, x in enumerate((dx - 3.4, dx - 1.6, dx + 2.4)):
+        if put('planter_pot_clay', (x, -1.45, 1.1), k * 40, 1.0) is None: cyl(f'pot{k}', .14, .22, (x, -1.45, 1.21), plain('pot', '#a85a30', .8), v=12)
+        T.lib.sphere(f'plant{k}', .2, (x, -1.45, 1.4), plain('leafy', '#3a7a2a', .8)).scale = (1, 1, .8)
+    ours = plaster('#efd08a', 'ours')
+    x0, x1 = LIV[0] - .2, BED[1] + .2
+    box('our_upper', (x1 - x0, 4.8, 3.1), ((x0 + x1) / 2, 2.25, H + 1.55), ours)          # 1st floor block over the flat
+    box('our_front_low', (x1 - x0 - (LIV[1] - LIV[0] + .2), .14, H), ((LIV[1] + x1) / 2 + .05, BED[2] - .07, H / 2), ours)   # bedroom front (outside)
+    box('our_band', (x1 - x0 + .1, .16, .14), ((x0 + x1) / 2, -.14, H), plaster('#e8e0d0', 'band'))
+    box('our_parapet', (x1 - x0 + .1, .2, .7), ((x0 + x1) / 2, -.05, H + 3.45), plaster('#e8e0d0', 'band'))
+    ext_window('our_w_up1', (-1.8, -.08, H + 1.6), 1.3, 1.15, (0, -1)); ext_window('our_w_up2', (1.0, -.08, H + 1.6), 1.1, 1.15, (0, -1))
+    chajja('our_ch_door', (dx, -.02, 2.3), 1.2, (0, -1), .6); chajja('our_ch_win', ((WINF[0] + WINF[1]) / 2, -.02, 2.2), WINF[1] - WINF[0], (0, -1))
+    for k in range(9): cyl(f'grillf{k}', .007, 1.1, (WINF[0] + (WINF[1] - WINF[0]) * (k + .5) / 9, -.14, 1.5), plain('grill#1c1e20', '#1c1e20', .45, .6), v=6)
+    HR.rbox('our_bal', (2.6, 1.0, .14), (3.4, -.5, H + .07), mat_ph('concrete', ('concrete', 'plaster'), '#c8c0b0', scale=.5), .1, sub=1)
+    for k in range(21): cyl(f'balrail{k}', .009, .85, (2.15 + k * .12, -.98, H + .55), plain('rail2', '#2a2a2a', .45, .6), v=6)
+    box('balrail_top', (2.6, .05, .04), (3.4, -.98, H + .98), plain('rail2', '#2a2a2a', .45, .6))
+    water_tank('our_tank', (-1.4, 2.0, H + 3.1), .55)
+    C.sign('nameplate', 'SHARMA\nNIWAS', .6, .32, (dx - .62, -1.78, 1.05), facing=(0, -1), bg='#2a2a2a', fg='#e8d8a0', size=(500, 270))
+    HR.rbox('our_ac', (.8, .3, .55), (-.4, -.17, H + .9), plain('acunit', '#ecebe6', .45), .08, sub=1)
+    # the colony: houses on our side (front y -1.65 line) and across the street (front y -9.0), a few shops opposite
+    cols = ['#e8c890', '#b8d8c8', '#f0b8a8', '#c8c0e8', '#f0e0a0', '#a8c8e0', '#e8a888', '#d0e0a8', '#f4d4c0', '#c4e0d0']
+    r = random.Random(4); x = -30.0; k = 0
+    while x < 30:
+        w = r.uniform(6, 8)
+        if not (x + w > LIV[0] - .6 and x < BED[1] + .6):
+            rowhouse(f'nbN{k}', x, w, -.1, 1, r.choice([2, 2, 3]), r.choice(cols), 100 + k, night=night)
+        x += w + .15; k += 1
+    shops = {1: 'SHARMA GAS AGENCY', 3: 'GUPTA GENERAL STORE', 5: 'CHAI  -  10 Rs', 6: 'MOBILE REPAIR'}
+    x = -26.0; k = 0
+    while x < 30:
+        w = r.uniform(6, 8)
+        rowhouse(f'nbS{k}', x, w, -9.0, -1, r.choice([2, 3, 3]), r.choice(cols), 200 + k, shop=shops.get(k), night=night)
+        if shops.get(k, '').startswith('SHARMA GAS'):
+            for j in range(5):
+                c_ = HR.lpg_cylinder(f'shopcyl{j}'); c_.location = (x + 1.0 + j * .42, -8.6 + (j % 2) * .1, 0)
+            gas_x = x + w / 2
+        if shops.get(k, '').startswith('CHAI'):
+            HR.rbox('chai_counter', (1.6, .6, .9), (x + w / 2, -8.2, .45), mat_ph('stallwood', ('wood', 'planks'), '#7a5a3a', scale=.4), .05, sub=1)
+            put('brass_pot_01', (x + w / 2 - .4, -8.2, .9), 0, 1.0); cyl('stove', .15, .12, (x + w / 2 + .3, -8.2, .96), plain('stove', '#2a2a2a', .5, .5), v=14)
+            for j in range(3): put('plastic_monobloc_chair_01', (x + .8 + j * .9, -7.5, 0), 180 + j * 25, 1.0)
+            put('plastic_crate_01', (x + w - .6, -8.4, 0), 10, 1.2)
+        x += w + .15; k += 1
+    # poles + a tangle of wires, trees, parked stuff
+    tops = [pole(f'pole{k}', x, y) for k, (x, y) in enumerate([(-9.5, -1.95), (6.8, -1.95), (18.0, -1.95), (-3.0, -8.55), (11.0, -8.55), (-20.0, -1.95)])]
+    wire = plain('wire', '#1a1a1a', .6); rr = random.Random(9)
+    for a, b in ((5, 0), (0, 1), (1, 2), (0, 3), (3, 4), (1, 4), (2, 4), (1, 3)):
+        pa, pb = tops[a], tops[b]
         for j in range(3):
-            off = Vector((0, 0, -.1 * j)) + Vector((rr.uniform(-.4, .4), 0, 0)); sag = rr.uniform(.4, 1.0); pts = []
-            for k in range(12):
-                u = k / 11; p = pa.lerp(pb, u) + off; p.z -= sag * math.sin(u * math.pi); pts.append(p)
-            T.lib.tube(f'wire{a}{b}{j}', pts, .008, m=wire) if hasattr(T.lib, 'tube') else None
-    # scooter
-    sc = Vector((3.2, -3.4, 0)); body = plain('scooter', '#2a6ab0', .3, .2); blk = plain('tire', '#141416', .9)
-    for dy in (-.55, .55): cyl(f'scw{dy}', .2, .1, (sc.x, sc.y + dy, .2), blk, rot=(0, math.pi / 2, 0), v=16)
-    box('sc_body', (.35, 1.2, .35), (sc.x, sc.y + .1, .42), body, bevel=.08); box('sc_seat', (.3, .6, .1), (sc.x, sc.y + .2, .68), plain('seat', '#1a1a1a', .5), bevel=.03)
-    box('sc_front', (.32, .2, .7), (sc.x, sc.y - .5, .6), body, bevel=.06); cyl('sc_bar', .02, .6, (sc.x, sc.y - .55, .98), blk, rot=(0, math.pi / 2, 0), v=8)
-    # potted plants, a cycle, a stray cow-free street dog... keep it simple: plants + water tank on the roof
-    for k, x in enumerate((-3.2, 1.2, 5.5)):
-        cyl(f'pot{k}', .16, .3, (x, -1.9, .15), plain('pot', '#a85a30', .8), v=12); T.lib.sphere(f'plant{k}', .25, (x, -1.9, .48), plain('leafy', '#3a7a2a', .8))
-    cyl('tank', .55, .9, (-1.5, 1.5, 6.9), plain('tank', '#1a1a1a', .5), v=20)
+            off = Vector((rr.uniform(-.5, .5), 0, -.12 * j)); sag = rr.uniform(.5, 1.1); pts = []
+            for q in range(14):
+                u = q / 13; p = pa.lerp(pb, u) + off; p.z -= sag * math.sin(u * math.pi); pts.append(p)
+            T.lib.tube(f'wire{a}{b}{j}', pts, .009, m=wire)
+    for k, (x, y) in enumerate(((dx + .05, -1.6), (4.0, -1.0))):                   # service wires into our house
+        T.lib.tube(f'svc{k}', [tops[1], Vector((x, y + .2, H + 2.6))], .006, m=wire)
+    for k, (x, y, s_) in enumerate(((-6.2, -1.3, 1.0), (13.5, -1.3, .9), (-14.0, -9.4, 1.1), (22.0, -9.4, 1.0))):
+        if put('tree_small_02', (x, y, 0), k * 70, s_) is None:
+            cyl(f'trunk{k}', .12, 2.5, (x, y, 1.25), plain('bark', '#5a4030', .9), v=10); T.lib.sphere(f'crown{k}', 1.4, (x, y, 3.2), plain('leafy', '#3a7a2a', .8))
+    put('covered_car', (-11.5, -7.3, 0), 90, 1.0)
+    HR.scooter('scooter_ours', (dx + 1.5, -.95, .12), 75, '#8a1620')
+    HR.scooter('scooter_nb', (-7.6, -2.4, 0), 160, '#e8e8e4', plate='DL 8C XY 0921')
+    HR.scooter('scooter_shop', (16.0, -7.9, 0), 20, '#1a3a8a', plate='HR 26 DK 3307')
+    for k, (x, y) in enumerate(((-9.2, -1.6), (18.3, -1.6))): put('trashbag', (x, y, 0), k * 50, 1.0)
+    put('old_tyre', (7.4, -1.5, .3), 80, 1.0)
 
 
 def build(night=False):
