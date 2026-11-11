@@ -316,7 +316,7 @@ class Person:
         covered = set()
         shirt_idx = [i for i in self.body_vs if (has(i, 'Spine', 'Shoulder', 'Arm') and not has(i, 'Hand')) or (has(i, 'Hips') and V(i).z > hip - .06) or (has(i, 'Neck') and V(i).z < neck - .02)]
         self.shirt = self._shell('shirt', shirt_idx, .005, cloth_mat(self.cid + '_shirt', P['shirt'], weave=520), thick=.003); covered |= set(shirt_idx)
-        boot_top = knee - .1
+        boot_top = knee - .1 if not P.get('shoes') else ank + .075      # shoes: low sneakers / loafers instead of boots
         trou_idx = [i for i in self.body_vs if (has(i, 'UpLeg', 'Leg') and not has(i, 'Foot', 'Toe') and V(i).z > boot_top - .03) or (has(i, 'Hips') and V(i).z < hip + .04)]
         self.trousers = self._shell('trousers', trou_idx, lambda c: .012 + .008 * max(0.0, min(1.0, (hip - c.z) / .3)), cloth_mat(self.cid + '_trou', P['trousers'], weave=380, wear=.35), thick=.003); covered |= set(trou_idx)
         boot_idx = [i for i in self.body_vs if has(i, 'Foot', 'Toe') or (has(i, 'Leg') and not has(i, 'UpLeg') and V(i).z < boot_top)]

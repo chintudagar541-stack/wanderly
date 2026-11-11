@@ -1,0 +1,54 @@
+{
+ "pigeon": {
+  "q": [
+   "pigeon",
+   "dove bird",
+   "crow flying",
+   "seagull flying"
+  ]
+ },
+ "dragonfly": {
+  "q": [
+   "dragonfly insect",
+   "damselfly"
+  ]
+ },
+ "lemur": {
+  "q": [
+   "lemur",
+   "chimpanzee",
+   "primate walk",
+   "gibbon"
+  ]
+ },
+ "hominin2": {
+  "q": [
+   "homo erectus",
+   "australopithecus",
+   "prehistoric man",
+   "caveman animated"
+  ]
+ },
+ "feathered": {
+  "q": [
+   "feathered dinosaur",
+   "microraptor",
+   "archaeopteryx",
+   "yutyrannus"
+  ]
+ },
+ "fish": {
+  "q": [
+   "coelacanth",
+   "fish swimming realistic",
+   "sturgeon"
+  ]
+ },
+ "herd": {
+  "q": [
+   "deer walk",
+   "horse walk realistic",
+   "elephant walk"
+  ]
+ }
+}

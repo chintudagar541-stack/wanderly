@@ -1,0 +1,412 @@
+[
+ {
+  "id": "L000",
+  "t": 7.05,
+  "who": "teacher"
+ },
+ {
+  "id": "L001",
+  "t": 11.42,
+  "who": "kevin"
+ },
+ {
+  "id": "L002",
+  "t": 17.28,
+  "who": "teacher"
+ },
+ {
+  "id": "L003",
+  "t": 26.34,
+  "who": "teacher"
+ },
+ {
+  "id": "L004",
+  "t": 39.8,
+  "who": "narrator"
+ },
+ {
+  "id": "L005",
+  "t": 55.73,
+  "who": "narrator"
+ },
+ {
+  "id": "L006",
+  "t": 63.27,
+  "who": "narrator"
+ },
+ {
+  "id": "L007",
+  "t": 78.16,
+  "who": "narrator"
+ },
+ {
+  "id": "L008",
+  "t": 87.05,
+  "who": "narrator"
+ },
+ {
+  "id": "L009",
+  "t": 92.67,
+  "who": "narrator"
+ },
+ {
+  "id": "L010",
+  "t": 104.25,
+  "who": "narrator"
+ },
+ {
+  "id": "L011",
+  "t": 112.3,
+  "who": "narrator"
+ },
+ {
+  "id": "L012",
+  "t": 125.57,
+  "who": "narrator"
+ },
+ {
+  "id": "L013",
+  "t": 138.16,
+  "who": "narrator"
+ },
+ {
+  "id": "L014",
+  "t": 151.77,
+  "who": "teacher"
+ },
+ {
+  "id": "L015",
+  "t": 156.62,
+  "who": "rohan"
+ },
+ {
+  "id": "L016",
+  "t": 160.89,
+  "who": "narrator"
+ },
+ {
+  "id": "L017",
+  "t": 176.17,
+  "who": "narrator"
+ },
+ {
+  "id": "L018",
+  "t": 188.6,
+  "who": "narrator"
+ },
+ {
+  "id": "L019",
+  "t": 196.16,
+  "who": "narrator"
+ },
+ {
+  "id": "L020",
+  "t": 209.84,
+  "who": "narrator"
+ },
+ {
+  "id": "L021",
+  "t": 221.75,
+  "who": "narrator"
+ },
+ {
+  "id": "L022",
+  "t": 229.86,
+  "who": "narrator"
+ },
+ {
+  "id": "L023",
+  "t": 241.63,
+  "who": "narrator"
+ },
+ {
+  "id": "L024",
+  "t": 247.56,
+  "who": "narrator"
+ },
+ {
+  "id": "L025",
+  "t": 260.85,
+  "who": "narrator"
+ },
+ {
+  "id": "L026",
+  "t": 266.78,
+  "who": "priya"
+ },
+ {
+  "id": "L027",
+  "t": 270.0,
+  "who": "teacher"
+ },
+ {
+  "id": "L028",
+  "t": 271.81,
+  "who": "priya"
+ },
+ {
+  "id": "L029",
+  "t": 274.0,
+  "who": "narrator"
+ },
+ {
+  "id": "L030",
+  "t": 280.78,
+  "who": "narrator"
+ },
+ {
+  "id": "L031",
+  "t": 295.27,
+  "who": "narrator"
+ },
+ {
+  "id": "L032",
+  "t": 302.06,
+  "who": "narrator"
+ },
+ {
+  "id": "L033",
+  "t": 313.18,
+  "who": "narrator"
+ },
+ {
+  "id": "L034",
+  "t": 319.11,
+  "who": "narrator"
+ },
+ {
+  "id": "L035",
+  "t": 324.42,
+  "who": "narrator"
+ },
+ {
+  "id": "L036",
+  "t": 339.62,
+  "who": "narrator"
+ },
+ {
+  "id": "L037",
+  "t": 346.6,
+  "who": "kevin"
+ },
+ {
+  "id": "L038",
+  "t": 348.68,
+  "who": "teacher"
+ },
+ {
+  "id": "L039",
+  "t": 352.8,
+  "who": "narrator"
+ },
+ {
+  "id": "L040",
+  "t": 364.66,
+  "who": "narrator"
+ },
+ {
+  "id": "L041",
+  "t": 373.47,
+  "who": "narrator"
+ },
+ {
+  "id": "L042",
+  "t": 376.92,
+  "who": "narrator"
+ },
+ {
+  "id": "L043",
+  "t": 387.46,
+  "who": "narrator"
+ },
+ {
+  "id": "L044",
+  "t": 391.82,
+  "who": "narrator"
+ },
+ {
+  "id": "L045",
+  "t": 399.32,
+  "who": "sam"
+ },
+ {
+  "id": "L046",
+  "t": 403.3,
+  "who": "teacher"
+ },
+ {
+  "id": "L047",
+  "t": 406.96,
+  "who": "narrator"
+ },
+ {
+  "id": "L048",
+  "t": 412.12,
+  "who": "narrator"
+ },
+ {
+  "id": "L049",
+  "t": 422.2,
+  "who": "narrator"
+ },
+ {
+  "id": "L050",
+  "t": 435.75,
+  "who": "narrator"
+ },
+ {
+  "id": "L051",
+  "t": 443.86,
+  "who": "narrator"
+ },
+ {
+  "id": "L052",
+  "t": 454.18,
+  "who": "narrator"
+ },
+ {
+  "id": "L053",
+  "t": 461.09,
+  "who": "narrator"
+ },
+ {
+  "id": "L054",
+  "t": 474.65,
+  "who": "narrator"
+ },
+ {
+  "id": "L055",
+  "t": 488.85,
+  "who": "narrator"
+ },
+ {
+  "id": "L056",
+  "t": 495.7,
+  "who": "narrator"
+ },
+ {
+  "id": "L057",
+  "t": 506.82,
+  "who": "kevin"
+ },
+ {
+  "id": "L058",
+  "t": 508.53,
+  "who": "teacher"
+ },
+ {
+  "id": "L059",
+  "t": 514.63,
+  "who": "kevin"
+ },
+ {
+  "id": "L060",
+  "t": 515.82,
+  "who": "teacher"
+ },
+ {
+  "id": "L061",
+  "t": 521.38,
+  "who": "narrator"
+ },
+ {
+  "id": "L062",
+  "t": 534.76,
+  "who": "narrator"
+ },
+ {
+  "id": "L063",
+  "t": 545.59,
+  "who": "narrator"
+ },
+ {
+  "id": "L064",
+  "t": 553.16,
+  "who": "narrator"
+ },
+ {
+  "id": "L065",
+  "t": 560.06,
+  "who": "narrator"
+ },
+ {
+  "id": "L066",
+  "t": 573.29,
+  "who": "narrator"
+ },
+ {
+  "id": "L067",
+  "t": 579.82,
+  "who": "narrator"
+ },
+ {
+  "id": "L068",
+  "t": 592.39,
+  "who": "narrator"
+ },
+ {
+  "id": "L069",
+  "t": 597.16,
+  "who": "narrator"
+ },
+ {
+  "id": "L070",
+  "t": 609.41,
+  "who": "narrator"
+ },
+ {
+  "id": "L071",
+  "t": 616.85,
+  "who": "narrator"
+ },
+ {
+  "id": "L072",
+  "t": 626.04,
+  "who": "narrator"
+ },
+ {
+  "id": "L073",
+  "t": 631.2,
+  "who": "narrator"
+ },
+ {
+  "id": "L074",
+  "t": 642.54,
+  "who": "teacher"
+ },
+ {
+  "id": "L075",
+  "t": 646.59,
+  "who": "kevin"
+ },
+ {
+  "id": "L076",
+  "t": 652.1,
+  "who": "teacher"
+ },
+ {
+  "id": "L077",
+  "t": 653.05,
+  "who": "kevin"
+ },
+ {
+  "id": "L078",
+  "t": 658.25,
+  "who": "teacher"
+ },
+ {
+  "id": "L079",
+  "t": 665.72,
+  "who": "narrator"
+ },
+ {
+  "id": "L080",
+  "t": 676.01,
+  "who": "narrator"
+ },
+ {
+  "id": "L081",
+  "t": 679.07,
+  "who": "narrator"
+ }
+]
