@@ -13,6 +13,7 @@ import town as T
 import lib
 from town import box, cyl, plain, put
 import city as C
+import typo as TY
 import hero as HR
 
 H = 2.8
@@ -96,7 +97,7 @@ def ceiling_fan(name, c):
 
 
 def poster(name, txt, c, w, h, facing, bg, fg, size=(600, 840)):
-    return C.sign(name, txt, w, h, c, facing=facing, bg=bg, fg=fg, size=size, font_scale=.5, border=fg)
+    return C.sign(name, txt, w, h, c, facing=facing, bg=bg, fg=fg, size=size, font_scale=.5, border=fg, **TY.kw('bungee'))
 
 
 # ------------------------------------------------------------------ Poly Haven models (CC0), instanced; primitives as fallback
@@ -234,7 +235,7 @@ def interior(night=False):
     cyl('chai_cup', .035, .07, (TABLE.x + .3, TABLE.y - .1, .43), plain('cup', '#f4f0e8', .4), v=14)
     cyl('chai_tea', .032, .005, (TABLE.x + .3, TABLE.y - .1, .465), plain('chai', '#a8703a', .3), v=14)
     cyl('saucer', .06, .008, (TABLE.x + .3, TABLE.y - .1, .396), plain('cup', '#f4f0e8', .4), v=18)
-    C.sign('paper_on_table', 'THE DAILY PRAGATI', .36, .26, (TABLE.x - .25, TABLE.y + .05, .4), facing=(0, -1), bg='#ece8dc', fg='#222', size=(500, 360), font_scale=.18).rotation_euler = (math.radians(-90), 0, .3)
+    C.sign('paper_on_table', 'THE DAILY PRAGATI', .36, .26, (TABLE.x - .25, TABLE.y + .05, .4), facing=(0, -1), bg='#ece8dc', fg='#222', size=(500, 360), font_scale=.18, **TY.kw('playfair')).rotation_euler = (math.radians(-90), 0, .3)
     v = TV
     put('modern_wooden_cabinet', (v.x, v.y + .02, 0), 180, (.62, .8, .9), fallback=lambda: box('tv_cab', (1.3, .45, .55), (v.x, v.y, .28), plain('teak', '#5a3420', .45), bevel=.02))
     if put('Television_01', (v.x, v.y + .02, .61), 180, 1.3) is None:
@@ -246,7 +247,7 @@ def interior(night=False):
         cyl('clock', .17, .03, (s.x, y1 - .08, 2.2), plain('clockface', '#f4f0e8', .5), rot=(math.pi / 2, 0, 0), v=24)
     put('hanging_picture_frame_01', (s.x - .95, y1 - .07, 1.7), 0, .7)
     put('hanging_picture_frame_02', (s.x + .95, y1 - .07, 1.75), 0, .7)
-    C.sign('calendar', 'NOVEMBER\n2026', .4, .55, (x0 + .07, 2.0, 1.7), facing=(1, 0), bg='#f4f0e4', fg='#b02020', size=(400, 550))
+    C.sign('calendar', 'NOVEMBER\n2026', .4, .55, (x0 + .07, 2.0, 1.7), facing=(1, 0), bg='#f4f0e4', fg='#b02020', size=(400, 550), **TY.kw('oswald_b'))
     put('hanging_picture_frame_02', (x0 + .08, 3.3, 1.75), 90, .6)
     box('tubelight_b', (1.25, .05, .06), (x0 + .07, 1.0, 2.4), plain('tubeholder', '#ece8e0', .4), rot=(0, 0, math.pi / 2))
     box('tubelight', (1.18, .035, .035), (x0 + .1, 1.0, 2.38), plain('tube', '#ffffff', .2, emit='#fff8e8', strength=10 if night else 4), rot=(0, 0, math.pi / 2))
@@ -398,8 +399,9 @@ def rowhouse(name, x0, w, front_y, side, floors, col, seed, shop=None, night=Fal
         sh_ = mat_ph('shutter', ('corrugated', 'metal'), '#8a8c8e', scale=.4)
         box(f'{name}_shut', (sw, .06, .55), (xc, front_y - side * .02, 2.55), sh_)
         box(f'{name}_shopin', (sw, .1, 2.25), (xc, front_y + side * .2, 1.12), plain('shopdark', '#2a241e', .9))
-        C.sign(f'{name}_board', shop, sw + .3, .75, (xc, front_y - side * .12, 3.25), facing=fdir, bg=r.choice(['#c01818', '#f0d020', '#1a5aa8', '#1a8a4a']),
-               fg='#ffffff' if 'GAS' in shop else '#1a1a1a', size=(1100, 220), font_scale=.5)
+        bwid = sw + .3; px = (int(220 * bwid / .75), 220); fsc = min(.55, .88 * px[0] / (len(shop) * .64 * px[1]))
+        C.sign(f'{name}_board', shop, bwid, .75, (xc, front_y - side * .12, 3.25), facing=fdir, bg=r.choice(['#c01818', '#f0d020', '#1a5aa8', '#1a8a4a']),
+               fg='#ffffff' if 'Gas' in shop else '#1a1a1a', size=px, font_scale=fsc, **TY.kw('baloo'))
         box(f'{name}_step', (sw, .5, .18), (xc, front_y - side * .25, .09), mat_ph('concrete', ('concrete', 'plaster'), '#c8c0b0', scale=.5))
     else:                                                        # gate + compound wall + door
         gx = x0 + w * .72
@@ -454,7 +456,7 @@ def street(night=False):
     for k in range(21): cyl(f'balrail{k}', .009, .85, (2.15 + k * .12, -.98, H + .55), plain('rail2', '#2a2a2a', .45, .6), v=6)
     box('balrail_top', (2.6, .05, .04), (3.4, -.98, H + .98), plain('rail2', '#2a2a2a', .45, .6))
     water_tank('our_tank', (-1.4, 2.0, H + 3.1), .55)
-    C.sign('nameplate', 'SHARMA\nNIWAS', .6, .32, (dx - .62, -1.78, 1.05), facing=(0, -1), bg='#2a2a2a', fg='#e8d8a0', size=(500, 270))
+    C.sign('nameplate', 'Sharma\nNiwas', .6, .32, (dx - .62, -1.78, 1.05), facing=(0, -1), bg='#2a2a2a', fg='#e8d8a0', size=(500, 270), border='#c8a040', **TY.kw('playfair'))
     HR.rbox('our_ac', (.8, .3, .55), (-.4, -.17, H + .9), plain('acunit', '#ecebe6', .45), .08, sub=1)
     # the colony: houses on our side (front y -1.65 line) and across the street (front y -9.0), a few shops opposite
     cols = ['#e8c890', '#b8d8c8', '#f0b8a8', '#c8c0e8', '#f0e0a0', '#a8c8e0', '#e8a888', '#d0e0a8', '#f4d4c0', '#c4e0d0']
@@ -464,16 +466,16 @@ def street(night=False):
         if not (x + w > LIV[0] - .6 and x < BED[1] + .6):
             rowhouse(f'nbN{k}', x, w, -.1, 1, r.choice([2, 2, 3]), r.choice(cols), 100 + k, night=night)
         x += w + .15; k += 1
-    shops = {1: 'SHARMA GAS AGENCY', 3: 'GUPTA GENERAL STORE', 5: 'CHAI  -  10 Rs', 6: 'MOBILE REPAIR'}
+    shops = {1: 'Sharma Gas Agency', 3: 'Gupta General Store', 5: 'Chai ₹10', 6: 'Mobile Repair'}
     x = -26.0; k = 0
     while x < 30:
         w = r.uniform(6, 8)
         rowhouse(f'nbS{k}', x, w, -9.0, -1, r.choice([2, 3, 3]), r.choice(cols), 200 + k, shop=shops.get(k), night=night)
-        if shops.get(k, '').startswith('SHARMA GAS'):
+        if shops.get(k, '').startswith('Sharma Gas'):
             for j in range(5):
                 c_ = HR.lpg_cylinder(f'shopcyl{j}'); c_.location = (x + 1.0 + j * .42, -8.6 + (j % 2) * .1, 0)
             gas_x = x + w / 2
-        if shops.get(k, '').startswith('CHAI'):
+        if shops.get(k, '').startswith('Chai'):
             HR.rbox('chai_counter', (1.6, .6, .9), (x + w / 2, -8.2, .45), mat_ph('stallwood', ('wood', 'planks'), '#7a5a3a', scale=.4), .05, sub=1)
             put('brass_pot_01', (x + w / 2 - .4, -8.2, .9), 0, 1.0); cyl('stove', .15, .12, (x + w / 2 + .3, -8.2, .96), plain('stove', '#2a2a2a', .5, .5), v=14)
             for j in range(3): put('plastic_monobloc_chair_01', (x + .8 + j * .9, -7.5, 0), 180 + j * 25, 1.0)

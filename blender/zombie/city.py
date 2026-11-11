@@ -123,14 +123,21 @@ def bench(name, x, y, yaw):
 
 
 # ------------------------------------------------------------------ signs
-def sign_mat(name, txt, bg='#1e2a3a', fg='#f4e8c8', size=(1024, 256), font_scale=.62, serif=False, border=None):
+def sign_mat(name, txt, bg='#1e2a3a', fg='#f4e8c8', size=(1024, 256), font_scale=.62, serif=False, border=None, font=None, wght=None):
     from PIL import Image, ImageDraw, ImageFont
     os.makedirs('/tmp/citytex', exist_ok=True); p = f'/tmp/citytex/{name}.png'
     im = Image.new('RGB', size, bg); d = ImageDraw.Draw(im)
     f = '/usr/share/fonts/truetype/dejavu/DejaVuSerif-Bold.ttf' if serif else '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'
     lines = txt.split('\n'); fs = int(size[1] * font_scale / len(lines))
-    ft = ImageFont.truetype(f, fs)
-    while max(d.textlength(l, font=ft) for l in lines) > size[0] * .9 and fs > 10: fs -= 2; ft = ImageFont.truetype(f, fs)
+    if font: f = font
+    def mk(fs):
+        ft_ = ImageFont.truetype(f, fs)
+        if wght:
+            try: ft_.set_variation_by_axes([wght])
+            except Exception: pass
+        return ft_
+    ft = mk(fs)
+    while max(d.textlength(l, font=ft) for l in lines) > size[0] * .9 and fs > 10: fs -= 2; ft = mk(fs)
     for k, l in enumerate(lines): d.text((size[0] / 2, size[1] * (k + .5) / len(lines)), l, font=ft, fill=fg, anchor='mm')
     if border: d.rectangle([6, 6, size[0] - 7, size[1] - 7], outline=border, width=8)
     im.save(p)

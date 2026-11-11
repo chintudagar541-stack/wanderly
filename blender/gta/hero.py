@@ -140,8 +140,9 @@ def scooter(name='scooter', loc=(0, 0, 0), yaw=0.0, col='#8a1620', plate='DL 3S 
     # tail lamp + number plates
     rbox(name + '_tail', (.16, .04, .06), (0, .93, .70), emit('taillamp', '#d8101a', 2.0), .4, root)
     import city as C
-    p1 = C.sign(name + '_plateR', plate.replace(' ', ' ', 1), .20, .06, (0, .925, .55), facing=(0, 1), bg='#f4f4f0', fg='#111', size=(600, 180), font_scale=.6); p1.parent = root
-    p2 = C.sign(name + '_plateF', plate, .16, .05, (0, -.70, .90), facing=(0, -1), bg='#f4f4f0', fg='#111', size=(600, 180), font_scale=.6); p2.parent = root
+    import typo as TY
+    p1 = C.sign(name + '_plateR', plate.replace(' ', ' ', 1), .20, .06, (0, .925, .55), facing=(0, 1), bg='#f4f4f0', fg='#111', size=(600, 180), font_scale=.6, border='#111', **TY.kw('oswald_b')); p1.parent = root
+    p2 = C.sign(name + '_plateF', plate, .16, .05, (0, -.70, .90), facing=(0, -1), bg='#f4f4f0', fg='#111', size=(600, 180), font_scale=.6, border='#111', **TY.kw('oswald_b')); p2.parent = root
     root.location = loc; root.rotation_euler = (0, 0, math.radians(yaw))
     return root
 
@@ -164,7 +165,8 @@ def lpg_cylinder(name='lpg'):
     T.cyl(name + '_valve', .025, .05, (0, 0, .70), T.plain('brass', '#c8a040', .3, 1.0), v=14).parent = root
     cap = T.lib.sphere(name + '_cap', .04, (0, 0, .745), T.plain('capblack', '#18181a', .4), seg=16, rings=8); cap.scale = (1, 1, .55); cap.parent = root
     import city as C
-    lab = C.sign(name + '_label', 'LPG', .09, .05, (0, -.163, .4), facing=(0, -1), bg='#c4161a', fg='#f4f0e8', size=(240, 130), font_scale=.7); lab.parent = root
+    import typo as TY
+    lab = C.sign(name + '_label', 'LPG', .09, .05, (0, -.163, .4), facing=(0, -1), bg='#c4161a', fg='#f4f0e8', size=(240, 130), font_scale=.7, **TY.kw('oswald_b')); lab.parent = root
     return root
 
 
