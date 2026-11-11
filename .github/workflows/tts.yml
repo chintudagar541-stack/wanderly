@@ -35,6 +35,10 @@ jobs:
           for f in $OUTS; do ffmpeg -loglevel error -y -i "$f" -codec:a libmp3lame -b:a 160k "${f%.wav}.mp3"; done
           git config user.name "github-actions"; git config user.email "github-actions@users.noreply.github.com"
           for f in $OUTS; do git add "$f" "${f%.wav}.mp3"; done
+          if echo "${{ inputs.lines }}" | grep -q audition; then
+            python -m pip install -q faster-whisper && python scripts/asr_check.py "${{ inputs.lines }}" || echo "asr check failed"
+            git add "$(dirname ${{ inputs.lines }})/asr_report.txt" 2>/dev/null || true
+          fi
           git commit -qm "voiceover ${{ inputs.lines }} [skip ci]" && for i in $(seq 1 10); do git pull --rebase --autostash -q && git push -q && break; sleep 5; done
       - name: audition voices
         if: inputs.lines == ''

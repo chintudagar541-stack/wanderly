@@ -1,0 +1,170 @@
+[
+ {
+  "who": "son",
+  "voice": "kokoro:hm_psi",
+  "speed": 1.0,
+  "text": "Dad, can I have five hundred rupees?",
+  "out": "audio/voiceover/gta/aud_son_hm_psi_0.wav"
+ },
+ {
+  "who": "son",
+  "voice": "kokoro:hm_psi",
+  "speed": 1.0,
+  "text": "I downloaded GTA to escape reality... Reality downloaded me instead.",
+  "out": "audio/voiceover/gta/aud_son_hm_psi_1.wav"
+ },
+ {
+  "who": "son",
+  "voice": "kokoro:am_puck",
+  "speed": 1.0,
+  "text": "Dad, can I have five hundred rupees?",
+  "out": "audio/voiceover/gta/aud_son_am_puck_0.wav"
+ },
+ {
+  "who": "son",
+  "voice": "kokoro:am_puck",
+  "speed": 1.0,
+  "text": "I downloaded GTA to escape reality... Reality downloaded me instead.",
+  "out": "audio/voiceover/gta/aud_son_am_puck_1.wav"
+ },
+ {
+  "who": "son",
+  "voice": "kokoro:am_echo",
+  "speed": 1.0,
+  "text": "Dad, can I have five hundred rupees?",
+  "out": "audio/voiceover/gta/aud_son_am_echo_0.wav"
+ },
+ {
+  "who": "son",
+  "voice": "kokoro:am_echo",
+  "speed": 1.0,
+  "text": "I downloaded GTA to escape reality... Reality downloaded me instead.",
+  "out": "audio/voiceover/gta/aud_son_am_echo_1.wav"
+ },
+ {
+  "who": "son",
+  "voice": "kokoro:am_fenrir",
+  "speed": 1.0,
+  "text": "Dad, can I have five hundred rupees?",
+  "out": "audio/voiceover/gta/aud_son_am_fenrir_0.wav"
+ },
+ {
+  "who": "son",
+  "voice": "kokoro:am_fenrir",
+  "speed": 1.0,
+  "text": "I downloaded GTA to escape reality... Reality downloaded me instead.",
+  "out": "audio/voiceover/gta/aud_son_am_fenrir_1.wav"
+ },
+ {
+  "who": "father",
+  "voice": "kokoro:hm_omega",
+  "speed": 1.0,
+  "text": "What happened to the five hundred I gave you yesterday?",
+  "out": "audio/voiceover/gta/aud_father_hm_omega_0.wav"
+ },
+ {
+  "who": "father",
+  "voice": "kokoro:hm_omega",
+  "speed": 1.0,
+  "text": "Inflation? You don't even have a job!",
+  "out": "audio/voiceover/gta/aud_father_hm_omega_1.wav"
+ },
+ {
+  "who": "father",
+  "voice": "kokoro:am_michael",
+  "speed": 1.0,
+  "text": "What happened to the five hundred I gave you yesterday?",
+  "out": "audio/voiceover/gta/aud_father_am_michael_0.wav"
+ },
+ {
+  "who": "father",
+  "voice": "kokoro:am_michael",
+  "speed": 1.0,
+  "text": "Inflation? You don't even have a job!",
+  "out": "audio/voiceover/gta/aud_father_am_michael_1.wav"
+ },
+ {
+  "who": "father",
+  "voice": "kokoro:bm_george",
+  "speed": 1.0,
+  "text": "What happened to the five hundred I gave you yesterday?",
+  "out": "audio/voiceover/gta/aud_father_bm_george_0.wav"
+ },
+ {
+  "who": "father",
+  "voice": "kokoro:bm_george",
+  "speed": 1.0,
+  "text": "Inflation? You don't even have a job!",
+  "out": "audio/voiceover/gta/aud_father_bm_george_1.wav"
+ },
+ {
+  "who": "father",
+  "voice": "kokoro:am_onyx",
+  "speed": 1.0,
+  "text": "What happened to the five hundred I gave you yesterday?",
+  "out": "audio/voiceover/gta/aud_father_am_onyx_0.wav"
+ },
+ {
+  "who": "father",
+  "voice": "kokoro:am_onyx",
+  "speed": 1.0,
+  "text": "Inflation? You don't even have a job!",
+  "out": "audio/voiceover/gta/aud_father_am_onyx_1.wav"
+ },
+ {
+  "who": "mother",
+  "voice": "kokoro:hf_alpha",
+  "speed": 1.0,
+  "text": "Get up! You have been sleeping for twelve hours!",
+  "out": "audio/voiceover/gta/aud_mother_hf_alpha_0.wav"
+ },
+ {
+  "who": "mother",
+  "voice": "kokoro:hf_alpha",
+  "speed": 1.0,
+  "text": "Good. Take this gas cylinder to the shop.",
+  "out": "audio/voiceover/gta/aud_mother_hf_alpha_1.wav"
+ },
+ {
+  "who": "mother",
+  "voice": "kokoro:hf_beta",
+  "speed": 1.0,
+  "text": "Get up! You have been sleeping for twelve hours!",
+  "out": "audio/voiceover/gta/aud_mother_hf_beta_0.wav"
+ },
+ {
+  "who": "mother",
+  "voice": "kokoro:hf_beta",
+  "speed": 1.0,
+  "text": "Good. Take this gas cylinder to the shop.",
+  "out": "audio/voiceover/gta/aud_mother_hf_beta_1.wav"
+ },
+ {
+  "who": "mother",
+  "voice": "kokoro:af_bella",
+  "speed": 1.0,
+  "text": "Get up! You have been sleeping for twelve hours!",
+  "out": "audio/voiceover/gta/aud_mother_af_bella_0.wav"
+ },
+ {
+  "who": "mother",
+  "voice": "kokoro:af_bella",
+  "speed": 1.0,
+  "text": "Good. Take this gas cylinder to the shop.",
+  "out": "audio/voiceover/gta/aud_mother_af_bella_1.wav"
+ },
+ {
+  "who": "mother",
+  "voice": "kokoro:af_nicole",
+  "speed": 1.0,
+  "text": "Get up! You have been sleeping for twelve hours!",
+  "out": "audio/voiceover/gta/aud_mother_af_nicole_0.wav"
+ },
+ {
+  "who": "mother",
+  "voice": "kokoro:af_nicole",
+  "speed": 1.0,
+  "text": "Good. Take this gas cylinder to the shop.",
+  "out": "audio/voiceover/gta/aud_mother_af_nicole_1.wav"
+ }
+]
