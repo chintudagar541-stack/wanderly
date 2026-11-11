@@ -161,18 +161,18 @@ def papa_reading(sh, papa, face, paper_up=lambda t: 1.0, look=None, talk=None, r
     return a, paper
 
 
-def carry_rig(sh, son, cyl, extra=None):
+def carry_rig(sh, son, cyl, extra=None, lift=.06):
     """the son hugs the cylinder at his belly: hand targets in his own frame, the cylinder rides the root (so it also
     falls with him in the game-over shot)"""
     sc = son.s
     def hands(d):
         loc, yaw, cr = d['loc'], d['yaw'], d.get('crouch', 0)
-        z = son.L - cr / sc + son.TL * .62
+        z = son.L - cr / sc + son.TL * .62 + (lift - .06) / sc
         yy = -(son.rw * .9 + .1 / sc); d['handL'] = l2w(loc, yaw, sc, (-.14, yy, z)); d['handR'] = l2w(loc, yaw, sc, (.14, yy, z))
         return d
     def cu_(t):
         bpy.context.view_layer.update(); d = son.fn(t); cr = d.get('crouch', 0)
-        local = Vector((0, -(son.rw * .9 + .13 / sc), son.L - cr / sc + .06 / sc))
+        local = Vector((0, -(son.rw * .9 + .13 / sc), son.L - cr / sc + lift / sc))
         cyl.matrix_world = son.root.matrix_world @ Matrix.Translation(local) @ Matrix.Scale(cyl.get('s', 1.0) / sc, 4)
     sh.updates.append(cu_)
     return hands
@@ -406,10 +406,10 @@ def s_cylinder(sh):
     sh.camera(cam_keys([(0, (DX - 2.25, -1.05, 1.35), (DX + .05, -.95, .95), 21), (sh.dur, (DX - 2.05, -1.05, 1.3), (DX + .05, -.9, .85), 23)], shake=.008), fstop=3.2)
 
 
-def carry_walk(sh, son, cyl, p0, p1, dur, face):
+def carry_walk(sh, son, cyl, p0, p1, dur, face, lift=.06):
     yw = math.degrees(math.atan2(p1.x - p0.x, -(p1.y - p0.y))) if (p1 - p0).length > .01 else 0
     a = sh.actor(son, [TO.Act(0, '82_08', 1.0, sh.dur + 2, loc=tuple(p0), yaw=yw, lock_root=True, speed=.6)], face=face)
-    hands = carry_rig(sh, son, cyl)
+    hands = carry_rig(sh, son, cyl, lift=lift)
     def mv(t, d):
         u = min(1.0, t / dur) if dur > 0 else 0; relocate(d, p0.lerp(p1, u), yw + 4 * math.sin(t * 3.1))
         d['crouch'] = d.get('crouch', 0) + .12 + .025 * math.sin(t * 6.2); d['lean'] = (-.09, d['lean'][1] + .05 * math.sin(t * 3.1))
@@ -434,7 +434,7 @@ def s_camera(sh):
     stage(sh, 'day', 35, 200)
     son = cast(sh, 'SON', SON); cyl = HR.lpg_cylinder('lpg', .78)
     p = Vector((DX + 1.6, -4.4, 0))
-    a = carry_walk(sh, son, cyl, p, p, 0, [(0, 'strain'), (.5, 'deadpan'), (4.2, 'bored'), (5.6, 'deadpan')])
+    a = carry_walk(sh, son, cyl, p, p, 0, [(0, 'strain'), (.5, 'deadpan'), (4.2, 'bored'), (5.6, 'deadpan')], lift=-.12)
     a.talk = [(.92, 3.98, 1.0), (5.72, 7.78, 1.0)]
     Z.extras(sh, [(DX - .2, -8.3, 20), (DX + 3.4, -8.1, -20)], seed=23, face='watch', look=lambda t: tuple(p + Vector((0, 0, 1.2))))
     def cam(t):
