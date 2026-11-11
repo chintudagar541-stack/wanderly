@@ -1,4 +1,4 @@
-00:00.763  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:00.784  cycles           | WARNING CUEW initialization failed: Error opening the library
 [lib] hdri sun 146 elev 48.5 -> az 120
 [lib] ph_find textures ['asphalt', 'road'] -> asphalt_02
 [lib] ph_find textures ['concrete', 'pavement', 'floor'] -> concrete_pavement
@@ -11,14 +11,14 @@
 [lib] ph_find textures ['brick', 'wall'] -> brick_wall_001
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
 [lib] ph_find textures ['wood', 'plank'] -> wood_planks_dirt
-RSS built 542 MB
-RSS extras 542 MB
+RSS built 543 MB
+RSS extras 543 MB
 CLEARCAM alarm 0
-RSS lod 638 MB
-RSS posed 639 MB
-RSS depsgraph 639 MB
+RSS lod 639 MB
+RSS posed 640 MB
+RSS depsgraph 640 MB
 OBJECTS 1415 MESHES 1277 IMAGES 48 37 Mpx
-01:32.923  render           | Saved: '/home/runner/work/wanderly/wanderly/out/alarm_0.png'
-RTIME 86.2
-RSS rendered 1510 MB
+00:55.377  render           | Saved: '/home/runner/work/wanderly/wanderly/out/alarm_0.png'
+RTIME 43.4
+RSS rendered 1515 MB
 RENDERED alarm 1.16
