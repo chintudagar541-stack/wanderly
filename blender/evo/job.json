@@ -1,7 +1,7 @@
 {
- "rev": 75,
+ "rev": 102,
  "mode": "video",
- "only": "k05,k03,d01,d04,a05,a02,h06,l04,t06,b09,p09a,a03,e06",
+ "only": "e02,h01,n02,n05,p01,t04,t06,m04,p09b,b04",
  "chunk": 24,
  "chunk_by_world": {
   "young_earth": 8,
@@ -29,5 +29,6 @@
  "w": 1920,
  "h": 1080,
  "samples": 32,
- "skip_file": "done_chunks.json"
+ "skip_file": "done_chunks.json",
+ "kaggle_repo": "chintudagar541-stack/wanderly"
 }
