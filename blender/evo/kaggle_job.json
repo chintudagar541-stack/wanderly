@@ -1,24 +1,26 @@
 {
  "shots": [
-  "c13",
-  "e01",
-  "e02",
-  "e03",
-  "e05",
-  "m01",
-  "m02",
-  "m06",
-  "k01",
-  "k02",
-  "k03",
-  "k04",
-  "k05",
-  "k06",
   "l01",
   "l02",
   "l03",
   "l04",
-  "d02"
+  "d02",
+  "k06",
+  "k05",
+  "k04",
+  "k03",
+  "k02",
+  "k01",
+  "m06",
+  "m02",
+  "m01",
+  "e03",
+  "p02",
+  "a04",
+  "e05",
+  "e01",
+  "c13",
+  "e02"
  ],
  "chunk": 24,
  "handle": 0.25,
@@ -43,5 +45,15 @@
   "impact": 12,
   "coast": 12,
   "coast_cretaceous": 12
- }
+ },
+ "chunk_by_shot": {
+  "e02": 4
+ },
+ "skip_file": "done_chunks2.json",
+ "dedupe_repos": [
+  "long-videos-dagar/Long-video-Renders.github",
+  "chintudagar541-stack/wanderly",
+  "Blender-tasks/blender-tasks",
+  "Explaination-video/explaination-video"
+ ]
 }

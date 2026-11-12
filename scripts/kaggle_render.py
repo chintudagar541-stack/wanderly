@@ -47,6 +47,20 @@ def uploaded(rel):
         page += 1
 
 
+_gh = {'t': 0, 'names': set()}
+def done_on_github():
+    """chunk names already rendered by the GitHub runners (artifacts 'chunk-<id>' in the twin repos), refreshed every 10 min"""
+    if time.time() - _gh['t'] < 600: return _gh['names']
+    names = set()
+    for repo in job.get('dedupe_repos', []):
+        for page in range(1, 40):
+            try: a = api(f'https://api.github.com/repos/{repo}/actions/artifacts?per_page=100&page={page}').get('artifacts', [])
+            except Exception: break
+            names |= {x['name'][6:] for x in a if x['name'].startswith('chunk-') and not x.get('expired')}
+            if len(a) < 100: break
+    _gh.update(t=time.time(), names=names); return names
+
+
 def upload(rel, path):
     name = os.path.basename(path)
     api(f"https://uploads.github.com/repos/{REPO}/releases/{rel['id']}/assets?name={name}", open(path, 'rb').read(), 'POST', 'video/mp4')
@@ -56,11 +70,13 @@ job = json.load(open(os.path.join(EVO, 'kaggle_job.json'))); film = json.load(op
 fps = film['fps']; S = {s['id']: s for s in film['shots']}; step = job.get('chunk', 24); handle = job.get('handle', .25)
 env = dict(os.environ, **{k: str(v) for k, v in job['env'].items()}, GPU='1', CUDA_VISIBLE_DEVICES=str(GPU), USE_PH='1')
 done_gh = set(json.load(open(os.path.join(EVO, 'done_chunks.json')))) if os.path.exists(os.path.join(EVO, 'done_chunks.json')) else set()
+skip = done_gh | (set(json.load(open(os.path.join(EVO, job['skip_file'])))) if job.get('skip_file') else set())
 chunks = []
 for sid in job['shots']:                         # same chunking as the GitHub plan, so names (and frames) match exactly
     n = round((S[sid]['dur'] + handle) * fps); st = step
     if not any(k.startswith(sid + '_') for k in done_gh): st = job.get('chunk_by_world', {}).get(S[sid]['world'], step)
-    chunks += [(sid, a, min(n, a + st - 1)) for a in range(1, n + 1, st) if f'{sid}_{a:04d}' not in done_gh]
+    if not any(k.startswith(sid + '_') for k in done_gh): st = job.get('chunk_by_shot', {}).get(sid, st)
+    chunks += [(sid, a, min(n, a + st - 1)) for a in range(1, n + 1, st) if f'{sid}_{a:04d}' not in skip]
 chunks.reverse()                                 # GitHub renders from the start of the list, the GPU from the end
 mine = [c for k, c in enumerate(chunks) if k % NG == GPU]
 rel = release(); done = uploaded(rel)
@@ -69,6 +85,7 @@ work = f'/tmp/evo_out{GPU}'
 for sid, a, b in mine:
     name = f'chunk_{sid}_{a:04d}.mp4'
     if name in done: continue
+    if f'{sid}_{a:04d}' in done_on_github(): print(f'GPU {GPU} {name} already rendered on GitHub - skipping', flush=True); continue
     t0 = time.time(); fr = os.path.join(work, 'frames'); shutil.rmtree(fr, ignore_errors=True); os.makedirs(fr, exist_ok=True)
     r = subprocess.run([PY, 'story.py', '--', 'frames', sid, str(a), str(b), fr], cwd=EVO, env=env, capture_output=True, text=True)
     pngs = sorted(glob.glob(os.path.join(fr, 'f_*.png')))

@@ -1,7 +1,7 @@
 {
- "rev": 215,
+ "rev": 300,
  "mode": "video",
- "only": "k06,p08,a06,e05,b08,b03,l05,t05,c08",
+ "only": "e02,h01,n02,n05,p01,t04,t06,m04,p09b,b04,a04,p02",
  "chunk": 24,
  "chunk_by_world": {
   "young_earth": 8,
@@ -38,5 +38,8 @@
   "Blender-tasks/blender-tasks",
   "Explaination-video/explaination-video"
  ],
- "reverse": false
+ "reverse": false,
+ "chunk_by_shot": {
+  "e02": 4
+ }
 }
