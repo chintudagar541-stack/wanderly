@@ -1,7 +1,7 @@
 {
- "rev": 103,
+ "rev": 214,
  "mode": "video",
- "only": "m02,n01,l01,a05,m03,l02,k04,d03,n03,e06",
+ "only": "k03,e01,d01,h07,a07,h06,d06,b09,b01,b06,n04",
  "chunk": 24,
  "chunk_by_world": {
   "young_earth": 8,
@@ -29,6 +29,14 @@
  "w": 1920,
  "h": 1080,
  "samples": 32,
- "skip_file": "done_chunks.json",
- "kaggle_repo": "chintudagar541-stack/wanderly"
+ "skip_file": "done_chunks2.json",
+ "kaggle_repo": "chintudagar541-stack/wanderly",
+ "size_file": "done_chunks.json",
+ "dedupe_repos": [
+  "long-videos-dagar/Long-video-Renders.github",
+  "chintudagar541-stack/wanderly",
+  "Blender-tasks/blender-tasks",
+  "Explaination-video/explaination-video"
+ ],
+ "reverse": false
 }
