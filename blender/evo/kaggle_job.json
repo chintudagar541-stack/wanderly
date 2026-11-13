@@ -47,7 +47,10 @@
   "coast_cretaceous": 12
  },
  "chunk_by_shot": {
-  "e02": 4
+  "e02": 4,
+  "c13": 4,
+  "e01": 4,
+  "e05": 4
  },
  "skip_file": "done_chunks2.json",
  "dedupe_repos": [
