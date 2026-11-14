@@ -5,6 +5,7 @@
 // seeded side bulge + tilt), bean torsos, single-stroke limbs with ink-dot hands, a thick-thin plum outline weighted
 // away from the light, soft painted crescents, deadpan lidded eyes, no blush, no catchlights.
 // Design space 600 x 1000 units (soles at y = 975); the canvas transform scales it.
+import { gearBack, gearCoat, gearTorso, gearHead, type Gear, type GearCtx } from "./gear";
 export const INK = "#241726";
 export const SKIN = "#ffe2c2";
 const WHITE = "#ffffff";
@@ -25,6 +26,8 @@ export type Outfit = {
   /** "ref": the reference-short head look: near-white cream skin (#f7f2ea unless `skin` is set), soft grey shading on the
    *  shadow side, a thinner even outline and slightly smaller features. Default (undefined) = the old look. */
   headStyle?: "ref";
+  /** costume gear (coats, vests, hair styles, masks, weapons): see gear.ts */
+  gear?: Gear;
 };
 export const REF_SKIN = "#f7f2ea";
 type P2 = [number, number];
@@ -992,6 +995,8 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts): FrontInfo => {
     const s0: P2 = [tcx - 0.75 * T.a, torsoBot - 0.2 * HH];
     p.band([s0, [s0[0] - Math.sin(rad(25)) * 0.8 * HH, s0[1] + Math.cos(rad(25)) * 0.8 * HH]], "#c9ccd2", 3 * u, 1.2 * u, "round");
   }
+  const gctx: GearCtx | null = o.gear ? { p, o, g: o.gear, u, HH, H, tcx, T, chin, torsoBot, hipY, sole, hc, crown, facing, light, thick, ow, back, ink: INK, hands: arms.map((a) => a.pts[2]), mul } : null;
+  if (gctx) { gearBack(gctx); gearCoat(gctx); }
   for (const a of arms) if (!a.front) drawArm(a);
   // torso / dress: shaded fill -> clothing clipped to it -> thick-thin ink ring
   if (dress) {
@@ -1036,6 +1041,7 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts): FrontInfo => {
     if (o.sash) { const s = facing || 1; p.poly([[tcx + s * 0.55 * T.a, torsoBot - 0.3 * HH], [tcx + s * 0.75 * T.a, torsoBot + 0.05 * HH], [tcx + s * 0.45 * T.a, torsoBot + 0.02 * HH]], o.sash, 1.6 * u); }
     p.inkRing(tp, ow, thick);
   }
+  if (gctx && !dress) gearTorso(gctx, tp);
   // ---- new props, in three layers: under the front arms, over them (hands redrawn on top), after the head ----
   const handDots = () => { for (const a of arms) if (a.front) p.dot(a.pts[2][0], a.pts[2][1], 5.5 * u); };
   const pc = opts.propColor, WOOD = "#8a5a34", fsc = refHead ? 0.88 : 1;
@@ -1478,6 +1484,7 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts): FrontInfo => {
     p.poly(bd, null, ow * 0.8);
     p.ell(300 + 8 * u * facing, hc + 22 * u, 7 * u, 4 * u, "#5a1e28", 2 * u);
   }
+  if (gctx) gearHead(gctx);
   if (prop === "binoculars") { // binoculars over the eyes, hands on the barrels
     for (const side of [-1, 1]) { p.ell(300 + side * 14 * u, hc - 2 * u, 12 * u, 13 * u, "#2b2e33", 2.6 * u); p.ell(300 + side * 14 * u, hc - 2 * u, 6 * u, 6.5 * u, "#5d7a9a", 1.6 * u); }
     p.poly([[300 - 4 * u, hc - 8 * u], [300 + 4 * u, hc - 8 * u], [300 + 4 * u, hc + 2 * u], [300 - 4 * u, hc + 2 * u]], "#2b2e33", 1.6 * u);
